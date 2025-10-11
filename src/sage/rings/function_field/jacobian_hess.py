@@ -296,27 +296,6 @@ class JacobianPoint(JacobianPoint_base):
 
         return G.element_class(self.parent(), dS, ds)
 
-    def addflip(self, other):
-        """
-        Return the addflip of this and ``other`` point.
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: G = C.jacobian(model='hess', base_div=b).group()
-            sage: pl1 = C([-1,2,1]).place()
-            sage: pl2 = C([2,19,1]).place()
-            sage: p1 = G.point(pl1 - b)
-            sage: p2 = G.point(pl2 - b)
-            sage: p1.addflip(p2)
-            [Place (y + 8, z + 27)]
-            sage: _ == -(p1 + p2)
-            True
-        """
-        return -(self + other)
-
     def defining_divisor(self):
         """
         Return the effective divisor that defines this point.

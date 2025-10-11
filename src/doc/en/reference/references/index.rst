@@ -3476,6 +3476,13 @@ REFERENCES:
              vol. 17 n11 pp.89--95, 1993.
              :doi:`10.1016/0895-7177(93)90259-2`.
 
+.. [HLT2003] Everett W. Howe, Kristin E. Lauter, Jaap Top,
+             *Pointless curves of genus three and four*,
+             Algebra, Geometry, and Coding Theory (2003),
+             Seminaires et Congres 11, pp. 125-141.
+             Societe Mathematique de France, Paris, 2005
+             :arxiv:`math/0403178` [math.NT]
+
 .. [HLY2002] Yi Hu, Chien-Hao Liu, and Shing-Tung Yau. *Toric morphisms
              and fibrations of toric Calabi-Yau
              hypersurfaces*. Adv. Theor. Math. Phys.,
@@ -4868,6 +4875,11 @@ REFERENCES:
 
 .. [Mac2015] Diane Maclagan and Bernd Sturmfels, *Introduction to
              Tropical Geometry*, American Mathematical Society, 2015.
+
+.. [Mac2025] Vincent Macri, *Comparison of and Improvements to Degree Zero
+             Divisor Class Group Arithmetic in Algebraic Function Fields*,
+             Masters thesis, University of Calgary, Canada, 2025.
+             :doi:`10.11575/PRISM/50422`.
 
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf

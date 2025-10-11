@@ -6,7 +6,37 @@ This module provides base classes for Jacobians of function fields.
 Jacobian
 --------
 
-The Jacobian of a function field is created by default in the Hess model, with
+Sage currently has five models for Jacobian arithmetic on global function fields.
+We denote the genus of the function field by `g`.
+Constructing each model requires either a base divisor or place `B`, with varying requirements:
+
+- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place.
+
+- Hess model (``hess``). Requires that `B` is a degree `g` divisor.
+
+- Khuri-Makdisi small model (``km_small``). Requires that `B` is an effective divisor with `\deg(B) \geq 2g + 1`.
+
+- Khuri-Makdisi medium model (``km_medium``). Requires that `B` is an effective divisor with `\deg(B) \geq 2g + 1`.
+
+- Khuri-Makdisi large model (``km_large``). Requires that `B` is an effective divisor with `\deg(B) \geq g + 1`.
+
+The ``unique_hess`` model is the only current model that computes with unique representatives
+of divisor classes, and so is the only model where Jacobian elements are hashable.
+
+All models will attempt to find an appropriate `B` if one is not provided.
+The current implementation does this by finding a degree 1 place and scaling it appropriately.
+If the function field does not have a degree one place, then the ``unique_hess`` model cannot be used,
+and other models will fail unless the user to supplies an appropriate base divisor `B`.
+It is exceedingly rare for a global function field to not contain a degree one place,
+see [HLT2003]_ for a heuristic argument of this.
+
+In order to allow for future optimizations, the way we choose the base place/divisor is
+considered to be an implementation detail. It is not guaranteed that the default base
+place/divisor is chosen deterministically, or that the default base place/divisor will be
+the same between Sage versions or Sage installations. If the user wants a specific base
+place/divisor to be used, then they should specify one.
+
+The Jacobian of a function field is created by default in the ``hess`` model, with
 a base divisor of degree `g` the genus of the function field. The base divisor
 is automatically chosen if not given. ::
 
@@ -67,10 +97,12 @@ We can get the corresponding point in the Jacobian in a different model. ::
 AUTHORS:
 
 - Kwankyu Lee (2022-01-24): initial version
+- Vincent Macri (2025-10-10): updates for ``unique_hess`` model
 """
 
 # ****************************************************************************
 #       Copyright (C) 2022 Kwankyu Lee <ekwankyu@gmail.com>
+#                 (C) 2025 Vincent Macri <vincent.macri@ucalgary.ca>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -98,7 +130,27 @@ class JacobianPoint_base(ModuleElement):
     """
     Abstract base class of points of Jacobian groups.
     """
-    pass
+
+    def addflip(self, other):
+        """
+        Return the addflip of this and ``other`` point.
+
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='hess', base_div=b).group()
+            sage: pl1 = C([-1,2,1]).place()
+            sage: pl2 = C([2,19,1]).place()
+            sage: p1 = G.point(pl1 - b)
+            sage: p2 = G.point(pl2 - b)
+            sage: p1.addflip(p2)
+            [Place (y + 8, z + 27)]
+            sage: _ == -(p1 + p2)
+            True
+        """
+        return -(self + other)
 
 
 class JacobianPoint_finite_field_base(JacobianPoint_base):
@@ -125,6 +177,8 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
 
         ALGORITHM: Shanks' Baby Step Giant Step
         """
+
+        # TODO: Optimize
         G = self.parent()
         B = G._bound_on_order()
         q = integer_ceil(B.sqrt())
