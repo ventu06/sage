@@ -60,6 +60,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+from typing import TYPE_CHECKING
+
 from sage.misc.cachefunc import cached_method
 
 from sage.structure.unique_representation import UniqueRepresentation
@@ -186,6 +190,10 @@ class JacobianPoint(JacobianPoint_base):
             sage: p2 = G.point(pl2 - b)
             sage: p1 == p1
             True
+            sage: p1 != p1
+            False
+            sage: p1 == p2
+            False
             sage: p1 != p2
             True
             sage: p1 > p1
@@ -194,6 +202,8 @@ class JacobianPoint(JacobianPoint_base):
             False
             sage: p1 < p2
             True
+            sage: p2 < p1
+            False
         """
         if op is op_EQ:
             J = self.parent()

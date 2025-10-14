@@ -6,11 +6,12 @@ This module provides base classes for Jacobians of function fields.
 Jacobian
 --------
 
-Sage currently has five models for Jacobian arithmetic on global function fields.
+Sage currently has five models for Jacobian arithmetic on function fields.
 We denote the genus of the function field by `g`.
 Constructing each model requires either a base divisor or place `B`, with varying requirements:
 
-- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place.
+- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place
+  Only works on function fields defined over a finite field (global function fields).
 
 - Hess model (``hess``). Requires that `B` is a degree `g` divisor.
 
@@ -111,7 +112,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 import math
+from typing import TYPE_CHECKING
 
 from sage.arith.misc import integer_floor, integer_ceil
 
@@ -125,6 +129,9 @@ from sage.categories.pushout import ConstructionFunctor, pushout
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
+if TYPE_CHECKING:
+    from .divisor import FunctionFieldDivisor
+
 
 class JacobianPoint_base(ModuleElement):
     """
@@ -134,6 +141,11 @@ class JacobianPoint_base(ModuleElement):
     def addflip(self, other):
         """
         Return the addflip of this and ``other`` point.
+        This naive implementation simply returns ``-(self + other)``.
+        The Khuri-Makdisi implement this operation more efficiently than
+        naively adding and negating. This naive implementation of ``addflip``
+        is to provide compatibility with the Khuri-Makdisi models for the
+        models which do not implement ``addflip`` separately.
 
         EXAMPLES::
 
@@ -151,6 +163,30 @@ class JacobianPoint_base(ModuleElement):
             True
         """
         return -(self + other)
+
+    def divisor(self) -> FunctionFieldDivisor:
+        """
+        Return a function field divisor in the divisor class of this Jacobian element.
+        """
+        ...
+
+    def _repr_(self) -> str:
+        """
+        Return string representation of ``self``.
+
+        The default implementation of ``_repr_`` for Jacobian points is to
+        call ``_repr_`` on ``self.divisor()``.
+        """
+        return self.divisor()._repr_()
+
+    def _latex_(self) -> str:
+        """
+        Return LaTeX representation of ``self``.
+
+        The default implementation of ``_latex_`` for Jacobian points is to
+        call ``_latex_`` on ``self.divisor()``.
+        """
+        return self.divisor()._latex_()
 
 
 class JacobianPoint_finite_field_base(JacobianPoint_base):
