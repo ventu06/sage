@@ -10,8 +10,7 @@ Sage currently has five models for Jacobian arithmetic on function fields.
 We denote the genus of the function field by `g`.
 Constructing each model requires either a base divisor or place `B`, with varying requirements:
 
-- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place
-  Only works on function fields defined over a finite field (global function fields).
+- Unique Hess model (``unique_hess``). Requires that `B` is a degree 1 place.
 
 - Hess model (``hess``). Requires that `B` is a degree `g` divisor.
 
@@ -61,7 +60,7 @@ Group of rational points
 
 The group of rational points of a Jacobian is created from the Jacobian. A
 point of the Jacobian group is determined by a divisor of degree zero. To
-represent the point, a divisor of the form `D-B` is selected where `D` is an
+represent the point, a divisor of the form `D - B` is selected where `D` is an
 effective divisor of the same degree with the base divisor `B`. Hence the point
 is simply represented by the divisor `D`. ::
 

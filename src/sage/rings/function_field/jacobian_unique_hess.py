@@ -61,23 +61,17 @@ from .jacobian_base import (Jacobian_base,
                             JacobianPoint_finite_field_base)
 
 class JacobianPoint(JacobianPoint_base):
-    pass
-
-class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base):
 
     def __init__(self, parent, finite_part, infinite_part) -> None:
-        raise NotImplementedError  # TODO
-
-    def divisor(self) -> FunctionFieldDivisor:
         raise NotImplementedError  # TODO
 
     def __hash__(self) -> int:
         raise NotImplementedError  # TODO
 
-    def _richcmp_(self, other, op):
+    def divisor(self) -> FunctionFieldDivisor:
         raise NotImplementedError  # TODO
 
-    def _add_(self, other):
+    def _richcmp_(self, other, op):
         raise NotImplementedError  # TODO
 
     def _add_(self, other):
@@ -89,6 +83,8 @@ class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base)
         """
         # TODO: Implement with hash tables
         raise NotImplementedError  # TODO
+
+class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base):
 
 class JacobianGroupEmbedding(Map):
     pass
@@ -108,6 +104,11 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         if function_field.constant_base_field().is_finite():
             self._group_class = JacobianGroup_finite_field
         else:
-            # [Mac2025]_ only considers the finite field case, and
-            # includes optimizations that only work over finite fields.
-            raise NotImplementedError
+            self._group_class = JacobianGroup
+
+    def _repr_(self) -> str:
+        """
+        Return the string representation of ``self``.
+        """
+        # TODO: Add tests
+        return f'{super()._repr_()} (Unique Hess model)'

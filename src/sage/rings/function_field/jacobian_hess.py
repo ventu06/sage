@@ -1034,5 +1034,4 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             Jacobian of Projective Plane Curve over Finite Field of size 17
              defined by x^3 - y^2*z + 5*z^3 (Hess model)
         """
-        r = super()._repr_()
-        return r + ' (Hess model)'
+        return f'{super()._repr_()} (Hess model)'
