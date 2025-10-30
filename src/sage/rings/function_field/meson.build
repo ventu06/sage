@@ -23,6 +23,7 @@ py.install_sources(
   'jacobian_base.py',
   'jacobian_hess.py',
   'jacobian_khuri_makdisi.py',
+  'jacobian_unique_hess.py',
   'khuri_makdisi.pyx',
   'maps.py',
   'order.py',
@@ -32,6 +33,7 @@ py.install_sources(
   'place.py',
   'place_polymod.py',
   'place_rational.py',
+  'riemann_roch.pyx',
   'valuation.py',
   'valuation_ring.py',
   subdir: 'sage/rings/function_field',
@@ -43,6 +45,7 @@ extension_data = {
   'element_rational' : files('element_rational.pyx'),
   'hermite_form_polynomial' : files('hermite_form_polynomial.pyx'),
   'khuri_makdisi' : files('khuri_makdisi.pyx'),
+  'riemann_roch' : files('riemann_roch.pyx'),
 }
 
 foreach name, pyx : extension_data
