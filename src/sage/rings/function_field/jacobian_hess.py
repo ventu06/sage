@@ -76,6 +76,7 @@ from sage.categories.homset import Hom
 from sage.arith.misc import integer_ceil
 from sage.arith.functions import lcm
 
+from sage.rings.function_field import riemann_roch
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
 
@@ -89,8 +90,6 @@ from .jacobian_base import (Jacobian_base,
                             JacobianGroup_finite_field_base,
                             JacobianPoint_base,
                             JacobianPoint_finite_field_base)
-
-from sage.rings.function_field import riemann_roch
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -698,14 +697,15 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             True
         """
         F = self._function_field
-        f = riemann_roch._normalize(self._function_field, I, J)
+        f = riemann_roch._short_circuit_riemann_roch_ideals(F, I, J)
 
         if f is None:
             return None
 
         O = F.maximal_order()
         Oinf = F.maximal_order_infinite()
-        return (O.ideal(~f) * I, Oinf.ideal(~f) * J)
+        f_inv = ~f
+        return (O.ideal(f_inv) * I, Oinf.ideal(f_inv) * J)
 
     def point(self, divisor):
         """

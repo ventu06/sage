@@ -45,7 +45,6 @@ extension_data = {
   'element_rational' : files('element_rational.pyx'),
   'hermite_form_polynomial' : files('hermite_form_polynomial.pyx'),
   'khuri_makdisi' : files('khuri_makdisi.pyx'),
-  'riemann_roch' : files('riemann_roch.pyx'),
 }
 
 foreach name, pyx : extension_data
@@ -58,6 +57,23 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, gmp],
   )
 endforeach
+
+extension_data_cpp = {
+  'riemann_roch' : files('riemann_roch.pyx'),
+}
+
+foreach name, pyx : extension_data_cpp
+  py.extension_module(
+    name,
+    sources: pyx,
+    subdir: 'sage/rings/function_field',
+    install: true,
+    override_options: ['cython_language=cpp'],
+    include_directories: [inc_cpython, inc_rings],
+    dependencies: [py_dep, gmp],
+  )
+endforeach
+
 
 install_subdir(
   'drinfeld_modules',

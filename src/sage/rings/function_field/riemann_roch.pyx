@@ -1,3 +1,4 @@
+# distutils: language = c++
 r"""
 Utility functions for Riemann-Roch computations with divisors represented as pairs of ideals.
 
@@ -6,7 +7,6 @@ AUTHORS:
 - Kwankyu Lee (2017-2022): initial versions
 - Vincent Macri (2025-10-29): Cythonization and refactoring
 """
-
 # ****************************************************************************
 #       Copyright (C) 2017-2022 Kwankyu Lee <ekwankyu@gmail.com>
 #                     2025      Vincent Macri <vincent.macri@ucalgary.ca>
@@ -17,56 +17,66 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from libcpp.vector cimport vector
+from libcpp.pair cimport pair
+from libcpp.list cimport list as linked_list
+
 from sage.arith.functions import lcm  # Should we use LCM_list or make lcm cpdef?
 from sage.matrix.constructor import matrix
 from sage.matrix.matrix cimport Matrix
 
-cpdef _normalize(F, I, J):  # TODO: Update docstring
+# Used to avoid a bunch of Python overhead.
+# Should be unnecessary if https://github.com/cython/cython/issues/3679 is fixed
+ctypedef pair[int, int] ipair
+
+def _riemann_roch_ideals(F, I, J):  # TODO: Update docstring
+    _, _, to = F.free_module(map=True)
+    gens = list(I.gens_over_base())
+    C = matrix([to(v) for v in gens])
+    B = matrix([to(b) for b in J.gens_over_base()])
+    return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, False)
+
+
+def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Update docstring
+    _, _, to = F.free_module(map=True)
+    gens = list(I.gens_over_base())
+    C = matrix([to(v) for v in gens])
+    B = matrix([to(b) for b in J.gens_over_base()])
+    return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, True)
+
+
+def _short_circuit_riemann_roch_matrices(F, Matrix C, Matrix B_inv, list gens):  # TODO: Update docstring
+    return _riemann_roch_basis(F.degree(), C, B_inv, list(gens), True)
+
+
+cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):  # TODO: Update docstring
     """
-    Return a pair of normalized ideals from `I` and `J`.
+    Return a basis of the Riemann-Roch space of the divisor.
 
-    INPUT:
 
-    - ``I`` -- an ideal of the finite maximal order
-
-    - ``J`` -- an ideal of the infinite maximal order
-
-    The output represents an effective divisor linearly equivalent to the
-    divisor represented by the given ideals `I` and `J`.
-
-    ALGORITHM:
-
-    Computes a function `f` in the Riemann-Roch space of the divisor `D`
-    represented by the (inverted) ideals `I` and `J`. The output is the
-    pair of the (inverted) ideals representing the effective divisor `(f) + D`,
-    which is linearly equivalent to `D`.
-
-    TESTS::
-
+    This implements Hess' algorithm 6.1 in [Hes2002]_
     """
-    # TODO: Static typing of local variables, especially ints (i, j, ideg, jdeg)
-    n = F.degree()
+    # The basic idea of this algorithm is to compute the intersection of the ideals I and J.
 
     # Step 1: construct matrix M of rational functions in x such that
     # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-    V, fr, to = F.free_module(map=True)
-    B = matrix([to(b) for b in J.gens_over_base()])
-    C = matrix([to(v) for v in I.gens_over_base()])
-    M = C * B.inverse()
 
-    # Step 2: get the denominator d of M and set mat = d * M
+    M = C * B_inv
+
+    # Step 1.5: get the denominator d of M and set mat = d * M
     den = lcm([e.denominator() for e in M.list()])
     R = den.parent()  # polynomial ring
     one = R.one()
     mat = matrix(R, n, [e.numerator() for e in (den * M).list()])
-    gens = list(I.gens_over_base())
 
-    # Step 3: transform mat to a weak Popov form, together with gens
+    # Step 2: transform mat to a weak Popov form, together with gens
 
     # initialise pivot_row and conflicts list
-    found = None
-    pivot_row = [[] for i in range(n)]
-    conflicts = []
+    cdef vector[vector[ipair]] pivot_row = vector[vector[ipair]](n)
+    cdef vector[int] conflicts = vector[int](0)
+    conflicts.reserve(n)
+
+    cdef int i, j, bestp, best, c, d, ideg, jdeg
     for i in range(n):
         bestp = -1
         best = -1
@@ -76,54 +86,68 @@ cpdef _normalize(F, I, J):  # TODO: Update docstring
                 bestp = c
                 best = d
 
-        if best <= den.degree():
-            found = i
-            break
+        if short_circuit and best <= den.degree():
+            return gens[i]
 
         if best >= 0:
-            pivot_row[bestp].append((i, best))
-            if len(pivot_row[bestp]) > 1:
-                conflicts.append(bestp)
+            pivot_row[bestp].push_back(ipair(i, best))
 
-    if found is None:
-        # while there is a conflict, do a simple transformation
-        while conflicts:
-            c = conflicts.pop()
-            row = pivot_row[c]
-            i, ideg = row.pop()
-            j, jdeg = row.pop()
+            if pivot_row[bestp].size() > 1:
+                conflicts.push_back(bestp)
 
-            if jdeg > ideg:
-                i, j = j, i
-                ideg, jdeg = jdeg, ideg
+    # while there is a conflict, do a simple transformation
+    while not conflicts.empty():
+        c = conflicts.back()
+        conflicts.pop_back()
+        row = pivot_row[c]
 
-            coeff = - mat[i, c].lc() / mat[j, c].lc()
-            s = coeff * one.shift(ideg - jdeg)
+        tmp = pivot_row[c].back()
+        i, ideg = tmp.first, tmp.second
+        pivot_row[c].pop_back()
 
-            mat.add_multiple_of_row(i, j, s)
-            gens[i] += s * gens[j]
+        tmp = pivot_row[c].back()
+        j, jdeg = tmp.first, tmp.second
+        pivot_row[c].pop_back()
 
-            row.append((j, jdeg))
+        if jdeg > ideg:
+            i, j = j, i
+            ideg, jdeg = jdeg, ideg
 
-            bestp = -1
-            best = -1
-            for c in range(n):
-                d = mat[i, c].degree()
-                if d >= best:
-                    bestp = c
-                    best = d
+        coeff = - mat[i, c].lc() / mat[j, c].lc()
+        s = coeff * one.shift(ideg - jdeg)
 
-            if best <= den.degree():
-                found = i
-                break
+        mat.add_multiple_of_row(i, j, s)
+        gens[i] += s * gens[j]
 
-            if best >= 0:
-                pivot_row[bestp].append((i, best))
-                if len(pivot_row[bestp]) > 1:
-                    conflicts.append(bestp)
-        else:
-            return None
+        pivot_row[c].push_back(ipair(j, jdeg))
 
-    return gens[found]
-    #f = gens[found]
-    #return (O.ideal(~f) * I, Oinf.ideal(~f) * J)
+        bestp = -1
+        best = -1
+        for c in range(n):
+            d = mat[i, c].degree()
+            if d >= best:
+                bestp = c
+                best = d
+
+        if short_circuit and best <= den.degree():
+            return gens[i]
+
+        if best >= 0:
+            pivot_row[bestp].push_back(ipair(i, best))
+            if pivot_row[bestp].size() > 1:
+                conflicts.push_back(bestp)
+
+    if short_circuit:
+        return None
+
+    # Step 3: build a Riemann-Roch basis from the data in mat and gens.
+    # Note that the values mat[i,j].degree() - den.degree() are known as
+    # invariants of M.
+    basis = []
+    for j in range(n):
+        i, ideg = pivot_row[j][0].first, pivot_row[j][0].second
+        gi = gens[i]
+        basis.extend(one.shift(k) * gi
+                     for k in range(den.degree() - ideg + 1))
+    # Done!
+    return basis
