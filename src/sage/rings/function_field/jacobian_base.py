@@ -129,7 +129,8 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
-    from .divisor import FunctionFieldDivisor
+    from sage.rings.function_field.divisor import FunctionFieldDivisor
+    from sage.rings.function_field.place import FunctionFieldPlace
 
 
 class JacobianPoint_base(ModuleElement):
@@ -376,7 +377,7 @@ class JacobianGroup_base(Parent):
     """
     _embedding_map_class = None
 
-    def __init__(self, parent, function_field, base_div) -> None:
+    def __init__(self, parent, function_field, base_div: FunctionFieldDivisor) -> None:
         """
         Initialize.
 

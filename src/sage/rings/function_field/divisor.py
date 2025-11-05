@@ -49,7 +49,10 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
 import random
+from typing import TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
@@ -73,7 +76,10 @@ from sage.rings.function_field import riemann_roch
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
-from .place import PlaceSet
+from sage.rings.function_field.place import PlaceSet
+
+if TYPE_CHECKING:
+    from sage.rings.function_field.place import FunctionFieldPlace
 
 
 def divisor(field, data):
@@ -468,7 +474,7 @@ class FunctionFieldDivisor(ModuleElement):
 
     valuation = multiplicity
 
-    def is_effective(self):
+    def is_effective(self) -> bool:
         """
         Return ``True`` if this divisor has nonnegative multiplicity at all
         places.
@@ -487,6 +493,81 @@ class FunctionFieldDivisor(ModuleElement):
         """
         data = self._data
         return all(data[place] >= 0 for place in data)
+
+    def is_prime(self) -> bool:
+        """
+        Return ``True`` if this is a prime divisor (i.e. the divisor is a place).
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: (3 * p2 - 2 * p1).is_prime()
+            False
+            sage: p2.divisor().is_prime()
+            True
+            sage: (2 * p2).is_prime()
+            False
+            sage: (0 * p2).is_prime()
+            False
+
+        TESTS::
+
+            sage: from sage.rings.function_field.divisor import divisor
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: P = L.places(degree=2)[0]
+            sage: divisor(L, {P: 1}).is_prime()
+            True
+            sage: divisor(L, {P: 0}).is_prime()
+            False
+            sage: divisor(L, {P: 2}).is_prime()
+            False
+            sage: divisor(L, {}).is_prime()
+            False
+        """
+        # This method is more complicated than it could be because
+        # we allow divisors to have a place with multiplicity 0.
+        prime = False
+        for P, m in self._data.items():
+            if m == 0:
+                continue
+            if prime or m != 1:
+                return False
+            prime = True
+
+        return prime
+
+    def place(self) -> FunctionFieldPlace:
+        """
+        Return the place of this divisor if it is prime.
+        Raises ``ValueError`` if this divisor is not prime.
+
+        EXAMPLES::
+
+            sage: K.<x> = FunctionField(GF(4)); _.<Y> = K[]
+            sage: L.<y> = K.extension(Y^3 + x^3*Y + x)
+            sage: p1, p2 = L.places()[:2]
+            sage: p1.divisor().place() == p1
+            True
+            sage: (3 * p2).place()
+            Traceback (most recent call last):
+            ...
+            ValueError: only prime divisors can be converted to a place
+            sage: (3 * p2 - 2 * p1).place()
+            Traceback (most recent call last):
+            ...
+            ValueError: only prime divisors can be converted to a place
+        """
+        # Like is_prime(), this method is more complicated than it could be because
+        # we allow divisors to have a place with multiplicity 0.
+        if not self.is_prime():
+            raise ValueError('only prime divisors can be converted to a place')
+        for P, m in self._data.items():
+            if m == 1:
+                return P
+        raise RuntimeError('failed to find place of a prime divisor, this is a bug and should be reported')
 
     def numerator(self):
         """
@@ -785,27 +866,7 @@ class FunctionFieldDivisor(ModuleElement):
 
         This implements Hess' algorithm 6.1 in [Hes2002]_
         """
-        
-        F = self.parent()._field
-        n = F.degree()
-        O = F.maximal_order()
-        Oinf = F.maximal_order_infinite()
-
-        # The ideal I is the inverse of the product of prime ideals attached
-        # to the finite places in the divisor while the ideal J corresponds
-        # to the infinite places in the divisor.
-        I = O.ideal(1)
-        J = Oinf.ideal(1)
-        for p in self._data:
-            m = self._data[p]
-            if p.is_infinite_place():
-                J *= p.prime_ideal() ** (-m)
-            else:
-                I *= p.prime_ideal() ** (-m)
-
-        # The function _riemann_roch_ideals is basically to compute
-        # the intersection of the ideals I and J.
-        return riemann_roch._riemann_roch_ideals(F, I, J)
+        return riemann_roch._riemann_roch_divisor(self)
 
     def _echelon_basis(self, basis):
         """

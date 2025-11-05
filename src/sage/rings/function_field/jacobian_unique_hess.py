@@ -62,8 +62,13 @@ from .jacobian_base import (Jacobian_base,
 
 class JacobianPoint(JacobianPoint_base):
 
-    def __init__(self, parent, finite_part, infinite_part) -> None:
-        raise NotImplementedError  # TODO
+    def __init__(self, parent, finite_ideal, infinite_ideal) -> None:
+        super().__init__(parent)
+        self._finite_ideal, self._infinite_ideal, self._n, a = self._fast_reduce(finite_ideal, infinite_ideal)
+
+    def _reduce(self, I, J):
+        parent = self.parent()
+        g = parent._genus
 
     def __hash__(self) -> int:
         raise NotImplementedError  # TODO
@@ -98,8 +103,30 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 class Jacobian(Jacobian_base, UniqueRepresentation):
     pass
 
-    def __init__(self, function_field, base_div, **kwds) -> None:
-        super().__init__(function_field, base_div, **kwds)
+    def __init__(self, function_field, base_div: FunctionFieldDivisor | FunctionFieldPlace, **kwds) -> None:
+
+        if isinstance(base_div, FunctionFieldPlace)
+            super().__init__(function_field, base_div.divisor(), **kwds)
+
+            # self._base_place would be a better name but is it already used for
+            # something else in Jacobian_base. Also, the set_base_place method in
+            # Jacobian_base allows self._base_place to be changed after construction,
+            # which would cause us problems.
+            # We call this value A to match with the literature that this implementation is based on.
+            self._A = base_div
+
+        elif isinstance(base_div, FunctionFieldDivisor):  # Allowed for compatibility with other Jacobian models
+            if not base_div.is_prime():
+                raise ValueError('base_div must be a prime divisor')
+            super().__init__(function_field, base_div, **kwds)
+            self._A = base_div.place()
+        else:
+            raise TypeError('base_div must be a divisor or a place')
+
+
+        # For faster/more convenient access from the JacobianPoint class
+        self._genus = self._function_field.genus()
+        self._vector_space, self._from_vector_space, self._to_vector_space = self._function_field.free_module(map=True)
 
         if function_field.constant_base_field().is_finite():
             self._group_class = JacobianGroup_finite_field

@@ -563,8 +563,8 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
         """
         super().__init__(parent, function_field, base_div)
-
-        bdS, bds = self._get_dS_ds(-base_div)
+        
+        bdS, bds = riemann_roch._divisor_to_inverted_ideals(-base_div)
         try:
             bdS._gens_two()  # speed up multiplication with these ideals
             bds._ideal._gens_two()  # by storing vector forms of two generators
@@ -626,41 +626,10 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if x.is_effective():
                 if x.degree() != self._genus:
                     raise ValueError(f"effective divisor is not of degree {self._genus}")
-                return self.element_class(self, *self._get_dS_ds(x))
+                return self.element_class(self, *riemann_roch._divisor_to_inverted_ideals(x))
 
         raise ValueError(f"cannot construct a point from {x}")
 
-    def _get_dS_ds(self, divisor):
-        """
-        Return (dS,ds) representation of the divisor.
-
-        TESTS::
-
-            sage: k = GF(17)
-            sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: J = C.jacobian(model='hess', base_div=b)
-            sage: G = J.group()
-            sage: pl = C([2,8,1]).place()
-            sage: dS, ds = G._get_dS_ds(2*pl)
-            sage: (~dS).divisor() + (~ds).divisor() == 2*pl
-            True
-        """
-        F = self._function_field
-        O = F.maximal_order()
-        Oinf = F.maximal_order_infinite()
-
-        I = O.ideal(1)
-        J = Oinf.ideal(1)
-        for p in divisor._data:
-            m = divisor._data[p]
-            if p.is_infinite_place():
-                J *= p.prime_ideal() ** (-m)
-            else:
-                I *= p.prime_ideal() ** (-m)
-
-        return I, J
 
     def _normalize(self, I, J):
         """
@@ -727,7 +696,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         c = divisor + self._base_div
         f = c.basis_function_space()[0]
         d = f.divisor() + c
-        dS, ds = self._get_dS_ds(d)
+        dS, ds = riemann_roch._divisor_to_inverted_ideals(d)
         return self.element_class(self, dS, ds)
 
     @cached_method
@@ -850,8 +819,8 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
             multiples.append((g + 1) * [None])
             P = ~new_pl.prime_ideal()
             dn = new_pl.degree()
-            I0 = O.ideal(1)
-            J0 = Oinf.ideal(1)
+            I0 = O.unit_ideal()
+            J0 = Oinf.unit_ideal()
             dr = 0
             for r in range(1, g // new_pl.degree() + 1):
                 if new_pl.is_infinite_place():

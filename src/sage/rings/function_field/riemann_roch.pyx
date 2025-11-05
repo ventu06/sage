@@ -29,7 +29,46 @@ from sage.matrix.matrix cimport Matrix
 # Should be unnecessary if https://github.com/cython/cython/issues/3679 is fixed
 ctypedef pair[int, int] ipair
 
-def _riemann_roch_ideals(F, I, J):  # TODO: Update docstring
+cpdef _divisor_to_inverted_ideals(divisor):
+    """
+    Return inverted ideal representation of divisor.
+
+    TESTS::
+
+        sage: from sage.rings.function_field import riemann_roch
+        sage: k = GF(17)
+        sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
+        sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+        sage: pl = C([2,8,1]).place()
+        sage: dS, ds = riemann_roch._divisor_to_inverted_ideals(2*pl)
+        sage: (~dS).divisor() + (~ds).divisor() == 2*pl
+        True
+    """
+    F = divisor.parent()._field
+    O = F.maximal_order()
+    Oinf = F.maximal_order_infinite()
+
+    # The ideal I is the inverse of the product of prime ideals attached
+    # to the finite places in the divisor while the ideal J corresponds
+    # to the infinite places in the divisor.
+    I = O.unit_ideal()
+    J = Oinf.unit_ideal()
+
+    for p, m in divisor._data.items():
+        if p.is_infinite_place():
+            J *= p.prime_ideal() ** (-m)
+        else:
+            I *= p.prime_ideal() ** (-m)
+
+    return I, J
+
+def _riemann_roch_divisor(divisor):
+    # The function _riemann_roch_ideals is basically to compute
+    # the intersection of the ideals I and J.
+    I, J = _divisor_to_inverted_ideals(divisor)
+    return _riemann_roch_ideals(divisor.parent()._field, I, J)
+
+cpdef _riemann_roch_ideals(F, I, J):  # TODO: Write docstring
     _, _, to = F.free_module(map=True)
     gens = list(I.gens_over_base())
     C = matrix([to(v) for v in gens])
@@ -37,7 +76,7 @@ def _riemann_roch_ideals(F, I, J):  # TODO: Update docstring
     return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, False)
 
 
-def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Update docstring
+def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Write docstring
     _, _, to = F.free_module(map=True)
     gens = list(I.gens_over_base())
     C = matrix([to(v) for v in gens])
@@ -45,11 +84,11 @@ def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Update docstring
     return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, True)
 
 
-def _short_circuit_riemann_roch_matrices(F, Matrix C, Matrix B_inv, list gens):  # TODO: Update docstring
+def _short_circuit_riemann_roch_matrices(F, Matrix C, Matrix B_inv, list gens):  # TODO: Write docstring
     return _riemann_roch_basis(F.degree(), C, B_inv, list(gens), True)
 
 
-cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):  # TODO: Update docstring
+cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):  # TODO: Write docstring
     """
     Return a basis of the Riemann-Roch space of the divisor.
 
