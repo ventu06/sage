@@ -567,7 +567,7 @@ class FunctionFieldDivisor(ModuleElement):
         for P, m in self._data.items():
             if m == 1:
                 return P
-        raise RuntimeError('failed to find place of a prime divisor, this is a bug and should be reported')
+        raise AssertionError('failed to find place of a prime divisor. This is a bug and should be reported')
 
     def numerator(self):
         """

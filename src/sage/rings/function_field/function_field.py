@@ -247,13 +247,13 @@ from sage.rings.ring import Field
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.divisor import DivisorGroup
+    from sage.rings.function_field.divisor import DivisorGroup, FunctionFieldDivisor
     from sage.rings.function_field.element import FunctionFieldElement
     from sage.rings.function_field.extensions import ConstantFieldExtension
     from sage.rings.function_field.function_field_rational import RationalFunctionField
     from sage.rings.function_field.jacobian_base import Jacobian_base
     from sage.rings.function_field.maps import FunctionFieldCompletion
-    from sage.rings.function_field.place import PlaceSet
+    from sage.rings.function_field.place import PlaceSet, FunctionFieldPlace
     from sage.rings.function_field.valuation import FunctionFieldValuation
 
 
@@ -1383,8 +1383,101 @@ class FunctionField(Field):
         from .extensions import ConstantFieldExtension
         return ConstantFieldExtension(self, k)
 
+    def places_finite(self, degree=1) -> list[FunctionFieldPlace]:
+        """
+        Return a list of the finite places of the given degree.
+
+        INPUT:
+
+        - ``degree`` -- (default: 1) a positive integer
+
+        EXAMPLES::
+
+            sage: F.<x> = FunctionField(GF(5))
+            sage: F.places_finite()                                                     # needs sage.libs.pari
+            [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.places_finite(1)
+            [Place (x, y), Place (x, y + 1)]
+        """
+        return list(self._places_finite(degree))
+    
+    def places_infinite(self, degree=1) -> list[FunctionFieldPlace]:
+        """
+        Return a list of infinite places of the given degree.
+        If ``degree`` is ``None``, return all infinite places.
+
+        """
+        # TODO: Finish docstring
+        raise NotImplementedError
+
+    def get_finite_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return a finite place of degree ``degree`` if one exists.
+        If no finite place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+        """
+        return next(self._places_finite(degree), None)
+
+    def get_infinite_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return an infinite place of degree ``degree`` if one exists.
+        If no infinite place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+        """
+        ...
+
+    def get_place(self, degree) -> FunctionFieldPlace | None:
+        r"""
+        Return a place of degree ``degree`` if one exists.
+        If no place of the specified degree exists, return ``None``.
+
+        INPUT:
+
+        - ``degree`` -- positive integer
+
+        OUTPUT: a place of degree ``degree`` if any exists; otherwise ``None``
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<Y> = PolynomialRing(K)
+            sage: L.<y> = K.extension(Y^4 + Y - x^5)
+            sage: L.get_place(1)
+            Place (x, y)
+            sage: L.get_place(2)
+            Place (x, y^2 + y + 1)
+            sage: L.get_place(3)
+            Place (x^3 + x^2 + 1, y + x^2 + x)
+            sage: L.get_place(4)
+            Place (x + 1, x^5 + 1)
+            sage: L.get_place(5)
+            Place (x^5 + x^3 + x^2 + x + 1, y + x^4 + 1)
+            sage: L.get_place(6)
+            Place (x^3 + x^2 + 1, y^2 + y + x^2)
+            sage: L.get_place(7)
+            Place (x^7 + x + 1, y + x^6 + x^5 + x^4 + x^3 + x)
+            sage: L.get_place(8)
+        """
+        if (place := self.get_finite_place(degree)):
+            return place
+        return self.get_infinite_place(degree)
+
     @cached_method
-    def jacobian(self, model=None, base_div=None, **kwds) -> Jacobian_base:
+    def jacobian(self, model: str = 'hess', base_div: FunctionFieldPlace | FunctionFieldDivisor | None = None, **kwds) -> Jacobian_base:
         """
         Return the Jacobian of the function field.
 
@@ -1392,13 +1485,15 @@ class FunctionField(Field):
 
         - ``model`` -- (default: ``'hess'``) model to use for arithmetic
 
-        - ``base_div`` -- an effective divisor
+        - ``base_div`` -- an effective divisor or a place
 
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
         conditions. Let `g` be the genus of the function field.
 
         - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
+
+        - ``unique_hess``: ideal-based arithmetic; requires base place of degree `1`
 
         - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
           degree at least `2g + 1`
@@ -1430,9 +1525,6 @@ class FunctionField(Field):
             ValueError: failed to obtain a rational place; provide a base divisor
         """
         from .place import FunctionFieldPlace
-
-        if model is None:
-            model = 'hess'
 
         if base_div is None:
             try:
