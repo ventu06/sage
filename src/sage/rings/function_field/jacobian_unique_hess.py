@@ -47,6 +47,7 @@ from sage.arith.misc import integer_ceil
 from sage.arith.functions import lcm
 
 from sage.rings.integer import Integer
+from sage.rings.function_field import riemann_roch
 from sage.matrix.constructor import matrix
 
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
@@ -64,22 +65,32 @@ class JacobianPoint(JacobianPoint_base):
 
     def __init__(self, parent, finite_ideal, infinite_ideal) -> None:
         super().__init__(parent)
-        self._finite_ideal, self._infinite_ideal, self._n, a = self._fast_reduce(finite_ideal, infinite_ideal)
+        self._finite_ideal, self._infinite_ideal, self._n, a = self._reduce(finite_ideal, infinite_ideal)
 
     def _reduce(self, I, J):
         parent = self.parent()
         g = parent._genus
+        return I, J, 0, 0
+
+    def _repr_(self) -> str:
+        raise NotImplementedError
 
     def __hash__(self) -> int:
-        raise NotImplementedError  # TODO
-
-    def divisor(self) -> FunctionFieldDivisor:
         raise NotImplementedError  # TODO
 
     def _richcmp_(self, other, op):
         raise NotImplementedError  # TODO
 
     def _add_(self, other):
+        raise NotImplementedError  # TODO
+
+    def _neg_(self):
+        raise NotImplementedError  # TODO
+
+    def multiple(self, n):
+        raise NotImplementedError  # TODO
+
+    def divisor(self) -> FunctionFieldDivisor:
         raise NotImplementedError  # TODO
 
     def order(self):
@@ -89,13 +100,74 @@ class JacobianPoint(JacobianPoint_base):
         # TODO: Implement with hash tables
         raise NotImplementedError  # TODO
 
+    def effective_part(self):
+        raise NotImplementedError  # TODO
+
+    def divisor(self):
+        raise NotImplementedError  # TODO
+
+
 class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base):
+    pass
 
 class JacobianGroupEmbedding(Map):
     pass
 
 class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
-    pass
+    Element = JacobianPoint
+
+    def __init__(self, parent, function_field, base_div) -> None:
+        super().__init__(parent, function_field, base_div)
+
+        # For faster/more convenient access from the JacobianPoint class
+        self._vector_space, self._from_vector_space, self._to_vector_space = self._function_field.free_module(map=True)
+
+    def _element_constructor_(self, x):
+
+        if x == 0:
+            return self.zero()
+
+        if isinstance(x, FunctionFieldPlace):
+            x = x.divisor()
+
+        if isinstance(x, FunctionFieldDivisor) and x in self._function_field.divisor_group():
+            return self.point(x)
+
+        raise ValueError(f'cannot construct a point from {x}')
+
+    def point(self, divisor: FunctionFieldDivisor):
+        """
+        Return the point represented by the divisor of degree zero.
+        """
+        if divisor.degree() != 0:
+            raise ValueError('divisor not of degree zero')
+        I, J = riemann_roch._divisor_to_inverted_ideals(divisor)
+        return self.element_class(self, I, J)
+
+    @cached_method
+    def zero(self):
+        """
+        Return the zero element of this group.
+        """
+        return self.point(self._function_field.divisor_group().zero())
+
+    def _repr_(self) -> str:
+        """
+        Return the string representation of ``self``.
+        """
+        raise NotImplementedError  # TODO
+
+    def _latex_(self) -> str:
+        raise NotImplementedError  # TODO
+
+    def __iter__(self):
+        """
+        Return generator of points of this group.
+        """
+
+        # TODO: Temporary implementation, does give all elements
+        for D in self._function_field.divisor_group().some_elements():
+            yield self.point(D - self._base_div * D.degree())
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     Element = JacobianPoint_finite_field
@@ -104,8 +176,21 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
     pass
 
     def __init__(self, function_field, base_div: FunctionFieldDivisor | FunctionFieldPlace, **kwds) -> None:
+        """
+        TESTS::
 
-        if isinstance(base_div, FunctionFieldPlace)
+            sage: K = GF(11)
+            sage: Kx.<x> = FunctionField(K)
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + 9*x*t^3 + (10*x + 7)*t^2 + (7*x^2 + 2*x + 10)*t + 9*x^3 + 3*x^2 + 6*x + 4)
+            sage: J = F.jacobian(model='unique_hess')
+            sage: TestSuite(J).run()
+        """
+
+        if base_div.degree() != 1:
+            raise ValueError('base_div must be degree 1')
+
+        if isinstance(base_div, FunctionFieldPlace):
             super().__init__(function_field, base_div.divisor(), **kwds)
 
             # self._base_place would be a better name but is it already used for
@@ -114,7 +199,6 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             # which would cause us problems.
             # We call this value A to match with the literature that this implementation is based on.
             self._A = base_div
-
         elif isinstance(base_div, FunctionFieldDivisor):  # Allowed for compatibility with other Jacobian models
             if not base_div.is_prime():
                 raise ValueError('base_div must be a prime divisor')
@@ -122,11 +206,6 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             self._A = base_div.place()
         else:
             raise TypeError('base_div must be a divisor or a place')
-
-
-        # For faster/more convenient access from the JacobianPoint class
-        self._genus = self._function_field.genus()
-        self._vector_space, self._from_vector_space, self._to_vector_space = self._function_field.free_module(map=True)
 
         if function_field.constant_base_field().is_finite():
             self._group_class = JacobianGroup_finite_field
@@ -139,3 +218,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         """
         # TODO: Add tests
         return f'{super()._repr_()} (Unique Hess model)'
+
+    def _latex_(self) -> str:
+        # TODO: Docstring
+        return fr'\operatorname{{Cl}}^0 ( {self._function_field._latex_()} ) \text{{(Unique Hess model)}}'

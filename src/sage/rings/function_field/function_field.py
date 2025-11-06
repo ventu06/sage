@@ -257,30 +257,6 @@ if TYPE_CHECKING:
     from sage.rings.function_field.valuation import FunctionFieldValuation
 
 
-def is_FunctionField(x) -> bool:
-    """
-    Return ``True`` if ``x`` is a function field.
-
-    EXAMPLES::
-
-        sage: from sage.rings.function_field.function_field import is_FunctionField
-        sage: is_FunctionField(QQ)
-        doctest:warning...
-        DeprecationWarning: The function is_FunctionField is deprecated; use '... in FunctionFields()' instead.
-        See https://github.com/sagemath/sage/issues/38289 for details.
-        False
-        sage: is_FunctionField(FunctionField(QQ, 't'))
-        True
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(38289,
-                "The function is_FunctionField is deprecated; "
-                "use '... in FunctionFields()' instead.")
-    if isinstance(x, FunctionField):
-        return True
-    return x in FunctionFields()
-
-
 class FunctionField(Field):
     """
     Abstract base class for all function fields.
@@ -1407,15 +1383,6 @@ class FunctionField(Field):
         """
         return list(self._places_finite(degree))
     
-    def places_infinite(self, degree=1) -> list[FunctionFieldPlace]:
-        """
-        Return a list of infinite places of the given degree.
-        If ``degree`` is ``None``, return all infinite places.
-
-        """
-        # TODO: Finish docstring
-        raise NotImplementedError
-
     def get_finite_place(self, degree) -> FunctionFieldPlace | None:
         r"""
         Return a finite place of degree ``degree`` if one exists.
@@ -1526,16 +1493,24 @@ class FunctionField(Field):
         """
         from .place import FunctionFieldPlace
 
-        if base_div is None:
-            try:
-                base_place = self.get_place(1)
-            except AttributeError:
-                raise ValueError('failed to obtain a rational place; provide a base divisor')
-            if base_place is None:
-                raise ValueError('the function field has no rational place')
-            # appropriate base divisor is constructed below.
-        elif isinstance(base_div, FunctionFieldPlace):
-            base_div = base_div.divisor()
+        if model == 'unique_hess':
+            if base_div is None:
+                base_div = self.get_infinite_place(1)
+                if base_div is None:
+                    base_div = self.get_finite_place(1)
+            if base_div is None:
+                raise ValueError('the function field has no degree 1 place')
+        else:
+            if base_div is None:
+                try:
+                    base_place = self.get_place(1)
+                except AttributeError:
+                    raise ValueError('failed to obtain a rational place; provide a base divisor')
+                if base_place is None:
+                    raise ValueError('the function field has no rational place')
+                # appropriate base divisor is constructed below.
+            elif isinstance(base_div, FunctionFieldPlace):
+                base_div = base_div.divisor()
 
         g = self.genus()
         curve = kwds.get('curve')
@@ -1569,6 +1544,9 @@ class FunctionField(Field):
                 base_div = g * base_place
             if base_div.degree() != g:
                 raise ValueError("Hess model requires base divisor of degree g for genus g")
+            return Jacobian(self, base_div, curve=curve)
+        elif model == 'unique_hess':
+            from .jacobian_unique_hess import Jacobian
             return Jacobian(self, base_div, curve=curve)
 
         raise ValueError("unknown model")

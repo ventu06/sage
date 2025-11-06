@@ -46,7 +46,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.place_polymod import FunctionField_polymod
+    from sage.rings.function_field.place_polymod import FunctionFieldPlace_polymod
 
 class FunctionField_polymod(FunctionField):
     """
@@ -1886,7 +1886,7 @@ class FunctionField_simple(FunctionField_polymod):
         else:
             k_degree = k.degree()
         different_degree = self.different().degree()  # must be even
-        return Integer(different_degree // 2 - self.degree() / k_degree) + 1
+        return Integer((different_degree // 2 - self.degree() / k_degree) + 1)
 
     def residue_field(self, place, name=None):
         """
@@ -1955,9 +1955,17 @@ class FunctionField_simple(FunctionField_polymod):
             sage: L.places_infinite(1)
             [Place (1/x, 1/x^4*y^3)]
         """
-        if degree is None:
-            return self.places_above(self.rational_function_field().place_infinite())
+        # TODO: Example with ``degree=None``
         return list(self._places_infinite(degree))
+
+    def get_infinite_place(self, degree=1) -> FunctionFieldPlace_polymod | None:
+        r"""
+        Return an infinite place of degree ``degree`` if one exists.
+        If no infinite place of the specified degree exists, return ``None``.
+
+        """
+        #TODO: Docstring
+        return next(self._places_infinite(degree), None)
 
     def _places_infinite(self, degree):
         """
@@ -1965,7 +1973,8 @@ class FunctionField_simple(FunctionField_polymod):
 
         INPUT:
 
-        - ``degree`` -- positive integer
+        - ``degree`` -- positive integer or ``None``.
+                        If ``None``, return a generator of all infinite places.
 
         EXAMPLES::
 
@@ -1980,7 +1989,9 @@ class FunctionField_simple(FunctionField_polymod):
         Oinf = self.maximal_order_infinite()
         for prime, _, _ in Oinf.decomposition():
             place = prime.place()
-            if place.degree() == degree:
+            if degree is None:
+                yield place
+            elif place.degree() == degree:
                 yield place
 
 
@@ -2104,18 +2115,7 @@ class FunctionField_global(FunctionField_simple):
         from .derivations_polymod import FunctionFieldHigherDerivation_global
         return FunctionFieldHigherDerivation_global(self)
 
-    def get_infinite_place(self, degree) -> FunctionFieldPlace | None:
-        r"""
-        Return an infinite place of degree ``degree`` if one exists.
-        If no infinite place of the specified degree exists, return ``None``.
-
-        INPUT:
-
-        - ``degree`` -- positive integer
-        """
-        ...
-
-    def places(self, degree=1):
+    def places(self, degree=1) -> list[FunctionFieldPlace_polymod]:
         """
         Return a list of the places with ``degree``.
 

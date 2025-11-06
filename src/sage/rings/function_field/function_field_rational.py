@@ -914,7 +914,7 @@ class RationalFunctionField_global(RationalFunctionField):
         """
         return self.maximal_order_infinite().prime_ideal().place()
 
-    def get_finite_place(self, degree) -> FunctionFieldPlace | None:
+    def get_finite_place(self, degree) -> FunctionFieldPlace_rational | None:
         r"""
         Return a finite place of degree ``degree`` if one exists.
         If no finite place of the specified degree exists, return ``None``.
@@ -938,9 +938,9 @@ class RationalFunctionField_global(RationalFunctionField):
             sage: K.get_place(5)                                                        # needs sage.libs.pari
             Place (x^5 + x^2 + 1)
         """
-        return next(self._places_finite(degree))
+        return next(self._places_finite(degree), None)
 
-    def get_infinite_place(self, degree=1) -> FunctionFieldPlace | None:
+    def get_infinite_place(self, degree=1) -> FunctionFieldPlace_rational | None:
         r"""
         Return an infinite place of degree ``degree`` if one exists.
         If no infinite place of the specified degree exists, return ``None``.
@@ -959,12 +959,6 @@ class RationalFunctionField_global(RationalFunctionField):
         if degree != 1:
             return None
         return self.place_infinite()
-
-    def places_infinite(self, degree=1) -> list[FunctionFieldPlace_rational]:
-        # TODO: Docstring
-        if degree == 1 or degree is None:
-            return [self.get_infinite_place()]
-        return []
 
     @cached_method
     def higher_derivation(self):
