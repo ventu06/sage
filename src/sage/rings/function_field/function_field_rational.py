@@ -27,7 +27,6 @@ Function Fields: rational
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 from typing import Literal, TYPE_CHECKING
 
 from sage.arith.functions import lcm
@@ -42,7 +41,9 @@ from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from .place_rational import FunctionFieldPlace_rational
+
 
 class RationalFunctionField(FunctionField):
     """

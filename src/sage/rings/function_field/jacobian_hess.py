@@ -563,7 +563,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: TestSuite(G).run(skip=['_test_elements', '_test_pickling'])
         """
         super().__init__(parent, function_field, base_div)
-        
+
         bdS, bds = riemann_roch._divisor_to_inverted_ideals(-base_div)
         try:
             bdS._gens_two()  # speed up multiplication with these ideals
@@ -628,7 +628,6 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
                 return self.element_class(self, *riemann_roch._divisor_to_inverted_ideals(x))
 
         raise ValueError(f"cannot construct a point from {x}")
-
 
     def _normalize(self, I, J):
         """

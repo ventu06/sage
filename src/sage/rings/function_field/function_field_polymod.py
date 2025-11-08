@@ -28,7 +28,6 @@ Function Fields: extension
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 from typing import Literal, TYPE_CHECKING
 
 from sage.arith.functions import lcm
@@ -46,7 +45,9 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
     from .place_polymod import FunctionFieldPlace_polymod
+
 
 class FunctionField_polymod(FunctionField):
     """

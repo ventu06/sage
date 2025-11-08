@@ -1382,7 +1382,7 @@ class FunctionField(Field):
             [Place (x, y), Place (x, y + 1)]
         """
         return list(self._places_finite(degree))
-    
+
     def get_finite_place(self, degree) -> FunctionFieldPlace | None:
         r"""
         Return a finite place of degree ``degree`` if one exists.

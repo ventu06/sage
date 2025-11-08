@@ -70,6 +70,7 @@ if TYPE_CHECKING:
     from .ideal import FunctionFieldIdealInfinite, FunctionFieldIdeal
     FunctionFieldIdealFinite = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
 
+
 class JacobianPoint(JacobianPoint_base):
 
     def __init__(self, parent: JacobianGroup, finite_ideal: FunctionFieldIdealFinite,
@@ -123,8 +124,10 @@ class JacobianPoint(JacobianPoint_base):
 class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base):
     pass
 
+
 class JacobianGroupEmbedding(Map):
     pass
+
 
 class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
@@ -262,8 +265,10 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             assert newD.degree() == 0
             yield self.point(newD)
 
+
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     Element = JacobianPoint_finite_field
+
 
 class Jacobian(Jacobian_base, UniqueRepresentation):
     pass
