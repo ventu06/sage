@@ -162,7 +162,9 @@ class FunctionFieldDivisor(ModuleElement):
             sage: TestSuite(G).run()
         """
         ModuleElement.__init__(self, parent)
-        self._data = data
+        # Removing 0 in the constructor allows us to make additional
+        # assumptions to simplify some logic, in particular for prime divisors.
+        self._data = {k: Integer(v) for k, v in data.items() if v != 0}
 
     def __hash__(self) -> int:
         """
@@ -523,17 +525,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: divisor(L, {}).is_prime()
             False
         """
-        # This method is more complicated than it could be because
-        # we allow divisors to have a place with multiplicity 0.
-        prime = False
-        for P, m in self._data.items():
-            if m == 0:
-                continue
-            if prime or m != 1:
-                return False
-            prime = True
-
-        return prime
+        return len(self._data) == 1 and next(iter(self._data.values())) == 1
 
     def place(self) -> FunctionFieldPlace:
         """
@@ -556,14 +548,9 @@ class FunctionFieldDivisor(ModuleElement):
             ...
             ValueError: only prime divisors can be converted to a place
         """
-        # Like is_prime(), this method is more complicated than it could be because
-        # we allow divisors to have a place with multiplicity 0.
         if not self.is_prime():
             raise ValueError('only prime divisors can be converted to a place')
-        for P, m in self._data.items():
-            if m == 1:
-                return P
-        raise AssertionError('failed to find place of a prime divisor. This is a bug and should be reported')
+        return next(iter(self._data))
 
     def numerator(self):
         """

@@ -56,9 +56,9 @@ cpdef _divisor_to_inverted_ideals(divisor):
 
     for p, m in divisor._data.items():
         if p.is_infinite_place():
-            J *= p.prime_ideal() ** (-m)
+            J *= pow(p.prime_ideal(), -m)
         else:
-            I *= p.prime_ideal() ** (-m)
+            I *= pow(p.prime_ideal(), -m)
 
     return I, J
 
