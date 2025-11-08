@@ -37,16 +37,16 @@ from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from sage.rings.function_field.element import FunctionFieldElement
-from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
-from sage.rings.function_field.function_field import FunctionField
-from sage.rings.function_field.function_field_rational import RationalFunctionField
+from .element import FunctionFieldElement
+from .element_polymod import FunctionFieldElement_polymod
+from .function_field import FunctionField
+from .function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.place_polymod import FunctionFieldPlace_polymod
+    from .place_polymod import FunctionFieldPlace_polymod
 
 class FunctionField_polymod(FunctionField):
     """

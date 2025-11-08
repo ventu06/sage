@@ -52,7 +52,6 @@ AUTHORS:
 from __future__ import annotations
 
 import random
-from typing import TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
@@ -72,14 +71,11 @@ from sage.matrix.constructor import matrix
 
 from sage.modules.free_module_element import vector
 
-from sage.rings.function_field import riemann_roch
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
-from sage.rings.function_field.place import PlaceSet
-
-if TYPE_CHECKING:
-    from sage.rings.function_field.place import FunctionFieldPlace
+from . import riemann_roch
+from .place import PlaceSet, FunctionFieldPlace
 
 
 def divisor(field, data):

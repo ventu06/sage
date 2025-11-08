@@ -247,14 +247,14 @@ from sage.rings.ring import Field
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.divisor import DivisorGroup, FunctionFieldDivisor
-    from sage.rings.function_field.element import FunctionFieldElement
-    from sage.rings.function_field.extensions import ConstantFieldExtension
-    from sage.rings.function_field.function_field_rational import RationalFunctionField
-    from sage.rings.function_field.jacobian_base import Jacobian_base
-    from sage.rings.function_field.maps import FunctionFieldCompletion
-    from sage.rings.function_field.place import PlaceSet, FunctionFieldPlace
-    from sage.rings.function_field.valuation import FunctionFieldValuation
+    from .divisor import DivisorGroup, FunctionFieldDivisor
+    from .element import FunctionFieldElement
+    from .extensions import ConstantFieldExtension
+    from .function_field_rational import RationalFunctionField
+    from .jacobian_base import Jacobian_base
+    from .maps import FunctionFieldCompletion
+    from .place import PlaceSet, FunctionFieldPlace
+    from .valuation import FunctionFieldValuation
 
 
 class FunctionField(Field):
