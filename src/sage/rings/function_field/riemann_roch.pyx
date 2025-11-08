@@ -84,13 +84,15 @@ def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Write docstring
     return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, True)
 
 
-def _short_circuit_riemann_roch_matrices(F, Matrix C, Matrix B_inv, list gens):  # TODO: Write docstring
-    return _riemann_roch_basis(F.degree(), C, B_inv, list(gens), True)
+def _short_circuit_riemann_roch_matrices(int n, Matrix C, Matrix B_inv, gens):  # TODO: Write docstring
+    return _riemann_roch_basis(n, C, B_inv, list(gens), True)
 
 
 cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):  # TODO: Write docstring
     """
     Return a basis of the Riemann-Roch space of the divisor.
+
+    Modifies gens
 
 
     This implements Hess' algorithm 6.1 in [Hes2002]_
@@ -99,7 +101,6 @@ cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_ci
 
     # Step 1: construct matrix M of rational functions in x such that
     # M * B == C where B = [b1,b1,...,bn], C =[v1,v2,...,vn]
-
     M = C * B_inv
 
     # Step 1.5: get the denominator d of M and set mat = d * M

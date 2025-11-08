@@ -76,7 +76,7 @@ from sage.categories.homset import Hom
 from sage.arith.misc import integer_ceil
 from sage.arith.functions import lcm
 
-from sage.rings.function_field import riemann_roch
+from . import riemann_roch
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
 
@@ -238,7 +238,7 @@ class JacobianPoint(JacobianPoint_base):
         jdS, jds = other._data
         bdS, bds = G._base_point
         dS, ds = G._normalize(idS * jdS * bdS, ids * jds * bds)
-        return G.element_class(self.parent(), dS, ds)
+        return G.element_class(G, dS, ds)
 
     def _neg_(self):
         """
@@ -589,8 +589,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             Group of rational points of Jacobian
              over Finite Field of size 17 (Hess model)
         """
-        r = super()._repr_()
-        return r + ' (Hess model)'
+        return f'{super()._repr_()} (Hess model)'
 
     def _element_constructor_(self, x):
         """
@@ -666,7 +665,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             True
         """
         F = self._function_field
-        f = riemann_roch._short_circuit_riemann_roch_ideals(F, I, J)
+        f = riemann_roch._short_circuit_riemann_roch_ideals(F.degree(), I, J)
 
         if f is None:
             return None

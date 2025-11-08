@@ -129,8 +129,8 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
-    from sage.rings.function_field.divisor import FunctionFieldDivisor
-    from sage.rings.function_field.place import FunctionFieldPlace
+    from .divisor import FunctionFieldDivisor
+    from .place import FunctionFieldPlace
 
 
 class JacobianPoint_base(ModuleElement):
