@@ -664,7 +664,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             True
         """
         F = self._function_field
-        f = riemann_roch._short_circuit_riemann_roch_ideals(F.degree(), I, J)
+        f = riemann_roch._short_circuit_riemann_roch_ideals(F, I, J)
 
         if f is None:
             return None
