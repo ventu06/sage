@@ -74,7 +74,7 @@ from sage.modules.free_module_element import vector
 from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
-from . import riemann_roch
+from sage.rings.function_field import riemann_roch
 from .place import PlaceSet, FunctionFieldPlace
 
 

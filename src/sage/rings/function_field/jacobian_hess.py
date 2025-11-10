@@ -76,7 +76,7 @@ from sage.categories.homset import Hom
 from sage.arith.misc import integer_ceil
 from sage.arith.functions import lcm
 
-from . import riemann_roch
+from sage.rings.function_field import riemann_roch
 from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
 

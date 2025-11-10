@@ -55,7 +55,7 @@ from sage.matrix.constructor import matrix
 
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
 
-from . import riemann_roch
+from sage.rings.function_field import riemann_roch
 from .place import FunctionFieldPlace
 from .divisor import FunctionFieldDivisor
 

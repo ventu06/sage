@@ -36,8 +36,8 @@ from sage.categories.homset import Hom
 from sage.categories.number_fields import NumberFields
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
-from .element import FunctionFieldElement
-from .element_polymod import FunctionFieldElement_polymod
+from sage.rings.function_field.element import FunctionFieldElement
+from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
 from .function_field import FunctionField
 from .function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
