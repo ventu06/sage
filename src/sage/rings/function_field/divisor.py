@@ -126,7 +126,7 @@ def prime_divisor(field, place, m=1):
         True
     """
     divisor_group = field.divisor_group()
-    return divisor_group.element_class(divisor_group, {place: Integer(m)})
+    return divisor_group.element_class(divisor_group, {place: m})
 
 
 class FunctionFieldDivisor(ModuleElement):
@@ -164,7 +164,7 @@ class FunctionFieldDivisor(ModuleElement):
         ModuleElement.__init__(self, parent)
         # Removing 0 in the constructor allows us to make additional
         # assumptions to simplify some logic, in particular for prime divisors.
-        self._data = {k: Integer(v) for k, v in data.items() if v != 0}
+        self._data: dict[FunctionFieldPlace, Integer] = {k: Integer(v) for k, v in data.items() if v != 0}
 
     def __hash__(self) -> int:
         """
