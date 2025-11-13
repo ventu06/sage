@@ -193,7 +193,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
     """
     Points of Jacobians over finite fields.
     """
-    def order(self):
+    def additive_order(self):
         """
         Return the order of this point.
 
@@ -230,7 +230,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
             g = g + self
 
         # giant steps
-        g0 = self.multiple(-q)
+        g0 = -q * self
         g = g0
         for i in range(q - 1):
             for r in range(q):

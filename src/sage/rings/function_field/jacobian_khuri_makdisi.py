@@ -120,6 +120,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import op_EQ, richcmp
@@ -330,7 +331,7 @@ class JacobianPoint(JacobianPoint_base):
         km = G._km
         return G.element_class(self.parent(), km.negate(self._w))
 
-    def _rmul_(self, n):
+    def _lmul_(self, n):
         """
         Return the ``n``-th multiple of this point.
 
@@ -351,38 +352,13 @@ class JacobianPoint(JacobianPoint_base):
             sage: 10*(10*p) == 100*p
             True
         """
-        return self.multiple(n)
-
-    def multiple(self, n):
-        """
-        Return the ``n``-th multiple of this point.
-
-        INPUT:
-
-        - ``n`` -- integer
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: h = C.function(y/x).divisor_of_poles()
-            sage: b = C([0,1,0]).place()
-            sage: pl = C([-1,2,1]).place()
-            sage: J = C.jacobian(model='km_large', base_div=h)
-            sage: G = J.group()
-            sage: p = G.point(pl - b)
-            sage: p.multiple(100)
-            Point of Jacobian determined by
-            [1 0 0 0 0 2 0 1 1]
-            [0 1 0 0 0 5 0 1 6]
-            [0 0 1 0 0 2 0 6 3]
-            [0 0 0 1 0 1 0 0 0]
-            [0 0 0 0 1 5 0 1 4]
-            [0 0 0 0 0 0 1 1 0]
-        """
         G = self.parent()
         km = G._km
-        return G.element_class(self.parent(), km.multiple(self._w, n))
+        return G.element_class(G, km.multiple(self._w, n))
+
+    def multiple(self, n):
+        deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
+        return n * self
 
     def addflip(self, other):
         """

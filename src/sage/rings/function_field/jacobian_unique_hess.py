@@ -79,9 +79,11 @@ class JacobianPoint(JacobianPoint_base):
         self._finite_ideal, self._infinite_ideal, self._r = parent._reduce(finite_ideal, infinite_ideal)
 
     def __hash__(self) -> int:
-        raise NotImplementedError  # TODO
+        # TODO: Docstring
+        return hash(self._finite_ideal, self._infinite_ideal)
 
     def _richcmp_(self, other, op):
+        # TODO: Docstring
         if not isinstance(other, JacobianPoint) or other.parent() != self.parent():
             return op == op_NE
 
@@ -102,12 +104,11 @@ class JacobianPoint(JacobianPoint_base):
         return D
 
     def _neg_(self):
-        raise NotImplementedError  # TODO
+        # TODO: Docstring
+        G = self.parent()
+        return G.element_class(G, ~self._finite_ideal, ~self._infinite_ideal)
 
-    def multiple(self, n):
-        raise NotImplementedError  # TODO
-
-    def order(self):
+    def additive_order(self):
         """
         Return the order of this point.
         """
@@ -115,7 +116,8 @@ class JacobianPoint(JacobianPoint_base):
         raise NotImplementedError  # TODO
 
     def effective_part(self):
-        raise NotImplementedError  # TODO
+        # TODO: Docstring
+        return self.divisor() + self.parent().base_divisor() * self._r
 
     def divisor(self) -> FunctionFieldDivisor:
         return (~self._finite_ideal).divisor() + (~self._infinite_ideal).divisor()

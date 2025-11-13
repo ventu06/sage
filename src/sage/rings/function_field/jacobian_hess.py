@@ -65,6 +65,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 
 from sage.structure.unique_representation import UniqueRepresentation
 from sage.structure.richcmp import op_EQ, richcmp
@@ -261,9 +262,9 @@ class JacobianPoint(JacobianPoint_base):
         idS, ids = self._data
         bdS2, bds2 = G._base_point_double
         dS, ds = G._normalize(~(idS * bdS2), ~(ids * bds2))
-        return G.element_class(self.parent(), dS, ds)
+        return G.element_class(G, dS, ds)
 
-    def multiple(self, n):
+    def _lmul_(self, n):
         """
         Return the ``n``-th multiple of this point.
 
@@ -275,7 +276,7 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = C.jacobian(model='hess', base_div=b).group()
             sage: pl = C([-1,2,1]).place()
             sage: p = G.point(pl - b)
-            sage: p.multiple(100)
+            sage: 100 * p
             [Place (1/y, 1/y*z + 8)]
         """
         if n == 0:
@@ -306,6 +307,10 @@ class JacobianPoint(JacobianPoint_base):
             dS, ds = G._normalize(~(dS * bdS2), ~(ds * bds2))
 
         return G.element_class(self.parent(), dS, ds)
+    
+    def multiple(self, n):
+        deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
+        return n * self
 
     def defining_divisor(self):
         """
@@ -325,7 +330,7 @@ class JacobianPoint(JacobianPoint_base):
         dS, ds = self._data
         return (~dS).divisor() + (~ds).divisor()
 
-    def order(self, bound=None):
+    def additive_order(self, bound=None):
         """
         Return the order of this point.
 
