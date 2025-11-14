@@ -119,7 +119,7 @@ from typing import TYPE_CHECKING
 from sage.arith.misc import integer_floor, integer_ceil
 
 from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement
+from sage.structure.element import AdditiveGroupElement
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.schemes import Jacobians
@@ -133,7 +133,7 @@ if TYPE_CHECKING:
     from .place import FunctionFieldPlace
 
 
-class JacobianPoint_base(ModuleElement):
+class JacobianPoint_base(AdditiveGroupElement):
     """
     Abstract base class of points of Jacobian groups.
     """

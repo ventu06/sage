@@ -279,6 +279,8 @@ class JacobianPoint(JacobianPoint_base):
             sage: 100 * p
             [Place (1/y, 1/y*z + 8)]
         """
+        # The coercion model can take care of multiplication
+        # without this method, but this implementation is faster.
         if n == 0:
             return self.parent().zero()
 
@@ -307,10 +309,10 @@ class JacobianPoint(JacobianPoint_base):
             dS, ds = G._normalize(~(dS * bdS2), ~(ds * bds2))
 
         return G.element_class(self.parent(), dS, ds)
-    
+
     def multiple(self, n):
         deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
-        return n * self
+        return self * n
 
     def defining_divisor(self):
         """

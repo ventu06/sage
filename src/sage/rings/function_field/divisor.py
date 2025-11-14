@@ -51,10 +51,14 @@ AUTHORS:
 
 from __future__ import annotations
 
+from collections.abc import Iterable
+import itertools
+from typing import Self
 import random
 
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
+from sage.misc.superseded import deprecation
 
 from sage.arith.functions import lcm
 
@@ -122,9 +126,11 @@ def prime_divisor(field, place, m=1):
         sage: p = F.places()[0]
         sage: from sage.rings.function_field.divisor import prime_divisor
         sage: d = prime_divisor(F, p)
+        ...
         sage: 3 * d == prime_divisor(F, p, 3)
         True
     """
+    deprecation(1, 'this method is deprecated, call the .divisor() method on the place instead')
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, {place: m})
 
@@ -313,7 +319,7 @@ class FunctionFieldDivisor(ModuleElement):
             return richcmp(skey, okey, op)
         return richcmp(len(s), len(o), op)
 
-    def _neg_(self):
+    def _neg_(self) -> Self:
         """
         Return the additive inverse of the divisor.
 
@@ -340,7 +346,7 @@ class FunctionFieldDivisor(ModuleElement):
             data[place] = -self._data[place]
         return divisor_group.element_class(divisor_group, data)
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         """
         Add the divisor to the other divisor.
 
@@ -368,7 +374,7 @@ class FunctionFieldDivisor(ModuleElement):
                 data[place] = m
         return divisor_group.element_class(divisor_group, data)
 
-    def _rmul_(self, i):
+    def _lmul_(self, i) -> Self:
         """
         Multiply integer `i` to the divisor.
 
@@ -601,7 +607,7 @@ class FunctionFieldDivisor(ModuleElement):
                 d[place] = -m
         return divisor_group.element_class(self.parent(), d)
 
-    def degree(self):
+    def degree(self) -> Integer:
         """
         Return the degree of the divisor.
 
@@ -616,7 +622,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         return sum([p.degree() * m for p, m in self.list()])
 
-    def dimension(self):
+    def dimension(self) -> Integer:
         """
         Return the dimension of the Riemann-Roch space of the divisor.
 
@@ -632,7 +638,7 @@ class FunctionFieldDivisor(ModuleElement):
             sage: D.dimension()
             5
         """
-        return len(self.basis_function_space())
+        return Integer(len(self.basis_function_space()))
 
     def basis_function_space(self):
         """
@@ -999,7 +1005,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         return "Divisor group of %s" % (self._field,)
 
-    def _element_constructor_(self, x):
+    def _element_constructor_(self, x) -> FunctionField:
         """
         Construct a divisor from ``x``.
 
@@ -1015,7 +1021,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
             return self.element_class(self, {})
         raise ValueError(f"cannot construct a divisor from {x}")
 
-    def _coerce_map_from_(self, S):
+    def _coerce_map_from_(self, S) -> SetMorphism:
         """
         Define coercions.
 
@@ -1034,10 +1040,10 @@ class DivisorGroup(UniqueRepresentation, Parent):
              + Place (x^2 + 4*x + 1, y)
         """
         if isinstance(S, PlaceSet):
-            func = lambda place: prime_divisor(self._field, place)
+            func = lambda place: place.divisor()
             return SetMorphism(Hom(S, self), func)
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which the divisor group is attached.
 
@@ -1051,7 +1057,73 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         return self._field
 
-    def _an_element_(self):
+    def effective_divisors(self, of_degree=None, max_degree=None) -> Iterable[FunctionFieldDivisor]:
+        r"""
+        Return an iterator of all effective divisors either of ``of_degree``
+        or up to ``max_degree``. Exactly one of these must be specified.
+
+        This function is useful for generating divisors for testing purposes.
+
+        INPUT:
+
+        - ``of_degree`` -- nonnegative integer; return iterator of all
+                           effective divisors of this degree
+
+        - ``max_degree`` -- nonnegative integer; return iterator of all
+                           effective divisors up to this degree
+
+
+        EXAMPLES:
+
+        We are able to handle function fields without any degree 1 places, such
+        as this example from [HLT2003]_::
+
+            sage: K.<x> = FunctionField(GF(3)); _.<t> = K[]
+            sage: F.<y> = K.extension(x^4 + x * t + t^4 + t^3 - t + 1)
+            sage: G = F.divisor_group()
+            sage: list(G.effective_divisors(of_degree=1))
+            []
+            sage: list(G.effective_divisors(max_degree=1))
+            [0]
+            sage: len(list(G.effective_divisors(of_degree=2)))
+            8
+            sage: len(set(G.effective_divisors(max_degree=3))) == len(list(G.effective_divisors(max_degree=3)))
+            True
+        """
+        if not self._field.constant_base_field().is_finite():
+            raise NotImplementedError
+
+        if of_degree is not None and max_degree is None:
+            if of_degree == 0:
+                yield self.zero()
+                return
+
+            if of_degree < 0:
+                raise ValueError('of_degree must be nonnegative')
+
+            places = []
+            for d in range(1, of_degree + 1):
+                places.append(self._field.places(d))
+
+            from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+            weighted_vectors = WeightedIntegerVectors(of_degree, range(1, of_degree + 1))
+            for weights in weighted_vectors:
+                component_divisors = []
+                for i, w in enumerate(weights):
+                    w_sums_of_places = [sum(ps) for ps in itertools.product(places[i], repeat=w)]
+                    component_divisors.append(w_sums_of_places)
+
+                for divisors in itertools.product(*component_divisors):
+                    yield sum(divisors)
+
+        elif max_degree is not None and of_degree is None:
+            for d in range(max_degree + 1):
+                yield from self.effective_divisors(of_degree=d)
+        else:
+            raise ValueError('must specify either of_degree or max_degree')
+
+
+    def _an_element_(self) -> FunctionFieldDivisor:
         """
         Return a divisor.
 

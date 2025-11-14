@@ -352,13 +352,15 @@ class JacobianPoint(JacobianPoint_base):
             sage: 10*(10*p) == 100*p
             True
         """
+        # The coercion model can take care of multiplication
+        # without this method, but this implementation is faster.
         G = self.parent()
         km = G._km
         return G.element_class(G, km.multiple(self._w, n))
 
     def multiple(self, n):
         deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
-        return n * self
+        return self * n
 
     def addflip(self, other):
         """

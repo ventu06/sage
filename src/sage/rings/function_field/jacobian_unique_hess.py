@@ -97,11 +97,16 @@ class JacobianPoint(JacobianPoint_base):
     def _add_(self, other):
         # TODO: Docstring
         G = self.parent()
-        D = G.element_class(G,
-                            self._finite_ideal * other._finite_ideal,
-                            G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
-                            )
+        finite_ideal = self._finite_ideal * other._finite_ideal
+        infinite_ideal = G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
+        D = G.element_class(G, finite_ideal, infinite_ideal)
         return D
+
+    #def _lmul_(self, n):
+    #    # The coercion model can take care of multiplication
+    #    # without this method, but this implementation is faster.
+    #    return None
+    # TODO: _lmul_ if necessary
 
     def _neg_(self):
         # TODO: Docstring
