@@ -130,6 +130,7 @@ from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
     from .divisor import FunctionFieldDivisor
+    from .function_field import FunctionFieldDivisor
     from .place import FunctionFieldPlace
 
 
@@ -476,7 +477,7 @@ class JacobianGroup_base(Parent):
         """
         return self._parent
 
-    def function_field(self):
+    def function_field(self) -> FunctionField:
         """
         Return the function field to which this Jacobian group attached.
 
@@ -491,7 +492,7 @@ class JacobianGroup_base(Parent):
         """
         return self._function_field
 
-    def base_divisor(self):
+    def base_divisor(self) -> FunctionFieldDivisor:
         """
         Return the base divisor that is used to represent points of this group.
 
@@ -829,7 +830,7 @@ class Jacobian_base(Parent):
             return [self.group()]
         return [self.group(k) for k in self._system]
 
-    def base_divisor(self):
+    def base_divisor(self) -> FunctionFieldDivisor:
         """
         Return the base divisor used to construct the Jacobian.
 

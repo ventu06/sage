@@ -51,9 +51,8 @@ AUTHORS:
 
 from __future__ import annotations
 
-from collections.abc import Iterable
 import itertools
-from typing import Self
+from typing import Self, TYPE_CHECKING
 import random
 
 from sage.misc.cachefunc import cached_method
@@ -81,6 +80,8 @@ from sage.rings.integer import Integer
 from sage.rings.function_field import riemann_roch
 from .place import PlaceSet, FunctionFieldPlace
 
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 def divisor(field, data):
     """
@@ -156,7 +157,7 @@ class FunctionFieldDivisor(ModuleElement):
          + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
          - 6*Place (x + 1, y + 1)
     """
-    def __init__(self, parent, data) -> None:
+    def __init__(self, parent: DivisorGroup, data: dict[FunctionFieldPlace, Integer | int]) -> None:
         """
         Initialize.
 
@@ -1057,7 +1058,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
         """
         return self._field
 
-    def effective_divisors(self, of_degree=None, max_degree=None) -> Iterable[FunctionFieldDivisor]:
+    def effective_divisors(self, of_degree=None, max_degree=None, avoid: Container[FunctionFieldPlace] | None = None) -> Iterable[FunctionFieldDivisor]:
         r"""
         Return an iterator of all effective divisors either of ``of_degree``
         or up to ``max_degree``. Exactly one of these must be specified.
@@ -1071,6 +1072,9 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         - ``max_degree`` -- nonnegative integer; return iterator of all
                            effective divisors up to this degree
+
+        - ``avoid`` -- collection (list/tuple/set/etc.) of places to exclude
+                       from the support of the returned divisors
 
 
         EXAMPLES:
@@ -1103,7 +1107,11 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
             places = []
             for d in range(1, of_degree + 1):
-                places.append(self._field.places(d))
+            # Avoid unnecessarily unpacking self._field.places(d)
+                if avoid is None:
+                    places.append(self._field.places(d))
+                else:
+                    places.append([P for P in self._field.places(d) if P not in avoid])
 
             from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
             weighted_vectors = WeightedIntegerVectors(of_degree, range(1, of_degree + 1))
@@ -1118,7 +1126,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
         elif max_degree is not None and of_degree is None:
             for d in range(max_degree + 1):
-                yield from self.effective_divisors(of_degree=d)
+                yield from self.effective_divisors(of_degree=d, avoid=avoid)
         else:
             raise ValueError('must specify either of_degree or max_degree')
 

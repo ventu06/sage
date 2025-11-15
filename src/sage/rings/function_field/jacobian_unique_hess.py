@@ -66,6 +66,8 @@ from .jacobian_base import (Jacobian_base,
                             JacobianPoint_finite_field_base)
 
 if TYPE_CHECKING:
+    from collections.abc import Iterable
+
     from .function_field import FunctionField
     from .ideal import FunctionFieldIdealInfinite, FunctionFieldIdeal
     FunctionFieldIdealFinite = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
@@ -80,7 +82,7 @@ class JacobianPoint(JacobianPoint_base):
 
     def __hash__(self) -> int:
         # TODO: Docstring
-        return hash(self._finite_ideal, self._infinite_ideal)
+        return hash((self._finite_ideal, self._infinite_ideal))
 
     def _richcmp_(self, other, op):
         # TODO: Docstring
@@ -262,19 +264,24 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         return f'{super()._repr_()} (Unique Hess model)'
 
-    def __iter__(self):
-        """
-        Return generator of points of this group.
-        """
-        # TODO: Temporary implementation, does give all elements
-        for D in self._function_field.divisor_group().some_elements():
-            newD = D - self._base_div * D.degree()
-            assert newD.degree() == 0
-            yield self.point(newD)
-
 
 class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base):
     Element = JacobianPoint_finite_field
+
+    def __iter__(self) -> Iterable[JacobianPoint_finite_field]:
+        dg = self.function_field().divisor_group()
+        g = self._genus
+        A = self._base_div
+        hits = set()
+        for D in dg.effective_divisors(max_degree=g):
+        for D in dg.effective_divisors(max_degree=g, avoid=[A]):
+            pt = D - D.degree() * A
+            assert pt.degree() == 0
+            point = self.point(pt)
+            if point in hits:
+                continue
+            hits.add(point)
+            yield point
 
 
 class Jacobian(Jacobian_base, UniqueRepresentation):
