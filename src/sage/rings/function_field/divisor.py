@@ -1131,7 +1131,6 @@ class DivisorGroup(UniqueRepresentation, Parent):
         else:
             raise ValueError('must specify either of_degree or max_degree')
 
-
     def _an_element_(self) -> FunctionFieldDivisor:
         """
         Return a divisor.
