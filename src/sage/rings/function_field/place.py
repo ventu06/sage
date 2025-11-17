@@ -71,6 +71,7 @@ if TYPE_CHECKING:
     from .function_field import FunctionField
     from .ideal import FunctionFieldIdeal
 
+
 class FunctionFieldPlace(Element):
     """
     Places of function fields.

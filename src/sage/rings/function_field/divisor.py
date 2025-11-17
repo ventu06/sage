@@ -83,6 +83,7 @@ from .place import PlaceSet, FunctionFieldPlace
 if TYPE_CHECKING:
     from collections.abc import Iterable
 
+
 def divisor(field, data):
     """
     Construct a divisor from the data.
@@ -1107,7 +1108,7 @@ class DivisorGroup(UniqueRepresentation, Parent):
 
             places = []
             for d in range(1, of_degree + 1):
-            # Avoid unnecessarily unpacking self._field.places(d)
+                # Avoid unnecessarily unpacking self._field.places(d)
                 if avoid is None:
                     places.append(self._field.places(d))
                 else:
