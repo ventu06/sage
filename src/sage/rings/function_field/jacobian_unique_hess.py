@@ -273,7 +273,6 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
         g = self._genus
         A = self._base_div
         hits = set()
-        for D in dg.effective_divisors(max_degree=g):
         for D in dg.effective_divisors(max_degree=g, avoid=[A]):
             pt = D - D.degree() * A
             assert pt.degree() == 0

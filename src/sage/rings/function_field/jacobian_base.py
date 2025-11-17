@@ -130,7 +130,7 @@ from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
     from .divisor import FunctionFieldDivisor
-    from .function_field import FunctionFieldDivisor
+    from .function_field import FunctionFieldDi
     from .place import FunctionFieldPlace
 
 
