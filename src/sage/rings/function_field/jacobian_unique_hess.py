@@ -39,9 +39,15 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 from sage.categories.map import Map
+
+import sage.groups.generic as groups_generic
+
 from sage.matrix.constructor import matrix
+
 from sage.misc.cachefunc import cached_method
+
 from sage.rings.function_field import riemann_roch
+
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -73,23 +79,25 @@ class JacobianPoint(JacobianPoint_base):
         self._finite_ideal, self._infinite_ideal, self._r = parent._reduce(finite_ideal, infinite_ideal)
 
     def __hash__(self) -> int:
-        # TODO: Docstring
+        r"""
+        Return the hash of ``self``.
+        """
         return hash((self._finite_ideal, self._infinite_ideal))
 
     def _richcmp_(self, other, op):
-        # TODO: Docstring
-        if not isinstance(other, JacobianPoint) or other.parent() != self.parent():
-            return op == op_NE
-
-        equal = (self._finite_ideal == other._finite_ideal) and (self._infinite_ideal == other._infinite_ideal)
-        if op == op_EQ:
-            return equal
-        elif op == op_NE:
-            return not equal
-        return richcmp((self._finite_ideal, self._infinite_ideal), (other._finite_ideal, other._infinite_ideal), op)
+        r"""
+        Compare ``self`` with ``other`` with respect to operator ``op``.
+        """
+        self_data = (self._finite_ideal, self._infinite_ideal)
+        other_data = (other._finite_ideal, other._infinite_ideal)
+        if op not in (op_EQ, op_NE):
+            return richcmp(self_data, other_data, op)
+        return (self_data == other_data) == (op is op_EQ)
 
     def _add_(self, other) -> Self:
-        # TODO: Docstring
+        r"""
+        Add ``self`` and ``other``.
+        """
         G = self.parent()
         finite_ideal = self._finite_ideal * other._finite_ideal
         infinite_ideal = G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
@@ -103,15 +111,34 @@ class JacobianPoint(JacobianPoint_base):
 
     def _neg_(self) -> Self:
         # TODO: Docstring
+        r"""
+        Return ``-self``.
+        """
         G = self.parent()
         return G.element_class(G, ~self._finite_ideal, ~self._infinite_ideal)
 
     def additive_order(self):
         r"""
         Return the order of this point.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='hess', base_div=b).group()
+            sage: p = C([-1,2,1]).place()
+            sage: pt = G.point(p - b)
+            sage: pt.order()
+            30
+            sage: D = pt.divisor()
+            sage: G = C.jacobian(model='unique_hess').group()
+            sage: P = G(D)
+            sage: P.order()
+            30
         """
-        # TODO: Implement with hash tables
-        raise NotImplementedError  # TODO
+        bounds = (1, self.parent()._bound_on_order())
+        return groups_generic.order_from_bounds(self, bounds)
 
     def effective_part(self) -> FunctionFieldDivisor:
         # TODO: Docstring
@@ -133,6 +160,17 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
 
     def __init__(self, parent, function_field, base_div: FunctionFieldDivisor) -> None:
+        r"""
+        TESTS::
+
+            sage: K = GF(11)
+            sage: Kx.<x> = FunctionField(K)
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + 9*x*t^3 + (10*x + 7)*t^2 + (7*x^2 + 2*x + 10)*t + 9*x^3 + 3*x^2 + 6*x + 4)
+            sage: J = F.jacobian(model='unique_hess')
+            sage: G = J.group()
+            sage: TestSuite(G).run()
+        """
 
         super().__init__(parent, function_field, base_div)
 
@@ -184,6 +222,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         B_inv = self._inverse_infinite_matrix(tilde_J)
 
         last_basis = riemann_roch._short_circuit_riemann_roch_matrices(degree, C, B_inv, tilde_I.gens_over_base())
+        basis = last_basis  # Needed to ensure basis is defined in the g = 1 case
 
         if last_basis is None:  # ell(D + (g - 1) A) = 0
             r = self._genus
@@ -286,8 +325,6 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: F.<y> = Kx.extension(t^4 + 9*x*t^3 + (10*x + 7)*t^2 + (7*x^2 + 2*x + 10)*t + 9*x^3 + 3*x^2 + 6*x + 4)
             sage: J = F.jacobian(model='unique_hess')
             sage: TestSuite(J).run()
-            sage: G = J.group()
-            sage: TestSuite(G).run()
         """
 
         if base_div.degree() != 1:

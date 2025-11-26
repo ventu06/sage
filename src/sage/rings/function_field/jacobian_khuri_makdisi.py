@@ -123,7 +123,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, richcmp
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
 from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
@@ -213,30 +213,6 @@ class JacobianPoint(JacobianPoint_base):
         """
         return f'Point of Jacobian determined by \n{self._w}'
 
-    def __hash__(self) -> int:
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: F = C.function_field()
-            sage: h = C.function(y/x).divisor_of_poles()
-            sage: J = C.jacobian(model='km_large', base_div=h)
-            sage: G = J.group()
-            sage: zero = G.zero()
-            sage: {zero: 1}
-            {Point of Jacobian determined by
-             [1 0 0 0 0 0 0 0 0]
-             [0 1 0 0 0 0 0 0 0]
-             [0 0 1 0 0 0 0 0 0]
-             [0 0 0 0 1 0 0 0 0]
-             [0 0 0 0 0 1 0 0 0]
-             [0 0 0 0 0 0 0 1 0]: 1}
-        """
-        return hash(self._w)
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` with ``other`` with respect to operator ``op``.
@@ -263,12 +239,30 @@ class JacobianPoint(JacobianPoint_base):
             True
             sage: p1 < p2
             False
+
+        We correctly handle divisor classes that are equal but have different defining matrices:
+
+            sage: Kx.<x> = FunctionField(GF(17))
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + (14*x + 3)*t^3 + (5*x + 7)*t^2 + (14*x^2 + 4*x + 8)*t + 4*x^3 + 7*x^2 + 4*x + 13)
+            sage: O = F.maximal_order()
+            sage: Oinf = F.maximal_order_infinite()
+            sage: B = 3 * O.ideal(x, y + 2).divisor()
+            sage: J = F.jacobian('km_small')
+            sage: D1 = 2 * Oinf.ideal(1/x, y/x).divisor() + Oinf.ideal(1/x, y/x + 14).divisor()
+            sage: D2 = O.ideal(x^3 + 6 * x^2 + x + 16, y).divisor()
+            sage: G = J.group()
+            sage: P1 = G.point(D1 - B)
+            sage: P2 = G.point(D2 - B)
+            sage: P1 == P2
+            True
+            sage: P1.defining_matrix() == P2.defining_matrix()
+            False
         """
-        if op is op_EQ:
-            km = self.parent()._km
-            return km.equal(self._w, other._w)
-        else:
+        if op not in (op_EQ, op_NE):
             return richcmp(self._w, other._w, op)
+        km = self.parent()._km
+        return km.equal(self._w, other._w) == (op is op_EQ)
 
     def _add_(self, other):
         """

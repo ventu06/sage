@@ -212,10 +212,18 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
             sage: p.order()
             15
 
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='hess', base_div=b).group()
+            sage: p = C([-1,2,1]).place()
+            sage: pt = G.point(p - b)
+            sage: pt.order()
+            30
+
         ALGORITHM: Shanks' Baby Step Giant Step
         """
+        # We implement BSGS instead of using sage.groups.generic because
+        # not all Jacobian models support hashable 
 
-        # TODO: Optimize
         G = self.parent()
         B = G._bound_on_order()
         q = integer_ceil(B.sqrt())

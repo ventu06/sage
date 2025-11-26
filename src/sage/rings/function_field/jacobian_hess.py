@@ -68,7 +68,7 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.superseded import deprecation
 
 from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, richcmp
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
 from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
@@ -158,24 +158,6 @@ class JacobianPoint(JacobianPoint_base):
         divisor = (~dS).divisor() + (~ds).divisor()
         return f'[{divisor}]'
 
-    def __hash__(self) -> int:
-        """
-        Return the hash of ``self``.
-
-        EXAMPLES::
-
-            sage: K.<x> = FunctionField(GF(2)); _.<Y> = K[]
-            sage: F.<y> = K.extension(Y^3 - x^2*(x^2 + x + 1)^2)
-            sage: f = x/(y + 1)
-            sage: d = f.divisor()
-            sage: {d: 1}
-            {Place (1/x, 1/x^4*y^2 + 1/x^2*y + 1)
-              + Place (1/x, 1/x^2*y + 1)
-              + 3*Place (x, (1/(x^3 + x^2 + x))*y^2)
-              - 6*Place (x + 1, y + 1): 1}
-        """
-        return hash(self._data)
-
     def _richcmp_(self, other, op):
         """
         Compare ``self`` with ``other`` with respect to operator ``op``.
@@ -206,14 +188,32 @@ class JacobianPoint(JacobianPoint_base):
             True
             sage: p2 < p1
             False
+
+        We correctly handle divisor classes that are equal but have different defining divisors:
+
+            sage: Kx.<x> = FunctionField(GF(17))
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^4 + (14*x + 3)*t^3 + (5*x + 7)*t^2 + (14*x^2 + 4*x + 8)*t + 4*x^3 + 7*x^2 + 4*x + 13)
+            sage: O = F.maximal_order()
+            sage: Oinf = F.maximal_order_infinite()
+            sage: B = 3 * O.ideal(x, y + 2).divisor()
+            sage: J = F.jacobian('hess', base_div=B)
+            sage: D1 = 2 * Oinf.ideal(1/x, y/x).divisor() + Oinf.ideal(1/x, y/x + 14).divisor()
+            sage: D2 = O.ideal(x^3 + 6 * x^2 + x + 16, y).divisor()
+            sage: G = J.group()
+            sage: P1 = G.point(D1 - B)
+            sage: P2 = G.point(D2 - B)
+            sage: P1 == P2
+            True
+            sage: P1.defining_divisor() == P2.defining_divisor()
+            False
         """
-        if op is op_EQ:
-            J = self.parent()
-            idS, ids = self._data
-            jdS, jds = other._data
-            return J._normalize(idS / jdS, ids / jds) is not None
-        else:
+        if op not in (op_EQ, op_NE):
             return richcmp(self._data, other._data, op)
+        J = self.parent()
+        idS, ids = self._data
+        jdS, jds = other._data
+        return (J._normalize(idS / jdS, ids / jds) is not None) == (op is op_EQ)
 
     def _add_(self, other):
         """
@@ -332,61 +332,6 @@ class JacobianPoint(JacobianPoint_base):
         dS, ds = self._data
         return (~dS).divisor() + (~ds).divisor()
 
-    def additive_order(self, bound=None):
-        """
-        Return the order of this point.
-
-        ALGORITHM: Shanks' Baby Step Giant Step
-
-        EXAMPLES::
-
-            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
-            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
-            sage: b = C([0,1,0]).place()
-            sage: G = C.jacobian(model='hess', base_div=b).group()
-            sage: p = C([-1,2,1]).place()
-            sage: pt = G.point(p - b)
-            sage: pt.order()
-            30
-        """
-        if bound is None:  # naive
-            J = self.parent()
-            zero = J.zero()
-
-            m = self
-            r = 1
-            while m != zero:
-                m = m + self
-                r += 1
-            return r
-
-        # if bound is given, deploy Shanks' Baby Step Giant Step
-
-        J = self.parent()
-        B = J.bound_on_order()
-        q = integer_ceil(B.sqrt())
-        zero = J.zero()
-
-        # baby steps
-        b = [zero]
-        g = self
-        for i in range(q - 1):
-            if g == zero:
-                return i + 1
-            b.append(g)
-            g = g + self
-
-        # giant steps
-        g0 = (-q) * self
-        g = g0
-        for i in range(q - 1):
-            for r in range(q):
-                if g == b[r]:
-                    return q * (i + 1) + r
-            g = g + g0
-
-        # order is neither smaller or nor larger than this
-        return q**2
 
     def divisor(self):
         """
