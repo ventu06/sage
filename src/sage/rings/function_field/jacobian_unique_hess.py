@@ -38,40 +38,30 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sage.misc.cachefunc import cached_method
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, op_NE, richcmp
-
 from sage.categories.map import Map
-from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.categories.homset import Hom
-
-from sage.arith.misc import integer_ceil
-from sage.arith.functions import lcm
-
-from sage.rings.integer import Integer
 from sage.matrix.constructor import matrix
-
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-
+from sage.misc.cachefunc import cached_method
 from sage.rings.function_field import riemann_roch
-from .place import FunctionFieldPlace
-from .divisor import FunctionFieldDivisor
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .jacobian_base import (Jacobian_base,
-                            JacobianGroup_base,
-                            JacobianGroup_finite_field_base,
-                            JacobianPoint_base,
-                            JacobianPoint_finite_field_base)
+from .divisor import FunctionFieldDivisor
+from .jacobian_base import (
+    Jacobian_base,
+    JacobianGroup_base,
+    JacobianGroup_finite_field_base,
+    JacobianPoint_base,
+    JacobianPoint_finite_field_base,
+)
+from .place import FunctionFieldPlace
 
 if TYPE_CHECKING:
-    from typing import TypeAlias
     from collections.abc import Iterable
+    from typing import Self, TypeAlias
 
     from .function_field import FunctionField
-    from .ideal import finite as InfiniteIdeal
     from .ideal import FunctionFieldIdeal
+    from .ideal import finite as InfiniteIdeal
     FiniteIdeal: TypeAlias = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
 
 
@@ -98,7 +88,7 @@ class JacobianPoint(JacobianPoint_base):
             return not equal
         return richcmp((self._finite_ideal, self._infinite_ideal), (other._finite_ideal, other._infinite_ideal), op)
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         # TODO: Docstring
         G = self.parent()
         finite_ideal = self._finite_ideal * other._finite_ideal
@@ -111,7 +101,7 @@ class JacobianPoint(JacobianPoint_base):
     #    return None
     # TODO: _lmul_ if necessary
 
-    def _neg_(self):
+    def _neg_(self) -> Self:
         # TODO: Docstring
         G = self.parent()
         return G.element_class(G, ~self._finite_ideal, ~self._infinite_ideal)
@@ -123,7 +113,7 @@ class JacobianPoint(JacobianPoint_base):
         # TODO: Implement with hash tables
         raise NotImplementedError  # TODO
 
-    def effective_part(self):
+    def effective_part(self) -> FunctionFieldDivisor:
         # TODO: Docstring
         return self.divisor() + self.parent().base_divisor() * self._r
 
@@ -253,7 +243,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         return self.element_class(self, I, J)
 
     @cached_method
-    def zero(self):
+    def zero(self) -> JacobianPoint:
         r"""
         Return the zero element of this group.
         """
