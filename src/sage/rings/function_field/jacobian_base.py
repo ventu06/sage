@@ -662,6 +662,9 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
             pass
 
         return lst
+    
+    def some_elements(self):
+        return self.get_points(4)
 
 
 class Jacobian_base(Parent):
