@@ -66,17 +66,19 @@ from .jacobian_base import (Jacobian_base,
                             JacobianPoint_finite_field_base)
 
 if TYPE_CHECKING:
+    from typing import TypeAlias
     from collections.abc import Iterable
 
     from .function_field import FunctionField
-    from .ideal import FunctionFieldIdealInfinite, FunctionFieldIdeal
-    FunctionFieldIdealFinite = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
+    from .ideal import finite as InfiniteIdeal
+    from .ideal import FunctionFieldIdeal
+    FiniteIdeal: TypeAlias = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
 
 
 class JacobianPoint(JacobianPoint_base):
 
-    def __init__(self, parent: JacobianGroup, finite_ideal: FunctionFieldIdealFinite,
-                 infinite_ideal: FunctionFieldIdealInfinite) -> None:
+    def __init__(self, parent: JacobianGroup, finite_ideal: FiniteIdeal,
+                 infinite_ideal: InfiniteIdeal) -> None:
         super().__init__(parent)
         self._finite_ideal, self._infinite_ideal, self._r = parent._reduce(finite_ideal, infinite_ideal)
 
@@ -90,19 +92,18 @@ class JacobianPoint(JacobianPoint_base):
             return op == op_NE
 
         equal = (self._finite_ideal == other._finite_ideal) and (self._infinite_ideal == other._infinite_ideal)
-        if op is op_EQ:
+        if op == op_EQ:
             return equal
-        elif op is op_NE:
+        elif op == op_NE:
             return not equal
-        return NotImplemented
+        return richcmp((self._finite_ideal, self._infinite_ideal), (other._finite_ideal, other._infinite_ideal), op)
 
     def _add_(self, other):
         # TODO: Docstring
         G = self.parent()
         finite_ideal = self._finite_ideal * other._finite_ideal
         infinite_ideal = G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
-        D = G.element_class(G, finite_ideal, infinite_ideal)
-        return D
+        return G.element_class(G, finite_ideal, infinite_ideal)
 
     #def _lmul_(self, n):
     #    # The coercion model can take care of multiplication
@@ -116,7 +117,7 @@ class JacobianPoint(JacobianPoint_base):
         return G.element_class(G, ~self._finite_ideal, ~self._infinite_ideal)
 
     def additive_order(self):
-        """
+        r"""
         Return the order of this point.
         """
         # TODO: Implement with hash tables
@@ -175,7 +176,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         else:
             self._multiply_pair_by_A = lambda I, J, A : (I * A, J)
 
-    def _reduce(self, I: FunctionFieldIdealFinite, J: FunctionFieldIdealInfinite) -> tuple[FunctionFieldIdealFinite, FunctionFieldIdealInfinite, int]:
+    def _reduce(self, I: FiniteIdeal, J: InfiniteIdeal) -> tuple[FiniteIdeal, InfiniteIdeal, int]:
         # We take the input divisor D and find the maximal r such that ℓ(D + rA) = 1
         degree = self._function_field_degree
         to = self._to_vector_space
@@ -226,7 +227,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         return matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
     @cached_method(key=lambda self, J1, J2 : frozenset((J1, J2)))
-    def _cached_ideal_mult(self, J1: FunctionFieldIdealInfinite, J2: FunctionFieldIdealInfinite):
+    def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):
         # TODO: Docstring
         return J1 * J2
 
@@ -243,7 +244,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         raise ValueError(f'cannot construct a point from {x}')
 
     def point(self, divisor: FunctionFieldDivisor):
-        """
+        r"""
         Return the point represented by the divisor of degree zero.
         """
         if divisor.degree() != 0:
@@ -253,13 +254,13 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
     @cached_method
     def zero(self):
-        """
+        r"""
         Return the zero element of this group.
         """
         return self.point(self._function_field.divisor_group().zero())
 
     def _repr_(self) -> str:
-        """
+        r"""
         Return the string representation of ``self``.
         """
         return f'{super()._repr_()} (Unique Hess model)'
@@ -284,10 +285,9 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 
 
 class Jacobian(Jacobian_base, UniqueRepresentation):
-    pass
 
-    def __init__(self, function_field, base_div: FunctionFieldDivisor | FunctionFieldPlace, cache_infinite_ideals: bool = True, **kwds) -> None:
-        """
+    def __init__(self, function_field: FunctionField, base_div: FunctionFieldDivisor | FunctionFieldPlace, cache_infinite_ideals: bool = False, **kwds) -> None:
+        r"""
         TESTS::
 
             sage: K = GF(11)
@@ -296,6 +296,8 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: F.<y> = Kx.extension(t^4 + 9*x*t^3 + (10*x + 7)*t^2 + (7*x^2 + 2*x + 10)*t + 9*x^3 + 3*x^2 + 6*x + 4)
             sage: J = F.jacobian(model='unique_hess')
             sage: TestSuite(J).run()
+            sage: G = J.group()
+            sage: TestSuite(G).run()
         """
 
         if base_div.degree() != 1:
@@ -320,7 +322,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             self._group_class = JacobianGroup
 
     def _repr_(self) -> str:
-        """
+        r"""
         Return the string representation of ``self``.
         """
         # TODO: Add tests
