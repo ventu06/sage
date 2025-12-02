@@ -1,5 +1,5 @@
 r"""
-Cartesian Products
+Cartesian products
 """
 # ****************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
@@ -271,7 +271,7 @@ class CartesianProduct_iters(EnumeratedSetFromIterator):
         """
         return iter(self._mrange)
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         The Cartesian product is finite if all of its inputs are
         finite, or if any input is empty.
