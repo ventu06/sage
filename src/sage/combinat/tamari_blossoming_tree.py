@@ -11,7 +11,7 @@ bud is a dangling bud with red half-edges next to it in the counter-clockwise
 order.
 
 REFERENCES:
-Fang--Fusy--Nadeau, arXiv:2312.13159 [math.CO]
+[FFN2025]_
 '''
 
 # ****************************************************************************
@@ -89,16 +89,19 @@ class TamariBlossomingTree:
         representation. In the intermediate steps, we have
 
         - Buds are represented by the label of its node and 1, 2 as the order
-        of buds of the same node
+        of buds of the same node.
+
         - Legs are represented by the label of both its ends, and 1, 2 as the
-        order of legs of the same node
+        order of legs of the same node.
         '''
         def aux(tree, budleg, budcnt):
             '''
             This auxiliary function computes recursively a list of buds and legs
             with the representations:
+
             - A bud is represented by ``((r,), k)`` where ``r`` is the label of
             its node, and ``k`` its order in prefix order.
+
             - A leg is represented by ``((r1, r2), i)``, where ``r1`` and ``r2``
             are the labels of the nodes adjacent to the edge of the leg, and
             ``i`` presents the side it is on.
@@ -161,22 +164,6 @@ class TamariBlossomingTree:
         # Finally, we return the order
         return norder, eorder
 
-    @staticmethod
-    def __canon_label(tree: OrderedTree) -> LabelledOrderedTree:
-        r'''
-        Internal function. Use a recursive approach to compute the canonical
-        labeling of a tree without using node_number, which is very costly.
-        More precisely, it is not linear, and quadratic in the worst case.
-
-        Will be replaced when the patch is merged.
-        '''
-        def aux(tree: OrderedTree, curl: list[int]) -> LabelledOrderedTree:
-            l: int = curl[0]
-            curl[0] += 1
-            return LabelledOrderedTree([aux(x, curl) for x in tree],
-                                       label=l)
-        return aux(tree, [1])
-
     def __init__(self, tree):
         r'''
         Initialize a Tamari blossoming tree with a plane tree. We consider the
@@ -185,6 +172,7 @@ class TamariBlossomingTree:
         dangling node
 
         INPUT:
+
         - ``tree``: a plane tree satisfying the given condition, can be given
                     either as a recursive list or ``AbstractTree``
 
@@ -223,12 +211,22 @@ class TamariBlossomingTree:
 
         # all tests passed, construct the object
         # the tree, with the canonical labeling
-        self.tree = TamariBlossomingTree.__canon_label(tree)
+        self.tree = OrderedTree(tree).canonical_labelling()
         # size is given by the number of edges in the tree (excluding buds)
         self.size = (self.tree.node_number() - 1) // 3
         # the meandric order of nodes
         self.node_order, self.edge_order = self.__get_meandric_order()
         return
+
+    def __eq__(self, other):
+        r'''
+        Equality test, which only needs to compare the underlying trees.
+
+        NOTE:
+
+        This delegates the comparison to LabelledOrderedTree.
+        '''
+        return self.tree == other.tree
 
     def to_plane_tree(self) -> OrderedTree:
         r'''
@@ -259,7 +257,9 @@ class TamariBlossomingTree:
             True
             sage: TamariBlossomingTree([[], [[], [], [[], []]]]).to_tamari()
             ([., [., .]], [., [., .]])
-            sage: B3, B4 = TamariBlossomingTree([[], [[], [], [[], []], [[[], []], [], []]], [[], [], [[[], []], [], [[], []], []]]]).to_tamari()
+            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
+            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: B3, B4 = TamariBlossomingTree(Tl).to_tamari()
             sage: B3
             [[[[., [., [., .]]], .], [[., .], .]], .]
             sage: B4
@@ -301,15 +301,32 @@ class TamariBlossomingTree:
         given as a pair of binary trees (not necessarily of type BinaryTree).
 
         INPUT:
-        - ``ltree``, ``htree``: two binary trees such that ``ltree`` is smaller
-        than ``htree`` in the Tamari order
+
+        - ``ltree``: the lower binary tree in the given Tamari interval.
+
+        - ``htree``: the upper binary tree in the given Tamari interval.
 
         OUTPUT:
-        A blossoming tree in bijectino with the given Tamari interval
+
+        A blossoming tree in bijection with the given Tamari interval
 
         EXAMPLES:
 
-            sage: TODO
+            sage: B0 = BinaryTree()
+            sage: TB0 = TamariBlossomingTree([[]])
+            sage: TamariBlossomingTree.from_tamari(B0, B0) == TB0
+            True
+            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
+            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: TlB = TamariBlossomingTree(Tl)
+            sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
+            sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
+            sage: TamariBlossomingTree.from_tamari(B3, B4) == TlB
+            True
+            sage: TamariBlossomingTree.from_tamari(B4, B3)
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a Tamari interval            
         '''
         def traversal(node, parent, cycord):
             # internal function, which go through the tree given by cycord
@@ -351,8 +368,25 @@ class TamariBlossomingTree:
 
     def to_TIP(self) -> TamariIntervalPoset:
         r'''
-        Returns the corresponding TamariIntervalPoset object in bijection with
-        the current blossoming tree
+        Returns the corresponding Tamari interval-poset in bijection with the
+        current instance of blossoming tree.
+
+        OUTPUT:
+        An object of type TamariIntervalPoset representing the corresponding
+        Tamari interval poset
+
+        EXAMPLES:
+
+            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
+            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: TlB = TamariBlossomingTree(Tl)
+            sage: tip = TlB.to_TIP()
+            sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
+            sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
+            sage: tip.lower_binary_tree() == BinaryTree(B3)
+            True
+            sage: tip.upper_binary_tree() == BinaryTree(B4)
+            True
         '''
         t1, t2 = self.to_tamari()
         return TamariIntervalPosets.from_binary_trees(t1, t2)
@@ -360,10 +394,28 @@ class TamariBlossomingTree:
     @staticmethod
     def from_TIP(tip) -> Self:
         r'''
-        Returns a blossoming tree in bijection with a TamariIntervalPoset
+        Constructs the blossoming tree in bijection with a given Tamari
+        interval-poset.
 
         INPUT:
+
         - ``tip``: a TamariIntervalPoset object representing a Tamari interval
+
+        EXAMPLES:
+
+            sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
+            sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
+            sage: B3, B4 = BinaryTree(B3), BinaryTree(B4)
+            sage: tip = TamariIntervalPosets.from_binary_trees(B3, B4)
+            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
+            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: TlB = TamariBlossomingTree(Tl)
+            sage: TlB == TamariBlossomingTree.from_TIP(tip)
+            True
+            sage: B0 = BinaryTree()
+            sage: tip2 = TamariIntervalPosets.from_binary_trees(B0, B0)
+            sage: TlB == TamariBlossomingTree.from_TIP(tip2)
+            False
         '''
         t1, t2 = tip.lower_binary_tree(), tip.upper_binary_tree()
         return TamariBlossomingTree.from_tamari(t1, t2)
@@ -371,14 +423,22 @@ class TamariBlossomingTree:
     @staticmethod
     def binary_tree_plot(btree) -> Graphics:
         r'''
-        Utility function for plotting binary trees in the Chapoton way
+        Utility function for plotting binary trees in the "Chapoton" way, i.e.,
+        leaves are drawn on a horizontal line, 
 
         INPUT:
+
         - ``btree``: a binary tree, not necessarily of type BinaryTree
 
         OUTPUT:
         A plot of ``btree``, with leaves on a horizontal line, and edges all of
         slope +1 or -1. Labels are ignored.
+
+        .. PLOT::
+
+            B3 = [[[[None, [None, []]], None], [[], None]], None]
+            g = TamariBlossomingTree.binary_tree_plot(B3)
+            sphinx_plot(g)
         '''
         # auxiliary function to compute coordinates of internal nodes
         def aux(t, a, b, points):
@@ -415,46 +475,86 @@ class TamariBlossomingTree:
 
     def tamari_dual(self) -> Self:
         r'''
-        Perform the half-turn symmetric on meandric tree and return the result.
-        This is equivalent of taking the dual in the Tamari lattice for the
-        corresponding interval. Not to be confused with the mirror symmetric of
-        blossoming trees.
+        Returns the current blossoming tree with colors exchanged.
 
-        Note that we use a feature of from_plane_tree instead of using the usual
-        Tamari module already in Sagemath to avoid exceeding the number of
-        recursions during the left-right symmetry of the binary trees when tree
-        size is large.
+        This is equivalent to taking the dual in the Tamari lattice for the
+        corresponding interval. **Not to be confused** with the mirror
+        symmetric of blossoming trees, which is implemented in another method.
+
+        .. NOTE::
+
+            We use a feature of from_plane_tree instead of using the usual
+            Tamari module already in Sagemath to avoid exceeding the number of
+            recursions during the left-right symmetry of the binary trees when
+            tree size is large.
+
+        EXAMPLES:
+
+            sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
+            sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
+            sage: B3, B4 = BinaryTree(B3), BinaryTree(B4)
+            sage: TB = TamariBlossomingTree.from_tamari(B3, B4)
+            sage: B4d, B3d = TB.tamari_dual().to_tamari()
+            sage: B4d == B4.left_right_symmetry()
+            True
+            sage: B3d == B3.left_right_symmetry()
+            True
         '''
         # use the fact that from_plane_tree picks the bud with the opposite
         # color of the root, so exchanges the color (thus duality)
         return TamariBlossomingTree.from_plane_tree(self.tree)
 
-    def plot_meandric(self, semicircle=False, arrow=True) -> Graphics:
+    def plot_meandric(self, semicircle=True, arrow=True) -> Graphics:
         r'''
-        Plot the meandric tree of ``self``
+        Plot the meandric tree of ``self``. See [FFN2025]_.
 
         INPUT:
+
         - ``semicircle``: optional, sets whether the arcs are drawn as
-        semicircles
-        - ``arrow``: optional, sets whether draw horizontal arrows tips.
+        semicircles or a Bezier arc. Default: ``True``.
+
+        - ``arrow``: optional, sets whether draw horizontal arrows tips.4
+        Default: ``True``.
+
+        .. PLOT::
+
+            Tl = [[], [[], [], [[], []], [[[], []], [], []]],
+                  [[], [], [[[], []], [], [[], []], []]]]
+            g = TamariBlossomingTree(Tl).plot_meandric()
+            sphinx_plot(g)
         '''
         def sqnode(x, y):
+            '''
+            Draws a white square node (middle of segments) at position (x, y).
+            '''
             diam = 0.1
             return polygon2d([[x - diam, y - diam], [x + diam, y - diam],
                               [x + diam, y + diam], [x - diam, y + diam]],
                              edgecolor='black', rgbcolor='white', zorder=2)
 
         def cirnode(x, y):
+            '''
+            Draws a black circle node at position (x, y).
+            '''
             return circle([x, y], 0.15, fill=True, edgecolor='black',
                           facecolor='black', zorder=2)
 
         def semicir(x1, x2, isupper):
+            '''
+            Draws a semi-circle from (x1, 0) to (x2, 0), with ``isupper``
+            indicating whether it is in the upper or lower plane.
+            '''
             sec = (0, pi) if isupper else (pi, 2 * pi)
             color = 'blue' if isupper else 'red'
             return arc([(x1 + x2) / 2, 0], (x2 - x1) / 2, sector=sec, zorder=1,
                        rgbcolor=color)
 
         def bezierarc(x1, x2, isupper):
+            '''
+            Draws an Bezier arc from (x1, 0) to (x2, 0), with ``isupper``
+            indicating whether it is in the upper or lower plane.
+            '''
+
             cp1 = [x1 * 0.7 + x2 * 0.3, (x2 - x1) * 0.6]
             cp2 = [x1 * 0.3 + x2 * 0.7, (x2 - x1) * 0.6]
             if not isupper:
@@ -544,7 +644,7 @@ class TamariBlossomingTree:
     def __get_cycle_order(t: LabelledOrderedTree) -> list[int]:
         r'''
         Internal function. Returns the cyclic order (in the sens of maps) of the
-        given tree. More precisely, this functions returns a dictionary with
+        given tree. More precisely, this function returns a dictionary with
         node labels as keys and a (cyclic) list of its neighbors in
         counterclockwise order. The root bud is labeled 0, under the assumption
         that 0 is not present in the canonical labeling.
@@ -562,17 +662,41 @@ class TamariBlossomingTree:
     @staticmethod
     def from_plane_tree(tree, skip_check=False, random_bud=False) -> Self:
         r'''
-        Return the blossoming tree corresponding to the given tree. We suppose
-        that the root of the tree is a bud. Comparing to __init__, we do not
-        fail when the buds are not matching, but tries to find the correct bud.
+        Return the blossoming tree corresponding to the given tree.
+
+        We suppose that the root of the tree is a bud. Comparing to __init__,
+        we do not fail when the buds are not matching, but tries to find the
+        correct bud.
+
         We assume that the root, which is a bud, has red half-edges next to it
         in counter-clockwise order (so the left one). We then find the unpaired
         bud with the opposite property, to simplify the reflection operation.
 
+        .. NOTE::
+
+            This function comes with two extra options that are not meant to be
+            used by end users, with which we may skip the check for bud
+            conditions (each node has two buds), and we may pick one of the
+            dangling buds at random as the root to simplify the random
+            generation.
+
         INPUT:
+
         - ``tree``: a plane tree with two buds on each node (one for the root).
-        - ``skip_check``: skip checking for bud conditions
-        - ``random_bud``: choose a bud at random, instead of the first
+
+        - ``skip_check``: skip checking for bud conditions. Default: ``False``.
+
+        - ``random_bud``: choose a bud at random, instead of the first. Default:
+        ``False``.
+
+        OUTPUT:
+
+        An object of type TamariBlossomingTree representing the blossoming tree
+        given by ``tree``.
+
+        EXAMPLES:
+
+            sage: TODO
         '''
         def traverse(node, parent, cycord):
             # Internal function, construct a plane tree out of the cycle order
@@ -588,7 +712,7 @@ class TamariBlossomingTree:
             for st in tree:
                 TamariBlossomingTree.__checkbuds(st)
 
-        tree = TamariBlossomingTree.__canon_label(tree)
+        tree = OrderedTree(tree).canonical_labelling()
         dangling = TamariBlossomingTree.__find_dangling_bud(tree)
 
         # compute bud color
@@ -641,7 +765,9 @@ class TamariBlossomingTree:
         with buds well spaced.
 
         INPUT:
+
         - ``aspect``: ratio of aspect, default to 1.0
+
         - ``layout``: the algorithm for layout, with three possible options:
             * 'tree': uses ``layout_tree`` of undirected graph in sage
             * 'planar': uses ``layout_planar`` of undirected graph in sage
@@ -765,6 +891,7 @@ class TamariBlossomingTree:
         given binary tree.
 
         INPUT:
+
         - ``btree``: a binary tree, which can be a BinaryTree or an
                        OrderedTree that happens to be binary
 
@@ -787,13 +914,17 @@ class TamariBlossomingTree:
     @staticmethod
     def binary_tree_smooth_drawing(btree, color='blue') -> Graphics:
         r'''
-        Utility function for plotting the smooth drawing of a binary tree
+        Utility function for plotting the smooth drawing of a binary tree, see
+        [FFN2025]_.
 
         INPUT:
-        - ``btree``: a binary tree, not necessarily of type BinaryTree
-        - ``color``: color of the arcs
+
+        - ``btree``: a binary tree, not necessarily of type ``BinaryTree``.
+
+        - ``color``: color of the arcs. Default: blue.
 
         OUTPUT:
+
         The smooth drawing of a binary tree with the given color
         '''
         # initialization
@@ -894,7 +1025,9 @@ class RandomPath:
         a random approach, which is faster than the unranking approach.
 
         INPUT:
+
         - ``n``: a positive integer
+
         - ``k``: a strictly positive integer at least 2
 
         OUTPUT:
@@ -939,8 +1072,10 @@ class RandomPath:
         us the probability to generate pairs of each size separation.
 
         INPUT:
+
         - ``cardlist``: a list of the cardinality of objects of sizes from
         ``0`` to ``size``
+
         - ``size``: the size of elements to generate
         '''
         # check list size
@@ -992,6 +1127,7 @@ class TamariBlossomingTreeFactory:
         Initialization.
 
         INPUT:
+
         - ``size``: the size of blossoming trees to generate, that is, the
         number of edges (not counting buds)
         '''
@@ -1074,11 +1210,13 @@ class SynchronizedBlossomingTreeFactory:
     We note that synchronized blossoming trees come with the two buds of the
     same node always consecutive, and we simplify them by identifying them.
     '''
+
     def __init__(self, size: int):
         r'''
         Initialization
 
         INPUT:
+
         - ``size``: the size of the synchronized blossoming tree to generate.
         '''
         if size <= 0:
@@ -1139,11 +1277,13 @@ class ModernBlossomingTreeFactory:
     - A is the series of Dyck paths with weight 2 on every up-step except the
     first and the second one on the x-axis (there may be only one such step)
     '''
+
     def __init__(self: Self, size: int):
         r'''
         Initialization and precomputation
 
         INPUT:
+
         - ``size``: the size of modern blossoming trees to generate, which is
         the number of internal edges (not including buds)
         '''
@@ -1170,6 +1310,7 @@ class ModernBlossomingTreeFactory:
         a plane tree so that the colors can be generated on the fly.
 
         INPUT:
+
         - `dtree`: a plane tree standing for the Dyck path
 
         OUTPUT:
@@ -1200,6 +1341,7 @@ class ModernBlossomingTreeFactory:
         initial and final step) is represented by a plane tree.
 
         INPUT:
+
         - `dtree`: a plane tree standing for the Dyck path with first and last
         step removed
 
@@ -1233,6 +1375,7 @@ class ModernBlossomingTreeFactory:
         The Dyck path is again given as a plane tree.
 
         INPUT:
+
         - `dtree`: a plane tree standing for the Dyck path
 
         OUTPUT:
