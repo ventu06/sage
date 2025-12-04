@@ -15,7 +15,7 @@ REFERENCES:
 '''
 
 # ****************************************************************************
-#       Copyright (C) 2024 Wenjie Fang <fwjmath@gmail.com>,
+#       Copyright (C) 2025 Wenjie Fang <fwjmath@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -660,13 +660,51 @@ class TamariBlossomingTree:
         return cycord
 
     @staticmethod
-    def from_plane_tree(tree, skip_check=False, random_bud=False) -> Self:
+    def from_plane_tree(tree) -> Self:
         r'''
         Return the blossoming tree corresponding to the given tree.
 
-        We suppose that the root of the tree is a bud. Comparing to __init__,
-        we do not fail when the buds are not matching, but tries to find the
-        correct bud.
+        We suppose that the root of the tree is a bud. Comparing to the
+        constructor, we do not fail when the buds are not matching, but tries
+        to find the correct bud.
+
+        We assume that the root, which is a bud, has red half-edges next to it
+        in counter-clockwise order (so the left one). We then find the unpaired
+        bud with the opposite property, to simplify the reflection operation.
+
+        .. NOTE::
+
+            This function is a thin wrapper of the internal function
+            ``_from_plane_tree````, which provides two extra functionalities
+            that end users should not be concerned.
+
+        INPUT:
+
+        - ``tree``: a plane tree with two buds on each node (one for the root).
+
+        OUTPUT:
+
+        An object of type TamariBlossomingTree representing the blossoming tree
+        given by ``tree``.
+
+        EXAMPLES:
+
+            sage: TamariBlossomingTree.from_plane_tree([[], []])
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a blossoming tree, bud count incorrect
+            sage: 
+        '''
+        return TamariBlossomingTree._from_plane_tree(tree)
+
+    @staticmethod
+    def _from_plane_tree(tree, skip_check=False, random_bud=False) -> Self:
+        r'''
+        Return the blossoming tree corresponding to the given tree.
+
+        We suppose that the root of the tree is a bud. Comparing to the
+        constructor, we do not fail when the buds are not matching, but tries
+        to find the correct bud.
 
         We assume that the root, which is a bud, has red half-edges next to it
         in counter-clockwise order (so the left one). We then find the unpaired
@@ -696,7 +734,20 @@ class TamariBlossomingTree:
 
         EXAMPLES:
 
-            sage: TODO
+            sage: TamariBlossomingTree.from_plane_tree([[], []])
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a blossoming tree, bud count incorrect
+            sage: pt = [[], [[[], []], [], []]]
+            sage: B1, B2 = TamariBlossomingTree.from_plane_tree(pt).to_tamari()
+            sage: B1 == BinaryTree([[], None])
+            True
+            sage: B1 == B2
+            True
+            sage: TamariBlossomingTree(pt)
+            Traceback (most recent call last):
+            ...
+            ValueError: Not a blossoming tree, bad matching
         '''
         def traverse(node, parent, cycord):
             # Internal function, construct a plane tree out of the cycle order
@@ -757,7 +808,7 @@ class TamariBlossomingTree:
         confused with the Tamari dual.
         '''
         tree = self.to_plane_tree().left_right_symmetry()
-        return TamariBlossomingTree.from_plane_tree(tree, skip_check=True)
+        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True)
 
     def plot_blossoming(self, aspect=1.0, layout='tree') -> Graphics:
         r'''
@@ -1010,7 +1061,7 @@ class TamariBlossomingTree:
         return self.to_TIP().is_modern()
 
 
-class RandomPath:
+class _RandomPath:
     r'''
     This class contains static functions related to the generation of random
     positive lattice paths with steps (1, k - 1) and (1, -1) of length kn + 1,
@@ -1110,8 +1161,8 @@ class RandomPath:
         Internal function. Returns a path for 3-ary trees (4n+1 steps, n of them
         up steps, then last step removed).
         '''
-        uset = RandomPath.gen_comb(n, k)
-        return RandomPath.comb_to_path(n, k, uset)
+        uset = _RandomPath.gen_comb(n, k)
+        return _RandomPath.comb_to_path(n, k, uset)
 
 
 class TamariBlossomingTreeFactory:
@@ -1143,7 +1194,7 @@ class TamariBlossomingTreeFactory:
             nextitem /= (3 * i + 1) * i * (3 * i - 1) / 9
             l.append(nextitem)
         # counting for generation
-        self.cutting = RandomPath.cutting(l, size)
+        self.cutting = _RandomPath.cutting(l, size)
         self.cutting_sum = sum([x[0] for x in self.cutting])
 
     def _rand_path(self) -> list[int]:
@@ -1160,8 +1211,8 @@ class TamariBlossomingTreeFactory:
             else:
                 cnt -= e[0]
         s2 = self.size - s1
-        p1 = RandomPath.gen_path(s1, 4)
-        p2 = RandomPath.gen_path(s2, 4)
+        p1 = _RandomPath.gen_path(s1, 4)
+        p2 = _RandomPath.gen_path(s2, 4)
         return [3] + p1 + [-1] + p2 + [-1, -1]
 
     @staticmethod
@@ -1197,8 +1248,8 @@ class TamariBlossomingTreeFactory:
         '''
         path = self._rand_path()
         tree = TamariBlossomingTreeFactory._path_to_tree(path)
-        return TamariBlossomingTree.from_plane_tree(tree, skip_check=True,
-                                                    random_bud=True)
+        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
+                                                     random_bud=True)
 
 
 class SynchronizedBlossomingTreeFactory:
@@ -1230,7 +1281,7 @@ class SynchronizedBlossomingTreeFactory:
 
         TODO: bug here
         '''
-        path = RandomPath.gen_path(size, 3)
+        path = _RandomPath.gen_path(size, 3)
         stack = [[0, []]]
         for step in path:
             if step == 2:  # new nodes
@@ -1252,8 +1303,8 @@ class SynchronizedBlossomingTreeFactory:
         Generate a random synchronized blossoming tree of a given size
         '''
         tree = SynchronizedBlossomingTreeFactory.__rand_tree(self.size)
-        return TamariBlossomingTree.from_plane_tree(tree, skip_check=True,
-                                                    random_bud=True)
+        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
+                                                     random_bud=True)
 
 
 class ModernBlossomingTreeFactory:
@@ -1298,7 +1349,7 @@ class ModernBlossomingTreeFactory:
         for i in range(2, size + 1):
             l.append(l[-1] * (i - 0.5) / (i + 1))
         # counting for generation
-        self.cutting = RandomPath.cutting(l, size)
+        self.cutting = _RandomPath.cutting(l, size)
         self.cutting_sum = sum([x[0] for x in self.cutting])
 
     @staticmethod
@@ -1412,5 +1463,5 @@ class ModernBlossomingTreeFactory:
         l2 = self.__genC(DyckWords(s2).random_element().to_ordered_tree())
         l1.extend(l2)
         tree = OrderedTree(l1)
-        return TamariBlossomingTree.from_plane_tree(tree, skip_check=True,
-                                                    random_bud=True)
+        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
+                                                     random_bud=True)
