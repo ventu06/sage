@@ -806,6 +806,10 @@ class TamariBlossomingTree:
         OUTPUT:
         A blossoming tree that is the mirror image of the current one. Not to be
         confused with the Tamari dual.
+
+        EXAMPLES:
+
+            sage: TODO
         '''
         tree = self.to_plane_tree().left_right_symmetry()
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True)
