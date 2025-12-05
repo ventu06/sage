@@ -185,7 +185,7 @@ class JacobianPoint(JacobianPoint_base):
             sage: G = J.group()
             sage: pl = C([3,2,1]).place()
             sage: p = G.point(pl - b)
-            sage: TestSuite(p).run(skip=['_test_category','_test_pickling'])
+            sage: TestSuite(p).run(skip=['_test_pickling'])
         """
         super().__init__(parent)
         w.set_immutable()

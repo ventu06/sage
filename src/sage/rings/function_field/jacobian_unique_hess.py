@@ -325,6 +325,13 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: F.<y> = Kx.extension(t^4 + 9*x*t^3 + (10*x + 7)*t^2 + (7*x^2 + 2*x + 10)*t + 9*x^3 + 3*x^2 + 6*x + 4)
             sage: J = F.jacobian(model='unique_hess')
             sage: TestSuite(J).run()
+
+        Test projective curve::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: J = C.jacobian(model='unique_hess')
+            sage: TestSuite(J).run()#skip=['_test_elements', '_test_pickling'])
         """
 
         if base_div.degree() != 1:
