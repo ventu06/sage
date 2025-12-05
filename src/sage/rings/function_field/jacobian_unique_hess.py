@@ -98,12 +98,6 @@ class JacobianPoint(JacobianPoint_base):
         infinite_ideal = G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
         return G.element_class(G, finite_ideal, infinite_ideal)
 
-    # def _lmul_(self, n):
-    #    # The coercion model can take care of multiplication
-    #    # without this method, but this implementation is faster.
-    #    return None
-    # TODO: _lmul_ if necessary
-
     def _neg_(self) -> Self:
         # TODO: Docstring
         r"""
@@ -356,7 +350,3 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
         """
         # TODO: Add tests
         return f'{super()._repr_()} (Unique Hess model)'
-
-    def _latex_(self) -> str:
-        # TODO: Docstring
-        return fr'\operatorname{{Cl}}^0 ( {self._function_field._latex_()} ) \text{{(Unique Hess model)}}'
