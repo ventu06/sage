@@ -38,16 +38,11 @@ from __future__ import annotations
 
 from typing import TYPE_CHECKING
 
-from sage.categories.map import Map
-
 import sage.groups.generic as groups_generic
-
+from sage.categories.map import Map
 from sage.matrix.constructor import matrix
-
 from sage.misc.cachefunc import cached_method
-
 from sage.rings.function_field import riemann_roch
-
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
 from sage.structure.unique_representation import UniqueRepresentation
 
@@ -103,7 +98,7 @@ class JacobianPoint(JacobianPoint_base):
         infinite_ideal = G._infinite_ideal_mult(self._infinite_ideal, other._infinite_ideal)
         return G.element_class(G, finite_ideal, infinite_ideal)
 
-    #def _lmul_(self, n):
+    # def _lmul_(self, n):
     #    # The coercion model can take care of multiplication
     #    # without this method, but this implementation is faster.
     #    return None
@@ -195,14 +190,14 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             self._inverse_infinite_matrix = self._cached_inverse_infinite_matrix
         else:
             self._infinite_ideal_mult = lambda J1, J2: J1 * J2
-            self._inverse_infinite_matrix = lambda J : matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
+            self._inverse_infinite_matrix = lambda J: matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
         # Ideal multiplication is expensive, so we want to avoid unnecessary multiplication by identity.
         # We define functions to handle this so that we don't need to complicate our reduction logic with branching.
         if self._A_is_infinite:
-            self._multiply_pair_by_A = lambda I, J, A : (I, self._infinite_ideal_mult(J, A))
+            self._multiply_pair_by_A = lambda I, J, A: (I, self._infinite_ideal_mult(J, A))
         else:
-            self._multiply_pair_by_A = lambda I, J, A : (I * A, J)
+            self._multiply_pair_by_A = lambda I, J, A: (I * A, J)
 
     def _reduce(self, I: FiniteIdeal, J: InfiniteIdeal) -> tuple[FiniteIdeal, InfiniteIdeal, int]:
         # We take the input divisor D and find the maximal r such that ℓ(D + rA) = 1
@@ -255,7 +250,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     def _cached_inverse_infinite_matrix(self, J):
         return matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
-    @cached_method(key=lambda self, J1, J2 : frozenset((J1, J2)))
+    @cached_method(key=lambda self, J1, J2: frozenset((J1, J2)))
     def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):
         # TODO: Docstring
         return J1 * J2
@@ -331,7 +326,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: J = C.jacobian(model='unique_hess')
-            sage: TestSuite(J).run()#skip=['_test_elements', '_test_pickling'])
+            sage: TestSuite(J).run()
         """
 
         if base_div.degree() != 1:
