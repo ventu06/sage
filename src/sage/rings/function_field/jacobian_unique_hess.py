@@ -153,7 +153,6 @@ class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base)
     """
     Points of Jacobians over finite fields
     """
-    pass
 
 
 class JacobianGroupEmbedding(Map):
@@ -175,7 +174,6 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             sage: G = J.group()
             sage: TestSuite(G).run()
         """
-
         super().__init__(parent, function_field, base_div)
 
         A = parent._A
@@ -234,9 +232,8 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             if self._A_is_infinite:
                 B_inv = self._inverse_infinite_matrix(tilde_J)
                 return C, B_inv, riemann_roch._short_circuit_riemann_roch_matrices(degree, C, B_inv, tilde_I.gens_over_base())
-            else:
-                C = matrix([to(v) for v in tilde_I.gens_over_base()])
-                return C, B_inv, riemann_roch._short_circuit_riemann_roch_matrices(degree, C, B_inv, tilde_I.gens_over_base())
+            C = matrix([to(v) for v in tilde_I.gens_over_base()])
+            return C, B_inv, riemann_roch._short_circuit_riemann_roch_matrices(degree, C, B_inv, tilde_I.gens_over_base())
 
         tilde_I, tilde_J = self._multiply_pair_by_A(I, J, self._A_g_minus_1)
         C = matrix([to(v) for v in tilde_I.gens_over_base()])
@@ -283,7 +280,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         return matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
     @cached_method(key=lambda self, J1, J2: frozenset((J1, J2)))
-    def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):
+    def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):  # noqa: PLR6301 - this is a method so the cache is deleted when the Jacobian instance is
         r"""
         Cached wrapper around multiplication of infinite ideals.
         Because ideal multiplication is commutative, we use a frozenset as the
@@ -370,7 +367,6 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             sage: J = C.jacobian(model='unique_hess')
             sage: TestSuite(J).run()
         """
-
         if base_div.degree() != 1:
             raise ValueError('base_div must be degree 1')
 
