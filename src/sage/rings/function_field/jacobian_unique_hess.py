@@ -71,6 +71,8 @@ class JacobianPoint(JacobianPoint_base):
     def __init__(self, parent: JacobianGroup, finite_ideal: FiniteIdeal,
                  infinite_ideal: InfiniteIdeal) -> None:
         super().__init__(parent)
+        # self._r is determined by the two ideals, but it is computed during
+        # reduction and is useful in a few utility methods so we store it.
         self._finite_ideal, self._infinite_ideal, self._r = parent._reduce(finite_ideal, infinite_ideal)
 
     def __hash__(self) -> int:
@@ -130,14 +132,27 @@ class JacobianPoint(JacobianPoint_base):
         return groups_generic.order_from_bounds(self, bounds)
 
     def effective_part(self) -> FunctionFieldDivisor:
-        # TODO: Docstring
+        r"""
+        Return the effective part of this divisor.
+
+        TODO: Example
+        """
         return self.divisor() + self.parent().base_divisor() * self._r
 
     def divisor(self) -> FunctionFieldDivisor:
+        r"""
+        Return the unique reduced representative of this divisor class
+        in the Unique Hess model with respect to the base place.
+
+        TODO: Example
+        """
         return (~self._finite_ideal).divisor() + (~self._infinite_ideal).divisor()
 
 
 class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base):
+    """
+    Points of Jacobians over finite fields
+    """
     pass
 
 
@@ -194,6 +209,23 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             self._multiply_pair_by_A = lambda I, J, A: (I * A, J)
 
     def _reduce(self, I: FiniteIdeal, J: InfiniteIdeal) -> tuple[FiniteIdeal, InfiniteIdeal, int]:
+        r"""
+        We use Algorithm 4.1 from [Mac2025]_ to find a unique reduced
+        representative of the divisor class. This algorithm is optimized
+        for typical inputs which will be the vast majority of inputs in
+        practice when performing a series of Jacobian computations.
+
+        INPUT:
+
+        - ``I`` -- an ideal of the finite maximal order
+        - ``J`` -- an ideal of the infinite maximal order
+
+        OUTPUT:
+
+        A tuple `(I', J', r)` where `(I', J')` is the ideal representation of
+        the unique reduced representative of the divisor class. The multiplicity
+        of the base place of the output divisor is `-r \leq 0`.
+        """
         # We take the input divisor D and find the maximal r such that ℓ(D + rA) = 1
         degree = self._function_field_degree
         to = self._to_vector_space
@@ -242,11 +274,27 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
     @cached_method
     def _cached_inverse_infinite_matrix(self, J):
+        r"""
+        During the computation of a Riemann-Roch space we need to invert
+        the matrix corresponding to the infinite ideal. Matrix inversion
+        is somewhat expensive, and there are few distinct infinite ideals
+        that we will wish to compute this for, so we cache the results.
+        """
         return matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
 
     @cached_method(key=lambda self, J1, J2: frozenset((J1, J2)))
     def _cached_ideal_mult(self, J1: InfiniteIdeal, J2: InfiniteIdeal):
-        # TODO: Docstring
+        r"""
+        Cached wrapper around multiplication of infinite ideals.
+        Because ideal multiplication is commutative, we use a frozenset as the
+        cache key, so we don't cache the same multiplication performed in a
+        different order.
+
+        When doing a sequence of computations in the Jacobian of a function field,
+        in practice we will only encounter a handful of distinct infinite ideals.
+        This means that we can cache the result of infinite ideal arithmetic with
+        minimal cost.
+        """
         return J1 * J2
 
     def _element_constructor_(self, x):
@@ -347,6 +395,13 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
     def _repr_(self) -> str:
         r"""
         Return the string representation of ``self``.
+
+        TESTS::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(7), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: C.jacobian(model='unique_hess')
+            Jacobian of Projective Plane Curve over Finite Field of size 7
+             defined by x^3 - y^2*z - 2*z^3 (Unique Hess model)
         """
-        # TODO: Add tests
         return f'{super()._repr_()} (Unique Hess model)'
