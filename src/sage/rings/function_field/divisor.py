@@ -171,7 +171,7 @@ class FunctionFieldDivisor(ModuleElement):
         """
         ModuleElement.__init__(self, parent)
         # Removing 0 in the constructor allows us to make additional
-        # assumptions to simplify some logic, in particular for prime divisors.
+        # assumptions to simplify some logic for prime divisors.
         self._data: dict[FunctionFieldPlace, Integer] = {k: Integer(v) for k, v in data.items() if v != 0}
 
     def __hash__(self) -> int:

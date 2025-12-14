@@ -62,11 +62,20 @@ if TYPE_CHECKING:
 
     from .function_field import FunctionField
     from .ideal import FunctionFieldIdeal
-    from .ideal import finite as InfiniteIdeal
+    from .ideal import FunctionFieldIdealInfinite as InfiniteIdeal
     FiniteIdeal: TypeAlias = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
+    # TODO: Can we do a type annotation that is FunctionFieldIdeal - FunctionFieldIdealInfinite?
+    # Should that type annotation be in ideal.py?
 
 
 class JacobianPoint(JacobianPoint_base):
+    r"""
+    A Jacobian point in the "Unique Hess" model.
+    Points are represented by pairs of ideals as in the "Hess" model, but we
+    use a different reduction algorithm that guarantees that all points have
+    a unique representative. Unlike the other Jacobian models in Sage, elements
+    of this class are hashable.
+    """
 
     def __init__(self, parent: JacobianGroup, finite_ideal: FiniteIdeal,
                  infinite_ideal: InfiniteIdeal) -> None:
@@ -81,7 +90,7 @@ class JacobianPoint(JacobianPoint_base):
         """
         return hash((self._finite_ideal, self._infinite_ideal))
 
-    def _richcmp_(self, other, op):
+    def _richcmp_(self, other: Self, op) -> bool:
         r"""
         Compare ``self`` with ``other`` with respect to operator ``op``.
         """
@@ -91,7 +100,7 @@ class JacobianPoint(JacobianPoint_base):
             return richcmp(self_data, other_data, op)
         return (self_data == other_data) == (op is op_EQ)
 
-    def _add_(self, other) -> Self:
+    def _add_(self, other: Self) -> Self:
         r"""
         Add ``self`` and ``other``.
         """
@@ -108,7 +117,7 @@ class JacobianPoint(JacobianPoint_base):
         G = self.parent()
         return G.element_class(G, ~self._finite_ideal, ~self._infinite_ideal)
 
-    def additive_order(self):
+    def additive_order(self) -> Integer:
         r"""
         Return the order of this point.
 
@@ -156,7 +165,119 @@ class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base)
 
 
 class JacobianGroupEmbedding(Map):
-    pass
+    """
+    Embeddings between Unique Hess Jacobian groups.
+
+    INPUT:
+
+    - ``base_group`` -- Unique Hess Jacobian group over a base field
+
+    - ``extension_group`` -- Unique Hess Jacobian group over an extension field
+
+    EXAMPLES::
+
+        sage: k = GF(17)
+        sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
+        sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+        sage: b = C([0,1,0]).place()
+        sage: J = C.jacobian(model='hess', base_div=b)
+        sage: G1 = J.group()
+        sage: K = k.extension(3)
+        sage: G3 = J.group(K)
+        sage: G3.coerce_map_from(G1)
+        Jacobian group embedding map:
+          From: Group of rational points of Jacobian
+           over Finite Field of size 17 (Hess model)
+          To:   Group of rational points of Jacobian
+           over Finite Field in z3 of size 17^3 (Hess model)
+    """
+    def __init__(self, base_group: JacobianGroup, extension_group: JacobianGroup) -> None:
+        """
+        Initialize.
+
+        TESTS::
+
+            sage: k = GF(17)
+            sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: J = C.jacobian(model='unique_hess', base_div=b)
+            sage: G1 = J.group()
+            sage: K = k.extension(3)
+            sage: G3 = J.group(K)
+            sage: map = G3.coerce_map_from(G1)
+            sage: TestSuite(map).run(skip=['_test_category', '_test_pickling'])
+        """
+        F = base_group._function_field
+        F_base = F.base_field()
+        K = F.constant_base_field()
+
+        F_ext = extension_group._function_field
+        F_ext_base = F_ext.base_field()
+        K_ext = F_ext.constant_base_field()
+
+        # construct embedding of F into F_ext
+        embedK = K_ext.coerce_map_from(K)
+        embedF_base = F_base.hom(F_ext_base.gen(), embedK)
+        if F.degree() > 1:
+            embedF = F.hom(F_ext.gen(), embedF_base)
+        else:
+            embedF = embedF_base
+
+        self._embedF = embedF
+        self._O_ext = F_ext.maximal_order()
+        self._Oinf_ext = F_ext.maximal_order_infinite()
+
+        Map.__init__(self, Hom(base_group, extension_group, CommutativeAdditiveGroups()))
+
+    def _repr_type(self) -> str:
+        """
+        Return string representation of ``self``.
+
+        TESTS::
+
+            sage: k = GF(17)
+            sage: P2.<x,y,z> = ProjectiveSpace(k, 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: J = C.jacobian(model='hess', base_div=b)
+            sage: G1 = J.group()
+            sage: K = k.extension(3)
+            sage: G3 = J.group(K)
+            sage: G3.coerce_map_from(G1)  # indirect doctest
+            Jacobian group embedding map:
+              From: Group of rational points of Jacobian
+               over Finite Field of size 17 (Hess model)
+              To:   Group of rational points of Jacobian
+               over Finite Field in z3 of size 17^3 (Hess model)
+        """
+        return 'Jacobian group embedding'
+
+    def _call_(self, x):
+        """
+        Conorm map from F to F_ext.
+
+        TESTS::
+
+            sage: k = GF(7)
+            sage: A.<x,y> = AffineSpace(k, 2)
+            sage: C = Curve(y^5 - x^3 - 2*x - 1).projective_closure()
+            sage: J = C.jacobian(model='hess')
+            sage: G1 = J.group()
+            sage: K = k.extension(3)
+            sage: G3 = J.group(K)
+            sage: m = G3.coerce_map_from(G1)
+            sage: m(G1.zero()) == G3.zero()
+            True
+        """
+        embedF = self._embedF
+        O_ext = self._O_ext
+        Oinf_ext = self._Oinf_ext
+
+        idS, ids = x._data
+        dS = O_ext.ideal([embedF(g) for g in idS.gens()])
+        ds = Oinf_ext.ideal([embedF(g) for g in ids.gens()])
+        return self.codomain().element_class(self.codomain(), dS, ds)
 
 
 class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
@@ -380,6 +501,8 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
             self._A = base_div.place()
         else:
             raise TypeError('base_div must be a divisor or a place')
+
+        #reveal_type(self._A)
 
         self._cache_infinite_ideals = cache_infinite_ideals
 
