@@ -332,7 +332,6 @@ class JacobianPoint(JacobianPoint_base):
         dS, ds = self._data
         return (~dS).divisor() + (~ds).divisor()
 
-
     def divisor(self):
         """
         Return the divisor representing this point.

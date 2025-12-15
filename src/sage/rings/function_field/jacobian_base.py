@@ -222,7 +222,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
         ALGORITHM: Shanks' Baby Step Giant Step
         """
         # We implement BSGS instead of using sage.groups.generic because
-        # not all Jacobian models support hashable 
+        # not all Jacobian models support hashable
 
         G = self.parent()
         B = G._bound_on_order()
@@ -670,7 +670,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
             pass
 
         return lst
-    
+
     def some_elements(self):
         return self.get_points(4)
 
