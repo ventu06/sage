@@ -783,25 +783,25 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-                sage: WittVectorRing(QQ, p=2).is_field()
-                True
-                sage: WittVectorRing(QQ, p=2, prec=2).is_field()
-                False
-                sage: WittVectorRing(GF(9, 'a')).is_field()
-                True
-                sage: WittVectorRing(GF(9, 'a'), prec=3).is_field()
-                False
-                sage: WittVectorRing(ZZ, p=5).is_field()
-                False
-                sage: L.<z> = LazyLaurentSeriesRing(ZZ)
-                sage: W = WittVectorRing(L, p=7, algorithm="standard")
-                sage: W.is_field(proof=True)
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: unable to determine whether or not Lazy
-                Laurent Series Ring in z over Integer Ring is a field.
-                sage: W.is_field(proof=False)
-                False
+            sage: WittVectorRing(QQ, p=2).is_field()
+            True
+            sage: WittVectorRing(QQ, p=2, prec=2).is_field()
+            False
+            sage: WittVectorRing(GF(9, 'a')).is_field()
+            True
+            sage: WittVectorRing(GF(9, 'a'), prec=3).is_field()
+            False
+            sage: WittVectorRing(ZZ, p=5).is_field()
+            False
+            sage: L.<z> = LazyLaurentSeriesRing(ZZ)
+            sage: W = WittVectorRing(L, p=7, algorithm="standard")
+            sage: W.is_field(proof=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: unable to determine whether or not Lazy
+            Laurent Series Ring in z over Integer Ring is a field.
+            sage: W.is_field(proof=False)
+            False
         """
         return self._prec.is_one() and self._coefficient_ring.is_field(proof=proof)
 
@@ -832,27 +832,27 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-                sage: WittVectorRing(ZZ, p=2).is_integral_domain()
-                True
-                sage: WittVectorRing(ZZ, p=2, prec=2).is_integral_domain()
-                False
-                sage: WittVectorRing(GF(9, 'a')).is_integral_domain()
-                True
-                sage: WittVectorRing(GF(9, 'a'), prec=3).is_integral_domain()
-                False
-                sage: R.<x> = ZZ[]
-                sage: S.<y> = R.quo(x^2 + 7*x + 8)
-                sage: T.<t> = S[]
-                sage: Q.<z> = T.quo(t^2)
-                sage: W = WittVectorRing(Q, p=7, algorithm="standard")
-                sage: W.is_integral_domain(proof=True)
-                Traceback (most recent call last):
-                ...
-                NotImplementedError: cannot rewrite Univariate Quotient
-                Polynomial Ring in y over Integer Ring with modulus
-                x^2 + 7*x + 8 as an isomorphic ring
-                sage: W.is_integral_domain(proof=False)
-                False
+            sage: WittVectorRing(ZZ, p=2).is_integral_domain()
+            True
+            sage: WittVectorRing(ZZ, p=2, prec=2).is_integral_domain()
+            False
+            sage: WittVectorRing(GF(9, 'a')).is_integral_domain()
+            True
+            sage: WittVectorRing(GF(9, 'a'), prec=3).is_integral_domain()
+            False
+            sage: R.<x> = ZZ[]
+            sage: S.<y> = R.quo(x^2 + 7*x + 8)
+            sage: T.<t> = S[]
+            sage: Q.<z> = T.quo(t^2)
+            sage: W = WittVectorRing(Q, p=7, algorithm="standard")
+            sage: W.is_integral_domain(proof=True)
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: cannot rewrite Univariate Quotient
+            Polynomial Ring in y over Integer Ring with modulus
+            x^2 + 7*x + 8 as an isomorphic ring
+            sage: W.is_integral_domain(proof=False)
+            False
         """
         return (self._prec.is_one() and
                 self._coefficient_ring.is_integral_domain(proof=proof))
@@ -863,20 +863,20 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-                sage: x = polygen(ZZ, 'x')
-                sage: K.<a> = NumberField(x^2 + 189*x + 394)
-                sage: R = K.order(2*a)
-                sage: WittVectorRing(R, p=79).is_integrally_closed()
-                False
-                sage: WittVectorRing(ZZ, p=101).is_integrally_closed()
-                True
-                sage: WittVectorRing(ZZ, p=101, prec=2).is_integrally_closed()
-                False
-                sage: S.<t> = ZZ[]
-                sage: WittVectorRing(S, p=101).is_integrally_closed()
-                Traceback (most recent call last):
-                ...
-                NotImplementedError
+            sage: x = polygen(ZZ, 'x')
+            sage: K.<a> = NumberField(x^2 + 189*x + 394)
+            sage: R = K.order(2*a)
+            sage: WittVectorRing(R, p=79).is_integrally_closed()
+            False
+            sage: WittVectorRing(ZZ, p=101).is_integrally_closed()
+            True
+            sage: WittVectorRing(ZZ, p=101, prec=2).is_integrally_closed()
+            False
+            sage: S.<t> = ZZ[]
+            sage: WittVectorRing(S, p=101).is_integrally_closed()
+            Traceback (most recent call last):
+            ...
+            NotImplementedError
         """
         return (self._prec.is_one() and
                 self._coefficient_ring.is_integrally_closed())
@@ -888,16 +888,16 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         EXAMPLES::
 
-                sage: WittVectorRing(QQ, p=2).is_prime_field()
-                True
-                sage: WittVectorRing(QQ, p=2, prec=2).is_prime_field()
-                False
-                sage: WittVectorRing(GF(9, 'a')).is_prime_field()
-                False
-                sage: WittVectorRing(GF(7)).is_prime_field()
-                True
-                sage: WittVectorRing(GF(7), prec=3).is_prime_field()
-                False
+            sage: WittVectorRing(QQ, p=2).is_prime_field()
+            True
+            sage: WittVectorRing(QQ, p=2, prec=2).is_prime_field()
+            False
+            sage: WittVectorRing(GF(9, 'a')).is_prime_field()
+            False
+            sage: WittVectorRing(GF(7)).is_prime_field()
+            True
+            sage: WittVectorRing(GF(7), prec=3).is_prime_field()
+            False
         """
         return self._prec.is_one() and self._coefficient_ring.is_prime_field()
 
