@@ -12,10 +12,14 @@ order.
 
 REFERENCES:
 [FFN2025]_
+
+AUTHORS:
+
+- Wenjie Fang (2026): initial implementation
 '''
 
 # ****************************************************************************
-#       Copyright (C) 2025 Wenjie Fang <fwjmath@gmail.com>,
+#       Copyright (C) 2026 Wenjie Fang <fwjmath@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
@@ -38,17 +42,47 @@ from sage.combinat.interval_posets import (TamariIntervalPoset,
                                            TamariIntervalPosets)
 from sage.misc.prandom import uniform, randrange
 from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
+from sage.structure.unique_representation import UniqueRepresentation
 
 
-class TamariBlossomingTree:
+class TamariBlossomingTree(SageObject, UniqueRepresentation):
+    r'''
+    The class of bicolored blossoming trees, which are in bijection with
+    intervals in the Tamari lattice.
 
-    @staticmethod
-    def __budcount(tree) -> int:
-        r'''
-        Internal function. Counts the number of buds at the root of ``tree``.
-        We do not suppose ``tree`` to be of type OrderedTree
-        '''
-        return len([x for x in tree if not x])
+    A bicolored blossoming tree is a plane unrooted tree satisfying:
+
+    - Each edge consists of two half-edges, one colored red and the other blue.
+
+    - Each node has two extra unpaired uncolored half-edges called **buds**,
+    which separate cyclically its other adjacent half-edges into two
+    monochromatic parts. In other words, for each node, when reading color of
+    adjacent half-edges in the cyclic order, colors change exactly twice, and the
+    buds are placed at such position of changes.
+
+    The size of a bicolored blossoming tree is the number of edges (not
+    counting buds). They are in bijection with intervals in the Tamari lattice
+    formed by binary trees of the same size (the number of internal nodes).
+
+    For usage, it is the best to use conversion functions provided by this class,
+    instead of its constructor, which has less flexibility.
+
+    EXAMPLES:
+
+        sage: TB = TamariBlossomingTree.from_plane_tree([[], [[[], []], [], []]])
+        sage: TB
+        Tamari blossoming tree [[], [[], []], [[], []]] of size 2
+        sage: B1, B2 = TB.to_tamari()
+        sage: B1, B2
+        ([[., .], .], [[., .], .])
+        sage: TB is TamariBlossomingTree.from_tamari(B1, B2)
+        True
+        sage: TB.is_modern()
+        True
+        sage: TB.is_synchronized()
+        True
+    '''
 
     @staticmethod
     def __checkbuds(tree):
@@ -58,53 +92,34 @@ class TamariBlossomingTree:
 
         TESTS:
 
-            sage: TamariBlossomingTree([])
+            sage: TamariBlossomingTree(OrderedTree([]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bud count incorrect
-            sage: TamariBlossomingTree([[], [[]]])
+            sage: TamariBlossomingTree(OrderedTree([[], [[]]]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bud count incorrect
-            sage: TamariBlossomingTree([[[], [], [[], []]], []])
+            sage: TamariBlossomingTree(OrderedTree([[[], [], [[], []]], []]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bad matching
-            sage: TamariBlossomingTree([[], [[], [], [[], []]]])._tree
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: TamariBlossomingTree(T)._tree
             1[2[], 3[4[], 5[], 6[7[], 8[]]]]
         '''
         if not tree:
             return
-        if TamariBlossomingTree.__budcount(tree) != 2:
+        if len([x for x in tree if not x]) != 2:
             raise ValueError('Not a blossoming tree, bud count incorrect')
         for st in tree:
             TamariBlossomingTree.__checkbuds(st)
         return
 
-    @staticmethod
-    def __matching_word(tree) -> list[int]:
-        r'''
-        Internal function, returns the matching word with buds as 1 and legs as
-        0. We do not suppose ``tree`` to be of type OrderedTree. We do not count
-        the root here.
-        '''
-        def aux(tree):
-            accu = []
-            for t in tree:
-                if not t:  # a bud
-                    accu.append(1)
-                else:  # not a bud, but an edge to the next subtree
-                    accu.append(-1)
-                    accu.extend(aux(t))
-                    accu.append(-1)
-            return accu
-
-        return aux(tree)
-
     def __get_meandric_order(self) -> tuple[list[int], list[int]]:
         r'''
         Internal function. Computes the order of nodes and edges in the meandric
-        representation. In the intermediate steps, we have
+        representation. In the intermediate steps, we have:
 
         - Buds are represented by the label of its node and 1, 2 as the order
         of buds of the same node.
@@ -182,37 +197,53 @@ class TamariBlossomingTree:
         # Finally, we return the order
         return norder, eorder
 
-    def __init__(self, tree):
+    def __init__(self, tree: OrderedTree):
         r'''
         Initialize a Tamari blossoming tree with a plane tree. We consider the
         root as a bud, so every internal node has two leaves, except the root
-        which has only one. We also need to check that the root is really a
-        dangling node
+        which has only one. We also check that the root is really a dangling
+        node, and raise an error otherwise.
 
         INPUT:
 
-        - ``tree``: a plane tree satisfying the given condition, can be given
-                    either as a recursive list or ``AbstractTree``
+        - ``tree``: a plane tree of the type ``OrderedTree``.
 
         EXAMPLES::
 
-            sage: TamariBlossomingTree([])
+            sage: TamariBlossomingTree(OrderedTree([]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bud count incorrect
-            sage: TamariBlossomingTree([[], [[]]])
+            sage: TamariBlossomingTree(OrderedTree([[], [[]]]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bud count incorrect
-            sage: TamariBlossomingTree([[[], [], [[], []]], []])
+            sage: TamariBlossomingTree(OrderedTree([[[], [], [[], []]], []]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bad matching
-            sage: TamariBlossomingTree([[], [[], [], [[], []]]])._tree
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: TamariBlossomingTree(T)._tree
             1[2[], 3[4[], 5[], 6[7[], 8[]]]]
         '''
+        def matching_word(tree):
+            '''
+            Internal function, returns the matching word with buds as 1 and legs
+            as 0. We do not suppose ``tree`` to be of type OrderedTree. We do
+            not count the root here.
+            '''
+            accu = []
+            for t in tree:
+                if not t:  # a bud
+                    accu.append(1)
+                else:  # not a bud, but an edge to the next subtree
+                    accu.append(-1)
+                    accu.extend(matching_word(t))
+                    accu.append(-1)
+            return accu
+
         # check root leaves
-        if TamariBlossomingTree.__budcount(tree) != 1:
+        if len([x for x in tree if not x]) != 1:
             raise ValueError('Not a blossoming tree, bud count incorrect')
 
         # check for all nodes
@@ -220,7 +251,7 @@ class TamariBlossomingTree:
             TamariBlossomingTree.__checkbuds(st)
 
         # check for matching (whether the root is a dangling bud)
-        mword = TamariBlossomingTree.__matching_word(tree)
+        mword = matching_word(tree)
         ht = 0
         for e in mword:
             ht += e
@@ -236,11 +267,19 @@ class TamariBlossomingTree:
         self._node_order, self._edge_order = self.__get_meandric_order()
         return
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r'''
         Returns a string representing the blossoming tree and its size.
         '''
-        return f'Tamari blossoming tree of size {self._size}'
+        s = f'Tamari blossoming tree {OrderedTree(self._tree)}'
+        s += f' of size {self._size}'
+        return s
+
+    def _ascii_art_(self) -> str:
+        r'''
+        Returns the ascii art of the blossoming tree, using that of OrderedTree.
+        '''
+        return self._tree._ascii_art_()
 
     def __hash__(self):
         r'''
@@ -256,6 +295,8 @@ class TamariBlossomingTree:
 
         This delegates the comparison to LabelledOrderedTree.
         '''
+        if type(self) != type(other):
+            return False
         return self._tree == other._tree
 
     def size(self) -> Integer:
@@ -303,12 +344,13 @@ class TamariBlossomingTree:
         EXAMPLES::
 
             sage: B0 = BinaryTree()
-            sage: TamariBlossomingTree([[]]).to_tamari() == (B0, B0)
+            sage: TamariBlossomingTree(OrderedTree([[]])).to_tamari() == (B0, B0)
             True
-            sage: TamariBlossomingTree([[], [[], [], [[], []]]]).to_tamari()
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: TamariBlossomingTree(T).to_tamari()
             ([., [., .]], [., [., .]])
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: B3, B4 = TamariBlossomingTree(Tl).to_tamari()
             sage: B3
             [[[[., [., [., .]]], .], [[., .], .]], .]
@@ -363,11 +405,11 @@ class TamariBlossomingTree:
         EXAMPLES:
 
             sage: B0 = BinaryTree()
-            sage: TB0 = TamariBlossomingTree([[]])
+            sage: TB0 = TamariBlossomingTree(OrderedTree([[]]))
             sage: TamariBlossomingTree.from_tamari(B0, B0) == TB0
             True
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: TlB = TamariBlossomingTree(Tl)
             sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
             sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
@@ -414,7 +456,7 @@ class TamariBlossomingTree:
         # traversal for the plane tree
         # 2 saying that it is the root (so parent inexistant)
         ptree = traversal(0, -2, cycord)
-        return TamariBlossomingTree(ptree)
+        return TamariBlossomingTree(OrderedTree(ptree))
 
     def to_TIP(self) -> TamariIntervalPoset:
         r'''
@@ -427,8 +469,8 @@ class TamariBlossomingTree:
 
         EXAMPLES:
 
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: TlB = TamariBlossomingTree(Tl)
             sage: tip = TlB.to_TIP()
             sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
@@ -457,8 +499,8 @@ class TamariBlossomingTree:
             sage: B4 = [[None, [[None, []], None]], [None, [[], None]]]
             sage: B3, B4 = BinaryTree(B3), BinaryTree(B4)
             sage: tip = TamariIntervalPosets.from_binary_trees(B3, B4)
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: TlB = TamariBlossomingTree(Tl)
             sage: TlB == TamariBlossomingTree.from_TIP(tip)
             True
@@ -578,14 +620,14 @@ class TamariBlossomingTree:
 
         EXAMPLES:
 
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: g = TamariBlossomingTree(Tl).plot_meandric()
 
         .. PLOT::
 
-            Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-                  [[], [], [[[], []], [], [[], []], []]]]
+            Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+                              [[], [], [[[], []], [], [[], []], []]]])
             g = TamariBlossomingTree(Tl).plot_meandric()
             sphinx_plot(g)
         '''
@@ -786,7 +828,7 @@ class TamariBlossomingTree:
             True
             sage: B1 == B2
             True
-            sage: TamariBlossomingTree([[], [[[], []], [], []]])
+            sage: TamariBlossomingTree(OrderedTree([[], [[[], []], [], []]]))
             Traceback (most recent call last):
             ...
             ValueError: Not a blossoming tree, bad matching
@@ -863,7 +905,7 @@ class TamariBlossomingTree:
 
         # check buds
         if not skip_check:
-            if TamariBlossomingTree.__budcount(tree) != 1:
+            if len([x for x in tree if not x]) != 1:
                 raise ValueError('Not a blossoming tree, bud count incorrect')
             for st in tree:
                 TamariBlossomingTree.__checkbuds(st)
@@ -900,7 +942,7 @@ class TamariBlossomingTree:
         dangling = dangling[didx]
         rroot = cycord[dangling][0]  # the only neighbor of a bud is the root
         rtree = traverse(rroot, dangling, cycord)
-        return TamariBlossomingTree(rtree)  # can do with a list
+        return TamariBlossomingTree(OrderedTree(rtree))  # can do with a list
 
     def reflection(self) -> Self:
         r'''
@@ -943,14 +985,14 @@ class TamariBlossomingTree:
 
         EXAMPLES:
 
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: g = TamariBlossomingTree(Tl).plot_blossoming()
 
         .. PLOT::
 
-            Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-                  [[], [], [[[], []], [], [[], []], []]]]
+            Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+                              [[], [], [[[], []], [], [[], []], []]]])
             g = TamariBlossomingTree(Tl).plot_meandric()
             sphinx_plot(g)
         '''
@@ -1065,7 +1107,7 @@ class TamariBlossomingTree:
         return G
 
     @staticmethod
-    def __binary_tree_arcs(btree: BinaryTree) -> list[tuple[int]]:
+    def _binary_tree_arcs(btree: BinaryTree) -> list[tuple[int]]:
         '''
         Internal function. Returns the list of arcs in the smooth drawing of a
         given binary tree.
@@ -1079,6 +1121,13 @@ class TamariBlossomingTree:
 
         The list of arcs in the smooth drawing, represented by leaves on its
         both ends.
+
+        TESTS:
+
+            sage: B = BinaryTree([[[[None, [None, []]], None], [[], None]],
+            ....:                 None])
+            sage: sorted(TamariBlossomingTree._binary_tree_arcs(B))
+            [(0, 3), (0, 4), (0, 7), (0, 8), (1, 3), (2, 3), (5, 6), (5, 7)]
         '''
         def aux(bt, offset, arcs):
             if not bt:
@@ -1127,7 +1176,7 @@ class TamariBlossomingTree:
         G.set_aspect_ratio(0.5)
 
         # plot the arcs
-        for e in TamariBlossomingTree.__binary_tree_arcs(bt):
+        for e in TamariBlossomingTree._binary_tree_arcs(bt):
             G += arc([(e[0] + e[1]) / 2, 0], (e[1] - e[0]) / 2, sector=(0, pi),
                      rgbcolor=color)
         G.axes(show=False)
@@ -1146,14 +1195,14 @@ class TamariBlossomingTree:
 
         EXAMPLES:
 
-            sage: Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-            ....:       [[], [], [[[], []], [], [[], []], []]]]
+            sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+            ....:                   [[], [], [[[], []], [], [[], []], []]]])
             sage: g = TamariBlossomingTree(Tl).smooth_drawing()
 
         .. PLOT::
 
-            Tl = [[], [[], [], [[], []], [[[], []], [], []]],
-                  [[], [], [[[], []], [], [[], []], []]]]
+            Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
+                              [[], [], [[[], []], [], [[], []], []]]])
             g = TamariBlossomingTree(Tl).smooth_drawing()
             sphinx_plot(g)
         '''
@@ -1179,7 +1228,7 @@ class TamariBlossomingTree:
         # draw the arcs according to upper and lower trees
         trees = self.to_tamari()
         for i in range(2):
-            for e in TamariBlossomingTree.__binary_tree_arcs(trees[i]):
+            for e in TamariBlossomingTree._binary_tree_arcs(trees[i]):
                 G += semicir(e[0], e[1], i == 1)  # 0 is lower, 1 is upper
         G.axes(show=False)
         return G
@@ -1191,7 +1240,16 @@ class TamariBlossomingTree:
 
         OUTPUT:
 
-        ``True`` if the blossoming tree is synchronized, and ``False`` otherwise
+        ``True`` if the blossoming tree is synchronized, otherwise ``False``
+
+        EXAMPLES:
+
+            sage: T1 = [[], [[], [], [[], []]]]
+            sage: TamariBlossomingTree.from_plane_tree(T1).is_synchronized()
+            True
+            sage: T2 = [[], [[], [[], []], []]]
+            sage: TamariBlossomingTree.from_plane_tree(T2).is_synchronized()
+            False
         '''
         def aux(tree, isroot=False):
             '''
@@ -1209,7 +1267,7 @@ class TamariBlossomingTree:
                 if len(idx) != 2 or idx[1] - idx[0] != 1:
                     return False
             for st in tree:
-                if not st and not aux(st):  # an internal node failing the test
+                if st and not aux(st):  # an internal node failing the test
                     return False
             return True
         return aux(self._tree, isroot=True)
@@ -1221,7 +1279,16 @@ class TamariBlossomingTree:
 
         OUTPUT:
 
-        ``True`` if the blossoming tree is modern, and ``False`` otherwise
+        ``True`` if the blossoming tree is modern, and ``False`` otherwise.
+
+        TESTS:
+
+            sage: T1 = [[], [[], [], [[], []]]]
+            sage: TamariBlossomingTree.from_plane_tree(T1).is_modern()
+            True
+            sage: T2 = [[], [[[], [], [[], []]], [], []]]
+            sage: TamariBlossomingTree.from_plane_tree(T2).is_modern()
+            False
         '''
         return self.to_TIP().is_modern()
 
@@ -1363,6 +1430,10 @@ class _RandomPath:
         to obtain a lattice path of total length `nk + 1`, then find the last
         lowest point of the path and rotate it there to obtain the path we want.
 
+        We note that this function assume the validity of inputs, as it should
+        only be called by other internal functions, which always give inputs of
+        the correct form.
+
         INPUT:
 
         - ``n``: the number of up steps in the path. There must be `(k - 1) n`
@@ -1381,7 +1452,11 @@ class _RandomPath:
 
         TESTS:
 
-            sage: pass # TODO
+            sage: from sage.combinat.tamari_blossoming_tree import _RandomPath
+            sage: _RandomPath._comb_to_path(4, 3, [1, 3, 7, 8])
+            [2, -1, 2, -1, -1, -1, 2, 2, -1, -1, -1, -1]
+            sage: _RandomPath._comb_to_path(4, 3, [3, 4, 10, 12])
+            [2, -1, 2, -1, -1, -1, 2, 2, -1, -1, -1, -1]
         '''
         path = [-1] * (k * n + 1)
         for e in uset:
@@ -1401,14 +1476,40 @@ class _RandomPath:
     @staticmethod
     def gen_path(n: int, k: int) -> list[int]:
         r'''
-        Internal function. Returns a path for 3-ary trees (4n+1 steps, n of them
-        up steps, then last step removed).
+        Returns a uniformly random lattice path for `k`-ary trees of size `n`,
+        which consists of `kn` steps, with `n` of them up steps `(1, k - 1)` and
+        others down steps `(1, -1)`. Such lattice paths are sometimes also
+        called "Raney paths", and are counted by Fuss--Catalan numbers. For more
+        details, see the documentation of ``_comb_to_path``.
+
+        INPUT:
+
+        - ``n``: the size of the lattice path (the length will be `kn`).
+
+        - ``k``: the parameter corresponding to the arity of the `k`-ary trees
+        that are in bijection with the generated random lattice path.
+
+        OUTPUT:
+
+        A uniformly random lattice path represented by variation in
+        `y`-coordinates.
+
+        TESTS:
+
+            sage: from sage.combinat.tamari_blossoming_tree import _RandomPath
+            sage: res = {tuple(_RandomPath.gen_path(3, 3)) for _ in range(1000)}
+            sage: len(res) <= binomial(10, 3) / 10
+            True
+            sage: while len(res) * 10 < binomial(10, 3):
+            ....:     res.add(tuple(_RandomPath.gen_path(3, 3)))
+            sage: len(res) == binomial(10, 3) / 10
+            True
         '''
         uset = _RandomPath.gen_comb(n, k)
         return _RandomPath._comb_to_path(n, k, uset)
 
 
-class TamariBlossomingTreeFactory:
+class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
     r'''
     This factory class is for random generation of Tamari blossoming trees of
     given size. As some precomputation is done, it would be the best to keep an
