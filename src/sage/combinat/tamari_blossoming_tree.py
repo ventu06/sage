@@ -60,7 +60,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     monochromatic parts. In other words, for each node, when reading color of
     adjacent half-edges in the cyclic order, colors change exactly twice, and
     the buds are placed at such position of changes.
-
+    
     The size of a bicolored blossoming tree is the number of edges (not
     counting buds). They are in bijection with intervals in the Tamari lattice
     formed by binary trees of the same size (the number of internal nodes).
@@ -213,7 +213,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree``: a plane tree of the type ``OrderedTree``.
-
+        
         EXAMPLES::
 
             sage: TamariBlossomingTree(OrderedTree([]))
@@ -403,7 +403,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``ltree``: the lower binary tree in the given Tamari interval.
         - ``htree``: the upper binary tree in the given Tamari interval.
-
+        
         OUTPUT:
 
         A blossoming tree in bijection with the given Tamari interval
@@ -437,7 +437,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
                 children = children[pidx + 1:] + children[:pidx]
             return [traversal(x, node, cycord) for x in children]
 
-        # initalization and verification
+        # initialization and verification
         btl, bth = BinaryTree(ltree), BinaryTree(htree)
         if not btl.tamari_lequal(bth):
             raise ValueError('Not a Tamari interval')
@@ -460,7 +460,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         # get rid of the first bud (ugly pop...)
         cycord[0].pop(0)
         # traversal for the plane tree
-        # 2 saying that it is the root (so parent inexistant)
+        # 2 saying that it is the root (so parent inexistent)
         ptree = traversal(0, -2, cycord)
         return TamariBlossomingTree(OrderedTree(ptree))
 
@@ -498,7 +498,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tip``: a TamariIntervalPoset object representing a Tamari interval
-
+        
         EXAMPLES:
 
             sage: B3 = [[[[None, [None, []]], None], [[], None]], None]
@@ -527,7 +527,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``btree``: a binary tree, not necessarily of type BinaryTree
-
+        
         OUTPUT:
         A plot of ``btree``, with leaves on a horizontal line, and edges all of
         slope +1 or -1. Labels are ignored.
@@ -620,9 +620,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``semicircle``: optional, sets whether the arcs are drawn as
         semicircles or a Bezier arc. Default: ``True``.
-        - ``arrow``: optional, sets whether draw horizontal arrows tips.4
+        - ``arrow``: optional, sets whether draw horizontal arrows tips.
         Default: ``True``.
-
+        
         EXAMPLES:
 
             sage: Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
@@ -819,7 +819,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree``: a plane tree with two buds on each node (one for the root).
-
+        
         OUTPUT:
 
         An object of type TamariBlossomingTree representing the blossoming tree
@@ -871,7 +871,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         - ``skip_check``: skip checking for bud conditions. Default: ``False``.
         - ``random_bud``: choose a bud at random, instead of the first. Default:
         ``False``.
-
+        
         OUTPUT:
 
         An object of type TamariBlossomingTree representing the blossoming tree
@@ -984,7 +984,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         - ``layout``: the algorithm for layout, with three possible options:
             * 'tree': uses ``layout_tree`` of undirected graph in sage
             * 'planar': uses ``layout_planar`` of undirected graph in sage
-
+        
         OUTPUT:
 
         A plot of the current blossoming tree.
@@ -1122,7 +1122,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``btree``: a binary tree, which can be a BinaryTree or an
                        OrderedTree that happens to be binary
-
+        
         OUTPUT:
 
         The list of arcs in the smooth drawing, represented by leaves on its
@@ -1159,7 +1159,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``btree``: a binary tree, not necessarily of type ``BinaryTree``.
         - ``color``: color of the arcs. Default: blue.
-
+        
         OUTPUT:
 
         The smooth drawing of a binary tree with the given color
@@ -1315,7 +1315,7 @@ class _RandomPath:
 
         - ``n``: a positive integer
         - ``k``: a strictly positive integer at least 2
-
+        
         OUTPUT:
 
         A list of elements in the random combination of ``n`` elements among
@@ -1396,7 +1396,7 @@ class _RandomPath:
         - ``cardlist``: a list of the cardinality of objects of sizes from
         ``0`` to ``size``
         - ``size``: the size of elements to generate
-
+        
         OUTPUT:
 
         A list of pairs ``(p, j)`` of first element size and its probability.
@@ -1444,7 +1444,7 @@ class _RandomPath:
         - ``k``: the parameter regulating the up steps. For Dyck paths, we have
         `k = 2`.
         - ``uset``: the subset of positions of up steps in the non-rotated path.
-
+        
         OUTPUT:
 
         A lattice path of steps `(1, k - 1)` and `(1, -1)` ending on the
@@ -1488,7 +1488,7 @@ class _RandomPath:
         - ``n``: the size of the lattice path (the length will be `kn`).
         - ``k``: the parameter corresponding to the arity of the `k`-ary trees
         that are in bijection with the generated random lattice path.
-
+        
         OUTPUT:
 
         A uniformly random lattice path represented by variation in
@@ -1537,7 +1537,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         - ``size``: the size of blossoming trees to generate, that is, the
         number of edges (not counting buds)
-
+        
         EXAMPLES:
 
             sage: TBTF = TamariBlossomingTreeFactory(100)
@@ -1651,7 +1651,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         - ``size``: the size (number of edges) of the Tamari blossoming tree to
         generate.
-
+        
         OUTPUT:
 
         A uniformly random Tamari blossoming tree of the given size.
@@ -1697,7 +1697,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size``: the size of the synchronized blossoming tree to generate.
-
+        
         EXAMPLES:
 
             sage: SynchronizedBlossomingTreeFactory(-3)
@@ -1790,7 +1790,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         - ``size``: the size (number of edges) of synchronized blossoming tree
         to generate.
-
+        
         OUTPUT:
 
         A uniformly random synchronized blossoming tree of the given size.
@@ -1842,7 +1842,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         - ``size``: the size of modern blossoming trees to generate, which is
         the number of internal edges (not including buds)
-
+        
         EXAMPLES:
 
             sage: MBTF = ModernBlossomingTreeFactory(100)
@@ -1892,7 +1892,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         - `C = \frac{A}{1 - B}`
         - `B = \frac{z(1 + C)}{1 - B}`
         - `A = \frac{z(1 + C)^2}{1 - B} = B (1 + C)`
-
+        
         Each series counts a certain family of trees with buds.
 
         By solving it, we know that
@@ -1904,7 +1904,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         - `A(z)` is the series of Dyck paths with weight 2 on every up-step
         except the first and the second one on the x-axis (there may be only
         one such step)
-
+        
         We may then generate a modern blossoming tree by generating Dyck paths
         with the correct weights, then interpreting such weights in the proper
         way to obtain a modern blossoming tree according to the recursive
@@ -2001,7 +2001,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         - ``size``: the size (number of edges) of the modern blossoming tree to
         generate
-
+        
         OUTPUT:
 
         A uniformly random Tamari blossoming tree of the given size.
