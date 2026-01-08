@@ -55,7 +55,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     A (bicolored) blossoming tree is a plane unrooted tree satisfying:
 
     - Each edge consists of two half-edges, one colored red and the other blue.
-
     - Each node has two extra unpaired uncolored half-edges called **buds**,
     which separate cyclically its other adjacent half-edges into two
     monochromatic parts. In other words, for each node, when reading color of
@@ -132,7 +131,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - Buds are represented by the label of its node and 1, 2 as the order
         of buds of the same node.
-
         - Legs are represented by the label of both its ends, and 1, 2 as the
         order of legs of the same node.
         '''
@@ -143,7 +141,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
             - A bud is represented by ``((r,), k)`` where ``r`` is the label of
             its node, and ``k`` its order in prefix order.
-
             - A leg is represented by ``((r1, r2), i)``, where ``r1`` and ``r2``
             are the labels of the nodes adjacent to the edge of the leg, and
             ``i`` presents the side it is on.
@@ -302,7 +299,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-        This delegates the comparison to LabelledOrderedTree.
+            This delegates the comparison to LabelledOrderedTree.
         '''
         if not isinstance(other, TamariBlossomingTree):
             return False
@@ -405,7 +402,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``ltree``: the lower binary tree in the given Tamari interval.
-
         - ``htree``: the upper binary tree in the given Tamari interval.
 
         OUTPUT:
@@ -624,7 +620,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``semicircle``: optional, sets whether the arcs are drawn as
         semicircles or a Bezier arc. Default: ``True``.
-
         - ``arrow``: optional, sets whether draw horizontal arrows tips.4
         Default: ``True``.
 
@@ -873,9 +868,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree``: a plane tree with two buds on each node (one for the root).
-
         - ``skip_check``: skip checking for bud conditions. Default: ``False``.
-
         - ``random_bud``: choose a bud at random, instead of the first. Default:
         ``False``.
 
@@ -988,7 +981,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``aspect``: ratio of aspect, default to 1.0
-
         - ``layout``: the algorithm for layout, with three possible options:
             * 'tree': uses ``layout_tree`` of undirected graph in sage
             * 'planar': uses ``layout_planar`` of undirected graph in sage
@@ -1166,7 +1158,6 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``btree``: a binary tree, not necessarily of type ``BinaryTree``.
-
         - ``color``: color of the arcs. Default: blue.
 
         OUTPUT:
@@ -1323,7 +1314,6 @@ class _RandomPath:
         INPUT:
 
         - ``n``: a positive integer
-
         - ``k``: a strictly positive integer at least 2
 
         OUTPUT:
@@ -1395,17 +1385,16 @@ class _RandomPath:
 
         .. NOTE::
 
-        In its usage, ``cardlist`` is sometimes renormalized with respect to the
-        exponential growth, i.e., ``cardlist[n]`` may be the number of objects
-        of size `n` divided by `c^n`, where `c` is the growth rate of
-        ``cardlist[n]``. This does not affect the validity of the result, as all
-        probabilities concern objects of the same size.
+            In its usage, ``cardlist`` is sometimes renormalized with respect to
+            the exponential growth, i.e., ``cardlist[n]`` may be the number of
+            objects of size `n` divided by `c^n`, where `c` is the growth rate of
+            ``cardlist[n]``. This does not affect the validity of the result, as
+            all probabilities concern objects of the same size.
 
         INPUT:
 
         - ``cardlist``: a list of the cardinality of objects of sizes from
         ``0`` to ``size``
-
         - ``size``: the size of elements to generate
 
         OUTPUT:
@@ -1452,10 +1441,8 @@ class _RandomPath:
 
         - ``n``: the number of up steps in the path. There must be `(k - 1) n`
         down steps in the same path.
-
         - ``k``: the parameter regulating the up steps. For Dyck paths, we have
         `k = 2`.
-
         - ``uset``: the subset of positions of up steps in the non-rotated path.
 
         OUTPUT:
@@ -1499,7 +1486,6 @@ class _RandomPath:
         INPUT:
 
         - ``n``: the size of the lattice path (the length will be `kn`).
-
         - ``k``: the parameter corresponding to the arity of the `k`-ary trees
         that are in bijection with the generated random lattice path.
 
@@ -1672,8 +1658,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-        This is a static version of ``random_element``, but it does not keep the
-        result of precomputation, thus useful for one-shot generation.
+            This is a static version of ``random_element``, but it does not keep
+            the result of precomputation, thus useful for one-shot generation.
 
         EXAMPLES:
 
@@ -1811,8 +1797,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-        This is a static version of ``random_element``, which is advised to be
-        used here as there is no precomputation needed.
+            This is a static version of ``random_element``, which is advised to
+            be used here as there is no precomputation needed.
 
         EXAMPLES:
 
@@ -2022,9 +2008,9 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-        This is a static version of ``random_element``, but it does not keep the
-        result of precomputation, and is suitable and more light-weight for
-        one-shot generation.
+            This is a static version of ``random_element``, but it does not keep
+            the result of precomputation, and is suitable and more light-weight
+            for one-shot generation.
 
         EXAMPLES:
 
