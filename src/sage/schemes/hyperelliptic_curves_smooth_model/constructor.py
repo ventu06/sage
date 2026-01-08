@@ -2,8 +2,12 @@ r"""
 Constructor for hyperelliptic curves using the smooth model
 in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
 
-Adapted from /hyperelliptic/constructor.py
 Adapted from ``sage/schemes/hyperelliptic_curves/constructor.py``
+
+TODO:
+
+- We currently cannot support the construction of curves over rings
+
 AUTHORS:
 
 - David Kohel (2006): initial version
@@ -51,16 +55,9 @@ from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_rational_field
     HyperellipticCurveSmoothModel_rational_field,
 )
 
-"""
-TODO:
-
-- We currently cannot support the construction of curves over rings
-
-"""
-
 
 def HyperellipticCurveSmoothModel(
-    f, h=0, check_squarefree=True, distinguished_point=None
+    f, h=0, check_squarefree: bool = True, distinguished_point=None
 ):
     r"""
     Constructor function for creating a hyperelliptic curve with
