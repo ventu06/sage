@@ -891,11 +891,11 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree`` -- a plane tree with two buds on each node (one for the
-        root).
+          root).
         - ``skip_check`` -- skip checking for bud conditions. Default:
-        ``False``.
+          ``False``.
         - ``random_bud`` -- choose a bud at random, instead of the first.
-        Default: ``False``.
+          Default: ``False``.
 
         OUTPUT:
 
