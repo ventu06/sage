@@ -209,12 +209,9 @@ def HyperellipticCurveSmoothModel(
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():
-            G = Y**2 - F
-        else:
-            H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
-            G = Y**2 + H * Y - F
-
-        return G
+            return Y**2 - F
+        H = sum(h[i] * X**i * Z ** (d - i) for i in range(d + 1))
+        return Y**2 + H * Y - F
 
     # -------------------------------------------
     # Typechecking and projective model creation
