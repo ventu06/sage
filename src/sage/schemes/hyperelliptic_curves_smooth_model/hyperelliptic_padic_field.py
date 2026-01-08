@@ -16,8 +16,11 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
-#                     2007 Robert Bradshaw, Ralf Gerkmann, Miljan Brakovevic, Kiran Kedlaya
+#       Copyright (C) 2007 Robert Bradshaw, Ralf Gerkmann, Miljan Brakovevic, Kiran Kedlaya
+#       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -661,7 +664,7 @@ class HyperellipticCurveSmoothModel_padic_field(
 
         from sage.misc.profiler import Profiler
         from sage.schemes.hyperelliptic_curves_smooth_model import monsky_washnitzer
-        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+        from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
             HyperellipticCurveSmoothModel,
         )
 
@@ -1155,7 +1158,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         - Jennifer Balakrishnan
 
         """
-        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+        from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
             HyperellipticCurveSmoothModel,
         )
 

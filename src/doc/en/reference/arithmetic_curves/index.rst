@@ -134,7 +134,7 @@ Hyperelliptic curves (smooth model)
 .. toctree::
    :maxdepth: 1
 
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_constructor
+   sage/schemes/hyperelliptic_curves_smooth_model/constructor
    sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_generic
    sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_finite_field
    sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_padic_field

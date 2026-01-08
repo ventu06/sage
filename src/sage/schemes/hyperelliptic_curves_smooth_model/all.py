@@ -8,6 +8,6 @@
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
     HyperellipticCurveSmoothModel,
 )

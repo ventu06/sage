@@ -1,6 +1,6 @@
 py.install_sources(
   'all.py',
-  'hyperelliptic_constructor.py',
+  'constructor.py',
   'hyperelliptic_finite_field.py',
   'hyperelliptic_g2.py',
   'hyperelliptic_generic.py',

@@ -8,7 +8,9 @@ AUTHORS:
 
 
 # ****************************************************************************
-#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
+#       Copyright (C) 2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

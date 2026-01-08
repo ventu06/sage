@@ -8,8 +8,10 @@ AUTHORS:
 """
 
 # ****************************************************************************
-#       Copyright (C) 2025 Sabrina Kunzweiler, Gareth Ma, Giacomo Pope
-#                     2006 David Kohel <kohel@maths.usyd.edu>
+#       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -182,7 +184,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             ...
             ValueError: singularity in the provided affine patch
         """
-        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+        from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
             HyperellipticCurveSmoothModel,
         )
 
@@ -1287,7 +1289,7 @@ class HyperellipticCurveSmoothModel_generic(WeightedProjectiveCurve):
             sage: HyperellipticCurveSmoothModel(x^5 + 1, 1).odd_degree_model()
             Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 + 5
         """
-        from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+        from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
             HyperellipticCurveSmoothModel,
         )
 

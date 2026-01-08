@@ -40,6 +40,9 @@ AUTHORS:
 #                     2006 Robert Bradshaw <robertwb@math.washington.edu>
 #                     2006 David Harvey <dmharvey@math.harvard.edu>
 #                     2014 Julian Rueth <julian.rueth@fsfe.org>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #                  https://www.gnu.org/licenses/
@@ -71,7 +74,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.rational_field import RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
     HyperellipticCurveSmoothModel,
 )
 from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_generic import (
@@ -1883,7 +1886,7 @@ def matrix_of_frobenius_hyperelliptic(Q, p=None, prec=None, M=None):
             prec = K.precision_cap()
         except AttributeError:
             raise ValueError(
-                "p and prec must be specified if Q is not " "defined over a p-adic ring"
+                "p and prec must be specified if Q is not defined over a p-adic ring"
             )
     if M is None:
         M = adjusted_prec(p, prec)

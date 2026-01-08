@@ -14,10 +14,11 @@ AUTHORS:
 
 """
 # *****************************************************************************
-#       Copyright (C) 2011, 2012, 2013
-#                  Florian Bouyer <f.j.s.c.bouyer@gmail.com>
-#                  Marco Streng <marco.streng@gmail.com>
-#
+#       Copyright (C) 2011, 2012, 2013 Florian Bouyer <f.j.s.c.bouyer@gmail.com>
+#                                      Marco Streng <marco.streng@gmail.com>
+#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                     2025 Gareth Ma <grhkm21@gmail.com>
+#                     2025 Giacomo Pope <giacomopope@gmail.com>
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
@@ -26,7 +27,7 @@ AUTHORS:
 
 from sage.matrix.constructor import Matrix
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_constructor import (
+from sage.schemes.hyperelliptic_curves_smooth_model.constructor import (
     HyperellipticCurveSmoothModel,
 )
 from sage.schemes.plane_conics.constructor import Conic
@@ -195,8 +196,7 @@ def HyperellipticCurve_from_invariants(
         [F1, F2, F3] = [p(t, 1) for p in parametrization]
     else:
         raise ValueError(
-            f"No such curve exists over {k} as there are no "
-            f"rational points on {MConic}"
+            f"No such curve exists over {k} as there are no rational points on {MConic}"
         )
 
     # setting the cijk from Mestre's algorithm
