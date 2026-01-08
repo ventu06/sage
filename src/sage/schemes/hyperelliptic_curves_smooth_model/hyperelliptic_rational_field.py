@@ -29,7 +29,7 @@ class HyperellipticCurveSmoothModel_rational_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
     def __init__(self, projective_model, f, h, genus):
-        """
+        r"""
         Create a hyperelliptic curve over the rationals.
 
         TESTS::
@@ -42,7 +42,7 @@ class HyperellipticCurveSmoothModel_rational_field(
         super().__init__(projective_model, f, h, genus)
 
     def matrix_of_frobenius(self, p, prec=20):
-        """
+        r"""
         Compute the matrix of Frobenius on Monsky-Washnitzer cohomology using
         the `p`-adic field with precision ``prec``.
 
@@ -90,7 +90,7 @@ class HyperellipticCurveSmoothModel_rational_field(
         return frob_p
 
     def lseries(self, prec=53):
-        """
+        r"""
         Return the L-series of this hyperelliptic curve of genus 2.
 
         EXAMPLES::

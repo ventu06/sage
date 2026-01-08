@@ -64,7 +64,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     """
 
     def dimension(self):
-        """
+        r"""
         Return the dimension of this Jacobian.
 
         EXAMPLES::
@@ -106,7 +106,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             raise ValueError("Arguments must determine a valid Mumford divisor.")
 
     def _point_homset(self, *args, **kwds):
-        """
+        r"""
         Create the Hom-Set of the Jacobian according to the type of `self`.
         """
         # TODO: make a constructor for this??
@@ -129,7 +129,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     @cached_method
     def order(self):
-        """
+        r"""
         Compute the order of the Jacobian.
 
         .. SEEALSO::
@@ -139,7 +139,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().order()
 
     def count_points(self, *args, **kwds):
-        """
+        r"""
         .. SEEALSO::
 
             :meth:`sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic.count_points`.
@@ -147,7 +147,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().count_points(*args, **kwds)
 
     def lift_u(self, *args, **kwds):
-        """
+        r"""
         Return one or all points with given `u`-coordinate.
 
         .. SEEALSO::
@@ -157,7 +157,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().lift_u(*args, **kwds)
 
     def random_element(self, *args, **kwds):
-        """
+        r"""
         Return a random element of the Jacobian.
 
         .. SEEALSO::
@@ -167,7 +167,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().random_element(*args, **kwds)
 
     def points(self, *args, **kwds):
-        """
+        r"""
         Return all points on the Jacobian.
 
         .. SEEALSO::
@@ -178,7 +178,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().points(*args, **kwds)
 
     def list(self):
-        """
+        r"""
         Return all rational elements of the Jacobian.
 
         .. SEEALSO::
@@ -189,9 +189,10 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         return self.point_homset().points()
 
     def __iter__(self):
-        """
+        r"""
         Return an iterator over the elements of the Jacobian.
         """
-        yield from self.list()
+        for point in self.point_homset().points():
+            yield point
 
     rational_points = points

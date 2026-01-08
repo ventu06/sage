@@ -22,6 +22,3 @@ py.install_sources(
   subdir: 'sage/schemes/hyperelliptic_curves_smooth_model',
 )
 
-extension_data_cpp = {}
-
-

@@ -30,13 +30,13 @@ from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_generic import (
 
 
 class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
-    """
+    r"""
     Special class to handle optimisations for jacobian computations
     in genus two
     """
 
     def _point_homset(self, *args, **kwds):
-        """
+        r"""
         Create the point Hom-set of the Jacobian of a genus-2 curve.
 
         TODO: make a constructor for this??

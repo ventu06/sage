@@ -73,7 +73,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         self._v = v
 
     def parent(self):
-        """
+        r"""
         Return the parent of the divisor class.
 
         EXAMPLES::
@@ -119,7 +119,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return self.codomain()
 
     def _repr_(self) -> str:
-        """
+        r"""
         Return the Mumford presentation of the divisor class.
 
         EXAMPLES::
@@ -135,7 +135,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return f"({self._u}, {self._v})"
 
     def is_zero(self):
-        """
+        r"""
         Return ``True`` if this point is zero.
 
         EXAMPLES::
@@ -153,7 +153,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return self._u.is_one() and self._v.is_zero()
 
     def uv(self):
-        """
+        r"""
         Return the `u` and `v` component of this Mumford divisor.
 
         EXAMPLES::
@@ -171,7 +171,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return (self._u, self._v)
 
     def _richcmp_(self, other, op) -> bool:
-        """
+        r"""
         Method for rich comparison.
 
         TESTS::
@@ -198,7 +198,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return richcmp(tuple(self), tuple(other), op)
 
     def __iter__(self):
-        """
+        r"""
         TESTS:
 
         Indirect tests::
@@ -215,7 +215,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         yield from [self._u, self._v]
 
     def __getitem__(self, n):
-        """
+        r"""
         Return the n-th item in the Mumford presentation of the divisor.
 
         TESTS::
@@ -232,7 +232,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return (self._u, self._v)[n]
 
     def __hash__(self):
-        """
+        r"""
         Compute the hash value of this element.
 
         TESTS::
@@ -247,7 +247,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return hash(tuple(self))
 
     def __bool__(self):
-        """
+        r"""
         Return "True" if this is not the zero element of the Jacobian.
 
         EXAMPLES::
@@ -264,7 +264,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
     @cached_method
     def order(self):
-        """
+        r"""
         Returns the order of self.
         This is only implemented over finite fields.
 
@@ -286,7 +286,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return order_from_multiple(self, n)
 
     def degree(self):
-        """
+        r"""
         Returns the degree of the affine part of the divisor.
 
         EXAMPLES::
@@ -304,7 +304,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return self._u.degree()
 
     def _add_(self, other):
-        """
+        r"""
         Add `other` to the divisor `self`.
 
         TESTS::
@@ -346,7 +346,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         return self._parent(u3, v3, check=False)
 
     def _neg_(self):
-        """
+        r"""
         Multiply the divisor by `[-1]`.
 
         EXAMPLES::
@@ -380,7 +380,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
 class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
     def __init__(self, parent, u, v, check=True):
-        """
+        r"""
         Create an element of the Jacobian of a ramified
         hyperelliptic curve.
 
@@ -403,7 +403,7 @@ class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
 
 class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
     def __init__(self, parent, u, v, check=True):
-        """
+        r"""
         Create an element of the Jacobian of a ramified
         hyperelliptic curve.
 
@@ -447,7 +447,7 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 
 class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
     def __init__(self, parent, u, v, n=0, check=True):
-        """
+        r"""
         Create an element of the Jacobian of a split
         hyperelliptic curve.
 
@@ -474,7 +474,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         super().__init__(parent, u, v, check=check)
 
     def __repr__(self):
-        """
+        r"""
         Return a representation of the element.
 
         TESTS::
@@ -488,7 +488,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         return f"({self._u}, {self._v} : {self._n})"
 
     def is_zero(self):
-        """
+        r"""
         Return ``True`` if this element is zero.
 
         EXAMPLES:
@@ -520,7 +520,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         return self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2
 
     def __iter__(self):
-        """
+        r"""
         TESTS:
 
         Indirect tests::
@@ -544,7 +544,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         yield from [self._u, self._v, self._n]
 
     def __hash__(self):
-        """
+        r"""
         Compute the hash value of this element.
 
         TESTS::

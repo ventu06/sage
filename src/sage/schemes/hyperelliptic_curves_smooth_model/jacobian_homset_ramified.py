@@ -28,7 +28,7 @@ from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
 
 class HyperellipticJacobianHomsetRamified(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        """
+        r"""
         Create the Jacobian Hom-set of a hyperelliptic curve with
         precisely one rational points at infinity.
 

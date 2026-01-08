@@ -165,21 +165,21 @@ def HyperellipticCurveSmoothModel(
     # Internal Helper functions
     # ---------------------------
 
-    def __genus(f, h):
-        """
+    def genus(f, h) -> Integer:
+        r"""
         Helper function to compute the genus of a hyperelliptic curve
         defined by `y^2 + h(x)y = f(x)`.
         """
         # Some classes still have issues with degrees returning `int`
-        # rather than Sage Integer types
-        df = Integer(f.degree())
-        dh_2 = 2 * Integer(h.degree())
+        # rather than Sage Integer types, so convert the output.
+        df = f.degree()
+        dh_2 = 2 * h.degree()
         if dh_2 < df:
-            return (df - 1) // 2
-        return (dh_2 - 1) // 2
+            return Integer((df - 1) // 2)
+        return Integer((dh_2 - 1) // 2)
 
     def __check_no_affine_singularities(f, h):
-        """
+        r"""
         Helper function which determines whether there are any
         affine singularities in the curve `y^2 + h(x)y = f(x)`.
         """
@@ -198,7 +198,7 @@ def HyperellipticCurveSmoothModel(
         return g1.gcd(g2).is_one()
 
     def __defining_polynomial(f, h):
-        """
+        r"""
         Compute the (homogenised weighted projective) defining polynomial of
         the hyperelliptic curve.
         """
@@ -236,7 +236,7 @@ def HyperellipticCurveSmoothModel(
         raise ValueError("singularity in the provided affine patch")
 
     # Compute the genus of the curve from f, h
-    genus = __genus(f, h)
+    genus = genus(f, h)
     if genus == 0:
         raise ValueError(
             f"arguments f = {f} and h = {h} must define a curve of genus at least one."

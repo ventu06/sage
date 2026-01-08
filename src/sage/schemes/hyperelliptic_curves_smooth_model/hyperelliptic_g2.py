@@ -49,7 +49,7 @@ class HyperellipticCurveSmoothModel_g2(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
     def is_odd_degree(self):
-        """
+        r"""
         Return ``True`` if the curve is an odd degree model.
 
         EXAMPLES::

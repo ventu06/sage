@@ -28,7 +28,7 @@ from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
 
 class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        """
+        r"""
         Create the Jacobian Hom-set of a hyperelliptic curve without
         rational points at infinity.
 
@@ -45,7 +45,7 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
         self._morphism_element = MumfordDivisorClassFieldInert
 
     def zero(self, check=True):
-        """
+        r"""
         Return the zero element of the Jacobian.
 
         The Mumford presentation of the zero element is given by

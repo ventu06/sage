@@ -34,7 +34,7 @@ from sage.structure.element import parent
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
     def __init__(self, Y, X, **kwds):
-        """
+        r"""
         Create the Jacobian Hom-set of a hyperelliptic curve with
         two rational points at infinity.
 
@@ -51,7 +51,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         self._morphism_element = MumfordDivisorClassFieldSplit
 
     def zero(self, check=True):
-        """
+        r"""
         Return the zero element of the Jacobian
 
         EXAMPLES ::

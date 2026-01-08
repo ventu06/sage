@@ -76,7 +76,7 @@ class HyperellipticCurveSmoothModel_padic_field(
     """
 
     def __init__(self, projective_model, f, h, genus):
-        """
+        r"""
         Create a hyperelliptic curve over a p-adic field.
 
         TESTS::
@@ -89,7 +89,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         super().__init__(projective_model, f, h, genus)
 
     def local_analytic_interpolation(self, P, Q):
-        """
+        r"""
         For points ``P``, ``Q`` in the same residue disc,
         construct an interpolation from ``P`` to ``Q``
         (in weighted homogeneous coordinates) in a power series in
@@ -202,7 +202,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             return (x, y, 1)
 
     def is_in_weierstrass_disc(self, P):
-        """
+        r"""
         Checks if `P` is in a Weierstrass disc.
 
         EXAMPLES:
@@ -312,7 +312,7 @@ class HyperellipticCurveSmoothModel_padic_field(
                 return P
 
     def residue_disc(self, P):
-        """
+        r"""
         Gives the residue disc of `P`
 
         TODO: Really, this gives the reduction over the residue field. Isn't the residue disc a disc over the p-adics?
@@ -402,7 +402,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             )
 
     def is_same_disc(self, P, Q):
-        """
+        r"""
         Checks if `P,Q` are in same residue disc
 
         EXAMPLES::
@@ -992,7 +992,7 @@ class HyperellipticCurveSmoothModel_padic_field(
             )  # this is just a dot product...
 
     def frobenius(self, P=None):
-        """
+        r"""
         Returns the `p`-th power lift of Frobenius of `P`
 
         EXAMPLES::
@@ -1175,7 +1175,7 @@ class HyperellipticCurveSmoothModel_padic_field(
         return HJ
 
     def get_boundary_point(self, curve_over_extn, P):
-        """
+        r"""
         Given self over an extension field, find a point in the disc of `P` near the boundary
 
         INPUT:

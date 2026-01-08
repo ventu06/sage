@@ -63,7 +63,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         self._morphism_element = None
 
     def _repr_(self) -> str:
-        """
+        r"""
         Return the string representation of the Jacobian Hom-set.
 
         EXAMPLES::
@@ -77,13 +77,13 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return f"Abelian group of points on {self.codomain()}"
 
     def _morphism(self, *args, **kwds):
-        """
+        r"""
         TODO
         """
         return self._morphism_element(*args, **kwds)
 
     def curve(self):
-        """
+        r"""
         On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
         return the curve `H`.
 
@@ -103,7 +103,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self.codomain().curve()
 
     def extended_curve(self):
-        """
+        r"""
         On input the set of `L`-rational points of a Jacobian `Jac(H)` defined over `K`,
         return the curve `H` with base extended to `L`.
 
@@ -130,7 +130,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     @cached_method
     def order(self):
-        """
+        r"""
         Compute the order of the Jacobian.
 
         EXAMPLES:
@@ -207,7 +207,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         )
 
     def count_points(self, n=1):
-        """
+        r"""
         Count the number of points of the Jacobian over all finite extensions
         of the base fields of degree less than or equal to n.
 
@@ -240,7 +240,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return [self.cardinality(extension_degree=i) for i in range(1, n + 1)]
 
     def point_to_mumford_coordinates(self, P):
-        """
+        r"""
         On input a point P, return the Mumford coordinates
         of (the affine part of) the divisor [P].
 
@@ -429,7 +429,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._morphism_element(self, u, v, check=check)
 
     def zero(self, check=True):
-        """
+        r"""
         Return the zero element of this jacobian homset.
 
         EXAMPLES::
@@ -445,7 +445,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._morphism_element(self, R.one(), R.zero(), check=check)
 
     def __cantor_double_generic(self, u1, v1):
-        """
+        r"""
         Efficient cantor composition for doubling an affine divisor
 
         Returns the Cantor composition of (u1, v1) with (u1, v1)
@@ -469,7 +469,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u3, v3, s.degree()
 
     def _cantor_composition_generic(self, u1, v1, u2, v2):
-        """
+        r"""
         Helper function for the Cantor composition algorithm.
 
         OUTPUT:
@@ -537,7 +537,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u3, v3, s.degree()
 
     def _cantor_reduction_generic(self, u0, v0):
-        """
+        r"""
         Helper function for the Cantor composition algorithm.
 
         OUTPUT:
@@ -571,7 +571,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u1, v1
 
     def cantor_composition(self, u1, v1, u2, v2):
-        """
+        r"""
         Return the Cantor composition of ``(u1, v1)`` and ``(u2, v2)``.
 
         EXAMPLES::
@@ -588,7 +588,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return u3, v3
 
     def cantor_reduction(self, u0, v0):
-        """
+        r"""
         Apply one reduction step of Cantor's algorithm to  ``(u0, v0)``.
 
         Note that, in general, several steps are necessary the
@@ -618,7 +618,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._cantor_reduction_generic(u0, v0)
 
     def lift_u(self, u, all=False):
-        """
+        r"""
         Return one or all points with given `u`-coordinate.
 
         This method is deterministic: it returns the same data each time when
@@ -863,7 +863,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return self._random_element_cover(*args, **kwargs)
 
     def points(self):
-        """
+        r"""
         Return all points on this Jacobian `J(K)`.
 
         .. WARNING::

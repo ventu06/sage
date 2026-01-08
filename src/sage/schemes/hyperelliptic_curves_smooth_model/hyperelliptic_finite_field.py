@@ -38,7 +38,7 @@ from sage.schemes.hyperelliptic_curves_smooth_model import hyperelliptic_generic
 class HyperellipticCurveSmoothModel_finite_field(
     hyperelliptic_generic.HyperellipticCurveSmoothModel_generic
 ):
-    """
+    r"""
     Class of hyperelliptic curves (smooth model) over a finite field.
 
     EXAMPLES::
@@ -81,7 +81,7 @@ class HyperellipticCurveSmoothModel_finite_field(
     """
 
     def __init__(self, projective_model, f, h, genus):
-        """
+        r"""
         Create a hyperelliptic curve over a finite field.
 
         TESTS::
@@ -94,7 +94,7 @@ class HyperellipticCurveSmoothModel_finite_field(
         super().__init__(projective_model, f, h, genus)
 
     def random_point(self):
-        """
+        r"""
         Return a random point on this hyperelliptic curve, uniformly chosen
         among all rational points.
 
@@ -123,7 +123,7 @@ class HyperellipticCurveSmoothModel_finite_field(
                 pass
 
     def rational_points_iterator(self):
-        """
+        r"""
         Return all the points on this hyperelliptic curve as an iterator.
 
         EXAMPLES::
@@ -145,7 +145,7 @@ class HyperellipticCurveSmoothModel_finite_field(
 
     @cached_method
     def points(self):
-        """
+        r"""
         Return all the points on this hyperelliptic curve.
 
         EXAMPLES::
