@@ -3,7 +3,7 @@ Constructor for hyperelliptic curves using the smooth model
 in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
 
 Adapted from /hyperelliptic/constructor.py
-
+Adapted from ``sage/schemes/hyperelliptic_curves/constructor.py``
 AUTHORS:
 
 - David Kohel (2006): initial version
