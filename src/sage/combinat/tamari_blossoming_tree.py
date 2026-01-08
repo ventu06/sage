@@ -294,7 +294,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         '''
         return self._tree._ascii_art_()
 
-  def _unicode_art_(self):
+    def _unicode_art_(self):
         r'''
         Return the unicode art of the blossoming tree, using that of OrderedTree.
         '''
