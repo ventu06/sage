@@ -37,90 +37,118 @@ Utilities
 - :ref:`sage.combinat.combinatorial_map`
 - :ref:`sage.combinat.misc`
 """
+from sage.combinat.species.all import *
+from sage.combinat.integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup
+from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+from sage.combinat.integer_vector import IntegerVectors
+from sage.combinat import ranker
+from sage.combinat.cluster_algebra_quiver.all import *
+from sage.combinat.posets.all import *
+from sage.combinat.matrices.all import *
+from sage.combinat.ncsym.all import *
+from sage.combinat.ncsf_qsym.all import *
+from sage.combinat.sf.all import *
+from sage.combinat.root_system.all import *
+from sage.combinat.sloane_functions import sloane
+from sage.combinat.necklace import Necklaces
+from sage.combinat.subset import Subsets, subsets, powerset, uniq
+from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
+from sage.combinat.set_partition import SetPartition, SetPartitions
+from sage.combinat.combination import Combinations
+from sage.combinat.binary_tree import (BinaryTree, BinaryTrees,
+                                       LabelledBinaryTree, LabelledBinaryTrees)
+from sage.combinat.ordered_tree import (OrderedTree, OrderedTrees,
+                                        LabelledOrderedTree, LabelledOrderedTrees)
+from sage.combinat.tuple import Tuples, UnorderedTuples
+from sage.combinat.graph_path import GraphPaths
+from sage.combinat.words.all import *
+from sage.combinat.k_tableau import WeakTableau, WeakTableaux, StrongTableau, StrongTableaux
+from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
+from sage.combinat.ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
+from sage.combinat.ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
+from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux, SemistandardSkewTableaux
+from sage.combinat.core import Core, Cores
+from sage.combinat.similarity_class_type import PrimarySimilarityClassType, PrimarySimilarityClassTypes, SimilarityClassType, SimilarityClassTypes
+from sage.combinat.diagram_algebras import PartitionAlgebra, BrauerAlgebra, TemperleyLiebAlgebra, PlanarAlgebra, PropagatingIdeal
+from sage.combinat.partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
+from sage.combinat.partition import (Partition, Partitions, PartitionsInBox,
+                                     OrderedPartitions, PartitionsGreatestLE,
+                                     PartitionsGreatestEQ, number_of_partitions)
+from sage.combinat.composition_signed import SignedCompositions
+from sage.combinat.composition import Composition, Compositions
+from sage.combinat.integer_lists import IntegerListsLex
+from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
+from sage.combinat.rsk import RSK, RSK_inverse, robinson_schensted_knuth, robinson_schensted_knuth_inverse, InsertionRules
+from sage.combinat.derangements import Derangements
+from sage.combinat.affine_permutation import AffinePermutationGroup
+from sage.combinat.permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
+from sage.combinat.yang_baxter_graph import YangBaxterGraph
+from sage.combinat.symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
+from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
+from sage.combinat.schubert_polynomial import SchubertPolynomialRing
+from sage.combinat.debruijn_sequence import DeBruijnSequences
+from sage.combinat.free_module import CombinatorialFreeModule
+from sage.combinat.designs.all import *
+from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
+from sage.combinat.rigged_configurations.all import *
+from sage.combinat.crystals.all import *
+from sage.combinat.chas.all import *
+from sage.combinat.expnums import expnums
+from sage.combinat.combinat import (CombinatorialObject,
+                                    bell_number, bell_polynomial, bernoulli_polynomial,
+                                    catalan_number, euler_number,
+                                    fibonacci, fibonacci_sequence, fibonacci_xrange,
+                                    lucas_number1, lucas_number2,
+                                    number_of_tuples, number_of_unordered_tuples,
+                                    polygonal_number, stirling_number1, stirling_number2,
+                                    tuples, unordered_tuples)
+from sage.misc.lazy_import import lazy_import
+from sage.combinat import quickref, tutorial
 from sage.misc.namespace_package import install_doc, install_dict
 # install the docstring of this module to the containing package
 install_doc(__package__, __doc__)
 
 # install modules quickref and tutorial to the containing package
-from sage.combinat import quickref, tutorial
 install_dict(__package__, {'quickref': quickref, 'tutorial': tutorial})
 del quickref, tutorial
 
-from sage.misc.lazy_import import lazy_import
-
-from sage.combinat.combinat import (CombinatorialObject,
-                       bell_number, bell_polynomial, bernoulli_polynomial,
-                       catalan_number, euler_number,
-                       fibonacci, fibonacci_sequence, fibonacci_xrange,
-                       lucas_number1, lucas_number2,
-                       number_of_tuples, number_of_unordered_tuples,
-                       polygonal_number, stirling_number1, stirling_number2,
-                       tuples, unordered_tuples)
-
-from sage.combinat.expnums import expnums
-
-from sage.combinat.chas.all import *
-from sage.combinat.crystals.all import *
-from sage.combinat.rigged_configurations.all import *
-
-from sage.combinat.dlx import DLXMatrix, AllExactCovers, OneExactCover
 
 # block designs, etc.
-from sage.combinat.designs.all import *
 
 # Free modules and friends
-from sage.combinat.free_module import CombinatorialFreeModule
-from sage.combinat.debruijn_sequence import DeBruijnSequences
 
-from sage.combinat.schubert_polynomial import SchubertPolynomialRing
 lazy_import('sage.combinat.key_polynomial', 'KeyPolynomialBasis', as_='KeyPolynomials')
 lazy_import('sage.combinat.key_polynomial', 'AtomPolynomialBasis', as_='AtomPolynomials')
-from sage.combinat.symmetric_group_algebra import SymmetricGroupAlgebra, HeckeAlgebraSymmetricGroupT
-from sage.combinat.symmetric_group_representations import SymmetricGroupRepresentation, SymmetricGroupRepresentations
-from sage.combinat.yang_baxter_graph import YangBaxterGraph
 
 # Permutations
-from sage.combinat.permutation import Permutation, Permutations, Arrangements, CyclicPermutations, CyclicPermutationsOfPartition
-from sage.combinat.affine_permutation import AffinePermutationGroup
 lazy_import('sage.combinat.colored_permutations', ['ColoredPermutations',
                                                    'SignedPermutation',
                                                    'SignedPermutations'])
-from sage.combinat.derangements import Derangements
 lazy_import('sage.combinat.baxter_permutations', ['BaxterPermutations'])
 
 # RSK
-from sage.combinat.rsk import RSK, RSK_inverse, robinson_schensted_knuth, robinson_schensted_knuth_inverse, InsertionRules
 
 # HillmanGrassl
 lazy_import("sage.combinat.hillman_grassl", ["WeakReversePlanePartition", "WeakReversePlanePartitions"])
 
 # PerfectMatchings
-from sage.combinat.perfect_matching import PerfectMatching, PerfectMatchings
 
 # Integer lists
-from sage.combinat.integer_lists import IntegerListsLex
 
 # Compositions
-from sage.combinat.composition import Composition, Compositions
-from sage.combinat.composition_signed import SignedCompositions
 
 # Partitions
-from sage.combinat.partition import (Partition, Partitions, PartitionsInBox,
-                        OrderedPartitions, PartitionsGreatestLE,
-                        PartitionsGreatestEQ, number_of_partitions)
 
 lazy_import('sage.combinat.partition_tuple', ['PartitionTuple', 'PartitionTuples'])
 lazy_import('sage.combinat.partition_kleshchev', ['KleshchevPartitions'])
 lazy_import('sage.combinat.skew_partition', ['SkewPartition', 'SkewPartitions'])
 
 # Partition algebra
-from sage.combinat.partition_algebra import SetPartitionsAk, SetPartitionsPk, SetPartitionsTk, SetPartitionsIk, SetPartitionsBk, SetPartitionsSk, SetPartitionsRk, SetPartitionsPRk
 
 # Raising operators
 lazy_import('sage.combinat.partition_shifting_algebras', 'ShiftingOperatorAlgebra')
 
 # Diagram algebra
-from sage.combinat.diagram_algebras import PartitionAlgebra, BrauerAlgebra, TemperleyLiebAlgebra, PlanarAlgebra, PropagatingIdeal
 
 # Descent algebra
 lazy_import('sage.combinat.descent_algebra', 'DescentAlgebra')
@@ -130,24 +158,17 @@ lazy_import('sage.combinat.vector_partition',
             ['VectorPartition', 'VectorPartitions'])
 
 # Similarity class types
-from sage.combinat.similarity_class_type import PrimarySimilarityClassType, PrimarySimilarityClassTypes, SimilarityClassType, SimilarityClassTypes
 
 # Cores
-from sage.combinat.core import Core, Cores
 
 # Tableaux
 lazy_import('sage.combinat.tableau',
             ["Tableau", "SemistandardTableau", "StandardTableau", "RowStandardTableau", "IncreasingTableau",
              "Tableaux", "SemistandardTableaux", "StandardTableaux", "RowStandardTableaux", "IncreasingTableaux"])
-from sage.combinat.skew_tableau import SkewTableau, SkewTableaux, StandardSkewTableaux, SemistandardSkewTableaux
-from sage.combinat.ribbon_shaped_tableau import RibbonShapedTableau, RibbonShapedTableaux, StandardRibbonShapedTableaux
-from sage.combinat.ribbon_tableau import RibbonTableaux, RibbonTableau, MultiSkewTableaux, MultiSkewTableau, SemistandardMultiSkewTableaux
-from sage.combinat.composition_tableau import CompositionTableau, CompositionTableaux
 
 lazy_import('sage.combinat.tableau_tuple',
             ['TableauTuple', 'StandardTableauTuple', 'RowStandardTableauTuple',
              'TableauTuples', 'StandardTableauTuples', 'RowStandardTableauTuples'])
-from sage.combinat.k_tableau import WeakTableau, WeakTableaux, StrongTableau, StrongTableaux
 lazy_import('sage.combinat.lr_tableau', ['LittlewoodRichardsonTableau',
                                          'LittlewoodRichardsonTableaux'])
 lazy_import('sage.combinat.shifted_primed_tableau', ['ShiftedPrimedTableaux',
@@ -158,14 +179,11 @@ lazy_import('sage.combinat.super_tableau',
             ["StandardSuperTableau", "SemistandardSuperTableau", "StandardSuperTableaux", "SemistandardSuperTableaux"])
 
 # Words
-from sage.combinat.words.all import *
 
 lazy_import('sage.combinat.subword', 'Subwords')
 
-from sage.combinat.graph_path import GraphPaths
 
 # Tuples
-from sage.combinat.tuple import Tuples, UnorderedTuples
 
 # Alternating sign matrices
 lazy_import('sage.combinat.alternating_sign_matrix', ('AlternatingSignMatrix',
@@ -189,53 +207,30 @@ lazy_import('sage.combinat.parking_functions',
             ['ParkingFunctions', 'ParkingFunction'])
 
 # Trees and Tamari interval posets
-from sage.combinat.ordered_tree import (OrderedTree, OrderedTrees,
-                          LabelledOrderedTree, LabelledOrderedTrees)
-from sage.combinat.binary_tree import (BinaryTree, BinaryTrees,
-                         LabelledBinaryTree, LabelledBinaryTrees)
 lazy_import('sage.combinat.interval_posets', ['TamariIntervalPoset', 'TamariIntervalPosets'])
 lazy_import('sage.combinat.rooted_tree', ('RootedTree', 'RootedTrees',
-                         'LabelledRootedTree', 'LabelledRootedTrees'))
+                                          'LabelledRootedTree', 'LabelledRootedTrees'))
 
-from sage.combinat.combination import Combinations
 
-from sage.combinat.set_partition import SetPartition, SetPartitions
-from sage.combinat.set_partition_ordered import OrderedSetPartition, OrderedSetPartitions
 lazy_import('sage.combinat.multiset_partition_into_sets_ordered',
             ['OrderedMultisetPartitionIntoSets',
              'OrderedMultisetPartitionsIntoSets'])
-from sage.combinat.subset import Subsets, subsets, powerset, uniq
-from sage.combinat.necklace import Necklaces
 lazy_import('sage.combinat.dyck_word', ('DyckWords', 'DyckWord'))
 lazy_import('sage.combinat.nu_dyck_word', ('NuDyckWords', 'NuDyckWord'))
-from sage.combinat.sloane_functions import sloane
 lazy_import('sage.combinat.superpartition', ('SuperPartition',
                                              'SuperPartitions'))
 
 lazy_import('sage.combinat.parallelogram_polyomino',
             ['ParallelogramPolyomino', 'ParallelogramPolyominoes'])
 
-from sage.combinat.root_system.all import *
-from sage.combinat.sf.all import *
-from sage.combinat.ncsf_qsym.all import *
-from sage.combinat.ncsym.all import *
 lazy_import('sage.combinat.fqsym', 'FreeQuasisymmetricFunctions')
-from sage.combinat.matrices.all import *
 # Posets
-from sage.combinat.posets.all import *
 
 # Cluster Algebras and Quivers
-from sage.combinat.cluster_algebra_quiver.all import *
 
-from sage.combinat import ranker
-
-from sage.combinat.integer_vector import IntegerVectors
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-from sage.combinat.integer_vectors_mod_permgroup import IntegerVectorsModPermutationGroup
 
 lazy_import('sage.combinat.q_analogues', ['gaussian_binomial', 'q_binomial', 'number_of_irreducible_polynomials'])
 
-from sage.combinat.species.all import *
 
 lazy_import('sage.combinat.kazhdan_lusztig', 'KazhdanLusztigPolynomial')
 
@@ -291,4 +286,6 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
 
 # TamariBlossomingTree
-lazy_import('sage.combinat.tamari_blossoming_tree', 'TamariBlossomingTree')
+lazy_import('sage.combinat.tamari_blossoming_tree',
+            ['TamariBlossomingTree', 'TamariBlossomingTreeFactory',
+             'SynchronizedBlossomingTreeFactory', 'ModernBlossomingTreeFactory'])

@@ -44,6 +44,7 @@ from sage.misc.prandom import uniform, randrange
 from sage.rings.integer import Integer
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
+from sage.misc.latex import latex
 
 
 class TamariBlossomingTree(SageObject, UniqueRepresentation):
@@ -51,26 +52,34 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     The class of bicolored blossoming trees, which are in bijection with
     intervals in the Tamari lattice.
 
-    A bicolored blossoming tree is a plane unrooted tree satisfying:
+    A (bicolored) blossoming tree is a plane unrooted tree satisfying:
 
     - Each edge consists of two half-edges, one colored red and the other blue.
 
     - Each node has two extra unpaired uncolored half-edges called **buds**,
     which separate cyclically its other adjacent half-edges into two
     monochromatic parts. In other words, for each node, when reading color of
-    adjacent half-edges in the cyclic order, colors change exactly twice, and the
-    buds are placed at such position of changes.
+    adjacent half-edges in the cyclic order, colors change exactly twice, and
+    the buds are placed at such position of changes.
 
     The size of a bicolored blossoming tree is the number of edges (not
     counting buds). They are in bijection with intervals in the Tamari lattice
     formed by binary trees of the same size (the number of internal nodes).
 
-    For usage, it is the best to use conversion functions provided by this class,
-    instead of its constructor, which has less flexibility.
+    As a convention, although a blossoming tree is unrooted, we represent it by
+    a rooted plane tree with the root as the node with the dangling bud with red
+    half-edges next to it in the counter-clockwise order. As a consequence, all
+    internal nodes of the rooted plane tree have two buds, except for the root
+    which only has one, separating blue half-edges on the left and red ones on
+    the right.
+
+    For usage, it is the best to use conversion functions provided by this
+    class, instead of its constructor, which has less flexibility.
 
     EXAMPLES:
 
-        sage: TB = TamariBlossomingTree.from_plane_tree([[], [[[], []], [], []]])
+        sage: T = [[], [[[], []], [], []]]
+        sage: TB = TamariBlossomingTree.from_plane_tree(T)
         sage: TB
         Tamari blossoming tree [[], [[], []], [[], []]] of size 2
         sage: B1, B2 = TB.to_tamari()
@@ -164,7 +173,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
                 stack.append(halfedge)
             else:  # leg
                 matching.append((stack.pop(), halfedge))
-        if len(stack) != 2:
+        if len(stack) != 2:  # should never happen as budcount already checked
             raise ValueError('Error during matching: incorrect matching')
 
         # get it in a dictionary
@@ -186,7 +195,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             curnode, curord = matchdict[curedge, curord]
             morder.append(curnode)
 
-        # A last check
+        # A last check, but should never happen
         if len(morder) != self._size * 2 + 1:
             raise ValueError('Error during matching: no Hamiltonian path')
 
@@ -202,7 +211,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         Initialize a Tamari blossoming tree with a plane tree. We consider the
         root as a bud, so every internal node has two leaves, except the root
         which has only one. We also check that the root is really a dangling
-        node, and raise an error otherwise.
+        node (i.e., adjacent to a dangling bud), and raise an error otherwise.
 
         INPUT:
 
@@ -295,7 +304,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         This delegates the comparison to LabelledOrderedTree.
         '''
-        if type(self) != type(other):
+        if not isinstance(other, TamariBlossomingTree):
             return False
         return self._tree == other._tree
 
@@ -344,7 +353,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         EXAMPLES::
 
             sage: B0 = BinaryTree()
-            sage: TamariBlossomingTree(OrderedTree([[]])).to_tamari() == (B0, B0)
+            sage: T0 = OrderedTree([[]])
+            sage: TamariBlossomingTree(T0).to_tamari() == (B0, B0)
             True
             sage: T = OrderedTree([[], [[], [], [[], []]]])
             sage: TamariBlossomingTree(T).to_tamari()
@@ -418,7 +428,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             sage: TamariBlossomingTree.from_tamari(B4, B3)
             Traceback (most recent call last):
             ...
-            ValueError: Not a Tamari interval            
+            ValueError: Not a Tamari interval
         '''
         def traversal(node, parent, cycord):
             # internal function, which go through the tree given by cycord
@@ -516,7 +526,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def binary_tree_plot(btree) -> Graphics:
         r'''
         Utility function for plotting binary trees in the "Chapoton" way, i.e.,
-        leaves are drawn on a horizontal line, 
+        leaves are drawn on a horizontal line.
 
         INPUT:
 
@@ -706,13 +716,17 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def _latex_(self) -> str:
         r'''
-        Returns the tikz code for the meandric drawing of the current blossoming
+        Returns latex code for the meandric drawing of the current blossoming
         tree.
 
-        TODO: implement it, refactor previous function to include production of
-        tikz code.
+        EXAMPLES:
+
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: T = TamariBlossomingTree(T)
+            sage: type(latex(T))
+            <class 'sage.misc.latex.LatexExpr'>
         '''
-        pass
+        return latex(self.plot_meandric())
 
     @staticmethod
     def __find_dangling_bud(tree: LabelledOrderedTree) -> list[int]:
@@ -728,8 +742,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
             sage: T1 = OrderedTree([[], [[], [], [[], []]]])
             sage: T1 = TamariBlossomingTree(T1)
-            sage: T2 = OrderedTree([[], [[], [], [[], []]]])
-            sage: T2 = TamariBlossomingTree(T2)
+            sage: T2 = OrderedTree([[[], [], [[], []]], []])
+            sage: T2 = TamariBlossomingTree.from_plane_tree(T2)
             sage: T1 == T2
             True
         '''
@@ -1296,16 +1310,15 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 class _RandomPath:
     r'''
     This class contains static functions related to the generation of random
-    positive lattice paths with steps (1, k - 1) and (1, -1) of length kn + 1,
-    which can be negative only at the end of the last step, with n and k given
-    in parameters.
+    positive lattice paths with steps `(1, k - 1)` and `(1, -1)` of length
+    `kn`, with `n` and `k` given in parameters.
     '''
 
     @staticmethod
     def gen_comb(n: int, k: int) -> list[int]:
         r'''
-        Generate a random combination of n elements among kn + 1 elements using
-        a random approach, which is faster than the unranking approach.
+        Generate a random combination of `n` elements among `kn + 1` elements
+        using a random approach, which is faster than the unranking approach.
 
         INPUT:
 
@@ -1422,13 +1435,14 @@ class _RandomPath:
     def _comb_to_path(n: int, k: int, uset: list[int]) -> list[int]:
         '''
         Utility function to convert a subset ``uset`` of integers from ``1`` to
-        `nk + 1` of size `k` into a lattice path with up steps `(1, k - 1)`
-        and `(1, -1)`, while staying always weakly above the x-axis and
-        returning to the x-axis at the end. They are counted by the
-        Fuss--Catalan numbers, and they are generated using the cyclic lemma.
-        More precisely, we use the elements in ``uset`` as positions of up steps
-        to obtain a lattice path of total length `nk + 1`, then find the last
-        lowest point of the path and rotate it there to obtain the path we want.
+        `nk` of size `k` into a lattice path with up steps `(1, k - 1)` and
+        `(1, -1)`, while staying always weakly above the x-axis and returning to
+        the x-axis at the end. They are counted by the Fuss--Catalan numbers,
+        and they are generated using the cyclic lemma. More precisely, we use
+        the elements in ``uset`` as positions of up step to obtain a lattice
+        path of total length `nk + 1`, then find the last lowest point of the
+        path and rotate it there to obtain the path we want, while removing the
+        last down step.
 
         We note that this function assume the validity of inputs, as it should
         only be called by other internal functions, which always give inputs of
@@ -1476,11 +1490,11 @@ class _RandomPath:
     @staticmethod
     def gen_path(n: int, k: int) -> list[int]:
         r'''
-        Returns a uniformly random lattice path for `k`-ary trees of size `n`,
-        which consists of `kn` steps, with `n` of them up steps `(1, k - 1)` and
-        others down steps `(1, -1)`. Such lattice paths are sometimes also
-        called "Raney paths", and are counted by Fuss--Catalan numbers. For more
-        details, see the documentation of ``_comb_to_path``.
+        Returns a uniformly random lattice path staying weakly above the x-axis
+        with `kn` steps , `n` of them up steps `(1, k - 1)` and others down
+        steps `(1, -1)`. Such lattice paths are sometimes also called "Raney
+        paths", and are counted by Fuss--Catalan numbers. For more details, see
+        the documentation of ``_comb_to_path``.
 
         INPUT:
 
@@ -1511,25 +1525,47 @@ class _RandomPath:
 
 class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
     r'''
-    This factory class is for random generation of Tamari blossoming trees of
+    This class is for uniform random generation of Tamari blossoming trees of
     given size. As some precomputation is done, it would be the best to keep an
     instance of this factory if users want to generate many objects of the same
-    size.
+    size. However, we also provide a static method for one-shot generation.
+
+    EXAMPLES:
+
+        sage: TBTF = TamariBlossomingTreeFactory(100)
+        sage: TBTF
+        Random generator of Tamari blossoming trees of size 100
+        sage: TBTF.random_element()
+        Tamari blossoming tree ... of size 100
+        sage: TamariBlossomingTreeFactory.generate(100)
+        Tamari blossoming tree ... of size 100
     '''
 
     def __init__(self, size: int):
         r'''
-        Initialization.
+        Initialize a random generator of Tamari blossoming trees of a given size
+        with the necessary precomputation. See ``random_element`` for precise
+        information on the precomputation.
 
         INPUT:
 
         - ``size``: the size of blossoming trees to generate, that is, the
         number of edges (not counting buds)
+
+        EXAMPLES:
+
+            sage: TBTF = TamariBlossomingTreeFactory(100)
+            sage: TBTF
+            Random generator of Tamari blossoming trees of size 100
+            sage: TamariBlossomingTreeFactory(-2)
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid parameter size.
         '''
         if size <= 0:
             raise ValueError('Invalid parameter size.')
         self._size = size
-        # compute the size of trees
+        # compute the size of trees, counted by binomial(4n + 1, n) / (4n + 1)
         # normalized by dividing the growth factor 4^4 / 3^3
         # precision is enough, as the rest grows as n^(-3/2)
         l: list[float] = [1.0]  # no need to use numerical_approx with prec
@@ -1541,13 +1577,53 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
         self.cutting = _RandomPath.cutting(l, size)
         self.cutting_sum = sum([x[0] for x in self.cutting])
 
-    def _rand_path(self) -> list[int]:
-        r'''
-        Internal function. Returns a path for the correct trees, using counting.
+    def _repr_(self) -> str:
         '''
+        Returns a string representing the instance of random generator and the
+        size of objects that it is going to generate.
+        '''
+        s = f'Random generator of Tamari blossoming trees of size {self._size}'
+        return s
+
+    def random_element(self) -> TamariBlossomingTree:
+        r'''
+        Generate a uniformly random Tamari blossoming tree of a given size.
+
+        OUTPUT:
+
+        A uniformly random Tamari blossoming tree, obtained through random
+        generation of lattice path.
+
+        ALGORITHM:
+
+        Let `A` be the set of rooted plane trees such that each internal node
+        has two buds. Then a tree in `A` can be decomposed at the root into
+        three sequences of sub-trees in `A`, separated by the two buds of the
+        root. A Tamari blossoming tree represented as a rooted plane tree can
+        thus be decomposed at the root as two sequences of sub-trees separated
+        by the only bud (the other bud hangs above the root).
+
+        It is clear that lattice paths with steps `(1, 3)` and `(1, -1)`
+        returning to the x-axis while staying always weakly above it are in
+        bijection with sequences of trees in `A` by separation at contacts. The
+        parts between contacts are the same family of lattices walks with the
+        extra condition of never touching the x-axis except at both ends. They
+        are in bijection with trees in `A` by decomposition at the last
+        returning to the height 3, 2 and 1.
+
+        We perform random generation by considering a blossoming tree as a pair
+        of lattice paths of a given total size, and the precomputation consists
+        of storing the relative probability of how the total size is split.
+
+        EXAMPLES:
+
+            sage: TamariBlossomingTreeFactory(100).random_element()
+            Tamari blossoming tree ... of size 100
+        '''
+        # First step: generate uniformly randomly a lattice path
         # get the correct size separation
         cnt = uniform(0, self.cutting_sum)
-        s1, s2 = -1, -1
+        s1 = -1
         for e in self.cutting:
             if cnt < e[0]:
                 s1 = e[1]
@@ -1555,19 +1631,12 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
             else:
                 cnt -= e[0]
         s2 = self._size - s1
+        # generate the lattice path based on the pair of random paths
         p1 = _RandomPath.gen_path(s1, 4)
         p2 = _RandomPath.gen_path(s2, 4)
-        return [3] + p1 + [-1] + p2 + [-1, -1]
+        path = [3] + p1 + [-1] + p2 + [-1, -1]
 
-    @staticmethod
-    def _path_to_tree(path: list[int]) -> list[list[int]]:
-        r'''
-        Internal function. Returns a nearly blossoming tree (without closure
-        condition) from the given path ``path`` for 4-ary trees. We assume that
-        the given path is valid (4n+1 steps, n of them up steps, ending at -1).
-
-        Half-public for testing
-        '''
+        # Second step: convert the random lattice path into a tree
         stack = [[0, []]]
         for step in path:
             if step == 3:  # new node
@@ -1584,48 +1653,130 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
         stack = stack[-1][1][0]
         # pop the last bud, which is always the last child
         stack.pop()
-        return stack
-
-    def random_element(self) -> TamariBlossomingTree:
-        r'''
-        Generate a random blossoming tree of a given size
-        '''
-        path = self._rand_path()
-        tree = TamariBlossomingTreeFactory._path_to_tree(path)
-        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
+        return TamariBlossomingTree._from_plane_tree(stack, skip_check=True,
                                                      random_bud=True)
 
+    @staticmethod
+    def generate(size: int) -> TamariBlossomingTree:
+        r'''
+        Returns a uniformly random Tamari blossoming tree of the given size.
 
-class SynchronizedBlossomingTreeFactory:
+        INPUT:
+
+        - ``size``: the size (number of edges) of the Tamari blossoming tree to
+        generate.
+
+        OUTPUT:
+
+        A uniformly random Tamari blossoming tree of the given size.
+
+        .. NOTE::
+
+        This is a static version of ``random_element``, but it does not keep the
+        result of precomputation, thus useful for one-shot generation.
+
+        EXAMPLES:
+
+            sage: TamariBlossomingTreeFactory.generate(100)
+            Tamari blossoming tree ... of size 100
+        '''
+        return TamariBlossomingTreeFactory(size).random_element()
+
+
+class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
     r'''
-    This factory class is for random generation of synchronized blossoming
+    This class is for uniform random generation of synchronized blossoming
     trees, which are in bijection with modern Tamari intervals, of a given
-    size. No precomputation is needed here, but we keep the same convention.
+    size. No precomputation is needed here, but we keep the same convention as
+    ``TamariBlossomingTreeFactory`` for the methods.
 
-    We note that synchronized blossoming trees come with the two buds of the
-    same node always consecutive, and we simplify them by identifying them.
+    EXAMPLES:
+
+        sage: SBTF = SynchronizedBlossomingTreeFactory(100)
+        sage: SBTF
+        Random generator of synchronized blossoming trees of size 100
+        sage: SBTF.random_element()
+        Tamari blossoming tree ... of size 100
+        sage: SBTF.random_element().is_synchronized()
+        True
+        sage: SynchronizedBlossomingTreeFactory.generate(100)
+        Tamari blossoming tree ... of size 100
     '''
 
     def __init__(self, size: int):
         r'''
-        Initialization
+        Initialization of the generator by the size of synchronized blossoming
+        trees to generate.
 
         INPUT:
 
         - ``size``: the size of the synchronized blossoming tree to generate.
+
+        EXAMPLES:
+
+            sage: SynchronizedBlossomingTreeFactory(-3)
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid parameter size.
+            sage: SBTF = SynchronizedBlossomingTreeFactory(100)
+            sage: SBTF
+            Random generator of synchronized blossoming trees of size 100
         '''
         if size <= 0:
             raise ValueError('Invalid parameter size.')
         self._size = size
 
-    @staticmethod
-    def __rand_tree(size) -> list[list[int]]:
-        r'''
-        Internal function. Returns a random tree with buds identified
-
-        TODO: bug here
+    def _repr_(self) -> str:
         '''
-        path = _RandomPath.gen_path(size, 3)
+        Returns a string representing the instance of random generator and the
+        size of objects that it is going to generate.
+        '''
+        s = 'Random generator of synchronized blossoming trees of size'
+        s += f' {self._size}'
+        return s
+
+    def random_element(self) -> TamariBlossomingTree:
+        r'''
+        Generates a random synchronized blossoming tree of a given size.
+
+        OUTPUT:
+
+        A uniformly random synchronized blossoming tree, obtained through
+        random generation of lattice paths.
+
+        ALGORITHM:
+
+        According to [FFN2025]_, a Tamari blossoming tree is synchronized if and
+        only if the two buds of the same node is always side by side. In such a
+        case, we may identify them, and what we need to generate is a plane tree
+        where each node has one extra bud. Now, root such a plane tree with buds
+        by one of the bud, we only need to generate a sequence of plane trees
+        with a bud at each internal node. Let `A` be the set of such trees. A
+        tree in `A` can be decomposed at the root as two sequences of trees in
+        `A`, separated by the bud.
+
+        It is clear that lattice paths with steps `(1, 2)` and `(1, -1)`
+        starting and ending on the x-axis while staying weakly above it (also
+        called 2-Dyck paths in some literature) are in bijection with such
+        sequence of plane trees. Such a lattice path can be considered a
+        sequence of primitive paths (touching only the x-axis at both ends),
+        and each of them can be decomposed into two 2-Dyck paths by the last
+        returning to the height 2 and 1. It is clear that `A` is in bijection
+        with primitive paths by isomorphism of recursive decomposition.
+
+        We note that no cutting is needed here, as we simply generate one
+        sequence instead of a pair of them. This is why precomputing is not
+        needed here.
+
+        EXAMPLES:
+
+            sage: B = SynchronizedBlossomingTreeFactory(100).random_element()
+            sage: B
+            Tamari blossoming tree ... of size 100
+            sage: B.is_synchronized()
+            True
+        '''
+        path = _RandomPath.gen_path(self._size, 3)
         stack = [[0, []]]
         for step in path:
             if step == 2:  # new nodes
@@ -1640,47 +1791,81 @@ class SynchronizedBlossomingTreeFactory:
                     stack[-1][1].append(subtree)
         tree = stack[-1][1]
         tree.append([])  # add the extra bud besides the root
-        return tree
-
-    def random_element(self) -> TamariBlossomingTree:
-        r'''
-        Generate a random synchronized blossoming tree of a given size
-        '''
-        tree = SynchronizedBlossomingTreeFactory.__rand_tree(self._size)
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
                                                      random_bud=True)
 
+    @staticmethod
+    def generate(size: int) -> TamariBlossomingTree:
+        r'''
+        Returns a uniformly random synchronized blossoming tree of the given
+        size.
 
-class ModernBlossomingTreeFactory:
+        INPUT:
+
+        - ``size``: the size (number of edges) of synchronized blossoming tree
+        to generate.
+
+        OUTPUT:
+
+        A uniformly random synchronized blossoming tree of the given size.
+
+        .. NOTE::
+
+        This is a static version of ``random_element``, which is advised to be
+        used here as there is no precomputation needed.
+
+        EXAMPLES:
+
+            sage: B = SynchronizedBlossomingTreeFactory.generate(100)
+            sage: B
+            Tamari blossoming tree ... of size 100
+            sage: B.is_synchronized()
+            True
+        '''
+        return SynchronizedBlossomingTreeFactory(size).random_element()
+
+
+class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
     r'''
-    This factory class is for the generation of blossoming trees associated with
-    modern Tamari intervals of a given size. As some precomputation is needed,
-    it is the best practice to keep the same instance when generating multiple
-    modern blossoming trees.
+    This class is for uniform random generation of blossoming trees associated
+    with modern Tamari intervals of a given size. As some precomputation is
+    needed, it is the best practice to keep the same instance when generating
+    multiple modern blossoming trees. For one-shot generation, we also provide a
+    static method.
 
-    According to Section 5.5 of the article, the generating function of modern
-    blossoming trees can be written as (1 + C)^2, with:
+    EXAMPLES:
 
-    - C = A / (1 - B)
-    - B = z / (1 - B) * (1 + C)
-    - A = z / (1 - B) * (1 + C)^2 = B * (1 + C)
-
-    By solving it, we know that
-
-    - C is the series of Dyck paths with weight 2 on every non-initial up-step
-    - B is the series of Dyck paths of C without touching the x-axis in middle
-    - A is the series of Dyck paths with weight 2 on every up-step except the
-    first and the second one on the x-axis (there may be only one such step)
+        sage: MBTF = ModernBlossomingTreeFactory(100)
+        sage: MBTF
+        Random generator of modern blossoming trees of size 100
+        sage: MBTF.random_element()
+        Tamari blossoming tree ... of size 100
+        sage: B = ModernBlossomingTreeFactory.generate(100)
+        sage: B.is_modern()
+        True
     '''
 
     def __init__(self: Self, size: int):
         r'''
-        Initialization and precomputation
+        Initialize a random generator of modern blossoming trees of a given size
+        along with the needed precomputation. See the documentation of
+        ``random_element`` for more precise information on the algorithm and the
+        related precomputation.
 
         INPUT:
 
         - ``size``: the size of modern blossoming trees to generate, which is
         the number of internal edges (not including buds)
+
+        EXAMPLES:
+
+            sage: MBTF = ModernBlossomingTreeFactory(100)
+            sage: MBTF
+            Random generator of modern blossoming trees of size 100
+            sage: ModernBlossomingTreeFactory(-4)
+            Traceback (most recent call last):
+            ...
+            ValueError: Invalid parameter size.
         '''
         if size <= 0:
             raise ValueError('Invalid parameter size.')
@@ -1688,108 +1873,119 @@ class ModernBlossomingTreeFactory:
         # compute the size of trees
         # two parts, each given by the series
         # 1 + C(z) = 1 + \sum_{n \geq 1} \frac{2^{n-1}}{n+1} \binom{2n}{n} z^n
-        # growth rate 8^n
+        # growth rate 8
         l: list[float] = [8.0, 1.0]  # float suffices as for other families
         for i in range(2, size + 1):
-            l.append(l[-1] * (i - 0.5) / (i + 1))
+            l.append(l[-1] * (i - 0.5) / (i + 1))  # growth rate divided out
         # counting for generation
         self.cutting = _RandomPath.cutting(l, size)
         self.cutting_sum = sum([x[0] for x in self.cutting])
 
-    @staticmethod
-    def __genC(dtree: OrderedTree) -> list[OrderedTree]:
-        r'''
-        Internal function. Generate a forest counted by the series 1+C, which
-        is a sequence of B-trees followed by an A-tree, given a Dyck path and
-        the colors of the up-steps on the x-axis. We represent the Dyck path by
-        a plane tree so that the colors can be generated on the fly.
-
-        INPUT:
-
-        - `dtree`: a plane tree standing for the Dyck path
-
-        OUTPUT:
-        A list of corresponding trees
+    def _repr_(self) -> str:
         '''
-        if not dtree:  # empty tree
-            return []
-        if len(dtree) == 1 and not dtree[0]:  # simple tree
-            return [OrderedTree([[], []])]
-        idx = len(dtree) - 1  # index of cutting
-        while idx > 0:  # never check the first
-            if randrange(2) == 1:  # bad color, B stops here
-                break
-            idx -= 1
-        idx += 1
-        lasttree = ModernBlossomingTreeFactory.__genA(OrderedTree(dtree[:idx]))
-        treelist = [lasttree]
-        restlist = [ModernBlossomingTreeFactory.__genB(dtree[i])
-                    for i in range(idx, len(dtree))]
-        treelist.extend(restlist)
-        return treelist
-
-    @staticmethod
-    def __genB(dtree: OrderedTree) -> OrderedTree:
-        r'''
-        Internal function. Generate a B-tree, given a Dyck path counted by the
-        series B (colors generated on the fly). The Dyck path (without the
-        initial and final step) is represented by a plane tree.
-
-        INPUT:
-
-        - `dtree`: a plane tree standing for the Dyck path with first and last
-        step removed
-
-        OUTPUT:
-        The corresponding B-tree
+        Returns a string representing the instance of random generator and the
+        size of objects that it is going to generate.
         '''
-        if not dtree:  # empty tree
-            return OrderedTree([[], []])
-        idx = 0  # index of cutting
-        while idx < len(dtree):
-            if randrange(2) == 1:  # bad color, B stops here
-                break
-            idx += 1
-        # first sequence: a sequence of B
-        treelist = [ModernBlossomingTreeFactory.__genB(dtree[i])
-                    for i in range(idx)]
-        # the first bud
-        treelist.append(OrderedTree([]))
-        # second sequence: a sequence given by C
-        restlist = ModernBlossomingTreeFactory.__genC(OrderedTree(dtree[idx:]))
-        treelist.extend(restlist)
-        # the second bud
-        treelist.append(OrderedTree([]))
-        return OrderedTree(treelist)
-
-    @staticmethod
-    def __genA(dtree: OrderedTree) -> OrderedTree:
-        r'''
-        Internal function. Generate an A-tree, given a Dyck path counted by the
-        series A with colors given on the fly (so no color for two up-steps).
-        The Dyck path is again given as a plane tree.
-
-        INPUT:
-
-        - `dtree`: a plane tree standing for the Dyck path
-
-        OUTPUT:
-        The corresponding A-tree
-        '''
-        if not dtree:  # empty tree, should not happen!
-            raise ValueError('Internal error on __genA')
-        # first part: same as B, and there is already a separating bud
-        treelist = [x for x in ModernBlossomingTreeFactory.__genB(dtree[0])]
-        # second part: a sequence from C
-        restlist = ModernBlossomingTreeFactory.__genC(OrderedTree(dtree[1:]))
-        treelist.extend(restlist)
-        return OrderedTree(treelist)
+        s = f'Random generator of modern blossoming trees of size {self._size}'
+        return s
 
     def random_element(self) -> TamariBlossomingTree:
         r'''
-        Generate a random modern blossoming tree of a given size
+        Generate a uniformly random modern blossoming tree of a given size.
+
+        OUTPUT:
+
+        A uniformly random modern blossoming tree obtained using bijection with
+        lattice paths.
+
+        ALGORITHM:
+
+        According to Section 5.5 of [FFN2025]_, the generating function of
+        modern blossoming trees can be written as `(1 + C)^2`, with:
+
+        - `C = \frac{A}{1 - B}`
+        - `B = \frac{z(1 + C)}{1 - B}`
+        - `A = \frac{z(1 + C)^2}{1 - B} = B (1 + C)`
+
+        Each series counts a certain family of trees with buds.
+
+        By solving it, we know that
+
+        - `C(z)` is the series of Dyck paths with weight 2 on every non-initial
+        up-step
+        - `B(z)` is the series of Dyck paths of C without touching the x-axis in
+        middle
+        - `A(z)` is the series of Dyck paths with weight 2 on every up-step
+        except the first and the second one on the x-axis (there may be only
+        one such step)
+
+        We may then generate a modern blossoming tree by generating Dyck paths
+        with the correct weights, then interpreting such weights in the proper
+        way to obtain a modern blossoming tree according to the recursive
+        decomposition. Details of the bijection for each family can be found in
+        the documentation of the corresponding sub-functions.
         '''
-        # get the size separation
+        def genC(dtree: OrderedTree) -> list[OrderedTree]:
+            r'''
+            Generates a forest counted by the series `1 + C(z)`, which
+            is a sequence of B-trees followed by an A-tree, given a Dyck path
+            and the colors of the up-steps on the x-axis. We represent the Dyck
+            path by a plane tree so that the colors can be generated on the fly.
+            '''
+            if not dtree:  # empty tree
+                return []
+            if len(dtree) == 1 and not dtree[0]:  # simple tree
+                return [OrderedTree([[], []])]
+            idx = len(dtree) - 1  # index of cutting
+            while idx > 0:  # never check the first
+                if randrange(2) == 1:  # bad color, B stops here
+                    break
+                idx -= 1
+            idx += 1
+            lasttree = genA(OrderedTree(dtree[:idx]))
+            treelist = [lasttree]
+            treelist.extend([genB(dtree[i]) for i in range(idx, len(dtree))])
+            return treelist
+
+        def genB(dtree: OrderedTree) -> OrderedTree:
+            r'''
+            Generates a `B`-tree, i.e., a tree counted by `B(z)`, given a Dyck
+            path counted by `B(z)` (colors generated on the fly). The Dyck path
+            (without the initial and final step) is represented by a plane tree.
+            '''
+            if not dtree:  # empty tree
+                return OrderedTree([[], []])
+            idx = 0  # index of cutting
+            while idx < len(dtree):
+                if randrange(2) == 1:  # bad color, B stops here
+                    break
+                idx += 1
+            # first sequence: a sequence of B
+            treelist = [genB(dtree[i]) for i in range(idx)]
+            # the first bud
+            treelist.append(OrderedTree([]))
+            # second sequence: a sequence given by C
+            treelist.extend(genC(OrderedTree(dtree[idx:])))
+            # the second bud
+            treelist.append(OrderedTree([]))
+            return OrderedTree(treelist)
+
+        def genA(dtree: OrderedTree) -> OrderedTree:
+            r'''
+            Generates an `A`-tree, i.e. a tree counted by `A(z)`, given a Dyck
+            path counted by `A(z)` with colors given on the fly (so no color
+            for the two up-steps starting on the x-axis). The Dyck path is
+            again given as a plane tree.
+            '''
+            if not dtree:  # empty tree, should not happen!
+                raise ValueError('Internal error on genA')
+            # first part: same as B, and there is already a separating bud
+            treelist = [x for x in genB(dtree[0])]
+            # second part: a sequence from C
+            treelist.extend(genC(OrderedTree(dtree[1:])))
+            return OrderedTree(treelist)
+
+        # get the size separation for (1 + C)^2
         cnt = uniform(0, self.cutting_sum)
         s1, s2 = -1, -1
         for e in self.cutting:
@@ -1800,12 +1996,42 @@ class ModernBlossomingTreeFactory:
                 cnt -= e[0]
         s2 = self._size - s1
         # first C sequence
-        l1 = self.__genC(DyckWords(s1).random_element().to_ordered_tree())
+        l1 = genC(DyckWords(s1).random_element().to_ordered_tree())
         # a bud
         l1.append(OrderedTree([]))
         # second C sequence
-        l2 = self.__genC(DyckWords(s2).random_element().to_ordered_tree())
+        l2 = genC(DyckWords(s2).random_element().to_ordered_tree())
         l1.extend(l2)
         tree = OrderedTree(l1)
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
                                                      random_bud=True)
+
+    @staticmethod
+    def generate(size: int) -> TamariBlossomingTree:
+        r'''
+        Returns a uniformly random modern blossoming tree of the given size.
+
+        INPUT:
+
+        - ``size``: the size (number of edges) of the modern blossoming tree to
+        generate
+
+        OUTPUT:
+
+        A uniformly random Tamari blossoming tree of the given size.
+
+        .. NOTE::
+
+        This is a static version of ``random_element``, but it does not keep the
+        result of precomputation, and is suitable and more light-weight for
+        one-shot generation.
+
+        EXAMPLES:
+
+            sage: B = ModernBlossomingTreeFactory.generate(100)
+            sage: B
+            Tamari blossoming tree ... of size 100
+            sage: B.is_modern()
+            True
+        '''
+        return ModernBlossomingTreeFactory(size).random_element()
