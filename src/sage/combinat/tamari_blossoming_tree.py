@@ -59,10 +59,10 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     - Each edge consists of two half-edges, one colored red and the other blue.
     - Each node has two extra unpaired uncolored half-edges called **buds**,
-    which separate cyclically its other adjacent half-edges into two
-    monochromatic parts. In other words, for each node, when reading color of
-    adjacent half-edges in the cyclic order, colors change exactly twice, and
-    the buds are placed at such position of changes.
+      which separate cyclically its other adjacent half-edges into two
+      monochromatic parts. In other words, for each node, when reading color of
+      adjacent half-edges in the cyclic order, colors change exactly twice, and
+      the buds are placed at such position of changes.
 
     The size of a bicolored blossoming tree is the number of edges (not
     counting buds). They are in bijection with intervals in the Tamari lattice
@@ -132,9 +132,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         representation. In the intermediate steps, we have:
 
         - Buds are represented by the label of its node and 1, 2 as the order
-        of buds of the same node.
+          of buds of the same node.
         - Legs are represented by the label of both its ends, and 1, 2 as the
-        order of legs of the same node.
+          order of legs of the same node.
         '''
         def aux(tree, budleg, budcnt):
             '''
@@ -142,10 +142,10 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             with the representations:
 
             - A bud is represented by ``((r,), k)`` where ``r`` is the label of
-            its node, and ``k`` its order in prefix order.
+              its node, and ``k`` its order in prefix order.
             - A leg is represented by ``((r1, r2), i)``, where ``r1`` and ``r2``
-            are the labels of the nodes adjacent to the edge of the leg, and
-            ``i`` presents the side it is on.
+              are the labels of the nodes adjacent to the edge of the leg, and
+              ``i`` presents the side it is on.
             '''
             rlabel = tree.label()
             for st in tree:
@@ -208,7 +208,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def __init__(self, tree: OrderedTree) -> None:
         r'''
         Initialize a Tamari blossoming tree with a plane tree.
-        
+
         We consider the
         root as a bud, so every internal node has two leaves, except the root
         which has only one. We also check that the root is really a dangling
@@ -341,7 +341,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def to_plane_tree(self) -> OrderedTree:
         r'''
         Return the blossoming tree as an OrderedTree.
-        
+
         The buds are simply leaves.
 
         EXAMPLES::
@@ -636,9 +636,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``semicircle`` -- optional, sets whether the arcs are drawn as
-        semicircles or a Bezier arc. Default: ``True``.
+          semicircles or a Bezier arc. Default: ``True``.
         - ``arrow`` -- optional, sets whether draw horizontal arrows tips.
-        Default: ``True``.
+          Default: ``True``.
 
         EXAMPLES::
 
@@ -838,7 +838,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree`` -- a plane tree with two buds on each node (one for the
-        root).
+          root).
 
         OUTPUT:
 
@@ -980,7 +980,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         r'''
         Return the blossoming tree that is the mirror image of the current
         blossoming tree.
-        
+
         Note that the dangling buds change in general, so the
         root dangling bud will be the one with the correct color.
 
@@ -1149,7 +1149,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``btree`` -- a binary tree, which can be a BinaryTree or an
-        OrderedTree that happens to be binary
+          OrderedTree that happens to be binary
 
         OUTPUT:
 
@@ -1422,7 +1422,7 @@ class _RandomPath:
         INPUT:
 
         - ``cardlist`` -- a list of the cardinality of objects of sizes from
-        ``0`` to ``size``
+          ``0`` to ``size``
         - ``size`` -- the size of elements to generate
 
         OUTPUT:
@@ -1468,11 +1468,11 @@ class _RandomPath:
         INPUT:
 
         - ``n`` -- the number of up steps in the path. There must be `(k - 1) n`
-        down steps in the same path.
+          down steps in the same path.
         - ``k`` -- the parameter regulating the up steps. For Dyck paths, we
-        have `k = 2`.
+          have `k = 2`.
         - ``uset`` -- the subset of positions of up steps in the non-rotated
-        path.
+          path.
 
         OUTPUT:
 
@@ -1516,7 +1516,7 @@ class _RandomPath:
 
         - ``n`` -- the size of the lattice path (the length will be `kn`).
         - ``k`` -- the parameter corresponding to the arity of the `k`-ary trees
-        that are in bijection with the generated random lattice path.
+          that are in bijection with the generated random lattice path.
 
         OUTPUT:
 
@@ -1565,7 +1565,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size`` -- the size of blossoming trees to generate, that is, the
-        number of edges (not counting buds)
+          number of edges (not counting buds)
 
         EXAMPLES::
 
@@ -1680,7 +1680,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size`` -- the size (number of edges) of the Tamari blossoming tree
-        to generate.
+          to generate.
 
         OUTPUT:
 
@@ -1819,7 +1819,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size`` -- the size (number of edges) of synchronized blossoming tree
-        to generate.
+          to generate.
 
         OUTPUT:
 
@@ -1871,7 +1871,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size`` -- the size of modern blossoming trees to generate, which is
-        the number of internal edges (not including buds)
+          the number of internal edges (not including buds)
 
         EXAMPLES::
 
@@ -1927,12 +1927,12 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         By solving it, we know that
 
         - `C(z)` is the series of Dyck paths with weight 2 on every non-initial
-        up-step
+          up-step
         - `B(z)` is the series of Dyck paths of C without touching the x-axis in
-        middle
+          middle
         - `A(z)` is the series of Dyck paths with weight 2 on every up-step
-        except the first and the second one on the x-axis (there may be only
-        one such step)
+          except the first and the second one on the x-axis (there may be only
+          one such step)
 
         We may then generate a modern blossoming tree by generating Dyck paths
         with the correct weights, then interpreting such weights in the proper
@@ -2029,7 +2029,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``size`` -- the size (number of edges) of the modern blossoming tree
-        to generate
+          to generate
 
         OUTPUT:
 
