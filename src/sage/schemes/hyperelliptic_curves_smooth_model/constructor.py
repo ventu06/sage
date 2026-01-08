@@ -56,6 +56,7 @@ from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_rational_field
 )
 
 
+@sage.misc.superseded.experimental(issue_number=39161)
 def HyperellipticCurveSmoothModel(
     f, h=0, check_squarefree: bool = True, distinguished_point=None
 ):

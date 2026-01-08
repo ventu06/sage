@@ -53,6 +53,7 @@ def _parse_multivariate_defining_equation(g):
         ([7, 7, 0, 0, 0, 7], [0, 0, 8])
     """
     from sage.rings.polynomial.multi_polynomial import MPolynomial
+
     if not isinstance(g, MPolynomial):
         raise ValueError("must be a multivariate polynomial")
 
@@ -270,9 +271,11 @@ def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
     # rather than f and h, one of which might be constant.
     if h is None:
         from sage.rings.polynomial.multi_polynomial import MPolynomial
+
         if isinstance(f, MPolynomial) and len(f.parent().gens()) == 2:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            P = PolynomialRing(f.base_ring(), 'x')
+
+            P = PolynomialRing(f.base_ring(), "x")
             f, h = _parse_multivariate_defining_equation(f)
             f, h = P(f), P(h)
         else:
@@ -365,4 +368,21 @@ def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
     # all classes we select from are subclasses of HyperellipticCurve_generic
     class_name = "_".join(cls_name)
     cls = dynamic_class(class_name, tuple(bases), doccls=HyperellipticCurve)
+
+    # Handle warnings for the depreciation of the current code in favour of the new
+    # HyperellipticCurveSmoothModel which uses weighted projective space and allows
+    # for correct arithmetic for Jacobian(H) when the degree of the curve is even.
+    if f.degree() % 1:
+        sage.misc.superseded.depreciation(
+            39161,
+            "this function will be replaced by the currently experimental constructor HyperellipticCurveSmoothModel.",
+        )
+    else:
+        sage.misc.stopgap.set_state(True)
+        sage.misc.stopgap(
+            "Some results are incorrect for even degree models, use HyperellipticCurveSmoothModel until this constructor is replaced.",
+            39161,
+        )
+        sage.misc.stopgap.set_state(False)
+
     return cls(PP, f, h, names=names, genus=g)
