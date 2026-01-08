@@ -1,7 +1,8 @@
 r'''
-Tamari blossoming tree
+Tamari blossoming trees
 
 This module implements the blossoming trees in bijection with Tamari intervals.
+
 These blossoming trees are with half-edges bicolored following some local rules,
 each node has two buds, and each edge has two legs. Buds are matched with legs
 in a planar way, leaving only two dangling buds. The coloring can be replaced by
@@ -11,6 +12,7 @@ bud is a dangling bud with red half-edges next to it in the counter-clockwise
 order.
 
 REFERENCES:
+
 [FFN2025]_
 
 AUTHORS:
@@ -24,10 +26,11 @@ AUTHORS:
 #  Distributed under the terms of the GNU General Public License (GPL)
 #  as published by the Free Software Foundation; either version 2 of
 #  the License, or (at your option) any later version.
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # ****************************************************************************
 from typing import Self
 from math import acos, cos, sin, pi
+
 from sage.all import DyckWords
 from sage.combinat.ordered_tree import OrderedTree, LabelledOrderedTree
 from sage.combinat.binary_tree import from_tamari_sorting_tuple, BinaryTree
@@ -95,23 +98,23 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def __checkbuds(tree):
         r'''
-        Internal function. Check recursively whether all nodes has two buds. We
+        Internal function. Check recursively whether every node has two buds. We
         do not suppose ``tree`` to be of type OrderedTree.
 
-        TESTS:
+        TESTS::
 
             sage: TamariBlossomingTree(OrderedTree([]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bud count incorrect
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree(OrderedTree([[], [[]]]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bud count incorrect
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree(OrderedTree([[[], [], [[], []]], []]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bad matching
+            ValueError: not a blossoming tree, bad matching
             sage: T = OrderedTree([[], [[], [], [[], []]]])
             sage: TamariBlossomingTree(T)._tree
             1[2[], 3[4[], 5[], 6[7[], 8[]]]]
@@ -119,14 +122,13 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         if not tree:
             return
         if len([x for x in tree if not x]) != 2:
-            raise ValueError('Not a blossoming tree, bud count incorrect')
+            raise ValueError('not a blossoming tree, bud count incorrect')
         for st in tree:
             TamariBlossomingTree.__checkbuds(st)
-        return
 
     def __get_meandric_order(self) -> tuple[list[int], list[int]]:
         r'''
-        Internal function. Computes the order of nodes and edges in the meandric
+        Internal function. Compute the order of nodes and edges in the meandric
         representation. In the intermediate steps, we have:
 
         - Buds are represented by the label of its node and 1, 2 as the order
@@ -203,9 +205,11 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         # Finally, we return the order
         return norder, eorder
 
-    def __init__(self, tree: OrderedTree):
+    def __init__(self, tree: OrderedTree) -> None:
         r'''
-        Initialize a Tamari blossoming tree with a plane tree. We consider the
+        Initialize a Tamari blossoming tree with a plane tree.
+        
+        We consider the
         root as a bud, so every internal node has two leaves, except the root
         which has only one. We also check that the root is really a dangling
         node (i.e., adjacent to a dangling bud), and raise an error otherwise.
@@ -214,27 +218,30 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         - ``tree`` -- a plane tree of the type ``OrderedTree``.
 
-        EXAMPLES:::
+        EXAMPLES::
+
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: TamariBlossomingTree(T)._tree
+            1[2[], 3[4[], 5[], 6[7[], 8[]]]]
+
+        TESTS::
 
             sage: TamariBlossomingTree(OrderedTree([]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bud count incorrect
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree(OrderedTree([[], [[]]]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bud count incorrect
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree(OrderedTree([[[], [], [[], []]], []]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bad matching
-            sage: T = OrderedTree([[], [[], [], [[], []]]])
-            sage: TamariBlossomingTree(T)._tree
-            1[2[], 3[4[], 5[], 6[7[], 8[]]]]
+            ValueError: not a blossoming tree, bad matching
         '''
         def matching_word(tree):
             '''
-            Internal function, returns the matching word with buds as 1 and legs
+            Internal function. Return the matching word with buds as 1 and legs
             as 0. We do not suppose ``tree`` to be of type OrderedTree. We do
             not count the root here.
             '''
@@ -250,7 +257,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         # check root leaves
         if len([x for x in tree if not x]) != 1:
-            raise ValueError('Not a blossoming tree, bud count incorrect')
+            raise ValueError('not a blossoming tree, bud count incorrect')
 
         # check for all nodes
         for st in tree:
@@ -262,7 +269,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         for e in mword:
             ht += e
             if ht < 0:
-                raise ValueError('Not a blossoming tree, bad matching')
+                raise ValueError('not a blossoming tree, bad matching')
 
         # all tests passed, construct the object
         # the tree, with the canonical labeling
@@ -275,25 +282,31 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def _repr_(self) -> str:
         r'''
-        Returns a string representing the blossoming tree and its size.
+        Return a string representing the blossoming tree and its size.
         '''
         s = f'Tamari blossoming tree {OrderedTree(self._tree)}'
         s += f' of size {self._size}'
         return s
 
-    def _ascii_art_(self) -> str:
+    def _ascii_art_(self):
         r'''
-        Returns the ascii art of the blossoming tree, using that of OrderedTree.
+        Return the ascii art of the blossoming tree, using that of OrderedTree.
         '''
         return self._tree._ascii_art_()
 
-    def __hash__(self):
+  def _unicode_art_(self):
         r'''
-        Returns the hash value of the blossoming tree.
+        Return the unicode art of the blossoming tree, using that of OrderedTree.
+        '''
+        return self._tree._unicode_art_()
+
+    def __hash__(self) -> int:
+        r'''
+        Return the hash value of the blossoming tree.
         '''
         return self._tree.__hash__()
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         r'''
         Equality test, which only needs to compare the underlying trees.
 
@@ -307,7 +320,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def size(self) -> Integer:
         r'''
-        Returns the size of the Tamari blossoming tree.
+        Return the size of the Tamari blossoming tree.
 
         OUTPUT:
 
@@ -327,10 +340,11 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def to_plane_tree(self) -> OrderedTree:
         r'''
-        Returns the blossoming tree as an OrderedTree. The buds are simply
-        leaves.
+        Return the blossoming tree as an OrderedTree.
+        
+        The buds are simply leaves.
 
-        EXAMPLES:::
+        EXAMPLES::
 
             sage: T = OrderedTree([[], [[], [], [[], []]]])
             sage: T == TamariBlossomingTree(T).to_plane_tree()
@@ -340,14 +354,15 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def to_tamari(self) -> tuple[BinaryTree, BinaryTree]:
         r'''
-        Returns the Tamari interval in bijection with ``self``, under the form
-        of a pair of binary trees
+        Return the Tamari interval in bijection with ``self``, under the form
+        of a pair of binary trees.
 
         OUTPUT:
+
         A pair of binary trees comparable in the Tamari lattice (thus a Tamari
         interval)
 
-        EXAMPLES:::
+        EXAMPLES::
 
             sage: B0 = BinaryTree()
             sage: T0 = OrderedTree([[]])
@@ -396,7 +411,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def from_tamari(ltree, htree) -> Self:
         r'''
-        Returns the blossoming tree corresponding to the given Tamari interval,
+        Return the blossoming tree corresponding to the given Tamari interval,
         given as a pair of binary trees (not necessarily of type BinaryTree).
 
         INPUT:
@@ -424,7 +439,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             sage: TamariBlossomingTree.from_tamari(B4, B3)
             Traceback (most recent call last):
             ...
-            ValueError: Not a Tamari interval
+            ValueError: not a Tamari interval
         '''
         def traversal(node, parent, cycord):
             # internal function, which go through the tree given by cycord
@@ -440,7 +455,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         # initialization and verification
         btl, bth = BinaryTree(ltree), BinaryTree(htree)
         if not btl.tamari_lequal(bth):
-            raise ValueError('Not a Tamari interval')
+            raise ValueError('not a Tamari interval')
 
         # compute the bracket vector and the dual bracket vector
         bvec = btl.tamari_sorting_tuple()[0]
@@ -466,10 +481,11 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def to_TIP(self) -> TamariIntervalPoset:
         r'''
-        Returns the corresponding Tamari interval-poset in bijection with the
+        Return the corresponding Tamari interval-poset in bijection with the
         current instance of blossoming tree.
 
         OUTPUT:
+
         An object of type TamariIntervalPoset representing the corresponding
         Tamari interval poset
 
@@ -492,7 +508,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def from_TIP(tip) -> Self:
         r'''
-        Constructs the blossoming tree in bijection with a given Tamari
+        Construct the blossoming tree in bijection with a given Tamari
         interval-poset.
 
         INPUT:
@@ -529,6 +545,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         - ``btree`` -- a binary tree, not necessarily of type BinaryTree
 
         OUTPUT:
+
         A plot of ``btree``, with leaves on a horizontal line, and edges all of
         slope +1 or -1. Labels are ignored.
 
@@ -578,7 +595,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def tamari_dual(self) -> Self:
         r'''
-        Returns the current blossoming tree with colors exchanged.
+        Return the current blossoming tree with colors exchanged.
 
         This is equivalent to taking the dual in the Tamari lattice for the
         corresponding interval. **Not to be confused** with the mirror
@@ -638,7 +655,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         '''
         def sqnode(x, y):
             '''
-            Draws a white square node (middle of segments) at position (x, y).
+            Draw a white square node (middle of segments) at position (x, y).
             '''
             diam = 0.1
             return polygon2d([[x - diam, y - diam], [x + diam, y - diam],
@@ -647,14 +664,14 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         def cirnode(x, y):
             '''
-            Draws a black circle node at position (x, y).
+            Draw a black circle node at position (x, y).
             '''
             return circle([x, y], 0.15, fill=True, edgecolor='black',
                           facecolor='black', zorder=2)
 
         def semicir(x1, x2, isupper):
             '''
-            Draws a semi-circle from (x1, 0) to (x2, 0), with ``isupper``
+            Draw a semi-circle from (x1, 0) to (x2, 0), with ``isupper``
             indicating whether it is in the upper or lower plane.
             '''
             sec = (0, pi) if isupper else (pi, 2 * pi)
@@ -664,7 +681,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         def bezierarc(x1, x2, isupper):
             '''
-            Draws an Bezier arc from (x1, 0) to (x2, 0), with ``isupper``
+            Draw a Bezier arc from (x1, 0) to (x2, 0), with ``isupper``
             indicating whether it is in the upper or lower plane.
             '''
 
@@ -711,7 +728,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def _latex_(self) -> str:
         r'''
-        Returns latex code for the meandric drawing of the current blossoming
+        Return latex code for the meandric drawing of the current blossoming
         tree.
 
         EXAMPLES::
@@ -726,14 +743,14 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def __find_dangling_bud(tree: LabelledOrderedTree) -> list[int]:
         r'''
-        Internal function. Returns the dangling buds of ``tree``, in the order
+        Internal function. Return the dangling buds of ``tree``, in the order
         of counterclockwise order starting from the root. In ``tree`` we assume
         that there is a bud for the root (that is not in ``tree``), labeled 0
         (which should not be in canonical labeling of ``tree``). We also assume
         that the tree is valid. Note that the root is not necessarily a dangling
         bud.
 
-        TESTS:
+        TESTS::
 
             sage: T1 = OrderedTree([[], [[], [], [[], []]]])
             sage: T1 = TamariBlossomingTree(T1)
@@ -781,8 +798,10 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def __get_cycle_order(t: LabelledOrderedTree) -> list[int]:
         r'''
-        Internal function. Returns the cyclic order (in the sens of maps) of the
-        given tree. More precisely, this function returns a dictionary with
+        Internal function. Return the cyclic order (in the sens of maps) of the
+        given tree.
+
+        More precisely, this function returns a dictionary with
         node labels as keys and a (cyclic) list of its neighbors in
         counterclockwise order. The root bud is labeled 0, under the assumption
         that 0 is not present in the canonical labeling.
@@ -828,20 +847,23 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
-            sage: TamariBlossomingTree.from_plane_tree([[], []])
-            Traceback (most recent call last):
-            ...
-            ValueError: Not a blossoming tree, bud count incorrect
             sage: pt = [[], [[[], []], [], []]]
             sage: B1, B2 = TamariBlossomingTree.from_plane_tree(pt).to_tamari()
             sage: B1 == BinaryTree([[], None])
             True
             sage: B1 == B2
             True
+
+        TESTS::
+
+            sage: TamariBlossomingTree.from_plane_tree([[], []])
+            Traceback (most recent call last):
+            ...
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree(OrderedTree([[], [[[], []], [], []]]))
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bad matching
+            ValueError: not a blossoming tree, bad matching
         '''
         return TamariBlossomingTree._from_plane_tree(tree)
 
@@ -880,12 +902,12 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         An object of type TamariBlossomingTree representing the blossoming tree
         given by ``tree``.
 
-        TESTS:
+        TESTS::
 
             sage: TamariBlossomingTree._from_plane_tree([[], []])
             Traceback (most recent call last):
             ...
-            ValueError: Not a blossoming tree, bud count incorrect
+            ValueError: not a blossoming tree, bud count incorrect
             sage: TamariBlossomingTree._from_plane_tree([[], []],
             ....:                                       skip_check=True)
             Traceback (most recent call last):
@@ -957,10 +979,13 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def reflection(self) -> Self:
         r'''
         Return the blossoming tree that is the mirror image of the current
-        blossoming tree. Note that the dangling buds change in general, so the
+        blossoming tree.
+        
+        Note that the dangling buds change in general, so the
         root dangling bud will be the one with the correct color.
 
         OUTPUT:
+
         A blossoming tree that is the mirror image of the current one. Not to be
         confused with the Tamari dual.
 
@@ -1131,7 +1156,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         The list of arcs in the smooth drawing, represented by leaves on its
         both ends.
 
-        TESTS:
+        TESTS::
 
             sage: B = BinaryTree([[[[None, [None, []]], None], [[], None]],
             ....:                 None])
@@ -1243,7 +1268,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def is_synchronized(self) -> bool:
         r'''
-        Returns whether the Tamari interval presented by the current blossoming
+        Return whether the Tamari interval presented by the current blossoming
         tree is synchronized, i.e., two buds of the same node are adjacent.
 
         OUTPUT:
@@ -1282,14 +1307,14 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def is_modern(self) -> bool:
         r'''
-        Returns whether the Tamari interval associated to the current blossoming
+        Return whether the Tamari interval associated to the current blossoming
         tree is modern, using the function ``is_modern`` in TamariIntervalPoset.
 
         OUTPUT:
 
         ``True`` if the blossoming tree is modern, and ``False`` otherwise.
 
-        TESTS:
+        EXAMPLES::
 
             sage: T1 = [[], [[], [], [[], []]]]
             sage: TamariBlossomingTree.from_plane_tree(T1).is_modern()
@@ -1455,7 +1480,7 @@ class _RandomPath:
         `x`-axis while staying weakly above it, represented by variation in
         `y`-coordinates.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.combinat.tamari_blossoming_tree import _RandomPath
             sage: _RandomPath._comb_to_path(4, 3, [1, 3, 7, 8])
@@ -1498,7 +1523,7 @@ class _RandomPath:
         A uniformly random lattice path represented by variation in
         `y`-coordinates.
 
-        TESTS:
+        TESTS::
 
             sage: from sage.combinat.tamari_blossoming_tree import _RandomPath
             sage: res = {tuple(_RandomPath.gen_path(3, 3)) for _ in range(1000)}
@@ -1569,7 +1594,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     def _repr_(self) -> str:
         '''
-        Returns a string representing the instance of random generator and the
+        Return a string representing the instance of random generator and the
         size of objects that it is going to generate.
         '''
         s = f'Random generator of Tamari blossoming trees of size {self._size}'
@@ -1587,6 +1612,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
         ALGORITHM:
 
         Let `A` be the set of rooted plane trees such that each internal node
+        return s
         has two buds. Then a tree in `A` can be decomposed at the root into
         three sequences of sub-trees in `A`, separated by the two buds of the
         root. A Tamari blossoming tree represented as a rooted plane tree can
@@ -1649,7 +1675,7 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
     @staticmethod
     def generate(size: int) -> TamariBlossomingTree:
         r'''
-        Returns a uniformly random Tamari blossoming tree of the given size.
+        Return a uniformly random Tamari blossoming tree of the given size.
 
         INPUT:
 
@@ -1693,7 +1719,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         Tamari blossoming tree ... of size 100
     '''
 
-    def __init__(self, size: int):
+    def __init__(self, size: int) -> None:
         r'''
         Initialization of the generator by the size of synchronized blossoming
         trees to generate.
@@ -1707,18 +1733,18 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
             sage: SynchronizedBlossomingTreeFactory(-3)
             Traceback (most recent call last):
             ...
-            ValueError: Invalid parameter size.
+            ValueError: invalid parameter size
             sage: SBTF = SynchronizedBlossomingTreeFactory(100)
             sage: SBTF
             Random generator of synchronized blossoming trees of size 100
         '''
         if size <= 0:
-            raise ValueError('Invalid parameter size.')
+            raise ValueError('invalid parameter size')
         self._size = size
 
     def _repr_(self) -> str:
         '''
-        Returns a string representing the instance of random generator and the
+        Return a string representing the instance of random generator and the
         size of objects that it is going to generate.
         '''
         s = 'Random generator of synchronized blossoming trees of size'
@@ -1727,7 +1753,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     def random_element(self) -> TamariBlossomingTree:
         r'''
-        Generates a random synchronized blossoming tree of a given size.
+        Generate a random synchronized blossoming tree of a given size.
 
         OUTPUT:
 
@@ -1787,7 +1813,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
     @staticmethod
     def generate(size: int) -> TamariBlossomingTree:
         r'''
-        Returns a uniformly random synchronized blossoming tree of the given
+        Return a uniformly random synchronized blossoming tree of the given
         size.
 
         INPUT:
@@ -1835,7 +1861,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         True
     '''
 
-    def __init__(self: Self, size: int):
+    def __init__(self: Self, size: int) -> None:
         r'''
         Initialize a random generator of modern blossoming trees of a given size
         along with the needed precomputation. See the documentation of
@@ -1873,11 +1899,10 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     def _repr_(self) -> str:
         '''
-        Returns a string representing the instance of random generator and the
+        Return a string representing the instance of random generator and the
         size of objects that it is going to generate.
         '''
-        s = f'Random generator of modern blossoming trees of size {self._size}'
-        return s
+        return f'Random generator of modern blossoming trees of size {self._size}'
 
     def random_element(self) -> TamariBlossomingTree:
         r'''
@@ -1917,7 +1942,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         '''
         def genC(dtree: OrderedTree) -> list[OrderedTree]:
             r'''
-            Generates a forest counted by the series `1 + C(z)`, which
+            Generate a forest counted by the series `1 + C(z)`, which
             is a sequence of B-trees followed by an A-tree, given a Dyck path
             and the colors of the up-steps on the x-axis. We represent the Dyck
             path by a plane tree so that the colors can be generated on the fly.
@@ -1939,7 +1964,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         def genB(dtree: OrderedTree) -> OrderedTree:
             r'''
-            Generates a `B`-tree, i.e., a tree counted by `B(z)`, given a Dyck
+            Generate a `B`-tree, i.e., a tree counted by `B(z)`, given a Dyck
             path counted by `B(z)` (colors generated on the fly). The Dyck path
             (without the initial and final step) is represented by a plane tree.
             '''
@@ -1962,7 +1987,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         def genA(dtree: OrderedTree) -> OrderedTree:
             r'''
-            Generates an `A`-tree, i.e. a tree counted by `A(z)`, given a Dyck
+            Generate an `A`-tree, i.e. a tree counted by `A(z)`, given a Dyck
             path counted by `A(z)` with colors given on the fly (so no color
             for the two up-steps starting on the x-axis). The Dyck path is
             again given as a plane tree.
@@ -1999,7 +2024,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
     @staticmethod
     def generate(size: int) -> TamariBlossomingTree:
         r'''
-        Returns a uniformly random modern blossoming tree of the given size.
+        Return a uniformly random modern blossoming tree of the given size.
 
         INPUT:
 
