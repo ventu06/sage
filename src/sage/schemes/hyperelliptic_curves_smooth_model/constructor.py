@@ -205,7 +205,7 @@ def HyperellipticCurveSmoothModel(
         X, Y, Z = PolynomialRing(f.base_ring(), names="X, Y, Z").gens()
 
         # Some classes still have issues with degrees returning `int`
-        d = max(Integer(h.degree()), (Integer(f.degree()) + 1) // 2)
+        d = Integer(max(h.degree(), (f.degree() + 1) // 2))
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():

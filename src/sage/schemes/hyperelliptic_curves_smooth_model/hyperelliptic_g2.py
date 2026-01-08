@@ -34,6 +34,9 @@ from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_padic_field im
 from sage.schemes.hyperelliptic_curves_smooth_model.hyperelliptic_rational_field import (
     HyperellipticCurveSmoothModel_rational_field,
 )
+from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_generic import (
+    HyperellipticJacobian_g2_generic,
+)
 
 """
 TODO List
@@ -152,11 +155,6 @@ class HyperellipticCurveSmoothModel_g2(
             sage: J(P_minus, P_plus)
             (1, 0 : 0)
         """
-
-        from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_generic import (
-            HyperellipticJacobian_g2_generic,
-        )
-
         return HyperellipticJacobian_g2_generic(self)
 
     # -----------------------------------
