@@ -300,6 +300,39 @@ class LatticePosets(Category):
                 """
                 return True
 
+            def spine(self):
+                """
+                Return the subposet on the union of longest maximal chains.
+
+                This is a distributive lattice, called the spine.
+
+                EXAMPLES::
+
+                    sage: P = posets.TamariLattice(4)
+                    sage: S = P.spine(); S
+                    Finite lattice containing 8 elements
+                    sage: S.category()
+                    Category of facade finite enumerated distributive lattices
+                """
+                from sage.combinat.posets.lattices import LatticePoset
+                maxi = 0
+                subset = set()
+                for ch in self.maximal_chains():
+                    L = len(ch)
+                    if L < maxi:
+                        continue
+                    if L == maxi:
+                        subset.update(ch)
+                    else:
+                        maxi = L
+                        subset = set(ch)
+                H = self.hasse_diagram()
+                covers = [(x, y) for x in subset for y in H.neighbors_in(x)
+                          if y in subset]
+                cat = LatticePosets().Finite().Distributive()
+                return LatticePoset([subset, covers],
+                                    cover_relations=True, category=cat)
+
     class CongruenceUniform(CategoryWithAxiom):
         """
         The category of congruence uniform lattices.
