@@ -515,7 +515,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tip`` -- a ``TamariIntervalPoset`` object representing a Tamari
-        interval
+          interval
 
         EXAMPLES::
 
