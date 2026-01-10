@@ -193,7 +193,7 @@ class TamariIntervalPoset(Element,
         sage: TIP(Poset({}))
         The Tamari interval of size 0 induced by relations []
     """
-    @ staticmethod
+    @staticmethod
     def __classcall_private__(cls, *args, **opts) -> TIP:
         r"""
         Ensure that interval-posets created by the enumerated sets and
@@ -649,7 +649,7 @@ class TamariIntervalPoset(Element,
         pair = (self.size(), tuple(tuple(e) for e in self._cover_relations))
         return hash(pair)
 
-    @ cached_method
+    @cached_method
     def increasing_cover_relations(self) -> list[tuple[int, int]]:
         r"""
         Return the cover relations of the initial forest of ``self``.
@@ -790,7 +790,7 @@ class TamariIntervalPoset(Element,
                 parent = i
         return parent
 
-    @ cached_method
+    @cached_method
     def decreasing_cover_relations(self) -> list[tuple[int, int]]:
         r"""
         Return the cover relations of the final forest of ``self``.
@@ -1017,7 +1017,7 @@ class TamariIntervalPoset(Element,
         """
         return self._size
 
-    @ cached_method
+    @cached_method
     def cubical_coordinates(self) -> tuple[int, ...]:
         """
         Return the cubical coordinates of ``self``.
@@ -2904,7 +2904,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         This is a factory class whose constructor returns instances of
         subclasses.
     """
-    @ staticmethod
+    @staticmethod
     def __classcall_private__(cls, n=None):
         r"""
         TESTS::
@@ -2981,7 +2981,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                             ' coordinates of vertices when latexed',
                             checker=lambda x: True)   # More trouble than it's worth to check
 
-    @ staticmethod
+    @staticmethod
     def check_poset(poset) -> bool:
         r"""
         Check if the given poset ``poset`` is a interval-poset, that is,
@@ -3030,7 +3030,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                     return False
         return True
 
-    @ staticmethod
+    @staticmethod
     def final_forest(element) -> TIP:
         r"""
         Return the final forest of a binary tree, an interval-poset or a
@@ -3144,7 +3144,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
 
-    @ staticmethod
+    @staticmethod
     def initial_forest(element) -> TIP:
         r"""
         Return the initial forest of a binary tree, an interval-poset or
@@ -3258,7 +3258,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
                                 format='vertices_and_edges'))  # type:ignore
         return TamariIntervalPoset(P, check=False)  # type:ignore
 
-    @ staticmethod
+    @staticmethod
     def from_binary_trees(tree1, tree2) -> TIP:
         r"""
         Return the interval-poset corresponding to the interval
@@ -3307,7 +3307,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         except ValueError:
             raise ValueError("the two binary trees are not comparable on the Tamari lattice")
 
-    @ staticmethod
+    @staticmethod
     def from_dyck_words(dw1, dw2) -> TIP:
         r"""
         Return the interval-poset corresponding to the interval
@@ -3358,7 +3358,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         except ValueError:
             raise ValueError("the two Dyck words are not comparable on the Tamari lattice")
 
-    @ staticmethod
+    @staticmethod
     def from_blossoming_tree(B: TamariBlossomingTree) -> TIP:
         r'''
         Return the interval poset corresponding to the Tamari interval in
@@ -3388,7 +3388,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         '''
         return B.to_TIP()
 
-    @ staticmethod
+    @staticmethod
     def recomposition_from_triple(left: TIP, right: TIP, r) -> TIP:
         """
         Recompose an interval-poset from a triple (``left``, ``right``, ``r``).
@@ -3427,7 +3427,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         # if yes, create the poset here and pass it as argument
         return TamariIntervalPoset(left.size() + right.size() + 1, rel)
 
-    @ staticmethod
+    @staticmethod
     def from_grafting_tree(tree) -> TIP:
         """
         Return an interval-poset from a grafting tree.
@@ -3453,7 +3453,7 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         right = TamariIntervalPosets.from_grafting_tree(tree[1])
         return TamariIntervalPosets.recomposition_from_triple(left, right, r)
 
-    @ staticmethod
+    @staticmethod
     def from_minimal_schnyder_wood(graph) -> TIP:
         """
         Return a Tamari interval built from a minimal Schnyder wood.
@@ -3911,7 +3911,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             self.factory = TamariBlossomingTreeFactory(self._size)
         return self.factory.random_element().to_TIP()
 
-    @ lazy_attribute
+    @lazy_attribute
     def _parent_for(self):
         r"""
         The parent of the element generated by ``self``.
@@ -3925,7 +3925,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         return TamariIntervalPosets_all()
 
     # This is needed because this is a facade parent via DisjointUnionEnumeratedSets
-    @ lazy_attribute
+    @lazy_attribute
     def element_class(self):
         r"""
         TESTS::
