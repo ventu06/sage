@@ -4076,6 +4076,7 @@ class EllipticCurve_rational_field(EllipticCurve_number_field):
             k += 1
         return bound
 
+    @cached_method
     def torsion_subgroup(self):
         r"""
         Return the torsion subgroup of this elliptic curve.

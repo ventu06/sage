@@ -1142,10 +1142,19 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         self.gens.set_cache(gens)
         return AdditiveAbelianGroupWrapper(self.point_homset(), gens, orders)
 
-    def torsion_basis(self, n):
+    def torsion_basis(self, n, *, algorithm=None):
         r"""
         Return a basis of the `n`-torsion subgroup of this elliptic curve,
-        assuming it is fully rational.
+        assuming it is isomorphic to `\ZZ/n\times\ZZ/n` and fully rational.
+
+        INPUT:
+
+        - ``n`` -- integer
+
+        - ``algorithm`` -- string (default: ``None``).
+          Currently available choices are ``"random"``, ``"structure"``,
+          and ``"divpoly"``. If ``algorithm`` is ``None``, the method
+          attempts to select the most suitable algorithm automatically.
 
         EXAMPLES::
 
@@ -1168,7 +1177,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             sage: E.torsion_basis(23)
             Traceback (most recent call last):
             ...
-            ValueError: curve does not have full rational 23-torsion
+            ValueError: curve does not have full rational 23-torsion, or very unlikely event
             sage: F = E.division_field(23); F
             Finite Field in t of size 101^11
             sage: EE = E.change_ring(F)
@@ -1186,25 +1195,140 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
              + 55*z11^5 + 23*z11^4 + 17*z11^3 + 90*z11^2 + 91*z11 + 68
              : 1)
 
+        TESTS:
+
+        Check on random curves that all three algorithms return
+        equivalent results::
+
+            sage: while True:
+            ....:     p = random_prime(100)
+            ....:     e = randrange(1,4)
+            ....:     E = choice(EllipticCurve(j=GF((p,e)).random_element()).twists())
+            ....:     ds = E.abelian_group().invariants()
+            ....:     if len(ds) < 2:
+            ....:         continue
+            ....:     ns = set(gcd(ds).divisors()) - {1}
+            ....:     if ns: break
+            sage: n = choice(list(ns))
+            sage: assert n >= 2
+            sage: P1, Q1 = E.torsion_basis(n, algorithm='random')
+            sage: A1 = AdditiveAbelianGroupWrapper.from_generators([P1, Q1])
+            sage: P2, Q2 = E.torsion_basis(n, algorithm='structure')
+            sage: A2 = AdditiveAbelianGroupWrapper.from_generators([P2, Q2])
+            sage: P3, Q3 = E.torsion_basis(n, algorithm='divpoly')
+            sage: A3 = AdditiveAbelianGroupWrapper.from_generators([P3, Q3])
+            sage: assert A1 == A2
+            sage: assert A1 == A3
+            sage: assert A2 == A3
+
         .. SEEALSO::
 
             Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
-            to determine a field extension containing the full `\ell`-torsion subgroup.
+            to determine a field extension containing the full `n`-torsion subgroup.
 
         ALGORITHM:
 
-        This method currently uses :meth:`abelian_group` and
+        If ``algorithm`` is ``"random"``, this method repeatedly
+        samples random points on the curve and distills a basis of the
+        `n`-torsion from them. This requires point counting.
+
+        If ``algorithm`` is ``divpoly``, this method uses division
+        polynomials to construct a basis of the `n`-torsion. The
+        complexity of this approach scales with the size of the prime
+        factors of `n`. This algorithm is usually much slower than
+        the others, but there might be situations in which it is
+        useful.
+
+        If ``algorithm`` is ``"structure"``, this method calls
+        :meth:`abelian_group` and
         :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+        Theoretically, this involves performing a superset of the work
+        of the ``"random"`` method, so it should never be the best
+        choice, but due to implementation details (PARI vs. Sage) this
+        approach can be faster than the ``"random"`` algorithm in
+        practice.
         """
-        # TODO: In many cases this is not the fastest algorithm.
-        # Alternatives include factoring division polynomials and
-        # random sampling (like PARI's ellgroup, but with a milder
-        # termination condition). We should implement these too
-        # and figure out when to use which.
-        T = self.abelian_group().torsion_subgroup(n)
-        if T.invariants() != (n, n):
-            raise ValueError(f'curve does not have full rational {n}-torsion')
-        return tuple(P.element() for P in T.gens())
+        n = ZZ(n)
+        if n < 2:
+            raise ValueError('computing an n-torsion basis only makes sense for n >= 2')
+
+        if self.base_field().characteristic().divides(n):
+            raise ValueError(f'curve does not have 2-dimensional rational {n}-torsion')
+
+        if algorithm is None:
+            if self.abelian_group.is_in_cache():
+                algorithm = 'structure'
+            else:
+                algorithm = 'random'
+
+        if algorithm == 'random':
+            # similar to AdditiveAbelianGroupWrapper.from_generators()
+            from sage.arith.misc import xlcm
+
+            N = self.cardinality()
+            P = Q = self.zero()
+            P._order = ZZ(1)
+
+            for step in range(999):
+                # check P,Q is a basis of the subgroup <P,Q> with ord(Q) | ord(P)
+                assert Q._order.divides(P._order)
+#                assert generic.has_order(P.weil_pairing(Q, P._order), Q._order, operation='*')
+
+                if Q._order == n:
+                    P *= P._order // n
+                    assert hasattr(P, '_order')
+                    break
+
+                cof = N.prime_to_m_part(n // Q._order)
+                T = cof * self.random_point()
+                T.set_order(multiple=N//cof, check=False)
+
+                # extend P using T as much as possible
+                m, k1, k2 = xlcm(P._order, T._order)
+                m1 = P._order // k1
+                m2 = T._order // k2
+                P = m1 * P + m2 * T
+                P._order = m
+
+                if not step:
+                    continue
+
+                # remove the P component from T
+                l = generic.order_from_multiple(P.weil_pairing(T, P._order), P._order, operation='*')
+                x = (l * T).log(l * P)
+                T -= x * P
+                T.set_order(multiple=P._order, check=False)
+
+                # for Q we only need the n-torsion part of T
+                T *= T._order // n.gcd(T._order)
+
+                # extend Q as much as possible
+                Q, m = generic.merge_points((Q, Q._order), (T, T._order))
+                Q._order = m
+
+                # remove the P component from Q
+                l = generic.order_from_multiple(P.weil_pairing(Q, P._order), P._order, operation='*')
+                y = (l * Q).log(l * P)
+                Q -= y * P
+                Q.set_order(multiple=P._order, check=False)
+
+            else:
+                raise ValueError(f'curve does not have full rational {n}-torsion, or very unlikely event')
+
+#            assert generic.has_order(P.weil_pairing(Q, n), n, operation='*')
+
+            return P, Q
+
+        elif algorithm == 'divpoly':
+            return super().torsion_basis(n, algorithm=algorithm)
+
+        elif algorithm == 'structure':
+            T = self.abelian_group().torsion_subgroup(n)
+            if T.invariants() != (n, n):
+                raise ValueError(f'curve does not have full rational {n}-torsion')
+            return tuple(P.element() for P in T.gens())
+
+        raise ValueError(f'unknown algorithm {algorithm!r}')
 
     def is_isogenous(self, other, field=None, proof=True):
         """

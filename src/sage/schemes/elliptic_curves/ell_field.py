@@ -1087,6 +1087,125 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             L = L, F_to_K.post_compose(K_to_L)
         return L
 
+    def torsion_basis(self, n, *, algorithm=None):
+        r"""
+        Return a basis of the `n`-torsion subgroup of this elliptic curve
+        assuming it is isomorphic to `\ZZ/n\times\ZZ/n` and fully rational.
+
+
+        INPUT:
+
+        - ``n`` -- integer
+
+        - ``algorithm`` -- string (default: ``None``).
+          Over general fields, only ``"divpoly"`` is available,
+          and over number fields, additionally ``"structure"``.
+          If ``algorithm`` is ``None``, the method attempts to
+          select the most suitable algorithm automatically.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve('15a1')
+            sage: E.torsion_basis(2)
+            ((-13/4 : 9/8 : 1), (-1 : 0 : 1))
+            sage: E.torsion_basis(4)
+            Traceback (most recent call last):
+            ...
+            ValueError: curve does not have full rational 2^2-torsion
+
+        ::
+
+            sage: E = EllipticCurve('11a2')
+            sage: E.torsion_subgroup()
+            Torsion Subgroup isomorphic to Trivial group
+              associated to the Elliptic Curve defined by y^2 + y = x^3 - x^2 - 7820*x - 263580
+                over Rational Field
+            sage: EE = E.change_ring(E.division_field(5))
+            sage: EE.torsion_subgroup()
+            Torsion Subgroup isomorphic to Z/5 + Z/5
+              associated to the Elliptic Curve defined by y^2 + y = x^3 + (-1)*x^2 + (-7820)*x + (-263580)
+                over Number Field in t with defining polynomial x^20 - 5*x^19 + 15*x^18 - 35*x^17 + 70*x^16 - 77*x^15 + 20*x^14 - 35*x^13 + 815*x^12 - 4380*x^11 + 9489*x^10 - 11860*x^9 + 4555*x^8 + 13055*x^7 + 12890*x^6 - 30338*x^5 + 11785*x^4 - 4380*x^3 - 13680*x^2 - 8640*x + 20736
+            sage: EE.torsion_basis(5, algorithm='divpoly')
+            ((595183/1928000*t^19 - 35292739/17352000*t^18 + 131419817/17352000*t^17 - 40329101/1928000*t^16 + 413372581/8676000*t^15 - 1379566363/17352000*t^14 + 376817699/4338000*t^13 - 1250892533/17352000*t^12 + 4879989161/17352000*t^11 - 7497101897/4338000*t^10 + 10429892351/1928000*t^9 - 15364091329/1446000*t^8 + 227824771789/17352000*t^7 - 114698642023/17352000*t^6 + 14739878027/8676000*t^5 - 46311365527/8676000*t^4 + 181688916383/17352000*t^3 - 55952844001/4338000*t^2 + 2240720131/361500*t - 199444/30125
+              : 67907087/13014000*t^19 - 224388017/6507000*t^18 + 2323846/18075*t^17 - 2312207969/6507000*t^16 + 10537958483/13014000*t^15 - 17608556113/13014000*t^14 + 19262352991/13014000*t^13 - 3191379809/2602800*t^12 + 30969621131/6507000*t^11 - 42357264953/1446000*t^10 + 398711684093/4338000*t^9 - 2352287312003/13014000*t^8 + 582276824761/2602800*t^7 - 367880125799/3253500*t^6 + 363704361121/13014000*t^5 - 73759615534/813375*t^4 + 2318110141133/13014000*t^3 - 7627182061/34704*t^2 + 3195593808/30125*t + 48027902/30125
+              : 1),
+             (104/150625*t^19 - 312/150625*t^18 + 728/150625*t^17 - 1456/150625*t^16 + 5723/301250*t^15 - 416/150625*t^14 + 728/150625*t^13 - 16952/150625*t^12 + 91104/150625*t^11 - 617317/301250*t^10 + 246688/150625*t^9 - 94744/150625*t^8 - 271544/150625*t^7 - 268112/150625*t^6 + 12021881/301250*t^5 - 245128/150625*t^4 + 91104/150625*t^3 + 284544/150625*t^2 + 179712/150625*t - 13340968/150625
+              : 3531/301250*t^19 - 10593/301250*t^18 + 24717/301250*t^17 - 24717/150625*t^16 + 48692/150625*t^15 - 7062/150625*t^14 + 24717/301250*t^13 - 575553/301250*t^12 + 1546578/150625*t^11 - 5246148/150625*t^10 + 4187766/150625*t^9 - 3216741/301250*t^8 - 9219441/301250*t^7 - 4551459/150625*t^6 + 102245379/150625*t^5 - 8322567/301250*t^4 + 1546578/150625*t^3 + 4830408/150625*t^2 + 3050784/150625*t - 95627989/150625
+              : 1))
+            sage: EE.torsion_basis(5, algorithm='structure')
+            ((595183/1928000*t^19 - 35292739/17352000*t^18 + 131419817/17352000*t^17 - 40329101/1928000*t^16 + 413372581/8676000*t^15 - 1379566363/17352000*t^14 + 376817699/4338000*t^13 - 1250892533/17352000*t^12 + 4879989161/17352000*t^11 - 7497101897/4338000*t^10 + 10429892351/1928000*t^9 - 15364091329/1446000*t^8 + 227824771789/17352000*t^7 - 114698642023/17352000*t^6 + 14739878027/8676000*t^5 - 46311365527/8676000*t^4 + 181688916383/17352000*t^3 - 55952844001/4338000*t^2 + 2240720131/361500*t - 199444/30125
+              : 67907087/13014000*t^19 - 224388017/6507000*t^18 + 2323846/18075*t^17 - 2312207969/6507000*t^16 + 10537958483/13014000*t^15 - 17608556113/13014000*t^14 + 19262352991/13014000*t^13 - 3191379809/2602800*t^12 + 30969621131/6507000*t^11 - 42357264953/1446000*t^10 + 398711684093/4338000*t^9 - 2352287312003/13014000*t^8 + 582276824761/2602800*t^7 - 367880125799/3253500*t^6 + 363704361121/13014000*t^5 - 73759615534/813375*t^4 + 2318110141133/13014000*t^3 - 7627182061/34704*t^2 + 3195593808/30125*t + 48027902/30125
+              : 1),
+             (104/150625*t^19 - 312/150625*t^18 + 728/150625*t^17 - 1456/150625*t^16 + 5723/301250*t^15 - 416/150625*t^14 + 728/150625*t^13 - 16952/150625*t^12 + 91104/150625*t^11 - 617317/301250*t^10 + 246688/150625*t^9 - 94744/150625*t^8 - 271544/150625*t^7 - 268112/150625*t^6 + 12021881/301250*t^5 - 245128/150625*t^4 + 91104/150625*t^3 + 284544/150625*t^2 + 179712/150625*t - 13340968/150625
+              : 3531/301250*t^19 - 10593/301250*t^18 + 24717/301250*t^17 - 24717/150625*t^16 + 48692/150625*t^15 - 7062/150625*t^14 + 24717/301250*t^13 - 575553/301250*t^12 + 1546578/150625*t^11 - 5246148/150625*t^10 + 4187766/150625*t^9 - 3216741/301250*t^8 - 9219441/301250*t^7 - 4551459/150625*t^6 + 102245379/150625*t^5 - 8322567/301250*t^4 + 1546578/150625*t^3 + 4830408/150625*t^2 + 3050784/150625*t - 95627989/150625
+              : 1))
+
+        .. SEEALSO::
+
+            Use :meth:`~sage.schemes.elliptic_curves.ell_field.EllipticCurve_field.division_field`
+            to determine a field extension containing the full `n`-torsion subgroup.
+
+        ALGORITHM:
+
+        If ``algorithm`` is ``divpoly``, this method uses division
+        polynomials to construct a basis of the `n`-torsion. The
+        complexity of this approach scales with the size of the prime
+        factors of `n`.
+
+        If ``algorithm`` is ``"structure"``, this method calls
+        :meth:`torsion_subgroup` and
+        :meth:`AdditiveAbelianGroupWrapper.torsion_subgroup`.
+        """
+        if algorithm is None:
+            if hasattr(self, 'torsion_subgroup') and self.torsion_subgroup.is_in_cache():
+                algorithm = 'structure'
+            else:
+                algorithm = 'divpoly'
+
+        if algorithm == 'structure':
+
+            T = self.torsion_subgroup().torsion_subgroup(n)
+            if T.invariants() != (n, n):
+                raise ValueError(f'curve does not have full rational {n}-torsion')
+            return tuple(P.element() for P in T.gens())
+
+        elif algorithm == 'divpoly':
+
+            from sage.groups.generic import has_order
+
+            n = ZZ(n)
+            if n < 2:
+                raise ValueError('computing an n-torsion basis only makes sense for n >= 2')
+
+            P = Q = self.zero()
+
+            for l,m in n.factor():
+                pts = filter(bool, self.zero().division_points(l))
+                Pl = next(pts)
+                for Ql in pts:
+                    if not Pl.weil_pairing(Ql, l).is_one():
+                        break
+                else:
+                    raise ValueError(f'curve does not have full rational {l}-torsion')
+
+                for i in range(1, m):
+                    try:
+                        Pl = Pl.division_points(l)[0]
+                        Ql = Ql.division_points(l)[0]
+                    except (StopIteration, IndexError):
+                        raise ValueError(f'curve does not have full rational {l}^{i+1}-torsion')
+#                    assert has_order(Pl.weil_pairing(Ql, l**(i+1)), l**(i+1), operation='*')
+
+                P += Pl
+                Q += Ql
+
+#            assert has_order(P.weil_pairing(Q, n), n, operation='*')
+            P._order = Q._order = n
+            return P, Q
+
+        else:
+            raise ValueError(f'unknown algorithm {algorithm!r}')
+
     def _Hom_(self, other, category=None):
         r"""
         Hook to make :class:`~sage.categories.homset.Hom`
