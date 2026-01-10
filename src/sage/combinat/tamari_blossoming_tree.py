@@ -325,7 +325,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         OUTPUT:
 
         The size of the current blossoming tree, which is the number of edges
-        excluding buds. This convention agrees with that of TamariIntervalPoset.
+        excluding buds. This convention agrees with that of
+        ``TamariIntervalPoset``.
 
         EXAMPLES::
 
@@ -340,9 +341,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def to_plane_tree(self) -> OrderedTree:
         r'''
-        Return the blossoming tree as an OrderedTree.
+        Return the blossoming tree as an ``OrderedTree``.
 
-        The buds are simply leaves.
+        The buds simply become leaves.
 
         EXAMPLES::
 
@@ -486,7 +487,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type TamariIntervalPoset representing the corresponding
+        An object of type ``TamariIntervalPoset`` representing the corresponding
         Tamari interval poset
 
         EXAMPLES::
@@ -513,7 +514,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``tip`` -- a TamariIntervalPoset object representing a Tamari interval
+        - ``tip`` -- a ``TamariIntervalPoset`` object representing a Tamari
+        interval
 
         EXAMPLES::
 
@@ -537,8 +539,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     @staticmethod
     def binary_tree_plot(btree) -> Graphics:
         r'''
-        Utility function for plotting binary trees in the "Chapoton" way, i.e.,
-        leaves are drawn on a horizontal line.
+        Utility function for plotting binary trees in the "upside-down
+        Chapoton" way, i.e., leaves are drawn on a horizontal line, but the
+        root still on top.
 
         INPUT:
 
@@ -547,7 +550,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         OUTPUT:
 
         A plot of ``btree``, with leaves on a horizontal line, and edges all of
-        slope +1 or -1. Labels are ignored.
+        slope `1` or `-1`. Labels are ignored.
 
         EXAMPLES::
 
@@ -603,10 +606,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-            We use a feature of from_plane_tree instead of using the usual
-            Tamari module already in Sagemath to avoid exceeding the number of
-            recursions during the left-right symmetry of the binary trees when
-            tree size is large.
+            We use a feature of ``from_plane_tree`` instead of using the usual
+            ``left_right_symmetry`` in ``BinaryTree`` to avoid exceeding the
+            limit on the number of recursions when tree size is large.
 
         EXAMPLES::
 
@@ -636,7 +638,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``semicircle`` -- optional, sets whether the arcs are drawn as
-          semicircles or a Bezier arc. Default: ``True``.
+          semicircles or a Bezier arc. Default: ``True``, which draws
+          semicircles.
         - ``arrow`` -- optional, sets whether draw horizontal arrows tips.
           Default: ``True``.
 
@@ -832,7 +835,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         .. NOTE::
 
             This function is a thin wrapper of the internal function
-            ``_from_plane_tree````, which provides two extra functionalities
+            ``_from_plane_tree``, which provides two extra functionalities
             by which end users should not be concerned.
 
         INPUT:
@@ -842,8 +845,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type TamariBlossomingTree representing the blossoming tree
-        given by ``tree``.
+        An object of type ``TamariBlossomingTree`` representing the blossoming
+        tree given by ``tree``.
 
         EXAMPLES::
 
@@ -899,8 +902,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type TamariBlossomingTree representing the blossoming tree
-        given by ``tree``.
+        An object of type ``TamariBlossomingTree`` representing the blossoming
+        tree given by ``tree``.
 
         TESTS::
 
@@ -938,7 +941,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         # check buds
         if not skip_check:
             if len([x for x in tree if not x]) != 1:
-                raise ValueError('Not a blossoming tree, bud count incorrect')
+                raise ValueError('not a blossoming tree, bud count incorrect')
             for st in tree:
                 TamariBlossomingTree.__checkbuds(st)
 
@@ -1008,10 +1011,10 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``aspect`` -- ratio of aspect, default to 1.0
+        - ``aspect`` -- ratio of aspect, default to ``1.0``
         - ``layout`` -- the algorithm for layout, with three possible options:
-            * 'tree': uses ``layout_tree`` of undirected graph in sage
-            * 'planar': uses ``layout_planar`` of undirected graph in sage
+            * ``'tree'``: uses ``layout_tree`` of undirected graph in sage
+            * ``'planar'``: uses ``layout_planar`` of undirected graph in sage
 
         OUTPUT:
 
@@ -1027,7 +1030,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
             Tl = OrderedTree([[], [[], [], [[], []], [[[], []], [], []]],
                               [[], [], [[[], []], [], [[], []], []]]])
-            g = TamariBlossomingTree(Tl).plot_meandric()
+            g = TamariBlossomingTree(Tl).plot_blossoming()
             sphinx_plot(g)
         '''
         def euclid_dist(p1, p2):
@@ -1186,7 +1189,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``btree`` -- a binary tree, not necessarily of type ``BinaryTree``.
-        - ``color`` -- color of the arcs. Default: blue.
+        - ``color`` -- color of the arcs. Default: ``blue``.
 
         OUTPUT:
 
@@ -1308,7 +1311,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def is_modern(self) -> bool:
         r'''
         Return whether the Tamari interval associated to the current blossoming
-        tree is modern, using the function ``is_modern`` in TamariIntervalPoset.
+        tree is modern, using the function ``is_modern`` in
+        ``TamariIntervalPoset``.
 
         OUTPUT:
 
@@ -1547,6 +1551,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     EXAMPLES::
 
+        sage: from sage.combinat.tamari_blossoming_tree import (
+        ....:     TamariBlossomingTreeFactory)
         sage: TBTF = TamariBlossomingTreeFactory(100)
         sage: TBTF
         Random generator of Tamari blossoming trees of size 100
@@ -1569,6 +1575,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTreeFactory)
             sage: TBTF = TamariBlossomingTreeFactory(100)
             sage: TBTF
             Random generator of Tamari blossoming trees of size 100
@@ -1633,6 +1641,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTreeFactory)
             sage: TamariBlossomingTreeFactory(100).random_element()
             Tamari blossoming tree ... of size 100
         '''
@@ -1693,6 +1703,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTreeFactory)
             sage: TamariBlossomingTreeFactory.generate(100)
             Tamari blossoming tree ... of size 100
         '''
@@ -1708,6 +1720,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     EXAMPLES::
 
+        sage: from sage.combinat.tamari_blossoming_tree import (
+        ....:     SynchronizedBlossomingTreeFactory)
         sage: SBTF = SynchronizedBlossomingTreeFactory(100)
         sage: SBTF
         Random generator of synchronized blossoming trees of size 100
@@ -1730,6 +1744,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     SynchronizedBlossomingTreeFactory)
             sage: SynchronizedBlossomingTreeFactory(-3)
             Traceback (most recent call last):
             ...
@@ -1786,6 +1802,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     SynchronizedBlossomingTreeFactory)
             sage: B = SynchronizedBlossomingTreeFactory(100).random_element()
             sage: B
             Tamari blossoming tree ... of size 100
@@ -1832,6 +1850,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     SynchronizedBlossomingTreeFactory)
             sage: B = SynchronizedBlossomingTreeFactory.generate(100)
             sage: B
             Tamari blossoming tree ... of size 100
@@ -1851,6 +1871,8 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
     EXAMPLES::
 
+        sage: from sage.combinat.tamari_blossoming_tree import (
+        ....:     ModernBlossomingTreeFactory)
         sage: MBTF = ModernBlossomingTreeFactory(100)
         sage: MBTF
         Random generator of modern blossoming trees of size 100
@@ -1875,6 +1897,8 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     ModernBlossomingTreeFactory)
             sage: MBTF = ModernBlossomingTreeFactory(100)
             sage: MBTF
             Random generator of modern blossoming trees of size 100
@@ -1939,6 +1963,16 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         way to obtain a modern blossoming tree according to the recursive
         decomposition. Details of the bijection for each family can be found in
         the documentation of the corresponding sub-functions.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     ModernBlossomingTreeFactory)
+            sage: B = ModernBlossomingTreeFactory(100).random_element()
+            sage: B
+            Tamari blossoming tree ... of size 100
+            sage: B.is_modern()
+            True
         '''
         def genC(dtree: OrderedTree) -> list[OrderedTree]:
             r'''
@@ -2043,6 +2077,8 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         EXAMPLES::
 
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     ModernBlossomingTreeFactory)
             sage: B = ModernBlossomingTreeFactory.generate(100)
             sage: B
             Tamari blossoming tree ... of size 100
