@@ -3907,7 +3907,9 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: len(u)
             8
         """
-        return TamariBlossomingTreeFactory.generate(self._size).to_TIP()
+        if not hasattr(self, 'factory'):
+            self.factory = TamariBlossomingTreeFactory(self._size)
+        return self.factory.random_element().to_TIP()
 
     @ lazy_attribute
     def _parent_for(self):
