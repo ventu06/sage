@@ -3767,13 +3767,8 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-
-        We currently have to skip checking that elements are produced
-        uniformly at random by :meth:`random_element`. This is not
-        the case because of :issue:`40693`::
-
-            sage: for i in range(5):
-            ....:     TestSuite(TamariIntervalPosets(i)).run(skip="_test_random")
+            sage: for i in range(1, 6):
+            ....:     TestSuite(TamariIntervalPosets(i)).run()
         """
         # there is a natural order on interval-posets through inclusions
         # that is why we use the FinitePosets category
@@ -3893,16 +3888,11 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
     def random_element(self) -> TIP:
         """
-        Return a random Tamari interval of fixed size.
+        Return a random Tamari interval poset of fixed size.
 
-        This is obtained by first creating a random rooted
-        planar triangulation, then computing its unique
-        minimal Schnyder wood, then applying a bijection
-        of Bernardi and Bonichon [BeBo2009]_.
-
-        Because the random rooted planar triangulation is
-        chosen uniformly at random, the Tamari interval is
-        also chosen according to the uniform distribution.
+        This is obtained using the class :class:`TamariBlossomingTreeFactory`,
+        which generates blossoming trees uniformly at random. A bijection is
+        then performed to obtain a Tamari interval poset.
 
         EXAMPLES::
 
@@ -3917,14 +3907,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: len(u)
             8
         """
-        from sage.graphs.schnyder import minimal_schnyder_wood
-        from sage.graphs.generators.random import RandomTriangulation
-        n = self._size
-        tri = RandomTriangulation(n + 3)
-        tip = TamariIntervalPosets
-        schnyder = minimal_schnyder_wood(tri, root_edge=(-1, -2),
-                                         check=False)
-        return tip.from_minimal_schnyder_wood(schnyder)
+        return TamariBlossomingTreeFactory.generate(self._size).to_TIP()
 
     @ lazy_attribute
     def _parent_for(self):
