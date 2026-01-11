@@ -734,6 +734,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         Return latex code for the meandric drawing of the current blossoming
         tree.
 
+        TODO: fix when doing view(T) the image is not shown properly.
+
         EXAMPLES::
 
             sage: T = OrderedTree([[], [[], [], [[], []]]])
@@ -741,7 +743,44 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             sage: type(latex(T))
             <class 'sage.misc.latex.LatexExpr'>
         """
-        return latex(self.plot_meandric())
+        n = self._size
+        tikz = []
+        latex.add_package_to_preamble_if_available('tikz')
+        # header
+        # tikz.append('\\resizebox{\\textwidth}{!}{%\n')
+        tikz.append('\\begin{tikzpicture}\n')
+        tikz.append(f'\\useasboundingbox (-0.6, -{n}) rectangle '
+                    f'({2 * n + 0.6}, {n});\n')
+        # zorder=0
+        # arrows
+        tikz.append(f'\\foreach \\x in {{0, 2, ..., {2 * n}}} '
+                    '\\draw[-latex, thick] (\\x, 0) -- ++(-0.6, 0);\n')
+        tikz.append(f'\\foreach \\x in {{0, 2, ..., {2 * n}}} '
+                    '\\draw[-latex, thick] (\\x, 0) -- ++(0.6, 0);\n')
+        # zorder=1
+        # tree edges
+        norder, eorder = self._node_order, self._edge_order
+        for i in range(n):
+            nidx1, nidx2 = eorder[i]
+            k, m = sorted((norder.index(nidx1), norder.index(nidx2)))
+            # upper arc
+            tikz.append(f'\\draw[blue, very thick] ({k * 2}, 0) arc '
+                        f'(180:0:{i - k + 0.5});\n')
+            # lower arc
+            tikz.append(f'\\draw[red, very thick] ({m * 2}, 0) arc '
+                        f'(0:-180:{m - i - 0.5});\n')
+        # zorder=2
+        # trees nodes, which are circles
+        tikz.append(f'\\foreach \\x in {{0,  2, ..., {2 * n}}} \\filldraw[black]'
+                    ' (\\x, 0) circle (0.15);\n')
+        # square nodes for edges, which are squares
+        tikz.append(f'\\foreach \\x in {{1, 3, ..., {2 * n - 1}}}'
+                    '\\node[draw=black, fill=white, '
+                    'very thick, minimum size=0.2] '
+                    '(square) at (\\x, 0) {};\n')
+        # ending
+        tikz.append('\\end{tikzpicture}\n')
+        return ''.join(tikz)
 
     @staticmethod
     def __find_dangling_bud(tree: LabelledOrderedTree) -> list[int]:
@@ -1926,7 +1965,8 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         Return a string representing the instance of random generator and the
         size of objects that it is going to generate.
         """
-        return f'Random generator of modern blossoming trees of size {self._size}'
+        return (f'Random generator of modern blossoming trees'
+                f' of size {self._size}')
 
     def random_element(self) -> TamariBlossomingTree:
         r"""
