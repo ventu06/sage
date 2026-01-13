@@ -66,8 +66,6 @@ if TYPE_CHECKING:
     from .ideal import FunctionFieldIdeal
     from .ideal import FunctionFieldIdealInfinite as InfiniteIdeal
     FiniteIdeal: TypeAlias = FunctionFieldIdeal  # For readability when we specifically mean a finite ideal
-    # TODO: Can we do a type annotation that is FunctionFieldIdeal - FunctionFieldIdealInfinite?
-    # Should that type annotation be in ideal.py?
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -160,7 +158,19 @@ class JacobianPoint(JacobianPoint_base):
         Return the unique reduced representative of this divisor class
         in the Unique Hess model with respect to the base place.
 
-        TODO: Example
+        EXAMPLES::
+
+            sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
+            sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
+            sage: b = C([0,1,0]).place()
+            sage: G = C.jacobian(model='unique_hess', base_div=b).group()
+            sage: p = C([-1,2,1]).place()
+            sage: D = p - b
+            sage: pt = G.point(D)
+            sage: pt.divisor() == D
+            True
+            sage: pt == D
+            False
         """
         return (~self._finite_ideal).divisor() + (~self._infinite_ideal).divisor()
 
