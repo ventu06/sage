@@ -391,7 +391,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         The size of the current blossoming tree, which is the number of edges
         excluding buds. This convention agrees with that of
-        ``TamariIntervalPoset``.
+        :class:`~sage.combinat.interval_posets.TamariIntervalPoset`.
 
         EXAMPLES::
 
@@ -554,8 +554,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type ``TamariIntervalPoset`` representing the corresponding
-        Tamari interval poset
+        An object of type
+        :class:`~sage.combinat.interval_posets.TamariIntervalPoset`
+        representing the corresponding Tamari interval poset
 
         EXAMPLES::
 
@@ -581,8 +582,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``tip`` -- a ``TamariIntervalPoset`` object representing a Tamari
-          interval
+        - ``tip`` -- a
+        :class:`~sage.combinat.interval_posets.TamariIntervalPoset` object
+        representing a Tamari interval
 
         EXAMPLES::
 
@@ -950,8 +952,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type ``TamariBlossomingTree`` representing the blossoming
-        tree given by ``tree``.
+        An object of type
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`
+        representing the blossoming tree given by ``tree``.
 
         EXAMPLES::
 
@@ -1007,8 +1010,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         OUTPUT:
 
-        An object of type ``TamariBlossomingTree`` representing the blossoming
-        tree given by ``tree``.
+        An object of type
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`
+        representing the blossoming tree given by ``tree``.
 
         TESTS::
 
@@ -1257,8 +1261,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``btree`` -- a binary tree, which can be a BinaryTree or an
-          OrderedTree that happens to be binary
+        - ``btree`` -- a binary tree. Both nested lists and tree objects in
+          Sagemath are accepted.
 
         OUTPUT:
 
@@ -1294,7 +1298,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
         INPUT:
 
-        - ``btree`` -- a binary tree, not necessarily of type ``BinaryTree``.
+        - ``btree`` -- a binary tree, not necessarily of type
+          :class:`~sage.combinat.binary_tree.BinaryTree`.
         - ``color`` -- color of the arcs. Default: ``blue``.
 
         OUTPUT:
@@ -1417,8 +1422,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
     def is_modern(self) -> bool:
         r"""
         Return whether the Tamari interval associated to the current blossoming
-        tree is modern, using the function ``is_modern`` in
-        ``TamariIntervalPoset``.
+        tree is modern, using the function
+        :meth:`~sage.combinat.interval_posets.TamariIntervalPoset.is_modern` in
+        :class:`~sage.combinat.interval_posets.TamariIntervalPoset`.
 
         OUTPUT:
 
@@ -1671,8 +1677,8 @@ class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
     def __init__(self, size: int) -> None:
         r"""
         Initialize a random generator of Tamari blossoming trees of a given size
-        with the necessary precomputation. See ``random_element`` for precise
-        information on the precomputation.
+        with the necessary precomputation. See :meth:`random_element` for
+        precise information on the precomputation.
 
         INPUT:
 
@@ -1829,7 +1835,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
     This class is for uniform random generation of synchronized blossoming
     trees, which are in bijection with modern Tamari intervals, of a given
     size. No precomputation is needed here, but we keep the same convention as
-    ``TamariBlossomingTreeFactory`` for the methods.
+    :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTreeFactory`
+    for the methods.
 
     EXAMPLES::
 
@@ -1965,8 +1972,8 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-            This is a static version of ``random_element``, which is advised to
-            be used here as there is no precomputation needed.
+            This is a static version of :meth:`random_element`, which is
+            advised to be used here as there is no precomputation needed.
 
         EXAMPLES::
 
@@ -2007,8 +2014,8 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         r"""
         Initialize a random generator of modern blossoming trees of a given size
         along with the needed precomputation. See the documentation of
-        ``random_element`` for more precise information on the algorithm and the
-        related precomputation.
+        :meth:`random_element` for more precise information on the algorithm
+        and the related precomputation.
 
         INPUT:
 
@@ -2199,9 +2206,9 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
 
         .. NOTE::
 
-            This is a static version of ``random_element``, but it does not keep
-            the result of precomputation, and is suitable and more light-weight
-            for one-shot generation.
+            This is a static version of :meth:`random_element`, but it does not
+            keep the result of precomputation, and is suitable and more
+            light-weight for one-shot generation.
 
         EXAMPLES::
 
