@@ -304,9 +304,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             sage: T = OrderedTree([[], [[], [], [[], []]]])
             sage: ascii_art(TamariBlossomingTree(T))
               __o___
-             /     /    
+             /     /
             o   __o___
-               / /   / 
+               / /   /
               o o   o_
                    / /
                   o o
