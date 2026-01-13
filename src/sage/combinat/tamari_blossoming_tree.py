@@ -218,7 +218,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tree`` -- a plane tree of the type
-        :class:`~sage.combinat.ordered_tree.OrderedTree`.
+          :class:`~sage.combinat.ordered_tree.OrderedTree`.
 
         EXAMPLES::
 
@@ -583,8 +583,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         INPUT:
 
         - ``tip`` -- a
-        :class:`~sage.combinat.interval_posets.TamariIntervalPoset` object
-        representing a Tamari interval
+          :class:`~sage.combinat.interval_posets.TamariIntervalPoset` object
+          representing a Tamari interval
 
         EXAMPLES::
 
