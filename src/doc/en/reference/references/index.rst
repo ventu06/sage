@@ -2736,7 +2736,7 @@ REFERENCES:
              Bayreuth, 2013.
 
 .. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau, 
-             "Tamari intervals and blossoming trees".
+             *Tamari intervals and blossoming trees*.
              Combinatorial Theory, Volume 5, Issue 1.
              :doi:`10.5070/C65165015`.
 
