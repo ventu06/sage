@@ -27,8 +27,8 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
-
 from sage.misc import stopgap, superseded
+
 
 def _parse_multivariate_defining_equation(g):
     """
