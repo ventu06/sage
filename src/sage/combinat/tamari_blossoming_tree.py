@@ -356,7 +356,7 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
             This delegates the comparison to
             :class:`~sage.combinat.ordered_tree.LabelledOrderedTree`
 
-        TEST::
+        TESTS::
 
             sage: T1 = [[], [[[], []], [], []]]
             sage: TB1 = TamariBlossomingTree.from_plane_tree(T1)
@@ -371,9 +371,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
 
     def __ne__(self, other) -> bool:
         r"""
-        Test for inequality, uses ``__ne__``.
+        Test for inequality, uses ``__eq__``.
 
-        TESTS:
+        TESTS::
 
             sage: T = OrderedTree([[], [[], []], [[], []]])
             sage: TB1 = TamariBlossomingTree.from_plane_tree(T)
