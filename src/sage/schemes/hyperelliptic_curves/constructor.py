@@ -374,7 +374,7 @@ def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
     # HyperellipticCurveSmoothModel which uses weighted projective space and allows
     # for correct arithmetic for Jacobian(H) when the degree of the curve is even.
     if f.degree() % 1:
-        superseded.depreciation(
+        superseded.deprecation(
             39161,
             "this function will be replaced by the currently experimental constructor HyperellipticCurveSmoothModel.",
         )
