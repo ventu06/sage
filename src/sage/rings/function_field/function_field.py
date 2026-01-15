@@ -258,7 +258,7 @@ if TYPE_CHECKING:
     from .jacobian_base import Jacobian_base
     from .maps import FunctionFieldCompletion
     from .place import PlaceSet, FunctionFieldPlace
-    from .valuation import FunctionFieldValuation
+    from .valuation import FunctionFieldValuation_base
 
 
 class FunctionField(Field):
@@ -880,7 +880,7 @@ class FunctionField(Field):
 
         return self if isinstance(self, RationalFunctionField) else self.base_field().rational_function_field()
 
-    def valuation(self, prime) -> FunctionFieldValuation:
+    def valuation(self, prime) -> FunctionFieldValuation_base:
         r"""
         Return the discrete valuation on this function field defined by
         ``prime``.
@@ -1448,7 +1448,7 @@ class FunctionField(Field):
         return self.get_infinite_place(degree)
 
     @cached_method
-    def jacobian(self, model: str = 'hess', base_div: FunctionFieldPlace | FunctionFieldDivisor | None = None, **kwds) -> Jacobian_base:
+    def jacobian(self, model: str = 'hess', base_div: FunctionFieldPlace | FunctionFieldDivisor | None = None, extra_caching: bool = True, **kwds) -> Jacobian_base:
         """
         Return the Jacobian of the function field.
 
@@ -1457,6 +1457,10 @@ class FunctionField(Field):
         - ``model`` -- (default: ``'hess'``) model to use for arithmetic
 
         - ``base_div`` -- an effective divisor or a place
+
+        - ``extra_caching`` -- speed up Jacobian arithmetic at the cost
+            of increased memory use by caching frequent computations.
+            This parameter is currently only used by the Unique Hess model.
 
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
@@ -1497,14 +1501,7 @@ class FunctionField(Field):
         """
         from .place import FunctionFieldPlace
 
-        if model == 'unique_hess':
-            if base_div is None:
-                base_div = self.get_infinite_place(1)
-                if base_div is None:
-                    base_div = self.get_finite_place(1)
-            if base_div is None:
-                raise ValueError('the function field has no degree 1 place')
-        else:
+        if model != 'unique_hess':
             if base_div is None:
                 try:
                     base_place = self.get_place(1)
@@ -1520,37 +1517,43 @@ class FunctionField(Field):
         curve = kwds.get('curve')
 
         if model.startswith('km'):
-            from .jacobian_khuri_makdisi import Jacobian
+            from .jacobian_khuri_makdisi import Jacobian as JacobianKhuriMakdisi
             if model == 'km' or model.endswith('large'):
                 if base_div is None:
                     base_div = (2 * g + 1) * base_place
                 if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi large model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
-                return Jacobian(self, base_div, model='large', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='large', curve=curve)
             elif model.endswith('medium'):
                 if base_div is None:
                     base_div = (2 * g + 1) * base_place
                 if not base_div.degree() >= 2 * g + 1:
                     raise ValueError("Khuri-Makdisi medium model requires base divisor of degree "
                                      "at least 2*g + 1 for genus g")
-                return Jacobian(self, base_div, model='medium', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='medium', curve=curve)
             elif model.endswith('small'):
                 if base_div is None:
                     base_div = (g + 1) * base_place
                 if not base_div.degree() >= g + 1:
                     raise ValueError("Khuri-Makdisi small model requires base divisor of degree "
                                      "at least g + 1 for genus g")
-                return Jacobian(self, base_div, model='small', curve=curve)
+                return JacobianKhuriMakdisi(self, base_div, model='small', curve=curve)
         elif model == 'hess':
-            from .jacobian_hess import Jacobian
+            from .jacobian_hess import Jacobian as JacobianHess
             if base_div is None:
                 base_div = g * base_place
             if base_div.degree() != g:
                 raise ValueError("Hess model requires base divisor of degree g for genus g")
-            return Jacobian(self, base_div, curve=curve)
+            return JacobianHess(self, base_div, curve=curve)
         elif model == 'unique_hess':
-            from .jacobian_unique_hess import Jacobian
-            return Jacobian(self, base_div, curve=curve)
+            from .jacobian_unique_hess import Jacobian as JacobianUniqueHess
+            if base_div is None:
+                base_div = self.get_infinite_place(1)
+            if base_div is None:
+                base_div = self.get_finite_place(1)
+            if base_div is None:
+                raise ValueError('the function field has no degree 1 place')
+            return JacobianUniqueHess(self, base_div, cache_infinite_ideals=extra_caching, curve=curve)
 
         raise ValueError("unknown model")

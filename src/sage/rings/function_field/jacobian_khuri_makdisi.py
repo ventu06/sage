@@ -595,7 +595,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         D0 = base_div
 
         self._base_div_degree = base_div.degree()
-        self._V_cache = dict()
+        self._V_cache: dict[int, tuple] = dict()
 
         def V(n):
             if n in self._V_cache:

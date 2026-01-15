@@ -371,7 +371,7 @@ class JacobianGroup_finite_field(JacobianGroup, JacobianGroup_finite_field_base)
 
 class Jacobian(Jacobian_base, UniqueRepresentation):
 
-    def __init__(self, function_field: FunctionField, base_div: FunctionFieldDivisor | FunctionFieldPlace, cache_infinite_ideals: bool = False, **kwds) -> None:
+    def __init__(self, function_field: FunctionField, base_div: FunctionFieldDivisor | FunctionFieldPlace, cache_infinite_ideals: bool = True, **kwds) -> None:
         r"""
         TESTS::
 

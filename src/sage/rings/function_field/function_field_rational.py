@@ -41,7 +41,7 @@ from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterator
     from .place_rational import FunctionFieldPlace_rational
 
 
@@ -880,7 +880,7 @@ class RationalFunctionField_global(RationalFunctionField):
         else:
             return self.places_finite(degree)
 
-    def _places_finite(self, degree=1) -> Iterable[FunctionFieldPlace_rational]:
+    def _places_finite(self, degree=1) -> Iterator[FunctionFieldPlace_rational]:
         """
         Return a generator for all monic irreducible polynomials of the degree.
 

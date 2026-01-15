@@ -26,7 +26,7 @@ of divisor classes, and so is the only model where Jacobian elements are hashabl
 All models will attempt to find an appropriate `B` if one is not provided.
 The current implementation does this by finding a degree 1 place and scaling it appropriately.
 If the function field does not have a degree one place, then the ``unique_hess`` model cannot be used,
-and other models will fail unless the user to supplies an appropriate base divisor `B`.
+and other models will fail unless the user supplies an appropriate base divisor `B`.
 It is exceedingly rare for a global function field to not contain a degree one place,
 see [HLT2003]_ for a heuristic argument of this.
 
@@ -129,8 +129,11 @@ from sage.rings.integer_ring import IntegerRing
 from sage.rings.integer import Integer
 
 if TYPE_CHECKING:
+    from sage.categories.map import Map
+    from sage.rings.ring import Field
+
     from .divisor import FunctionFieldDivisor
-    from .function_field import FunctionFieldDi
+    from .function_field import FunctionField
     from .place import FunctionFieldPlace
 
 
@@ -169,7 +172,7 @@ class JacobianPoint_base(AdditiveGroupElement):
         """
         Return a function field divisor in the divisor class of this Jacobian element.
         """
-        ...
+        return NotImplemented
 
     def _repr_(self) -> str:
         """
@@ -222,7 +225,7 @@ class JacobianPoint_finite_field_base(JacobianPoint_base):
         ALGORITHM: Shanks' Baby Step Giant Step
         """
         # We implement BSGS instead of using sage.groups.generic because
-        # not all Jacobian models support hashable
+        # not all Jacobian models have hashable elements
 
         G = self.parent()
         B = G._bound_on_order()
@@ -384,9 +387,9 @@ class JacobianGroup_base(Parent):
         sage: J.group()
         Group of rational points of Jacobian over Finite Field of size 7 (Hess model)
     """
-    _embedding_map_class = None
+    _embedding_map_class: type[Map] | None = None
 
-    def __init__(self, parent, function_field, base_div: FunctionFieldDivisor) -> None:
+    def __init__(self, parent, function_field: FunctionField, base_div: FunctionFieldDivisor) -> None:
         """
         Initialize.
 
@@ -639,7 +642,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return sum(bs)
 
-    def get_points(self, n) -> list:
+    def get_points(self, n) -> list[JacobianPoint_finite_field_base]:
         """
         Return `n` points of the Jacobian group.
 
@@ -686,7 +689,7 @@ class Jacobian_base(Parent):
         sage: F.jacobian()
         Jacobian of Function field in y defined by y^2 + y + (x^2 + 1)/x (Hess model)
     """
-    def __init__(self, function_field, base_div, **kwds) -> None:
+    def __init__(self, function_field: FunctionField, base_div: FunctionFieldDivisor | FunctionFieldPlace, **kwds) -> None:
         """
         Initialize.
 
@@ -699,7 +702,7 @@ class Jacobian_base(Parent):
         """
         self._function_field = function_field
         self._base_div = base_div
-        self._system = {}
+        self._system: dict[Field, tuple[JacobianGroup_base, Field]] = {}
         self._base_place = None
         self._curve = kwds.get('curve')
         super().__init__(category=Jacobians(function_field.constant_base_field()),

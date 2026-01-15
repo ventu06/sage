@@ -46,7 +46,7 @@ from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
 if TYPE_CHECKING:
-    from collections.abc import Iterable
+    from collections.abc import Iterator
     from .place_polymod import FunctionFieldPlace_polymod
 
 
@@ -2137,7 +2137,7 @@ class FunctionField_global(FunctionField_simple):
         """
         return self.places_infinite(degree) + self.places_finite(degree)
 
-    def _places_finite(self, degree) -> Iterable[FunctionFieldPlace_polymod]:
+    def _places_finite(self, degree) -> Iterator[FunctionFieldPlace_polymod]:
         """
         Return a generator of finite places with ``degree``.
 
