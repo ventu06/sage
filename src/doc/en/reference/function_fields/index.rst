@@ -4,7 +4,9 @@ Algebraic Function Fields
 Sage allows basic computations with elements and ideals in orders of algebraic
 function fields over arbitrary constant fields. Advanced computations, like
 computing the genus or a basis of the Riemann-Roch space of a divisor, are
-available for function fields over finite fields, number fields, and the algebraic closure of `\QQ`.
+available for function fields over finite fields, number fields, and the
+algebraic closure of `\QQ`.
+
 .. toctree::
    :maxdepth: 1
 
