@@ -132,7 +132,7 @@ def prime_divisor(field, place, m=1):
         sage: 3 * d == prime_divisor(F, p, 3)
         True
     """
-    deprecation(1, 'this method is deprecated, call the .divisor() method on the place instead')
+    deprecation(41453, 'this method is deprecated, call the .divisor() method on the place instead')
     divisor_group = field.divisor_group()
     return divisor_group.element_class(divisor_group, {place: m})
 
