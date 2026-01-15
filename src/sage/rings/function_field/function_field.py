@@ -1407,7 +1407,7 @@ class FunctionField(Field):
 
         - ``degree`` -- positive integer
         """
-        ...
+        return NotImplemented
 
     def get_place(self, degree) -> FunctionFieldPlace | None:
         r"""
