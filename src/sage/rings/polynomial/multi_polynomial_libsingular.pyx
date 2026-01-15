@@ -170,8 +170,6 @@ AUTHORS:
 #   * pNext and pIter don't need currRing
 #   * p_Normalize apparently needs currRing
 
-from warnings import warn
-
 from libc.limits cimport INT_MAX
 
 from cpython.object cimport Py_NE
@@ -663,6 +661,7 @@ cdef class MPolynomialRing_libsingular(MPolynomialRing_base):
 
         Coercion from boolean polynomials, also by index::
 
+            sage: # needs sage.rings.polynomial.pbori
             sage: B.<x,y,z> = BooleanPolynomialRing(3)
             sage: P.<x,y,z> = QQ[]
             sage: P(B.gen(0))
@@ -4662,6 +4661,8 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
                 sig_off()
             finally:
                 if check_error():
+                    if len(self.variables()) == 1:
+                        return Factorization([(self._parent(p), e) for p, e in self.univariate_polynomial().factor()])
                     raise NotImplementedError("Factorization of multivariate polynomials over prime fields with characteristic > 2^29 is not implemented.")
 
             ivv = iv.ivGetVec()
@@ -4683,6 +4684,38 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
         find ``s_1,...,s_r`` such that ``g = s_1 f_1 + ... + s_r f_r``.
 
         A :exc:`ValueError` exception is raised if ``g (== self)`` does not belong to ``I``.
+
+        .. WARNING::
+
+            This method is unreliable when the base ring is inexact::
+
+                sage: R.<x> = PolynomialRing(RDF, implementation="singular")
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; R(1).lift((g, m))
+                Traceback (most recent call last):
+                ...
+                ValueError: polynomial is not in the ideal
+                sage: g.inverse_mod(m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+                sage: inverse_mod(g, m)
+                Traceback (most recent call last):
+                ...
+                ArithmeticError: element is non-invertible
+
+            While the generic implementation is fine::
+
+                sage: R.<x> = PolynomialRing(RDF)
+                sage: g = 5*x^3 + x - 7; m = x^4 - 12*x + 13; inverse_mod(g, m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+                sage: g.inverse_mod(m)  # abs tol 1e-14
+                -0.03196361250430942*x^3 - 0.03832697590106863*x^2 - 0.046305090023464945*x + 0.3464796877258926
+
+            But this is because of Singular:
+
+            .. code-block:: bash
+
+                Singular -q -c 'ring r = real,(x),lp; poly f = 5*x3 + x - 7; poly g = x4 - 12*x + 13; ideal M = f,g; ideal G = std(M); ideal SM = f; matrix T = lift(G,SM); T; quit;'
 
         INPUT:
 
@@ -4745,6 +4778,7 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
 
         Ensure interrupt does not make the internal state inconsistent::
 
+            sage: # long time
             sage: R.<x,y> = QQ[]
             sage: n = 17  # chosen so that the computation takes > 1 second but not excessively long.
             ....: # when Singular improves the algorithm or hardware gets faster, increase n.
@@ -4799,9 +4833,10 @@ cdef class MPolynomial_libsingular(MPolynomial_libsingular_base):
             finally:
                 s = check_error()
             if s:
+                msg = "polynomial is not in the ideal"
                 if s != ('2nd module does not lie in the first',):
-                    warn(f'unexpected error from singular: {s}')
-                raise ValueError("polynomial is not in the ideal")
+                    msg += f'; unexpected error from singular: {s}'
+                raise ValueError(msg)
 
             l = [new_MP(parent, pTakeOutComp(&res.m[i], 1))
                  for i in range(IDELEMS(res)) for _ in range(IDELEMS(_I))]
