@@ -58,7 +58,7 @@ foreach name, pyx : extension_data
   )
 endforeach
 
-extension_data_cpp = {'riemann_roch' : files('riemann_roch.pyx')}
+extension_data_cpp = {'riemann_roch': files('riemann_roch.pyx')}
 
 foreach name, pyx : extension_data_cpp
   py.extension_module(
