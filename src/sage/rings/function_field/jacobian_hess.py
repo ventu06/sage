@@ -311,6 +311,9 @@ class JacobianPoint(JacobianPoint_base):
         return G.element_class(self.parent(), dS, ds)
 
     def multiple(self, n):
+        r"""
+        Deprecated alias of ``self * n``.
+        """
         deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
         return self * n
 
