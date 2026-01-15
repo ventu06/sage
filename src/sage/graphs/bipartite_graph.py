@@ -351,7 +351,19 @@ class BipartiteGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: cannot add edge from 0 to 0 in graph without loops
+        
+    Check that construction from a file works with immutable graphs::
+    sage: import tempfile, os
+    sage: content = "2 2\n1 1\n1 1\n"
+    sage: fd, path = tempfile.mkstemp()
+    sage: with os.fdopen(fd, 'w') as f:
+    ....:     _ = f.write(content)
+    sage: B = BipartiteGraph(path, immutable=True)
+    sage: B.is_immutable()
+    True
+
     """
+
 
     def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
         """
