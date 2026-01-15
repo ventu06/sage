@@ -356,7 +356,7 @@ class JacobianPoint(JacobianPoint_base):
         r"""
         Deprecated alias of ``self * n``.
         """
-        deprecation(1, 'this method is deprecated, use regular multiplication with * instead')
+        deprecation(41453, 'this method is deprecated, use regular multiplication with * instead')
         return self * n
 
     def addflip(self, other):
