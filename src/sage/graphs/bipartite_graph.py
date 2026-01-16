@@ -427,6 +427,8 @@ class BipartiteGraph(Graph):
                 raise ValueError('loops are not allowed in bipartite graphs')
             kwds['loops'] = False
 
+        immutable_request = kwds.pop("immutable", False)
+
         if data is None:
             if partition is not None and check:
                 if partition[0] or partition[1]:
@@ -583,7 +585,8 @@ class BipartiteGraph(Graph):
         if hash_labels is None and hasattr(data, '_hash_labels'):
             hash_labels = data._hash_labels
         self._hash_labels = hash_labels
-
+        if immutable_request:
+            self._backend = self._backend.to_immutable()
         return
 
     @cached_method
