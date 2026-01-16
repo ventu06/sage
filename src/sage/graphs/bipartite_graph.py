@@ -437,6 +437,7 @@ class BipartiteGraph(Graph):
             self.left = set()
             self.right = set()
             self._hash_labels = hash_labels
+
             return
 
         # need to turn off partition checking for Graph.__init__() adding
@@ -457,7 +458,12 @@ class BipartiteGraph(Graph):
         elif isinstance(data, str):
             import os
             alist_file = os.path.exists(data)
-            Graph.__init__(self, data=None if alist_file else data, *args, **kwds)
+            kwds_for_init = kwds
+            if alist_file and immutable_request:
+	            kwds_for_init = dict(kwds)
+	            kwds_for_init["immutable"] = False
+
+            Graph.__init__(self, data=None if alist_file else data, *args, **kwds_for_init)
 
             # methods; initialize left and right attributes
             self.left = set()
@@ -585,8 +591,7 @@ class BipartiteGraph(Graph):
         if hash_labels is None and hasattr(data, '_hash_labels'):
             hash_labels = data._hash_labels
         self._hash_labels = hash_labels
-        if immutable_request:
-            self._backend = self._backend.to_immutable()
+
         return
 
     @cached_method
