@@ -1,5 +1,5 @@
 r"""
-Jacobians in Hess model
+Jacobians in the Hess model
 
 This module implements Jacobian arithmetic based on divisor representation by
 ideals. This approach to Jacobian arithmetic implementation is attributed to

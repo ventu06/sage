@@ -1,5 +1,5 @@
 r"""
-Jacobians in Khuri-Makdisi model
+Jacobians in the Khuri-Makdisi model
 
 This module implements Jacobian arithmetic by Khuri-Makdisi's algorithms
 [Khu2004]_ based on divisor representation by linear spaces.

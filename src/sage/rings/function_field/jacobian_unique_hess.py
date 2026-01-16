@@ -184,7 +184,7 @@ class JacobianPoint_finite_field(JacobianPoint, JacobianPoint_finite_field_base)
 class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
     Element = JacobianPoint
 
-    def __init__(self, parent, function_field, base_div: FunctionFieldDivisor) -> None:
+    def __init__(self, parent, function_field: FunctionField, base_div: FunctionFieldDivisor) -> None:
         r"""
         TESTS::
 
