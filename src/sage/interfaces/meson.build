@@ -17,6 +17,7 @@ py.install_sources(
   'gnuplot.py',
   'gp.py',
   'interface.py',
+  'interfaces_test.py',
   'jmoldata.py',
   'kash.py',
   'kenzo.py',
@@ -58,7 +59,6 @@ py.install_sources(
   'sympy_wrapper.py',
   'tab_completion.py',
   'tachyon.py',
-  'tests.py',
   'tides.py',
   subdir: 'sage/interfaces',
 )
