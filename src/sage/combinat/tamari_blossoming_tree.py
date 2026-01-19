@@ -28,15 +28,20 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections.abc import Iterator
 from typing import Self
 from math import acos, cos, sin, pi
 
+from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.combinat.binary_tree import from_tamari_sorting_tuple, BinaryTree
 from sage.combinat.dyck_word import DyckWords
+from sage.combinat.integer_lists.invlex import IntegerListsLex
 from sage.combinat.interval_posets import (TamariIntervalPoset,
                                            TamariIntervalPosets)
 from sage.combinat.ordered_tree import OrderedTree, LabelledOrderedTree
+from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.misc.latex import latex
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.misc.prandom import uniform, randrange
 from sage.plot.arc import arc
 from sage.plot.arrow import arrow2d
@@ -46,11 +51,17 @@ from sage.plot.graphics import Graphics
 from sage.plot.line import line
 from sage.plot.polygon import polygon2d
 from sage.rings.integer import Integer
+from sage.sets.disjoint_union_enumerated_sets import DisjointUnionEnumeratedSets
+from sage.sets.family import Family
+from sage.sets.positive_integers import PositiveIntegers
+from sage.structure.element import Element
+from sage.structure.parent import Parent
 from sage.structure.sage_object import SageObject
 from sage.structure.unique_representation import UniqueRepresentation
 
 
-class TamariBlossomingTree(SageObject, UniqueRepresentation):
+class TamariBlossomingTree(Element, UniqueRepresentation,
+                           metaclass=InheritComparisonClasscallMetaclass):
     r"""
     The class of bicolored blossoming trees, which are in bijection with
     intervals in the Tamari lattice.
@@ -206,14 +217,26 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         # Finally, we return the order
         return norder, eorder
 
-    def __init__(self, tree: OrderedTree) -> None:
+    @staticmethod
+    def __classcall_private__(cls, tree):
+        """
+        To uniformize for cached representation
+        And to make every blossoming tree an element of
+        TamariBlossomingTrees_all.element_class
+
+        TODO: write more details
+        """
+        A = TamariBlossomingTrees_all()
+        return A.element_class(A, OrderedTree(tree))
+
+    def __init__(self, parent, tree: OrderedTree) -> None:
         r"""
         Initialize a Tamari blossoming tree with a plane tree.
 
-        We consider the
-        root as a bud, so every internal node has two leaves, except the root
-        which has only one. We also check that the root is really a dangling
-        node (i.e., adjacent to a dangling bud), and raise an error otherwise.
+        We consider the root as a bud, so every internal node has two leaves,
+        except the root which has only one. We also check that the root is
+        really a dangling node (i.e., adjacent to a dangling bud), and raise an
+        error otherwise.
 
         INPUT:
 
@@ -258,6 +281,9 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
                     yield -1
             return
 
+        # case of rebuilding the element
+        if isinstance(tree, TamariBlossomingTree):
+            return
         # check root leaves
         if len([x for x in tree if not x]) != 1:
             raise ValueError('not a blossoming tree, bud count incorrect')
@@ -280,6 +306,8 @@ class TamariBlossomingTree(SageObject, UniqueRepresentation):
         self._size = (self._tree.node_number() - 1) // 3
         # the meandric order of nodes
         self._node_order, self._edge_order = self.__get_meandric_order()
+        # element/parent class
+        Element.__init__(self, parent)
 
     def _repr_(self) -> str:
         r"""
@@ -1531,9 +1559,9 @@ class _RandomPath:
 
             In its usage, ``cardlist`` is sometimes renormalized with respect to
             the exponential growth, i.e., ``cardlist[n]`` may be the number of
-            objects of size `n` divided by `c^n`, where `c` is the growth rate of
-            ``cardlist[n]``. This does not affect the validity of the result, as
-            all probabilities concern objects of the same size.
+            objects of size `n` divided by `c^n`, where `c` is the growth rate
+            of ``cardlist[n]``. This does not affect the validity of the
+            result, as all probabilities concern objects of the same size.
 
         INPUT:
 
@@ -1652,6 +1680,383 @@ class _RandomPath:
         """
         uset = _RandomPath.gen_comb(n, k)
         return _RandomPath._comb_to_path(n, k, uset)
+
+
+class TamariBlossomingTrees(UniqueRepresentation, Parent):
+    """
+    Factory class for Tamari blossoming trees. See
+    :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree` for
+    details of the elements.
+
+    INPUT:
+
+    - ``size`` -- size of Tamari blossoming trees in the set (optional,
+      default: None, standing for Tamari blossoming trees of all sizes)
+
+    OUTPUT:
+
+    An object representing the set of Tamari blossoming trees of the given size.
+
+    EXAMPLES:
+
+        sage: from sage.combinat.tamari_blossoming_tree import (
+        ....:     TamariBlossomingTrees)
+        sage: TamariBlossomingTrees()
+        Tamari blossoming trees
+        sage: TamariBlossomingTrees(10)
+        Tamari blossoming trees of size 10
+
+    .. NOTE::
+
+        This is a factory class whose constructor returns instances of
+        subclasses corresponding to call parameters.
+    """
+
+    def __classcall_private__(cls, size=None):
+        """
+        TODO
+
+        Using the private version to avoid infinite recursion when initializing
+        :class:`TamariBlossomingTrees_all`.
+        """
+        if size is None:
+            return TamariBlossomingTrees_all()
+        if not isinstance(size, (Integer, int)) or size <= 0:
+            raise ValueError('size must be a strictly positive integer')
+        return TamariBlossomingTrees_size(size)
+
+
+class TamariBlossomingTrees_all(DisjointUnionEnumeratedSets,
+                                TamariBlossomingTrees):
+    """
+    The enumerated set of all Tamari blossoming trees.
+    """
+
+    Element = TamariBlossomingTree
+
+    def __init__(self):
+        """
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBTA = TamariBlossomingTrees()
+            sage: TBTA.cardinality()
+            +Infinity
+            sage: TBTA is TamariBlossomingTrees()
+            True
+        """
+        DisjointUnionEnumeratedSets.__init__(
+            self, Family(PositiveIntegers(), TamariBlossomingTrees_size),
+            facade=True, keepkey=False
+        )
+
+    def _repr_(self) -> str:
+        """
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TamariBlossomingTrees()
+            Tamari blossoming trees
+        """
+        return 'Tamari blossoming trees'
+
+    def __contains__(self, elem) -> bool:
+        """
+        TEST::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBT4 = TamariBlossomingTrees(4)
+            sage: TBT4.random_element() in TamariBlossomingTrees()
+            True
+        """
+        return isinstance(elem, self.element_class)
+
+
+class TamariBlossomingTrees_size(TamariBlossomingTrees):
+    """
+    The enumerated set of Tamari blossoming trees of a given size.
+    """
+
+    def __init__(self, size):
+        """
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBTS = TamariBlossomingTrees(5)
+            sage: TBTS is TamariBlossomingTrees(5)
+            True
+            sage: for i in range(1, 6):
+            ....:     TestSuite(TamariBlossomingTrees(i)).run()
+        """
+        super().__init__(category=(FiniteEnumeratedSets()))
+        self._size = size
+
+    def _repr_(self) -> str:
+        """
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TamariBlossomingTrees(8)
+            Tamari blossoming trees of size 8
+        """
+        return f'Tamari blossoming trees of size {self._size}'
+
+    @lazy_attribute
+    def _parent_for(self):
+        """
+        The parent of elements generated by ``self``. In our case, it should be
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees_all`
+        so that the parent of every Tamari blossoming tree is the same.
+
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TamariBlossomingTrees(8)._parent_for
+            Tamari blossoming trees
+        """
+        return TamariBlossomingTrees_all()
+
+    @lazy_attribute
+    def element_class(self):
+        """
+        Overriding the original ``element_class`` method to make the element
+        class uniform across all implementation of sets of Tamari blossoming
+        trees.
+
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TODO = TamariBlossomingTrees()
+        """
+        return self._parent_for.element_class
+
+    def _element_constructor_(self, tree) -> TamariBlossomingTree:
+        """
+        TODO
+        """
+        A = TamariBlossomingTrees_all()
+        if isinstance(tree, TamariBlossomingTree):
+            tree = tree._tree
+        return self.element_class(A, OrderedTree(tree))
+
+    def __contains__(self, elem) -> bool:
+        """
+        TEST::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBT4 = TamariBlossomingTrees(4)
+            sage: TBT4.random_element() in TBT4
+            True
+            sage: TBT4.random_element() in TamariBlossomingTrees(5)
+            False
+        """
+        return (isinstance(elem, self.element_class)
+                and elem.size() == self._size)
+
+    def cardinality(self) -> Integer:
+        r"""
+        Return the cardinality of ``self``, i.e., the number of Tamari
+        blossoming trees of size `n` used to initialize the instance.
+
+        The formula, which is the same as that for Tamari intervals, is given
+        in [Cha2008]_:
+
+        .. MATH::
+
+            \frac{2}{n (n + 1)} \binom{4n + 1}{n - 1}
+
+        EXAMPLES::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: [len(TamariBlossomingTrees(n)) for n in range(1, 6)]
+            [1, 3, 13, 68, 399]
+        """
+        n = self._size
+        return (2 * Integer(4 * n + 1).binomial(n - 1)) // (n * (n + 1))
+
+    @staticmethod
+    def __path_to_tree(path: list[int]) -> TamariBlossomingTree:
+        """
+        Return a plane tree as a nested list corresponding to the lattice path
+        given by ``path``.
+
+        The lattice path we consider here should be with steps `(1, 3)` and
+        `(1, -1)`, and is represented as a list of the y-coordinate variation.
+        Furthermore, it must intersect with the x-axis only at both ends, so
+        that it can be considered as a pair of paths by last return
+        decomposition. For more information, see :meth:`random_element`.
+
+        INPUT:
+
+        - ``path`` -- a lattice path represented by the height variation
+          between steps
+
+        OUTPUT:
+
+        A plane tree as nested list in bijection with the given path.
+
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBS5 = TamariBlossomingTrees(5)
+            sage: len(set(x for x in TBS5)) == TBS5.cardinality()
+            True
+        """
+        # start with a stack of sub-trees in construction
+        stack = [[0, []]]
+        for step in path:
+            if step == 3:  # new node
+                stack.append([0, []])
+            else:  # depending on type
+                if stack[-1][0] < 2:  # add bud
+                    stack[-1][0] += 1
+                    stack[-1][1].append([])
+                else:  # subtree completed
+                    subtree = stack.pop()[1]
+                    stack[-1][1].append(subtree)
+        # Get the tree (list of subtrees for the moment)
+        stack = stack[-1][1][0]
+        # pop the last bud, which is always the last child
+        stack.pop()
+        return stack
+
+    def random_element(self) -> TamariBlossomingTree:
+        r"""
+        Generate a uniformly random Tamari blossoming tree of a given size.
+
+        OUTPUT:
+
+        A uniformly random Tamari blossoming tree, obtained through random
+        generation of lattice path.
+
+        ALGORITHM:
+
+        Let `A` be the set of rooted plane trees such that each internal node
+        has two buds. Then a tree in `A` can be decomposed at the root into
+        three sequences of sub-trees in `A`, separated by the two buds of the
+        root. A Tamari blossoming tree represented as a rooted plane tree can
+        thus be decomposed at the root as two sequences of sub-trees separated
+        by the only bud (the other bud hangs above the root).
+
+        It is clear that lattice paths with steps `(1, 3)` and `(1, -1)`
+        returning to the x-axis while staying always weakly above it are in
+        bijection with sequences of trees in `A` by separation at contacts. The
+        parts between contacts are the same family of lattices walks with the
+        extra condition of never touching the x-axis except at both ends. They
+        are in bijection with trees in `A` by decomposition at the last
+        returning to the height 3, 2 and 1.
+
+        We perform random generation by considering a blossoming tree as a pair
+        of lattice paths of a given total size, and the precomputation consists
+        of storing the relative probability of how the total size is split.
+
+        EXAMPLES::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TB = TamariBlossomingTrees(100).random_element()
+            sage: TB
+            Tamari blossoming tree ... of size 100
+            sage: TB in TamariBlossomingTrees()
+            True
+            sage: TB in TamariBlossomingTrees(100)
+            True
+        """
+        # Compute lazily the cutting
+        if not hasattr(self, '_cutting'):
+            # compute the size of trees, given by binomial(4n + 1, n) / (4n + 1)
+            # normalized by dividing the growth factor 4^4 / 3^3
+            # precision is enough, as the rest grows as n^(-3/2)
+            l: list[float] = [1.0]  # no need to use numerical_approx with prec
+            for i in range(1, self._size + 1):
+                nextitem = l[-1] * (4 * i - 1) * (4 * i - 2) * (4 * i - 3) / 64
+                nextitem /= (3 * i + 1) * i * (3 * i - 1) / 9
+                l.append(nextitem)
+                # counting for generation
+            self._cutting = _RandomPath.cutting(l, self._size)
+            self._cutting_sum = sum([x[0] for x in self._cutting])
+
+        # get the correct size separation
+        cnt = uniform(0, self._cutting_sum)
+        s1 = -1
+        for e in self._cutting:
+            if cnt < e[0]:
+                s1 = e[1]
+                break
+            else:
+                cnt -= e[0]
+        s2 = self._size - s1
+        # generate the lattice path based on the pair of random paths
+        p1 = _RandomPath.gen_path(s1, 4)
+        p2 = _RandomPath.gen_path(s2, 4)
+        path = [3] + p1 + [-1] + p2 + [-1, -1]
+        # convert lattice path to blossoming tree
+        tree = TamariBlossomingTrees_size.__path_to_tree(path)
+        return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
+                                                     random_bud=True)
+
+    def __iter__(self) -> Iterator[TamariBlossomingTree]:
+        """
+        The generation is done using
+        :class:`~sage.combinat.integer_lists.invlex.IntegerListsLex` to generate
+        lattice paths in bijection with Tamari blossoming trees. See
+        :meth:`random_element` for details of the bijection.
+
+        .. NOTES::
+
+            This method of iteration losses a factor of `n`, as only two leaves
+            can be dangling, and all other leaves fail to be the root, so that
+            each blossoming tree is generated only once. The current timing is
+            therefore slower than using conversion from
+            :class:`~sage.combinat.interval_posets.TamariIntervalPosets_size`.
+
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....:     TamariBlossomingTrees)
+            sage: TBS = TamariBlossomingTrees
+            sage: all(len(set(TBS(n))) == TBS(n).cardinality()
+            ....:     for n in range(1, 6))
+            True
+            sage: all(len(list(TBS(n))) == TBS(n).cardinality()
+            ....:     for n in range(1, 6))
+            True
+        """
+        def ballot(m):
+            if m == 0:
+                yield []
+                return
+            for ss in IntegerListsLex(length=m * 3, floor=lambda x: x // 3 + 1,
+                                      ceiling=lambda x: m, min_slope=0,
+                                      check=False):
+                accu = [3] * ss[0] + [-1]
+                for i in range(1, len(ss)):
+                    accu.extend([3] * (ss[i] - ss[i - 1]))
+                    accu.append(-1)
+                yield accu
+            return
+
+        for m1 in range(self._size + 1):
+            m2 = self._size - m1
+            for p1 in ballot(m1):
+                for p2 in ballot(m2):
+                    path = [3] + p1 + [-1] + p2 + [-1, -1]
+                    tree = TamariBlossomingTrees_size.__path_to_tree(path)
+                    try:
+                        yield TamariBlossomingTree(tree)
+                    except ValueError:  # bad luck, the root is not dangling
+                        pass
+        return
 
 
 class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
