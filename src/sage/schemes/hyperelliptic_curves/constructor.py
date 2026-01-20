@@ -27,7 +27,6 @@ from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.rational_field import RationalField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.structure.dynamic_class import dynamic_class
-from sage.misc import stopgap, superseded
 
 
 def _parse_multivariate_defining_equation(g):
@@ -369,21 +368,5 @@ def HyperellipticCurve(f, h=None, names=None, PP=None, check_squarefree=True):
     # all classes we select from are subclasses of HyperellipticCurve_generic
     class_name = "_".join(cls_name)
     cls = dynamic_class(class_name, tuple(bases), doccls=HyperellipticCurve)
-
-    # Handle warnings for the depreciation of the current code in favour of the new
-    # HyperellipticCurveSmoothModel which uses weighted projective space and allows
-    # for correct arithmetic for Jacobian(H) when the degree of the curve is even.
-    if f.degree() % 1:
-        superseded.deprecation(
-            39161,
-            "this function will be replaced by the currently experimental constructor HyperellipticCurveSmoothModel.",
-        )
-    else:
-        stopgap.set_state(True)
-        stopgap(
-            "Some results are incorrect for even degree models, use HyperellipticCurveSmoothModel until this constructor is replaced.",
-            39161,
-        )
-        stopgap.set_state(False)
 
     return cls(PP, f, h, names=names, genus=g)

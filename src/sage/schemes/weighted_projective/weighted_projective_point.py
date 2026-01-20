@@ -190,7 +190,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             return op == op_NE
 
         if op in (op_EQ, op_NE):
-            weights = space._weights
+            weights = space.weights()
             # (other[i] / self[i])^(1 / weight[i]) all equal
             # check weights
             if (weights == other.codomain().weights()) != (op == op_EQ):
@@ -316,7 +316,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             coords = self._coords
             for i in reversed(range(len(coords))):
                 w, c = weights[i], coords[i]
-                if w.is_one() and not c.is_zero():
+                if w == 1 and not c == 0:
                     # we normalise w.r.t this coordinate
                     self.scale_by(~c)
                     self._normalized = True
