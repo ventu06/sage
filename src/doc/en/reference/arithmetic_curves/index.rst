@@ -110,59 +110,33 @@ Hyperelliptic curves
    sage/schemes/hyperelliptic_curves/hyperelliptic_finite_field
    sage/schemes/hyperelliptic_curves/hyperelliptic_padic_field
    sage/schemes/hyperelliptic_curves/hyperelliptic_rational_field
+   sage/schemes/hyperelliptic_curves/hyperelliptic_g2
 
+   sage/schemes/hyperelliptic_curves/invariants
    sage/schemes/hyperelliptic_curves/mestre
-
    sage/schemes/hyperelliptic_curves/monsky_washnitzer
    sage/schemes/hyperelliptic_curves/hypellfrob
 
-   sage/schemes/hyperelliptic_curves/jacobian_generic
-   sage/schemes/hyperelliptic_curves/jacobian_g2
-   sage/schemes/hyperelliptic_curves/jacobian_homset
-   sage/schemes/hyperelliptic_curves/jacobian_morphism
-   sage/schemes/hyperelliptic_curves/jacobian_endomorphism_utils
-
-   sage/schemes/hyperelliptic_curves/hyperelliptic_g2
-   sage/schemes/hyperelliptic_curves/invariants
-   sage/schemes/hyperelliptic_curves/kummer_surface
-
    sage/interfaces/genus2reduction
 
-Hyperelliptic curves (smooth model)
-===================================
-
-.. toctree::
-   :maxdepth: 1
-
-   sage/schemes/hyperelliptic_curves_smooth_model/constructor
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_generic
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_finite_field
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_padic_field
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_rational_field
-   sage/schemes/hyperelliptic_curves_smooth_model/hyperelliptic_g2
-
-   sage/schemes/hyperelliptic_curves_smooth_model/invariants
-   sage/schemes/hyperelliptic_curves_smooth_model/mestre
-   sage/schemes/hyperelliptic_curves_smooth_model/monsky_washnitzer
-
-Jacobians of hyperelliptic curves (smooth model)
+Jacobians of hyperelliptic curves
 ------------------------------------------------
 
 .. toctree::
    :maxdepth: 1
 
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_generic
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_homset_generic
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_homset_ramified
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_homset_split
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_homset_inert
+   sage/schemes/hyperelliptic_curves/jacobian_generic
+   sage/schemes/hyperelliptic_curves/jacobian_homset_generic
+   sage/schemes/hyperelliptic_curves/jacobian_homset_ramified
+   sage/schemes/hyperelliptic_curves/jacobian_homset_split
+   sage/schemes/hyperelliptic_curves/jacobian_homset_inert
 
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_g2_generic
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_g2_homset_ramified
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_g2_homset_split
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_g2_homset_inert
+   sage/schemes/hyperelliptic_curves/jacobian_g2_generic
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_ramified
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_split
+   sage/schemes/hyperelliptic_curves/jacobian_g2_homset_inert
 
-   sage/schemes/hyperelliptic_curves_smooth_model/jacobian_morphism
+   sage/schemes/hyperelliptic_curves/jacobian_morphism
 
 
 .. include:: ../footer.txt

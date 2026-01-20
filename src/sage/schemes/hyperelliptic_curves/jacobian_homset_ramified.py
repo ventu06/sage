@@ -18,10 +18,10 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import (
+from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import (
     HyperellipticJacobianHomset,
 )
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     MumfordDivisorClassFieldRamified,
 )
 
@@ -35,11 +35,11 @@ class HyperellipticJacobianHomsetRamified(HyperellipticJacobianHomset):
         TESTS::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x^2 + 1)
+            sage: H = HyperellipticCurve(x^5 + 2*x^2 + 1)
             sage: assert H.is_ramified()
             sage: JK = Jacobian(H)(GF(7))
             sage: type(JK)
-            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_homset_ramified.HyperellipticJacobianHomsetRamified_g2_with_category'>
+            <class 'sage.schemes.hyperelliptic_curves.jacobian_g2_homset_ramified.HyperellipticJacobianHomsetRamified_g2_with_category'>
         """
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldRamified

@@ -19,10 +19,10 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer import Integer
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import (
+from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import (
     HyperellipticJacobianHomset,
 )
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_morphism import (
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     MumfordDivisorClassFieldSplit,
 )
 
@@ -41,11 +41,11 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         TESTS::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^6 + 2*x^2 + 1)
+            sage: H = HyperellipticCurve(x^6 + 2*x^2 + 1)
             sage: assert H.is_split()
             sage: JK = Jacobian(H)(GF(7))
             sage: type(JK)
-            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2_with_category'>
+            <class 'sage.schemes.hyperelliptic_curves.jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2_with_category'>
         """
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldSplit
@@ -57,7 +57,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES ::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + 1)
+            sage: H = HyperellipticCurve(x^8 + 1)
             sage: J = Jacobian(H)
             sage: J.zero()
             (1, 0 : 2)
@@ -79,7 +79,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^6 - 8*x^4 + 6*x^3 + 8*x^2 - 4*x + 1)
+            sage: H = HyperellipticCurve(x^6 - 8*x^4 + 6*x^3 + 8*x^2 - 4*x + 1)
             sage: P = H([-1, 46, 3]); P
             (-1/3 : 46/27 : 1)
             sage: O = H([1,1,0])
@@ -140,7 +140,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
+            sage: H = HyperellipticCurve(x^8 + x + 1)
             sage: H.is_split()
             True
             sage: J = Jacobian(H)
@@ -171,7 +171,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         TESTS::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 1)
+            sage: H = HyperellipticCurve(x^8 + x + 1)
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
             sage: J() == J(0) == J(1, 0) == J.zero() == JH(0) == 0
@@ -259,7 +259,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + 3*x + 2)
+            sage: H = HyperellipticCurve(x^8 + 3*x + 2)
             sage: JF = Jacobian(H).point_homset()
             sage: D1 = [x^2 + 4*x + 3, 2*x + 2, 1]
             sage: assert JF(D1)
@@ -295,7 +295,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + 3*x + 2)
+            sage: H = HyperellipticCurve(x^8 + 3*x + 2)
             sage: JF = Jacobian(H).point_homset()
             sage: D1 = [x^2 + 4*x + 3, 2*x + 2, 1]
             sage: D2 = [x^3 + 6*x^2 + 6*x, 6*x^2 + 6*x + 3, 0]
@@ -342,7 +342,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         EXAMPLES::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + 3*x + 2)
+            sage: H = HyperellipticCurve(x^8 + 3*x + 2)
             sage: JF = Jacobian(H).point_homset()
             sage: D1 = [x^2 + 4*x + 3, 2*x + 2, 1]
 

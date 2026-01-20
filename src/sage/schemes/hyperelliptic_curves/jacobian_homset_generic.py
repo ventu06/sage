@@ -52,7 +52,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         EXAMPLE::
 
-            sage: from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_generic import HyperellipticJacobianHomset
+            sage: from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import HyperellipticJacobianHomset
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurve(2*x^4 - x^3 + 4*x^2 - x, x^3 + x)
             sage: J = H.jacobian()
@@ -69,7 +69,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
             sage: J = H.jacobian()
             sage: J(GF(13)) # indirect doctest
             Abelian group of points on Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + 2*x + 1
@@ -94,7 +94,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = QQ[]
             sage: K.<omega> = QQ.extension(x^2+x+1)
-            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: H = HyperellipticCurve(x^6-1)
             sage: JK = Jacobian(H)(K); JK
             Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
             sage: JK.curve()
@@ -111,7 +111,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = QQ[]
             sage: K.<omega> = QQ.extension(x^2+x+1)
-            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: H = HyperellipticCurve(x^6-1)
             sage: JK = Jacobian(H)(K); JK
             Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
             sage: JK.extended_curve()
@@ -138,14 +138,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         We compute the order of a superspecial hyperelliptic curve of genus 3::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 - 1)
+            sage: H = HyperellipticCurve(x^8 - 1)
             sage: J = H.jacobian()
             sage: J(GF(7)).order() == (7+1)^3
             True
             sage: J(GF(7^2)).order() == (7+1)^6
             True
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 - 1)
+            sage: H = HyperellipticCurve(x^8 - 1)
             sage: J = H.jacobian()
             sage: J.order()
             Traceback (most recent call last):
@@ -169,7 +169,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         `\FF_{5^2}` Frobenius acts as multiplication by `-5`::
 
             sage: R.<x> = GF(5)[]
-            sage: H = HyperellipticCurveSmoothModel(x^6-1)
+            sage: H = HyperellipticCurve(x^6-1)
             sage: J = Jacobian(H)
             sage: rts = J(GF(5))._curve_frobenius_roots()
             sage: rts[0]^2 == -5
@@ -189,7 +189,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(5)[]
-            sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
+            sage: H = HyperellipticCurve(x^6 + x + 1)
             sage: J = H.jacobian()
             sage: J(GF(5)).cardinality()
             31
@@ -218,7 +218,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(5)[]
-            sage: H = HyperellipticCurveSmoothModel(x^6 + x + 1)
+            sage: H = HyperellipticCurve(x^6 + x + 1)
             sage: J = H.jacobian()
             sage: J.count_points(10) == [J.change_ring(GF((5, k))).order() for k in range(1, 11)]
             True
@@ -247,7 +247,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 - 2*x^4 + 2*x^3 - x^2, 1)
+            sage: H = HyperellipticCurve(x^5 - 2*x^4 + 2*x^3 - x^2, 1)
             sage: P = H([2,3]); P
             (2 : 3 : 1)
             sage: JQ = H.jacobian()(QQ)
@@ -286,7 +286,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         hence a unique point at infinity::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 + x + 1)
+            sage: H = HyperellipticCurve(x^7 + x + 1)
             sage: J = Jacobian(H)
             sage: JH = J.point_homset()
             sage: P = H.lift_x(1)
@@ -306,7 +306,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         in the Jacobian. This works for general models of hyperelliptic curves::
 
             sage: R.<x> = PolynomialRing(GF(13))
-            sage: H = HyperellipticCurveSmoothModel(2*x^8 + x + 1)
+            sage: H = HyperellipticCurve(2*x^8 + x + 1)
             sage: H.is_inert()
             True
             sage: J = Jacobian(H)
@@ -342,7 +342,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         Ensure that field elements are treated as mumford coordinates::
 
             sage: R.<x> = GF(7)[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 - x^2 - 1)
+            sage: H = HyperellipticCurve(x^7 - x^2 - 1)
             sage: J = H.jacobian(); J
             Jacobian of Hyperelliptic Curve over Finite Field of size 7 defined by y^2 = x^7 + 6*x^2 + 6
             sage: J(H.lift_x(3))
@@ -354,7 +354,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = QQ[]
             sage: f = (x^4 - 2*x^2 - 8*x + 1) * (x^3 + x + 1)
-            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: H = HyperellipticCurve(f)
             sage: J = H.jacobian()
             sage: D = J(H(0, 1))
             sage: D.base_ring()
@@ -435,7 +435,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 1)
+            sage: H = HyperellipticCurve(x^5 + 1)
             sage: JQ = H.jacobian()(QQ)
             sage: JQ.zero()
             (1, 0)
@@ -481,7 +481,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         TESTS::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
             sage: JK = H.jacobian()(GF(13))
             sage: (u1,v1) = (x^2 + 1, 10*x + 6)
             sage: (u2,v2) = (x + 5, R(8))
@@ -552,7 +552,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         TESTS::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 2*x + 1)
+            sage: H = HyperellipticCurve(x^5 + 2*x + 1)
             sage: JK = H.jacobian()(GF(13))
             sage: (u1,v1) = (x^2 + 1, 10*x + 6)
             sage: (u2,v2) = (x + 5, R(8))
@@ -577,7 +577,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
+            sage: H = HyperellipticCurve(x^7 + x^5 + x + 1)
             sage: JF = Jacobian(H).point_homset()
             sage: (u1, v1) = (x^3 + 4*x^2, 10*x^2 + 7*x + 1)
             sage: (u2, v2) = (x^3 + 8*x^2 + 11*x + 2, x^2 + 9*x + 10)
@@ -597,7 +597,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(13)[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 + x^5 + x + 1)
+            sage: H = HyperellipticCurve(x^7 + x^5 + x + 1)
             sage: g = H.genus()
             sage: JF = Jacobian(H).point_homset()
             sage: (u0, v0) = (x^6 + 12*x^5 + 4*x^4 + 7*x^3 + 8*x^2, 5*x^5 + 2*x^4 + 12*x^2 + 7*x + 1)
@@ -642,7 +642,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(1993)[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + x + 1)
+            sage: H = HyperellipticCurve(x^5 + x + 1)
             sage: J = H.jacobian()
             sage: P = J.lift_u(x^2 + 42*x + 270); P
             (x^2 + 42*x + 270, 1837*x + 838)
@@ -753,14 +753,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: K = FiniteField(101)
             sage: R.<x> = K[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 + x)
+            sage: H = HyperellipticCurve(x^7 + x)
             sage: JK = H.jacobian()(K)
             sage: JK._random_element_cover() # random
             (x^3 + 29*x^2 + 81*x + 66, 96*x^2 + 22*x + 32)
 
             sage: K = FiniteField(2)
             sage: R.<x> = K[]
-            sage: H = HyperellipticCurveSmoothModel(x^5 + 1, x)
+            sage: H = HyperellipticCurve(x^5 + 1, x)
             sage: JK = H.jacobian()(K)
             sage: JK._random_element_cover() # random
             (x + 1, 1)
@@ -800,7 +800,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = GF(5)[]
             sage: f = x^5 + 2*x^4 + 4*x^3 + x^2 + 4*x + 3
-            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: H = HyperellipticCurve(f)
             sage: J = H.jacobian()
             sage: J.order()
             16
@@ -839,7 +839,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
             sage: R.<x> = GF(5)[]
             sage: f = x^5 + 2*x^4 + 4*x^3 + x^2 + 4*x + 3
-            sage: H = HyperellipticCurveSmoothModel(f)
+            sage: H = HyperellipticCurve(f)
             sage: J = H.jacobian()
 
         This example demonstrates that the ``fast`` algorithm is not
@@ -873,7 +873,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         EXAMPLES::
 
             sage: R.<x> = GF(3)[]
-            sage: H = HyperellipticCurveSmoothModel(x^7 + 2*x + 1)
+            sage: H = HyperellipticCurve(x^7 + 2*x + 1)
             sage: J3 = H.jacobian()(GF(3))
             sage: Pts = J3.points()
             sage: len(Pts)
@@ -888,7 +888,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         The function also works in the split and inert cases.
 
             sage: R.<x> = GF(3)[]
-            sage: H = HyperellipticCurveSmoothModel(x^8 + x + 2)
+            sage: H = HyperellipticCurve(x^8 + x + 2)
             sage: H.is_split()
             True
             sage: J3 = H.jacobian()(GF(3))
@@ -896,7 +896,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: len(Pts)
             35
 
-            sage: H = HyperellipticCurveSmoothModel(2*x^8 + 2*x + 1)
+            sage: H = HyperellipticCurve(2*x^8 + 2*x + 1)
             sage: H.is_inert()
             True
             sage: J3 = H.jacobian()(GF(3))

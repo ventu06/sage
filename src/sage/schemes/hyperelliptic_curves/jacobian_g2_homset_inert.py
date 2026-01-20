@@ -18,7 +18,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_homset_inert import (
+from sage.schemes.hyperelliptic_curves.jacobian_homset_inert import (
     HyperellipticJacobianHomsetInert,
 )
 

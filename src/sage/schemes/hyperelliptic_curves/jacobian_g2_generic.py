@@ -19,12 +19,12 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.schemes.hyperelliptic_curves_smooth_model import (
+from sage.schemes.hyperelliptic_curves import (
     jacobian_g2_homset_inert,
     jacobian_g2_homset_ramified,
     jacobian_g2_homset_split,
 )
-from sage.schemes.hyperelliptic_curves_smooth_model.jacobian_generic import (
+from sage.schemes.hyperelliptic_curves.jacobian_generic import (
     HyperellipticJacobian_generic,
 )
 
@@ -44,10 +44,10 @@ class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
         TESTS::
 
             sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurveSmoothModel(-x^6 + 15*x^4 - 75*x^2 -56, x^3 + x)
+            sage: H = HyperellipticCurve(-x^6 + 15*x^4 - 75*x^2 -56, x^3 + x)
             sage: J = Jacobian(H)(QQ)
             sage: type(J) # indirect doctest
-            <class 'sage.schemes.hyperelliptic_curves_smooth_model.jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2_with_category'>
+            <class 'sage.schemes.hyperelliptic_curves.jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2_with_category'>
         """
         H = self.curve()
         if H.is_ramified():
