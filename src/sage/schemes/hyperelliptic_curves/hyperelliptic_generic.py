@@ -138,11 +138,11 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: R.<x> = GF(13)[]
             sage: H = HyperellipticCurve(x^5 - 1)
             sage: H.weights()
-            [1, 3, 1]
+            (1, 3, 1)
 
             sage: H = HyperellipticCurve(x^9 - 1)
             sage: H.weights()
-            [1, 5, 1]
+            (1, 5, 1)
 
         """
         return (ZZ.one(), self._genus + 1, ZZ.one())

@@ -286,7 +286,7 @@ def HyperellipticCurve(
     # D is the discriminant; use this for the type check
     # rather than f and h, one of which might be constant.
     D = h**2 + 4 * f
-    if not isinstance(F, Polynomial):
+    if not isinstance(D, Polynomial):
         raise TypeError(f"arguments f = {f} and h = {h} must be polynomials")
 
     # Store the hyperelliptic polynomials as the correct type
