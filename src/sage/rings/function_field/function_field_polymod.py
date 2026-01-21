@@ -1957,16 +1957,29 @@ class FunctionField_simple(FunctionField_polymod):
             sage: L.places_infinite(1)
             [Place (1/x, 1/x^4*y^3)]
         """
-        # TODO: Example with ``degree=None``
         return list(self._places_infinite(degree))
 
     def get_infinite_place(self, degree=1) -> FunctionFieldPlace_polymod | None:
         r"""
         Return an infinite place of degree ``degree`` if one exists.
         If no infinite place of the specified degree exists, return ``None``.
+        
+        If ``degree`` is ``None``, return any infinite place.
 
+        INPUT:
+
+        - ``degree`` -- positive integer (default: `1`) or ``None``
+
+        EXAMPLES::
+
+            sage: # needs sage.rings.finite_rings
+            sage: F.<a> = GF(2)
+            sage: K.<x> = FunctionField(F)
+            sage: R.<t> = PolynomialRing(K)
+            sage: L.<y> = K.extension(t^4 + t - x^5)
+            sage: L.get_infinite_place()
+            Place (1/x, 1/x^4*y^3)
         """
-        #TODO: Docstring
         return next(self._places_infinite(degree), None)
 
     def _places_infinite(self, degree):
