@@ -4,7 +4,7 @@ in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
 
 TODO:
 
-- We currently cannot support the construction of curves over rings
+- We do not yet support the construction of hyperelliptic curves over rings
 
 AUTHORS:
 
@@ -127,7 +127,6 @@ def HyperellipticCurve(
     specified by an (affine) equation in Weierstrass form
 
     .. MATH::
-
         y^2 + h(x) y = f(x),
 
     for some polynomials `h` and `f`. This defines a smooth
@@ -284,13 +283,15 @@ def HyperellipticCurve(
     # -------------------------------------------
 
     # Check the polynomials are of the right type
-    F = h**2 + 4 * f
+    # D is the discriminant; use this for the type check
+    # rather than f and h, one of which might be constant.
+    D = h**2 + 4 * f
     if not isinstance(F, Polynomial):
         raise TypeError(f"arguments f = {f} and h = {h} must be polynomials")
 
     # Store the hyperelliptic polynomials as the correct type
-    polynomial_ring = F.parent()
-    base_ring = F.base_ring()
+    polynomial_ring = D.parent()
+    base_ring = D.base_ring()
     f = polynomial_ring(f)
     h = polynomial_ring(h)
 

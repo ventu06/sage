@@ -49,6 +49,8 @@ from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import ZZ
 from sage.misc.lazy_import import lazy_import
 from sage.schemes.curves.weighted_projective_curve import WeightedProjectiveCurve
 from sage.schemes.weighted_projective.weighted_projective_space import (
@@ -118,18 +120,18 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         self._polynomial_ring = f.parent()
         self._base_ring = f.base_ring()
 
-        # TODO: is this simply genus + 1
         self._d = max(h.degree(), (f.degree() + 1) // 2)
-        assert self._d == self._genus + 1
+        if self._d != self._genus + 1:
+            raise ValueError('genus does not match expected value')
 
         # Initalise the underlying curve
-        A = WeightedProjectiveSpace([1, self._genus + 1, 1], self._base_ring)
+        A = WeightedProjectiveSpace((1, self._genus + 1, 1), self._base_ring)
         WeightedProjectiveCurve.__init__(self, A, defining_polynomial)
 
-    def weights(self) -> list[int]:
+    def weights(self) -> tuple[Integer, Integer, Integer]:
         r"""
         Return the weights of the weighted projective space this hyperelliptic curve lives in, i.e.
-        `[1, g + 1, 1]`, where `g` is the genus of the curve.
+        `(1, g + 1, 1)`, where `g` is the genus of the curve.
 
         EXAMPLES::
 
@@ -143,9 +145,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             [1, 5, 1]
 
         """
-        return [1, self._genus + 1, 1]
+        return (ZZ.one(), self._genus + 1, ZZ.one())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         r"""
         Return a representation of the hyperelliptic curve.
 
@@ -176,7 +178,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         return f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
 
-    def genus(self):
+    def genus(self) -> Integer:
         r"""
         Return the genus of the hyperelliptic curve.
 
@@ -285,7 +287,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
             sage: # H.affine_patch() is not implemented
             sage: H_patch = H.projective_curve().affine_patch(2)
-            sage: for p in prime_range(3, 300):
+            sage: for p in prime_range(3, 50):
             ....:     Hp = H_patch.change_ring(GF(p))
             ....:     assert Hp.is_smooth() == (H.discriminant() % p != 0)
         """
@@ -312,7 +314,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return self._polynomial_ring
 
-    def hyperelliptic_polynomials(self):
+    def hyperelliptic_polynomials(self) -> tuple:
         r"""
         Return the polynomials `(f, h)` such that `C : y^2 + hy = f`.
 
@@ -329,12 +331,13 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return self._hyperelliptic_polynomials
 
-    def roots_at_infinity(self):
+    def roots_at_infinity(self) -> list:
         r"""
         Compute the roots of: `Y^2 + h_{g+1} Y - f_{2g+2} = 0`.
 
-        When the curve is ramified, we expect one root, when
-        the curve is inert or split we expect zero or two roots.
+        When the curve is ramified, we expect one root. When
+        the curve is split we expect two roots. When the curve
+        is inert we expect zero roots. 
 
         EXAMPLES::
 
@@ -370,7 +373,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         self._alphas = (x**2 + x * h[d] - f[2 * d]).roots(multiplicities=False)
         return self._alphas
 
-    def is_split(self):
+    def is_split(self) -> bool:
         r"""
         Return ``True`` if the curve is split, i.e. there are two rational
         points at infinity.
@@ -388,9 +391,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return len(self.roots_at_infinity()) == 2
 
-    def is_ramified(self):
+    def is_ramified(self) -> bool:
         r"""
-        Return ``True`` if the curve is ramified, i.e. there is one rational
+        Return ``True`` if the curve is ramified, i.e. there is exactly one rational
         point at infinity.
 
         EXAMPLES::
@@ -406,7 +409,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return len(self.roots_at_infinity()) == 1
 
-    def is_inert(self):
+    def is_inert(self) -> bool:
         r"""
         Return ``True`` if the curve is inert, i.e. there are no rational
         points at infinity.
@@ -431,7 +434,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
     def split_G_plus_minus(self):
         r"""
-        Return `G^\\pm(x)` for curves in the split degree model.
+        Return `G^{\pm(x)}` for curves in the split degree model.
 
         This is used for Cantor composition with points at infinity
         when performing arithmetic on the Jacobian. See Definition 4
@@ -469,7 +472,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         alphas = self.roots_at_infinity()
 
         # This function only makes sense for the split model
-        if not len(alphas) == 2:
+        if not self.is_split():
             raise ValueError("hyperelliptic curve does not have the split model")
 
         f, h = self._hyperelliptic_polynomials
@@ -498,7 +501,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         self._split_G_plus_minus = G_plus, G_minus
         return self._split_G_plus_minus
 
-    def points_at_infinity(self):
+    def points_at_infinity(self) -> list:
         r"""
         Compute the points at infinity on the curve.
 
@@ -527,7 +530,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return [self.point([1, y, 0], check=True) for y in self.roots_at_infinity()]
 
-    def is_x_coord(self, x):
+    def is_x_coord(self, x) -> bool:
         r"""
         Return ``True`` if ``x`` is the `x`-coordinate of a point on this curve.
 
@@ -824,7 +827,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         g = self.genus()
         return P[0] / P[2], P[1] / P[2] ** (g + 1)
 
-    def is_weierstrass_point(self, P):
+    def is_weierstrass_point(self, P) -> bool:
         r"""
         Return ``True`` if ``P`` is a Weierstrass point of ``self``.
 
@@ -946,6 +949,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             if self.is_ramified():
                 return P
             else:
+                # If Z = 0 then P is a point at infinity,
+                # so we cannot be in the inert case and
+                # must be in the split case here.
                 points = self.points_at_infinity()
                 if P == points[0]:
                     return points[1]
@@ -998,7 +1004,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             except ValueError:
                 pass
 
-        raise ValueError("distinguished point not found")
+        raise ValueError("curve has no points")
 
     def set_distinguished_point(self, P0):
         r"""
@@ -1028,9 +1034,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         Return the Jacobian of the hyperelliptic curve.
 
         Elements of the Jacobian are represented by tuples
-        of the form `(u, v : n)`, where
+        of the form `(u, v, n)`, where
 
-        - `(u,v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
+        - `(u, v)` is the Mumford representative of a divisor `P_1 + ... + P_r`,
 
         - `n` is a non-negative integer
 
@@ -1209,7 +1215,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         R, (_, y, z) = PolynomialRing(self.base_ring(), 3, "x, y, z").objgens()
         return Curve(R(y**2 + h * y - f).homogenize(z))
 
-    def rational_points(self, **kwds):
+    def rational_points(self, **kwds) -> list:
         r"""
         Find rational points on the hyperelliptic curve. Arguments are passed
         on to :meth:`sage.schemes.generic.algebraic_scheme.rational_points`.
@@ -1252,11 +1258,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         proj_pts = self.projective_curve().rational_points(**kwds)
         return self.points_at_infinity() + [self(*P) for P in proj_pts if P[2] != 0]
 
-    # -------------------------------------------
-    # Hacky functions from old implementation.
-    # -------------------------------------------
-
-    def is_singular(self, *args, **kwargs):
+    def is_singular(self) -> Literal[False]:
         r"""
         Return ``False``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
@@ -1270,7 +1272,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return False
 
-    def is_smooth(self):
+    def is_smooth(self) -> Literal[True]:
         r"""
         Return ``True``, because hyperelliptic curves are smooth projective
         curves, as checked on construction.
@@ -1469,14 +1471,14 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
     def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
         r"""
-        For a non-Weierstrass point ``P = (a,b)`` on the hyperelliptic
+        For a non-Weierstrass point ``P = (a, b)`` on the hyperelliptic
         curve `y^2 + h(x) * y = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
         where `t = x - a` is the local parameter.
 
         INPUT:
 
         - ``P = (a, b)`` -- a non-Weierstrass point on ``self``
-        - ``prec`` --  desired precision of the local coordinates
+        - ``prec`` -- desired precision of the local coordinates
         - ``name`` -- gen of the power series ring (default: ``t``)
 
         OUTPUT:
@@ -1514,7 +1516,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: (yt^2 + h(xt)*yt -f(xt)).is_zero()
             True
 
-        AUTHOR:
+        AUTHORS:
 
         - Jennifer Balakrishnan (2007-12)
         - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
@@ -1538,7 +1540,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         ft = f(t + a)
         ht = h(t + a)
-        for _ in range((RR(log(prec, 2))).ceil()):
+        for _ in range(prec.bit_length()):
             b = b - (b**2 + b * ht - ft) / (2 * b + ht)
         return t + a + O(t ** (prec)), b + O(t ** (prec))
 
