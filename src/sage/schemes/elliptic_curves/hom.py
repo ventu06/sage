@@ -38,7 +38,7 @@ from sage.arith.misc import integer_floor
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings import finite_field_base
 from sage.rings.number_field import number_field_base
-
+lazy_import('sage.schemes.elliptic_curves', 'weierstrass_morphism', as_='wm')
 
 class EllipticCurveHom(Morphism):
     """
@@ -1108,7 +1108,6 @@ class EllipticCurveHom(Morphism):
             sage: psi.rational_maps() == (f, -g)
             True
         """
-        import sage.schemes.elliptic_curves.weierstrass_morphism as wm
         return wm.negation_morphism(self.codomain()) * self
 
     @cached_method
