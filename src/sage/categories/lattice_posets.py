@@ -315,17 +315,9 @@ class LatticePosets(Category):
                     Category of facade finite enumerated distributive lattices
                 """
                 from sage.combinat.posets.lattices import LatticePoset
-                maxi = 0
-                subset = set()
-                for ch in self.maximal_chains():
-                    L = len(ch)
-                    if L < maxi:
-                        continue
-                    if L == maxi:
-                        subset.update(ch)
-                    else:
-                        maxi = L
-                        subset = set(ch)
+                subset_H, _ = self._hasse_diagram.spine()
+                subset = [self._vertex_to_element(v) for v in subset_H]
+
                 H = self.hasse_diagram()
                 covers = [(x, y) for x in subset for y in H.neighbors_in(x)
                           if y in subset]
