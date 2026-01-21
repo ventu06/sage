@@ -63,12 +63,20 @@ cpdef _divisor_to_inverted_ideals(divisor):
     return I, J
 
 def _riemann_roch_divisor(divisor):
+    r"""
+    Wrapper around :func:`_riemann_roch_ideals` that first
+    converts the inputted divisor to a pair of inverted ideals.
+    """
     # The function _riemann_roch_ideals is basically to compute
     # the intersection of the ideals I and J.
     I, J = _divisor_to_inverted_ideals(divisor)
     return _riemann_roch_ideals(divisor.parent()._field, I, J)
 
-cpdef _riemann_roch_ideals(F, I, J):  # TODO: Write docstring
+cpdef _riemann_roch_ideals(F, I, J):
+    r"""
+    Wrapper around :func:`_riemann_roch_basis` that takes a function field
+    and a pair of (inverted) ideals.
+    """
     _, _, to = F.free_module(map=True)
     gens = list(I.gens_over_base())
     C = matrix([to(v) for v in gens])
@@ -76,7 +84,12 @@ cpdef _riemann_roch_ideals(F, I, J):  # TODO: Write docstring
     return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, False)
 
 
-def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Write docstring
+def _short_circuit_riemann_roch_ideals(F, I, J):
+    r"""
+    Wrapper around :func:`_riemann_roch_basis` that takes a function field
+    and a pair of (inverted) ideals. Performs a short-circuited Riemann-Roch
+    computation that returns after finding a single basis element.
+    """
     _, _, to = F.free_module(map=True)
     gens = list(I.gens_over_base())
     C = matrix([to(v) for v in gens])
@@ -84,11 +97,23 @@ def _short_circuit_riemann_roch_ideals(F, I, J):  # TODO: Write docstring
     return _riemann_roch_basis(F.degree(), C, B.inverse(), gens, True)
 
 
-def _short_circuit_riemann_roch_matrices(int n, Matrix C, Matrix B_inv, gens):  # TODO: Write docstring
+def _short_circuit_riemann_roch_matrices(int n, Matrix C, Matrix B_inv, gens):
+    r"""
+    Wrapper around :func:`_riemann_roch_basis` where matrix conversion is
+    already done. Used by Unique Hess implementation which can do some
+    caching with the computation of ``B_inv``.
+
+    INPUT:
+
+    - ``n`` -- degree of the function field
+    - ``C`` -- matrix representation of finite ideal
+    - ``B_inv`` -- matrix inverse of matrix representation of infinite ideal
+    - ``gens`` -- list of generators for the finite ideal
+    """
     return _riemann_roch_basis(n, C, B_inv, list(gens), True)
 
 
-cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):  # TODO: Write docstring
+cdef _riemann_roch_basis(int n, Matrix C, Matrix B_inv, list gens, bint short_circuit):
     """
     Return a basis of the Riemann-Roch space of the divisor.
 

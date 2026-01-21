@@ -429,7 +429,7 @@ class Jacobian(Jacobian_base, UniqueRepresentation):
     def group(self, k_ext=None):
         r"""
         Raise an error if ``k_ext is not self.function_field().constant_base_field()``,
-        otherwise call :meth:``Jacobian_base.group``.
+        otherwise call :meth:`Jacobian_base.group`.
         """
         if k_ext is not None and k_ext is not self._function_field.constant_base_field():
             raise NotImplementedError('Embeddings are not yet supported for the Unique Hess Jacobian model')
