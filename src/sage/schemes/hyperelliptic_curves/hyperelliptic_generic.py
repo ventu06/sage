@@ -1,5 +1,27 @@
 r"""
-Hyperelliptic curves (smooth model) over a general ring
+Hyperelliptic curves (smooth model) over a field
+
+EXAMPLES::
+
+    sage: P.<x> = GF(5)[]
+    sage: f = x^5 - 3*x^4 - 2*x^3 + 6*x^2 + 3*x - 1
+    sage: C = HyperellipticCurve(f); C
+    Hyperelliptic Curve over Finite Field of size 5
+     defined by y^2 = x^5 + 2*x^4 + 3*x^3 + x^2 + 3*x + 4
+
+::
+
+    sage: P.<x> = QQ[]
+    sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+    sage: C = HyperellipticCurve(f); C
+    Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 - 30*x^3 + 45*x - 22
+    sage: C.genus()
+    2
+
+    # TODO: weighted projective space doesnt have affine_patch
+    # sage: D = C.affine_patch(0)
+    # sage: D.defining_polynomials()[0].parent()
+    # Multivariate Polynomial Ring in x1, x2 over Rational Field
 
 AUTHORS:
 
@@ -20,21 +42,61 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.all import log
+from typing import Literal
 from sage.misc.cachefunc import cached_method
 from sage.rings.big_oh import O
 from sage.rings.laurent_series_ring import LaurentSeriesRing
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.real_mpfr import RR
-
+from sage.misc.lazy_import import lazy_import
 from sage.schemes.curves.weighted_projective_curve import WeightedProjectiveCurve
 from sage.schemes.weighted_projective.weighted_projective_space import (
     WeightedProjectiveSpace,
 )
 
+lazy_import("sage.functions.all", "log")
+
 
 class HyperellipticCurve_generic(WeightedProjectiveCurve):
+    """
+    TESTS::
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: C0 == C1
+        False
+        sage: C0 == C0
+        True
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: C0 != C1
+        True
+        sage: C0 != C0
+        False
+
+        sage: P.<x> = QQ[]
+        sage: f0 = 4*x^5 - 30*x^3 + 45*x - 22
+        sage: C0 = HyperellipticCurve(f0)
+        sage: f1 = x^5 - x^3 + x - 22
+        sage: C1 = HyperellipticCurve(f1)
+        sage: Q.<y> = GF(5)[]
+        sage: f2 = y^5 - y^3 + y - 22
+        sage: C2 = HyperellipticCurve(f2)
+        sage: hash(C0) == hash(C0)
+        True
+        sage: hash(C0) == hash(C1)
+        False
+        sage: hash(C1) == hash(C2)
+        False
+    """
     def __init__(self, defining_polynomial, f, h, genus):
         r"""
         Create a hyperelliptic curve as a weighted projective curve.
@@ -367,15 +429,13 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return len(self.roots_at_infinity()) == 0
 
-    def infinite_polynomials(self):
+    def split_G_plus_minus(self):
         r"""
         Return `G^\\pm(x)` for curves in the split degree model.
 
         This is used for Cantor composition with points at infinity
         when performing arithmetic on the Jacobian. See Definition 4
         in [GHM2008]_.
-
-        TODO: the name of this function could be better?
 
         .. SEEALSO::
 
@@ -386,10 +446,10 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
             sage: R.<x> = QQ[]
             sage: H = HyperellipticCurve(x^6 + x^4 + 1)
-            sage: H.infinite_polynomials()
+            sage: H.split_G_plus_minus()
             (x^3 + 1/2*x, -x^3 - 1/2*x)
             sage: H = HyperellipticCurve(4*x^6 + x^4 + 1)
-            sage: H.infinite_polynomials()
+            sage: H.split_G_plus_minus()
             (2*x^3 + 1/4*x, -2*x^3 - 1/4*x)
 
         The function is only defined for hyperelliptic curves with
@@ -398,13 +458,13 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: H = HyperellipticCurve(2*x^6 + x^4 + 1)
             sage: H.is_split()
             False
-            sage: H.infinite_polynomials()
+            sage: H.split_G_plus_minus()
             Traceback (most recent call last):
             ...
             ValueError: hyperelliptic curve does not have the split model
         """
-        if hasattr(self, "_infinite_polynomials"):
-            return self._infinite_polynomials
+        if hasattr(self, "_split_G_plus_minus"):
+            return self._split_G_plus_minus
 
         alphas = self.roots_at_infinity()
 
@@ -435,8 +495,8 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         assert (G_plus**2 + h * G_plus - f).degree() <= genus
         assert G_minus.leading_coefficient() == alpha_minus
 
-        self._infinite_polynomials = G_plus, G_minus
-        return self._infinite_polynomials
+        self._split_G_plus_minus = G_plus, G_minus
+        return self._split_G_plus_minus
 
     def points_at_infinity(self):
         r"""
@@ -1553,7 +1613,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         a, b = self.affine_coordinates(P)
         yt = (t + b).add_bigoh(prec)
         yt2 = yt**2
-        for _ in range(int(log(prec, 2))):
+        for _ in range(prec.bit_length()):
             a = a - (yt2 + yt * h(a) - f(a)) / (yt * h_prime(a) - f_prime(a))
         return (a, yt)
 
@@ -1633,7 +1693,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         w = yt**2 + h * yt - f
         wprime = w.derivative(x)
         xt = t**-2
-        for _ in range((RR(log(prec + 2) / log(2))).ceil()):
+        for _ in range((prec + 2).bit_length()):
             xt = xt - w(xt) / wprime(xt)
         yt = xt ** (g + 1) * t
         return xt + O(t ** (prec + 2)), yt + O(
@@ -1711,7 +1771,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         ft = f(xt)
         ht = h(xt)
         yt = P[1] / t**3
-        for _ in range((RR(log(prec + 2) / log(2))).ceil()):
+        for _ in range((prec + 2).bit_length()):
             yt = yt - (yt**2 + ht * yt - ft) / (2 * yt + ht)
         return xt + O(t ** (prec + 2)), yt + O(t ** (prec + 2))
 

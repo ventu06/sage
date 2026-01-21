@@ -360,7 +360,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         g = H.genus()
 
         # Pick either G_plus or G_minus for reduction
-        G_plus, G_minus = H.infinite_polynomials()
+        G_plus, G_minus = H.split_G_plus_minus()
         if plus:
             G = G_plus
         else:

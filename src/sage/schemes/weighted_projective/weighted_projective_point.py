@@ -278,7 +278,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             raise ValueError("Cannot scale by 0")
         R = self.codomain().base_ring()
         self._coords = tuple(
-            [R(u * t**w) for u, w in zip(self._coords, self.codomain().weights())]
+            R(u * t**w) for u, w in zip(self._coords, self.codomain().weights())
         )
         self._normalized = False
 

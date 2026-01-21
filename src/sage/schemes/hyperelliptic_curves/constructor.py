@@ -9,6 +9,7 @@ TODO:
 AUTHORS:
 
 - David Kohel (2006): initial version
+- Anna Somoza (2019-04): dynamic class creation
 - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
 
@@ -28,6 +29,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from sage.functions.other import ceil
 from sage.categories.finite_fields import FiniteFields
 from sage.rings.abc import pAdicField
 from sage.rings.integer import Integer
@@ -53,6 +55,66 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_rational_field import (
     HyperellipticCurve_rational_field,
 )
 
+def _parse_multivariate_defining_equation(g):
+    """
+    Parse a defining equation for a hyperelliptic curve.
+    The input `g` should have the form `g(x, y) = y^2 + h(x) y - f(x)`,
+    or a constant multiple of that.
+
+    OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+
+    TESTS::
+
+        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+        sage: R.<x,y> = QQ[]
+        sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1, 1, 0, 0, 0, 1], [0, 0, 3])
+        sage: _parse_multivariate_defining_equation(2*y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1/2, 1/2, 0, 0, 0, 1/2], [0, 0, 3/2])
+
+    The variable names are arbitrary::
+
+        sage: S.<z,t> = GF(13)[]
+        sage: _parse_multivariate_defining_equation(2*t^2 + 3*z^2*t - (z^5 + z + 1))
+        ([7, 7, 0, 0, 0, 7], [0, 0, 8])
+    """
+    from sage.rings.polynomial.multi_polynomial import MPolynomial
+    if not isinstance(g, MPolynomial):
+        raise ValueError("must be a multivariate polynomial")
+
+    variables = g.variables()
+    if len(variables) != 2:
+        raise ValueError("must be a polynomial in two variables")
+
+    y, x = sorted(variables, key=g.degree)
+    if g.degree(y) != 2:
+        raise ValueError("must be a polynomial of degree 2 in a variable")
+
+    f = []
+    h = []
+    for k, v in g:
+        dx = v.degree(x)
+        dy = v.degree(y)
+        if dy == 2:
+            if dx != 0:
+                raise ValueError(f"cannot have a term y*x^{dx}")
+            y2 = k
+        elif dy == 1:
+            while len(h) <= dx:
+                h.append(0)
+            h[dx] = k
+        else:
+            assert dy == 0
+            while len(f) <= dx:
+                f.append(0)
+            f[dx] = -k
+
+    if not y2.is_one():
+        y2_inv = y2.inverse_of_unit()
+        f = [c * y2_inv for c in f]
+        h = [c * y2_inv for c in h]
+
+    return f, h
 
 def HyperellipticCurve(
     f, h=0, check_squarefree: bool = True, distinguished_point=None
@@ -85,6 +147,10 @@ def HyperellipticCurve(
 
     -  ``check_squarefree`` (default: ``True``) -- test if
        the input defines a hyperelliptic curve
+
+    - ``distinguished_point`` (default: ``None``) -- set a custom
+       point to be the distinguished point for arithmetic. One of
+       points at infinity if one so exists.
 
     EXAMPLES:
 
@@ -151,7 +217,9 @@ def HyperellipticCurve(
         ...
         ValueError: singularity in the provided affine patch
 
-    The constructor accepts a distinguished point as an argument::
+    The constructor accepts a distinguished point as an argument, allowing
+    the user to pick which point at infinity is selected in the case there
+    is more than one for the given curve model::
 
         sage: C = HyperellipticCurve(x^5 + x + 2, distinguished_point=(1, -2))
         sage: C.distinguished_point()
@@ -176,7 +244,7 @@ def HyperellipticCurve(
             return Integer((df - 1) // 2)
         return Integer((dh_2 - 1) // 2)
 
-    def __check_no_affine_singularities(f, h):
+    def check_no_affine_singularities(f, h):
         r"""
         Helper function which determines whether there are any
         affine singularities in the curve `y^2 + h(x)y = f(x)`.
@@ -195,7 +263,7 @@ def HyperellipticCurve(
         g2 = 2 * f.derivative() + h * h.derivative()
         return g1.gcd(g2).is_one()
 
-    def __defining_polynomial(f, h):
+    def homogenize_defining_polynomial(f, h):
         r"""
         Compute the (homogenised weighted projective) defining polynomial of
         the hyperelliptic curve.
@@ -203,7 +271,7 @@ def HyperellipticCurve(
         X, Y, Z = PolynomialRing(f.base_ring(), names="X, Y, Z").gens()
 
         # Some classes still have issues with degrees returning `int`
-        d = Integer(max(h.degree(), (f.degree() + 1) // 2))
+        d = Integer(max(h.degree(), ceil(f.degree() / 2)))
         F = sum(f[i] * X**i * Z ** (2 * d - i) for i in range(2 * d + 1))
 
         if h.is_zero():
@@ -227,19 +295,19 @@ def HyperellipticCurve(
     h = polynomial_ring(h)
 
     # Ensure that there are no affine singular points
-    if check_squarefree and not __check_no_affine_singularities(f, h):
+    if check_squarefree and not check_no_affine_singularities(f, h):
         raise ValueError("singularity in the provided affine patch")
 
     # Compute the genus of the curve from f, h
-    genus = genus(f, h)
-    if genus == 0:
+    curve_genus = genus(f, h)
+    if curve_genus == 0:
         raise ValueError(
             f"arguments f = {f} and h = {h} must define a curve of genus at least one."
         )
 
     # Compute the smooth model for the hyperelliptic curve
     # using a weighted projective space
-    defining_polynomial = __defining_polynomial(f, h)
+    defining_polynomial = homogenize_defining_polynomial(f, h)
 
     # -----------------------
     # Class selection
@@ -247,29 +315,29 @@ def HyperellipticCurve(
 
     # Special class for finite fields
     if base_ring in FiniteFields():
-        if genus == 2:
+        if curve_genus == 2:
             cls = HyperellipticCurve_g2_finite_field
         else:
             cls = HyperellipticCurve_finite_field
     # Special class for pAdic fields
     elif isinstance(base_ring, pAdicField):
-        if genus == 2:
+        if curve_genus == 2:
             cls = HyperellipticCurve_g2_padic_field
         else:
             cls = HyperellipticCurve_padic_field
     # Special class for rational fields
     elif isinstance(base_ring, RationalField):
-        if genus == 2:
+        if curve_genus == 2:
             cls = HyperellipticCurve_g2_rational_field
         else:
             cls = HyperellipticCurve_rational_field
     # Default class for all other fields
-    elif genus == 2:
+    elif curve_genus == 2:
         cls = HyperellipticCurve_g2
     else:
         cls = HyperellipticCurve_generic
 
-    H = cls(defining_polynomial, f, h, genus)
+    H = cls(defining_polynomial, f, h, curve_genus)
     if distinguished_point:
         H.set_distinguished_point(H(distinguished_point))
     return H

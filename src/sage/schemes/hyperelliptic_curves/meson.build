@@ -24,6 +24,7 @@ py.install_sources(
   'jacobian_endomorphism_utils.py',
   'mestre.py',
   'monsky_washnitzer.py',
+  'kummer_surface.py',
   subdir: 'sage/schemes/hyperelliptic_curves',
 )
 

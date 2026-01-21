@@ -4,14 +4,28 @@ Hyperelliptic curves (smooth model) over a finite field
 AUTHORS:
 
 - David Kohel (2006): initial version
+- Robert Bradshaw (2007)
+- Alyson Deines, Marina Gresham, Gagan Sekhon, (2010)
+- Daniel Krenn (2011)
+- Jean-Pierre Flori, Jan Tuitman (2013)
+- Kiran Kedlaya (2016)
+- Dean Bisogno (2017): Fixed Hasse-Witt computation
 - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
 """
 
 # ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
-#                     2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
-#                     2025 Gareth Ma <grhkm21@gmail.com>
-#                     2025 Giacomo Pope <giacomopope@gmail.com>
+#       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
+#       Copyright (C) 2010 Alyson Deines <aly.deines@gmail.com>, 
+#                          Marina Gresham <marina.gresham@coloradocollege.edu>
+#                          Gagan Sekhon <gagan.d.sekhon@gmail.com>
+#       Copyright (C) 2011 Daniel Krenn
+#       Copyright (C) 2013 Jean-Pierre Flori <jean-pierre.flori@ssi.gouv.fr>,
+#                          Jan Tuitman <jan.tuitman@wis.kuleuven.be>
+#       Copyright (C) 2016 Kiran Kedlaya <kedlaya@ucsd.edu>
+#       Copyright (C) 2025 Sabrina Kunzweiler <sabrina.kunzweiler@math.u-bordeaux.fr>
+#                          Gareth Ma <grhkm21@gmail.com>
+#                          Giacomo Pope <giacomopope@gmail.com>
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by
@@ -21,7 +35,6 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.arith.misc import binomial
-from sage.libs.pari.all import pari
 from sage.matrix.constructor import identity_matrix, matrix
 from sage.misc.cachefunc import cached_method
 from sage.misc.functional import rank
@@ -31,9 +44,11 @@ from sage.rings.integer_ring import ZZ
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
-from sage.schemes.hyperelliptic_curves.hypellfrob import hypellfrob
+from sage.misc.lazy_import import lazy_import
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
 
+lazy_import('sage.libs.pari', 'pari')
+lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
 
 class HyperellipticCurve_finite_field(
     hyperelliptic_generic.HyperellipticCurve_generic
