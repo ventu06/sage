@@ -65,7 +65,7 @@ if TYPE_CHECKING:
 lazy_import('sage.combinat.dyck_word', 'DyckWords')
 
 lazy_import('sage.combinat.tamari_blossoming_tree',
-            ['TamariBlossomingTree', 'TamariBlossomingTreeFactory'])
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
 
 
 class TamariIntervalPoset(Element,
@@ -3896,7 +3896,8 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         """
         Return a random Tamari interval poset of fixed size.
 
-        This is obtained using the class :class:`TamariBlossomingTreeFactory`,
+        This is obtained using the class
+        :class:`~sage.tamari_blossoming_tree.TamariBlossomingTrees`,
         which generates blossoming trees uniformly at random. A bijection is
         then performed to obtain a Tamari interval poset.
 
@@ -3914,7 +3915,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             8
         """
         if not hasattr(self, 'factory'):
-            self.factory = TamariBlossomingTreeFactory(self._size)
+            self.factory = TamariBlossomingTrees(self._size)
         return self.factory.random_element().to_TIP()
 
     @lazy_attribute
