@@ -89,6 +89,18 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
     For usage, it is the best to use conversion functions provided by this
     class, instead of its constructor, which has less flexibility.
 
+    .. NOTE:
+
+        The metaclass
+        :class:`~sage.misc.inherit_comparison.InheritComparisonClasscallMetaclass`
+        comes from a conjoint of the metaclass
+        :class:`~sage.misc.inherit_comparison.InheritComparisonMetaclass`
+        imposed by the base class
+        :class:`~sage.structure.unique_representation.UniqueRepresentation`
+        and the metaclass
+        :class:`~sage.misc.classcall_metaclass.ClasscallMetaclass`
+        imposed by :class:`~sage.structure.element.Element`.
+
     EXAMPLES::
 
         sage: T = [[], [[[], []], [], []]]
@@ -220,14 +232,42 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
     @staticmethod
     def __classcall_private__(cls, tree):
         """
-        To uniformize for cached representation
-        And to make every blossoming tree an element of
-        TamariBlossomingTrees_all.element_class
+        Internal function serving two purposes:
 
-        TODO: write more details
+        - Capture any instanciation of such that the constructed instance is
+          always an element of :class:`TamariBlossomingTrees_all` so that the
+          relation Parent/Element is unambiguous. We thus need to construct
+          from the ``element_class`` of :class:`TamariBlossomingTrees_all`. Note
+          that all instances of :class:`TamariBlossomingTree` will have
+          :class:`TamariBlossomingTrees_all` as parent.
+        - Uniformize the input for cached representation. As we accept nested
+          lists representing trees, which is not hashable, we need to convert
+          it to :class:`~sage.combinat.ordered_tree.OrderedTree`, which is
+          hashable, so that we may use a cached representation.
+
+        TESTS::
+
+            sage: T = OrderedTree([[], [[], [], [[], []]]])
+            sage: B = TamariBlossomingTree(T)
+            sage: B.parent()
+            Tamari blossoming trees
+            sage: B.parent() is TamariBlossomingTrees()
+            True
+            sage: B2 = TamariBlossomingTrees()(T)
+            sage: B2 is B
+            True
+            sage: B3 = TamariBlossomingTrees(2)(T)
+            sage: B3 is B
+            True
+            sage: B.parent() is B2.parent()
+            True
+            sage: B.parent() is B3.parent()
+            True
         """
         A = TamariBlossomingTrees_all()
-        return A.element_class(A, OrderedTree(tree))
+        if not isinstance(tree, OrderedTree):
+            tree = OrderedTree(tree)
+        return A.element_class(A, tree)
 
     def __init__(self, parent, tree: OrderedTree) -> None:
         r"""
@@ -366,12 +406,9 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
 
         TESTS::
 
-            sage: # using random generator, to change when we have an iterator
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTreeFactory)
-            sage: TBTF = TamariBlossomingTreeFactory(3)
-            sage: len(set(hash(TBTF.random_element()) for _ in range(400)))
-            13
+            sage: TBT5 = TamariBlossomingTrees(5)
+            sage: len(set(hash(T) for T in TBT5)) == TBT5.cardinality()
+            True
         """
         return self._tree.__hash__()
 
@@ -1114,7 +1151,7 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
         dangling = dangling[didx]
         rroot = cycord[dangling][0]  # the only neighbor of a bud is the root
         rtree = traverse(rroot, dangling, cycord)
-        return TamariBlossomingTree(OrderedTree(rtree))  # can do with a list
+        return TamariBlossomingTree(OrderedTree(rtree))
 
     def reflection(self) -> Self:
         r"""
@@ -1714,10 +1751,42 @@ class TamariBlossomingTrees(UniqueRepresentation, Parent):
 
     def __classcall_private__(cls, size=None):
         """
-        TODO
+        Return the appropriate subclass according to the type of the parameter.
 
-        Using the private version to avoid infinite recursion when initializing
-        :class:`TamariBlossomingTrees_all`.
+        INPUT:
+
+        - ``size`` -- size of Tamari blossoming trees in the set (optional,
+          default: None, standing for Tamari blossoming trees of all sizes)
+
+        We use the private version here to avoid infinite recursion when
+        initializing :class:`TamariBlossomingTrees_all`.
+
+        TESTS::
+
+            sage: from sage.combinat.tamari_blossoming_tree import (
+            ....: TamariBlossomingTrees_all, TamariBlossomingTrees_size)
+            sage: isinstance(TamariBlossomingTrees(4),
+            ....:            TamariBlossomingTrees_size)
+            True
+            sage: isinstance(TamariBlossomingTrees(),
+            ....:            TamariBlossomingTrees_all)
+            True
+            sage: isinstance(TamariBlossomingTrees(),
+            ....:            TamariBlossomingTrees_size)
+            False
+            sage: isinstance(TamariBlossomingTrees(4),
+            ....:            TamariBlossomingTrees_all)
+            False
+            sage: TamariBlossomingTrees() is TamariBlossomingTrees_all()
+            True
+            sage: TamariBlossomingTrees(-3)
+            Traceback (most recent call last):
+            ...
+            ValueError: size must be a strictly positive integer
+            sage: TamariBlossomingTrees(2.6)
+            Traceback (most recent call last):
+            ...
+            ValueError: size must be a strictly positive integer
         """
         if size is None:
             return TamariBlossomingTrees_all()
@@ -1738,13 +1807,20 @@ class TamariBlossomingTrees_all(DisjointUnionEnumeratedSets,
         """
         TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
             sage: TBTA = TamariBlossomingTrees()
             sage: TBTA.cardinality()
             +Infinity
             sage: TBTA is TamariBlossomingTrees()
             True
+            sage: it = iter(TBTA)
+            sage: [next(it) for _ in range(4)]
+            [Tamari blossoming tree [[], [[], []]] of size 1,
+             Tamari blossoming tree [[], [[], [[], []], []]] of size 2,
+             Tamari blossoming tree [[], [[], [], [[], []]]] of size 2,
+             Tamari blossoming tree [[], [[], []], [[], []]] of size 2]
+            sage: next(it).parent()
+            Tamari blossoming trees
+            sage: TestSuite(TBTA).run()  # long time (5s)
         """
         DisjointUnionEnumeratedSets.__init__(
             self, Family(PositiveIntegers(), TamariBlossomingTrees_size),
@@ -1784,23 +1860,19 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
         """
         TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
             sage: TBTS = TamariBlossomingTrees(5)
             sage: TBTS is TamariBlossomingTrees(5)
             True
             sage: for i in range(1, 6):
             ....:     TestSuite(TamariBlossomingTrees(i)).run()
         """
-        super().__init__(category=(FiniteEnumeratedSets()))
+        super().__init__(category=(FiniteEnumeratedSets(),))
         self._size = size
 
     def _repr_(self) -> str:
         """
         TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
             sage: TamariBlossomingTrees(8)
             Tamari blossoming trees of size 8
         """
@@ -1815,8 +1887,6 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
 
         TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
             sage: TamariBlossomingTrees(8)._parent_for
             Tamari blossoming trees
         """
@@ -1831,27 +1901,44 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
 
         TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
-            sage: TODO = TamariBlossomingTrees()
+            sage: TBTS = TamariBlossomingTrees(5)
+            sage: TBTS.element_class is TamariBlossomingTrees().element_class
+            True
         """
         return self._parent_for.element_class
 
     def _element_constructor_(self, tree) -> TamariBlossomingTree:
         """
-        TODO
+        Internal element constructor. As a side-effect of our choice to
+        uniformize the parent class of all Tamari blossoming trees, this
+        constructor is needed for an idempotent initialization of elements
+        produced by this class.
+
+        TESTS::
+
+            sage: TBT5 = TamariBlossomingTrees(5)
+            sage: T = TBT5.random_element()
+            sage: T == TBT5(T)
+            True
+            sage: TBT5([[]])
+            Traceback (most recent call last):
+            ...
+            ValueError: the given tree does not have the correct size
         """
         A = TamariBlossomingTrees_all()
         if isinstance(tree, TamariBlossomingTree):
             tree = tree._tree
-        return self.element_class(A, OrderedTree(tree))
+        if not isinstance(tree, OrderedTree):
+            tree = OrderedTree(tree)
+        T = self.element_class(A, tree)
+        if T.size() != self._size:
+            raise ValueError('the given tree does not have the correct size')
+        return T
 
     def __contains__(self, elem) -> bool:
         """
-        TEST::
+        TESTS::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTrees)
             sage: TBT4 = TamariBlossomingTrees(4)
             sage: TBT4.random_element() in TBT4
             True
@@ -1886,8 +1973,8 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
     @staticmethod
     def __path_to_tree(path: list[int]) -> TamariBlossomingTree:
         """
-        Return a plane tree as a nested list corresponding to the lattice path
-        given by ``path``.
+        Internal function. Return a plane tree as a nested list corresponding
+        to the lattice path given by ``path``.
 
         The lattice path we consider here should be with steps `(1, 3)` and
         `(1, -1)`, and is represented as a list of the y-coordinate variation.
@@ -2058,181 +2145,59 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
                         pass
         return
 
-
-class TamariBlossomingTreeFactory(SageObject, UniqueRepresentation):
-    r"""
-    This class is for uniform random generation of Tamari blossoming trees of
-    given size. As some precomputation is done, it would be the best to keep an
-    instance of this factory if users want to generate many objects of the same
-    size. However, we also provide a static method for one-shot generation.
-
-    EXAMPLES::
-
-        sage: from sage.combinat.tamari_blossoming_tree import (
-        ....:     TamariBlossomingTreeFactory)
-        sage: TBTF = TamariBlossomingTreeFactory(100)
-        sage: TBTF
-        Random generator of Tamari blossoming trees of size 100
-        sage: TBTF.random_element()
-        Tamari blossoming tree ... of size 100
-        sage: TamariBlossomingTreeFactory.generate(100)
-        Tamari blossoming tree ... of size 100
-    """
-
-    def __init__(self, size: int) -> None:
+    def random_synchronized_element(self) -> TamariBlossomingTree:
         r"""
-        Initialize a random generator of Tamari blossoming trees of a given size
-        with the necessary precomputation. See :meth:`random_element` for
-        precise information on the precomputation.
-
-        INPUT:
-
-        - ``size`` -- the size of blossoming trees to generate, that is, the
-          number of edges (not counting buds)
-
-        EXAMPLES::
-
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTreeFactory)
-            sage: TBTF = TamariBlossomingTreeFactory(100)
-            sage: TBTF
-            Random generator of Tamari blossoming trees of size 100
-            sage: TamariBlossomingTreeFactory(-2)
-            Traceback (most recent call last):
-            ...
-            ValueError: invalid parameter size.
-        """
-        if size <= 0:
-            raise ValueError('invalid parameter size.')
-        self._size = size
-        # compute the size of trees, counted by binomial(4n + 1, n) / (4n + 1)
-        # normalized by dividing the growth factor 4^4 / 3^3
-        # precision is enough, as the rest grows as n^(-3/2)
-        l: list[float] = [1.0]  # no need to use numerical_approx with prec
-        for i in range(1, size + 1):
-            nextitem = l[-1] * (4 * i - 1) * (4 * i - 2) * (4 * i - 3) / 64
-            nextitem /= (3 * i + 1) * i * (3 * i - 1) / 9
-            l.append(nextitem)
-        # counting for generation
-        self.cutting = _RandomPath.cutting(l, size)
-        self.cutting_sum = sum([x[0] for x in self.cutting])
-
-    def _repr_(self) -> str:
-        """
-        Return a string representing the instance of random generator and the
-        size of objects that it is going to generate.
-
-        TESTS::
-
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTreeFactory)
-            sage: TamariBlossomingTreeFactory(10)
-            Random generator of Tamari blossoming trees of size 10
-        """
-        s = f'Random generator of Tamari blossoming trees of size {self._size}'
-        return s
-
-    def random_element(self) -> TamariBlossomingTree:
-        r"""
-        Generate a uniformly random Tamari blossoming tree of a given size.
+        Return a uniformly random synchronized blossoming tree in the current
+        set of Tamari blossoming trees of a given size.
 
         OUTPUT:
 
-        A uniformly random Tamari blossoming tree, obtained through random
-        generation of lattice path.
-
-        ALGORITHM:
-
-        Let `A` be the set of rooted plane trees such that each internal node
-        return s
-        has two buds. Then a tree in `A` can be decomposed at the root into
-        three sequences of sub-trees in `A`, separated by the two buds of the
-        root. A Tamari blossoming tree represented as a rooted plane tree can
-        thus be decomposed at the root as two sequences of sub-trees separated
-        by the only bud (the other bud hangs above the root).
-
-        It is clear that lattice paths with steps `(1, 3)` and `(1, -1)`
-        returning to the x-axis while staying always weakly above it are in
-        bijection with sequences of trees in `A` by separation at contacts. The
-        parts between contacts are the same family of lattices walks with the
-        extra condition of never touching the x-axis except at both ends. They
-        are in bijection with trees in `A` by decomposition at the last
-        returning to the height 3, 2 and 1.
-
-        We perform random generation by considering a blossoming tree as a pair
-        of lattice paths of a given total size, and the precomputation consists
-        of storing the relative probability of how the total size is split.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTreeFactory)
-            sage: TamariBlossomingTreeFactory(100).random_element()
-            Tamari blossoming tree ... of size 100
-        """
-        # First step: generate uniformly randomly a lattice path
-        # get the correct size separation
-        cnt = uniform(0, self.cutting_sum)
-        s1 = -1
-        for e in self.cutting:
-            if cnt < e[0]:
-                s1 = e[1]
-                break
-            else:
-                cnt -= e[0]
-        s2 = self._size - s1
-        # generate the lattice path based on the pair of random paths
-        p1 = _RandomPath.gen_path(s1, 4)
-        p2 = _RandomPath.gen_path(s2, 4)
-        path = [3] + p1 + [-1] + p2 + [-1, -1]
-
-        # Second step: convert the random lattice path into a tree
-        stack = [[0, []]]
-        for step in path:
-            if step == 3:  # new node
-                stack.append([0, []])
-            else:  # depending on type
-                if stack[-1][0] < 2:  # add bud
-                    stack[-1][0] += 1
-                    stack[-1][1].append([])
-                else:  # subtree completed
-                    subtree = stack.pop()[1]
-                    stack[-1][1].append(subtree)
-
-        # Get the tree (list of subtrees for the moment)
-        stack = stack[-1][1][0]
-        # pop the last bud, which is always the last child
-        stack.pop()
-        return TamariBlossomingTree._from_plane_tree(stack, skip_check=True,
-                                                     random_bud=True)
-
-    @staticmethod
-    def generate(size: int) -> TamariBlossomingTree:
-        r"""
-        Return a uniformly random Tamari blossoming tree of the given size.
-
-        INPUT:
-
-        - ``size`` -- the size (number of edges) of the Tamari blossoming tree
-          to generate.
-
-        OUTPUT:
-
-        A uniformly random Tamari blossoming tree of the given size.
+        A uniformly random synchronized blossoming tree in the current instance.
 
         .. NOTE::
 
-            This is a static version of ``random_element``, but it does not keep
-            the result of precomputation, thus useful for one-shot generation.
+            This is a thin wrapper of the random generation in
+            ``_SynchronizedBlossomingTreeFactory``, which automatically cache
+            the instance.
 
         EXAMPLES::
 
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     TamariBlossomingTreeFactory)
-            sage: TamariBlossomingTreeFactory.generate(100)
+            sage: B = TamariBlossomingTrees(100).random_synchronized_element()
+            sage: B
             Tamari blossoming tree ... of size 100
+            sage: B.is_synchronized()
+            True
         """
-        return TamariBlossomingTreeFactory(size).random_element()
+        if not hasattr(self, 'SBTF'):
+            self.SBTF = SynchronizedBlossomingTreeFactory(self._size)
+        return self.SBTF.random_element()
+
+    def random_modern_element(self) -> TamariBlossomingTree:
+        r"""
+        Return a uniformly random modern blossoming tree in the current set of
+        Tamari blossoming trees of a given size.
+
+        OUTPUT:
+
+        A uniformly random modern blossoming tree in the current instance.
+
+        .. NOTE::
+
+            This is a thin wrapper of the random generation facility in
+            ``_ModernBlossomingTreeFactory``, which automatically cache the
+            instance, thus also the precomputation within.
+
+        EXAMPLES::
+
+            sage: B = TamariBlossomingTrees(100).random_modern_element()
+            sage: B
+            Tamari blossoming tree ... of size 100
+            sage: B.is_modern()
+            True
+        """
+        if not hasattr(self, 'MBTF'):
+            self.MBTF = ModernBlossomingTreeFactory(self._size)
+        return self.MBTF.random_element()
 
 
 class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
@@ -2254,8 +2219,6 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         Tamari blossoming tree ... of size 100
         sage: SBTF.random_element().is_synchronized()
         True
-        sage: SynchronizedBlossomingTreeFactory.generate(100)
-        Tamari blossoming tree ... of size 100
     """
 
     def __init__(self, size: int) -> None:
@@ -2360,38 +2323,6 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
                                                      random_bud=True)
 
-    @staticmethod
-    def generate(size: int) -> TamariBlossomingTree:
-        r"""
-        Return a uniformly random synchronized blossoming tree of the given
-        size.
-
-        INPUT:
-
-        - ``size`` -- the size (number of edges) of synchronized blossoming tree
-          to generate.
-
-        OUTPUT:
-
-        A uniformly random synchronized blossoming tree of the given size.
-
-        .. NOTE::
-
-            This is a static version of :meth:`random_element`, which is
-            advised to be used here as there is no precomputation needed.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     SynchronizedBlossomingTreeFactory)
-            sage: B = SynchronizedBlossomingTreeFactory.generate(100)
-            sage: B
-            Tamari blossoming tree ... of size 100
-            sage: B.is_synchronized()
-            True
-        """
-        return SynchronizedBlossomingTreeFactory(size).random_element()
-
 
 class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
     r"""
@@ -2410,8 +2341,7 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         Random generator of modern blossoming trees of size 100
         sage: MBTF.random_element()
         Tamari blossoming tree ... of size 100
-        sage: B = ModernBlossomingTreeFactory.generate(100)
-        sage: B.is_modern()
+        sage: MBTF.random_element().is_modern()
         True
     """
 
@@ -2594,35 +2524,3 @@ class ModernBlossomingTreeFactory(SageObject, UniqueRepresentation):
         tree = OrderedTree(l1)
         return TamariBlossomingTree._from_plane_tree(tree, skip_check=True,
                                                      random_bud=True)
-
-    @staticmethod
-    def generate(size: int) -> TamariBlossomingTree:
-        r"""
-        Return a uniformly random modern blossoming tree of the given size.
-
-        INPUT:
-
-        - ``size`` -- the size (number of edges) of the modern blossoming tree
-          to generate
-
-        OUTPUT:
-
-        A uniformly random Tamari blossoming tree of the given size.
-
-        .. NOTE::
-
-            This is a static version of :meth:`random_element`, but it does not
-            keep the result of precomputation, and is suitable and more
-            light-weight for one-shot generation.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.tamari_blossoming_tree import (
-            ....:     ModernBlossomingTreeFactory)
-            sage: B = ModernBlossomingTreeFactory.generate(100)
-            sage: B
-            Tamari blossoming tree ... of size 100
-            sage: B.is_modern()
-            True
-        """
-        return ModernBlossomingTreeFactory(size).random_element()

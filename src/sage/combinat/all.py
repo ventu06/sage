@@ -291,4 +291,5 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
 
 # TamariBlossomingTree
-lazy_import('sage.combinat.tamari_blossoming_tree', 'TamariBlossomingTree')
+lazy_import('sage.combinat.tamari_blossoming_tree', 
+            ['TamariBlossomingTree', 'TamariBlossomingTrees'])
