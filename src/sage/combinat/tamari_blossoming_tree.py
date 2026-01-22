@@ -89,7 +89,7 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
     For usage, it is the best to use conversion functions provided by this
     class, instead of its constructor, which has less flexibility.
 
-    .. NOTE:
+    .. NOTE::
 
         The metaclass
         :class:`~sage.misc.inherit_comparison.InheritComparisonClasscallMetaclass`
@@ -2099,7 +2099,7 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
         lattice paths in bijection with Tamari blossoming trees. See
         :meth:`random_element` for details of the bijection.
 
-        .. NOTES::
+        .. NOTE::
 
             This method of iteration losses a factor of `n`, as only two leaves
             can be dangling, and all other leaves fail to be the root, so that
