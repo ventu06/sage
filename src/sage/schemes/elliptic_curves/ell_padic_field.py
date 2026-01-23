@@ -29,13 +29,11 @@ from sage.matrix.constructor import matrix
 from sage.modules.free_module import VectorSpace
 from sage.rings.infinity import Infinity
 from sage.rings.laurent_series_ring import LaurentSeriesRing
-from sage.rings.real_mpfr import RR
 from sage.rings.rational_field import QQ
 from sage.rings.big_oh import O
 from sage.rings.rational_field import RationalField
 from sage.rings.integer_ring import ZZ
 
-lazy_import("sage.functions.all", "log")
 lazy_import("sage.rings.padics.factory", "Qp", as_="pAdicField")
 lazy_import("sage.schemes.hyperelliptic_curves", "monsky_washnitzer")
 
