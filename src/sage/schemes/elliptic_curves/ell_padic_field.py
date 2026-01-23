@@ -113,59 +113,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         return self._frob(P)
 
     # =============================================================================
-    # EllipticCurve_padic_field used to inherit from HyperllipticCurve_padic_field
-    # The below methods are included below to avoid breaking backwards compatibility
-    # in case a user was relying on these methods from inheritance.
-    # =============================================================================
-
-    def odd_degree_model(self):
-        r"""
-        Return an odd degree model of ``self`` in Weierstrass form.
-
-        EXAMPLES::
-
-            TODO
-        """
-        _, h = self.hyperelliptic_polynomials()
-        if h:
-            raise NotImplementedError(
-                "odd_degree_model only implemented for curves in Weierstrass form"
-            )
-        return self
-
-    def has_odd_degree_model(self) -> bool:
-        r"""
-        Return ``True`` if an odd degree model of ``self`` exists over the
-        field of definition; ``False`` otherwise.
-
-        EXAMPLES::
-
-            TODO
-        """
-        _, h = self.hyperelliptic_polynomials()
-        if h:
-            raise NotImplementedError(
-                "odd_degree_model only implemented for curves in Weierstrass form"
-            )
-        return True
-
-    def jacobian(self):
-        r"""
-        Return the Jacobian of the curve, which for elliptic curves is the curve itself.
-
-        EXAMPLES::
-
-            sage: E = EllipticCurve(QQ,[2,3])
-            sage: E is Jacobian(E)
-            True
-            sage: Qp = pAdicField(17)
-            sage: E = EllipticCurve(Qp,[2,3])
-            sage: E is Jacobian(E)
-            True
-        """
-        return self
-
-    # =============================================================================
     # The functions below were prototyped at the 2007 Arizona Winter School by
     # Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and
     # Kiran Kedlaya
@@ -178,7 +125,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
         """
-        TODO
+        TODO: rewrite description for elliptic curve
 
         For a non-Weierstrass point `P = (a,b)` on the hyperelliptic
         curve `y^2 = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
@@ -221,7 +168,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
-        TODO
+        TODO: rewrite description for elliptic curve
 
         For a finite Weierstrass point on the hyperelliptic
         curve `y^2 = f(x)`, returns `(x(t), y(t))` such that
@@ -264,7 +211,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_infinity(self, prec=20, name="t"):
         """
-        TODO
+        TODO: rewrite description for elliptic curve
 
         For the genus `g` hyperelliptic curve `y^2 = f(x)`, return
         `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = x^g/y` is
