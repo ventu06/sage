@@ -37,6 +37,7 @@ from sage.rings.integer_ring import ZZ
 
 lazy_import("sage.functions.all", "log")
 lazy_import("sage.rings.padics.factory", "Qp", as_="pAdicField")
+lazy_import("sage.schemes.hyperelliptic_curves", "monsky_washnitzer")
 
 
 class EllipticCurve_padic_field(EllipticCurve_field):
@@ -84,37 +85,34 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             sage: E.frobenius(E(0,1))
             (0 : 1 + O(13^20) : 1 + O(13^20))
         """
-        try:
-            _frob = self._frob
-        except AttributeError:
-            K = self.base_field()
-            p = K.prime()
-            x = PolynomialRing(K, 'x').gen(0)
-
+        if not hasattr(self, "_frob"):
             a1, a2, a3, a4, a6 = self.a_invariants()
-            if a1 != 0 or a3 != 0:
+            if a1 or a3:
                 raise NotImplementedError("Curve must be in weierstrass normal form.")
 
-            f = x*x*x + a2*x*x + a4*x + a6
-            h = (f(x**p) - f**p)
+            K = self.base_field()
+            p = K.prime()
+            x = PolynomialRing(K, "x").gen(0)
+
+            f = x**3 + a2 * x**2 + a4 * x + a6
+            h = f(x**p) - f**p
 
             # internal function: I don't know how to doctest it...
             def _frob(P):
                 x0 = P[0]
                 y0 = P[1]
-                uN = (1 + h(x0)/y0**(2*p)).sqrt()
+                uN = (1 + h(x0) / y0 ** (2 * p)).sqrt()
                 yres = y0**p * uN
                 xres = x0**p
-                if (yres-y0).valuation() == 0:
+                if (yres - y0).valuation() == 0:
                     yres = -yres
                 return self.point([xres, yres, K(1)])
 
             self._frob = _frob
 
         if P is None:
-            return _frob
-        else:
-            return _frob(P)
+            return self._frob
+        return self._frob(P)
 
     # =============================================================================
     # The functions below were prototyped at the 2007 Arizona Winter School by
@@ -127,7 +125,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
     # moving to the weighted projective model.
     # =============================================================================
 
-    def local_coordinates_at_infinity(self, prec=20, name='t'):
+    def local_coordinates_at_infinity(self, prec=20, name="t"):
         """
         TODO
 
@@ -153,22 +151,21 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan (2007-12)
         """
-        g = self.genus()
         pol = self.hyperelliptic_polynomials()[0]
-        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec+2)
+        K = LaurentSeriesRing(self.base_ring(), name, default_prec=prec + 2)
         t = K.gen()
-        L = PolynomialRing(K,'x')
+        L = PolynomialRing(K, "x")
         x = L.gen()
-        i = 0
-        w = (x**g/t)**2-pol
+        w = (x / t) ** 2 - pol
         wprime = w.derivative(x)
         x = t**-2
-        for i in range((RR(log(prec+2)/log(2))).ceil()):
-            x = x - w(x)/wprime(x)
-        y = x**g/t
-        return x+O(t**(prec+2)) , y+O(t**(prec+2))
 
-    def local_coord(self, P, prec=20, name='t'):
+        for _ in range((prec + 1).bit_length()):
+            x = x - w(x) / wprime(x)
+        y = x / t
+        return x + O(t ** (prec + 2)), y + O(t ** (prec + 2))
+
+    def local_coord(self, P, prec=20, name="t"):
         """
         Call the appropriate local_coordinates function.
 
@@ -193,10 +190,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         if P[1] == 0:
             return self.local_coordinates_at_weierstrass(P, prec, name)
-        elif P[2] == 0:
+        if P[2] == 0:
             return self.local_coordinates_at_infinity(prec, name)
-        else:
-            return self.local_coordinates_at_nonweierstrass(P, prec, name)
+        return self.local_coordinates_at_nonweierstrass(P, prec, name)
 
     def monsky_washnitzer_gens(self):
         """
@@ -206,7 +202,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
             TODO
         """
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
         return S.gens()
 
@@ -219,9 +214,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
             TODO
         """
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as m_w
-        S = m_w.SpecialHyperellipticQuotientRing(self)
-        MW = m_w.MonskyWashnitzerDifferentialRing(S)
+        S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
+        MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(S)
         return MW.invariant_differential()
 
     def local_analytic_interpolation(self, P, Q):
@@ -253,27 +247,28 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Jennifer Balakrishnan (2010-02)
         """
         prec = self.base_ring().precision_cap()
-        if not self.is_same_disc(P,Q):
-            raise ValueError("%s and %s are not in the same residue disc" % (P,Q))
+        if not self.is_same_disc(P, Q):
+            raise ValueError(f"{P} and {Q} are not in the same residue disc")
         disc = self.residue_disc(P)
-        t = PowerSeriesRing(self.base_ring(), 't', prec).gen(0)
-        if disc == self.change_ring(self.base_ring().residue_field())(0,1,0): # Infinite disc
-            x,y = self.local_coordinates_at_infinity(2*prec)
-            g = self.genus()
-            return (x*t**(2*g+1),y*t**(2*g+1),t**(2*g+1))
-        if disc[1] != 0: # non-Weierstrass disc
-            x = P[0]+t*(Q[0]-P[0])
+        t = PowerSeriesRing(self.base_ring(), "t", prec).gen(0)
+        if disc == self.change_ring(self.base_ring().residue_field())(
+            0, 1, 0
+        ):  # Infinite disc
+            x, y = self.local_coordinates_at_infinity(2 * prec)
+            return (x * t**3, y * t**3, t**3)
+        if disc[1] != 0:  # non-Weierstrass disc
+            x = P[0] + t * (Q[0] - P[0])
             pts = self.lift_x(x, all=True)
             if pts[0][1][0] == P[1]:
                 return pts[0]
             else:
                 return pts[1]
-        else: # Weierstrass disc
+        else:  # Weierstrass disc
             S = self.find_char_zero_weier_point(P)
-            x,y = self.local_coord(S, prec)
+            x, y = self.local_coord(S, prec)
             a = P[1]
             b = Q[1] - P[1]
-            y = a + b*t
+            y = a + b * t
             x = x.polynomial()(y).add_bigoh(x.prec())
             return (x, y, 1)
 
@@ -290,7 +285,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         f, h = self.hyperelliptic_polynomials()
         if h != 0:
             raise NotImplementedError()
-        return [self((0,1,0))] + [self((x, 0, 1)) for x in f.roots(multiplicities=False)]
+        return [self((0, 1, 0))] + [
+            self((x, 0, 1)) for x in f.roots(multiplicities=False)
+        ]
 
     def is_in_weierstrass_disc(self, P):
         """
@@ -319,7 +316,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan (2010-02)
         """
-        return (P[1] == 0 or P[2] == 0)
+        return P[1] == 0 or P[2] == 0
 
     def find_char_zero_weier_point(self, Q):
         """
@@ -335,10 +332,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Jennifer Balakrishnan
         """
         if not self.is_in_weierstrass_disc(Q):
-            raise ValueError("%s is not in a Weierstrass disc" % Q)
+            raise ValueError(f"{Q} is not in a Weierstrass disc")
         points = self.weierstrass_points()
         for P in points:
-            if self.is_same_disc(P,Q):
+            if self.is_same_disc(P, Q):
                 return P
 
     def residue_disc(self, P):
@@ -357,20 +354,20 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         yPv = P[1].valuation()
         F = self.base_ring().residue_field()
         HF = self.change_ring(F)
-        if P == self(0,1,0):
-            return HF(0,1,0)
+        if P == self(0, 1, 0):
+            return HF(0, 1, 0)
         elif yPv > 0:
             if xPv > 0:
-                return HF(0,0,1)
+                return HF(0, 0, 1)
             if xPv == 0:
-                return HF(P[0].expansion(0), 0,1)
+                return HF(P[0].expansion(0), 0, 1)
         elif yPv == 0:
             if xPv > 0:
-                return HF(0, P[1].expansion(0),1)
+                return HF(0, P[1].expansion(0), 1)
             if xPv == 0:
-                return HF(P[0].expansion(0), P[1].expansion(0),1)
+                return HF(P[0].expansion(0), P[1].expansion(0), 1)
         else:
-            return HF(0,1,0)
+            return HF(0, 1, 0)
 
     def is_same_disc(self, P, Q):
         """
@@ -407,22 +404,24 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             sage: E.tiny_integrals([1,x],P, TP) == E.tiny_integrals_on_basis(P,TP)
             True
         """
-        x, y, z = self.local_analytic_interpolation(P, Q)  #homogeneous coordinates
-        x = x/z
-        y = y/z
-        dt = x.derivative() / (2*y)
+        x, y, z = self.local_analytic_interpolation(P, Q)  # homogeneous coordinates
+        x = x / z
+        y = y / z
+        dt = x.derivative() / (2 * y)
         integrals = []
-        g = self.genus()
+
         for f in F:
             try:
-                f_dt = f(x,y)*dt
-            except TypeError:   #if f is a constant, not callable
-                f_dt = f*dt
+                f_dt = f(x, y) * dt
+            except TypeError:  # if f is a constant, not callable
+                f_dt = f * dt
             if x.valuation() != -2:
-                I = sum(f_dt[n]/(n+1) for n in range(f_dt.degree() + 1)) # \int_0^1 f dt
+                I = sum(
+                    f_dt[n] / (n + 1) for n in range(f_dt.degree() + 1)
+                )  # \int_0^1 f dt
             else:
                 If_dt = f_dt.integral().laurent_polynomial()
-                I = If_dt(Q[0]**g/Q[1]) - If_dt(P[0]**g/P[1])
+                I = If_dt(Q[0] / Q[1]) - If_dt(P[0] / P[1])
             integrals.append(I)
         return vector(integrals)
 
@@ -449,11 +448,11 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             (17 + 14*17^2 + 17^3 + 8*17^4 + O(17^5), 16*17 + 5*17^2 + 8*17^3 + 14*17^4 + O(17^5))
         """
         if P == Q:
-            V = VectorSpace(self.base_ring(), 2*self.genus())
+            V = VectorSpace(self.base_ring(), 2)
             return V(0)
-        R = PolynomialRing(self.base_ring(), ['x', 'y'])
-        x, y = R.gens()
-        return self.tiny_integrals([x**i for i in range(2*self.genus())], P, Q)
+        R = PolynomialRing(self.base_ring(), ["x", "y"])
+        x, _ = R.gens()
+        return self.tiny_integrals([x**i for i in range(2)], P, Q)
 
     def teichmuller(self, P):
         r"""
@@ -507,17 +506,16 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Robert Bradshaw (2007-03): non-Weierstrass points
         - Jennifer Balakrishnan and Robert Bradshaw (2010-02): Weierstrass points
         """
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         from sage.misc.profiler import Profiler
+
         prof = Profiler()
         prof("setup")
         K = self.base_ring()
         p = K.prime()
         prec = K.precision_cap()
-        g = self.genus()
-        dim = 2*g
+        dim = 2
         V = VectorSpace(K, dim)
-        #if P or Q is Weierstrass, use the Frobenius algorithm
+        # if P or Q is Weierstrass, use the Frobenius algorithm
         if self.is_weierstrass(P):
             if self.is_weierstrass(Q):
                 return V(0)
@@ -531,9 +529,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             QQ = None
             TQ = None
             TP = self.frobenius(P)
-        elif self.is_same_disc(P,Q):
-            return self.tiny_integrals_on_basis(P,Q)
-        elif algorithm == 'teichmuller':
+        elif self.is_same_disc(P, Q):
+            return self.tiny_integrals_on_basis(P, Q)
+        elif algorithm == "teichmuller":
             prof("teichmuller")
             PP = TP = self.teichmuller(P)
             QQ = TQ = self.teichmuller(Q)
@@ -547,35 +545,42 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             P_to_TP = V(0)
         else:
             if TP is not None:
-                TPv = (TP[0]**g/TP[1]).valuation()
+                TPv = (TP[0] / TP[1]).valuation()
                 xTPv = TP[0].valuation()
             else:
                 xTPv = TPv = +Infinity
             if TQ is not None:
-                TQv = (TQ[0]**g/TQ[1]).valuation()
+                TQv = (TQ[0] / TQ[1]).valuation()
                 xTQv = TQ[0].valuation()
             else:
                 xTQv = TQv = +Infinity
-            offset = (2*g-1)*max(TPv, TQv)
+            offset = (2 - 1) * max(TPv, TQv)
             if offset == +Infinity:
-                offset = (2*g-1)*min(TPv,TQv)
-            if (offset > prec and (xTPv < 0 or xTQv < 0) and (self.residue_disc(P) == self.change_ring(GF(p))(0,1,0) or self.residue_disc(Q) == self.change_ring(GF(p))(0,1,0))):
+                offset = (2 - 1) * min(TPv, TQv)
+            if (
+                offset > prec
+                and (xTPv < 0 or xTQv < 0)
+                and (
+                    self.residue_disc(P) == self.change_ring(GF(p))(0, 1, 0)
+                    or self.residue_disc(Q) == self.change_ring(GF(p))(0, 1, 0)
+                )
+            ):
                 newprec = offset + prec
-                K = pAdicField(p,newprec)
-                A = PolynomialRing(RationalField(),'x')
+                K = pAdicField(p, newprec)
+                A = PolynomialRing(RationalField(), "x")
                 f = A(self.hyperelliptic_polynomials()[0])
                 self = EllipticCurve(f).change_ring(K)
                 xP = P[0]
                 xPv = xP.valuation()
-                xPnew = K(sum(c * p**(xPv + i) for i, c in enumerate(xP.expansion())))
+                xPnew = K(sum(c * p ** (xPv + i) for i, c in enumerate(xP.expansion())))
                 PP = P = self.lift_x(xPnew)
                 TP = self.frobenius(P)
                 xQ = Q[0]
                 xQv = xQ.valuation()
-                xQnew = K(sum(c * p**(xQv + i) for i, c in enumerate(xQ.expansion())))
+                xQnew = K(sum(c * p ** (xQv + i) for i, c in enumerate(xQ.expansion())))
                 QQ = Q = self.lift_x(xQnew)
                 TQ = self.frobenius(Q)
-                V = VectorSpace(K,dim)
+                V = VectorSpace(K, dim)
             P_to_TP = V(self.tiny_integrals_on_basis(P, TP))
         if TQ is None:
             TQ_to_Q = V(0)
@@ -585,7 +590,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         try:
             M_frob, forms = self._frob_calc
         except AttributeError:
-            M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+            M_frob, forms = self._frob_calc = (
+                monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+            )
         prof("eval f")
         R = forms[0].base_ring()
         try:
@@ -595,8 +602,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             elif QQ is None:
                 L = [ff(R(PP[0]), R(PP[1])) for ff in forms]
             else:
-                L = [ff(R(PP[0]), R(PP[1])) - ff(R(QQ[0]), R(QQ[1]))
-                     for ff in forms]
+                L = [ff(R(PP[0]), R(PP[1])) - ff(R(QQ[0]), R(QQ[1])) for ff in forms]
         except ValueError:
             prof("changing rings")
             forms = [ff.change_ring(self.base_ring()) for ff in forms]
@@ -612,18 +618,18 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             b -= TQ_to_Q
         elif QQ is None:
             b -= P_to_TP
-        elif algorithm != 'teichmuller':
+        elif algorithm != "teichmuller":
             b -= P_to_TP + TQ_to_Q
         prof("lin alg")
         M_sys = matrix(K, M_frob).transpose() - 1
-        TP_to_TQ = M_sys**(-1) * b
+        TP_to_TQ = M_sys ** (-1) * b
         prof("done")
-        if algorithm == 'teichmuller':
+        if algorithm == "teichmuller":
             return P_to_TP + TP_to_TQ + TQ_to_Q
         else:
             return TP_to_TQ
 
-    def coleman_integral(self, w, P, Q, algorithm='None'):
+    def coleman_integral(self, w, P, Q, algorithm="None"):
         r"""
         Return the Coleman integral `\int_P^Q w`.
 
@@ -651,8 +657,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Kiran Kedlaya (2008-05)
         - Jennifer Balakrishnan (2010-02)
         """
-        # TODO: implement Jacobians and show the relationship directly
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         K = self.base_ring()
         prec = K.precision_cap()
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self, K)
@@ -661,56 +665,52 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         f, vec = w.reduce_fast()
         basis_values = self.coleman_integrals_on_basis(P, Q, algorithm)
         dim = len(basis_values)
-        x,y = self.local_coordinates_at_infinity(2*prec)
+        x, y = self.local_coordinates_at_infinity(2 * prec)
         if self.is_weierstrass(P):
             if self.is_weierstrass(Q):
                 return 0
             elif f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif w._coeff(x,-y)*x.derivative()/(-2*y)+w._coeff(x,y)*x.derivative()/(2*y) == 0:
-                return self.coleman_integral(w,self(Q[0],-Q[1]), self(Q[0],Q[1]), algorithm)/2
+            elif (
+                w._coeff(x, -y) * x.derivative() / (-2 * y)
+                + w._coeff(x, y) * x.derivative() / (2 * y)
+                == 0
+            ):
+                return (
+                    self.coleman_integral(
+                        w, self(Q[0], -Q[1]), self(Q[0], Q[1]), algorithm
+                    )
+                    / 2
+                )
             else:
-                raise ValueError("The differential is not odd: use coleman_integral_from_weierstrass_via_boundary")
+                raise ValueError(
+                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+                )
 
         elif self.is_weierstrass(Q):
             if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif w._coeff(x,-y)*x.derivative()/(-2*y)+w._coeff(x,y)*x.derivative()/(2*y) == 0:
-                return -self.coleman_integral(w,self(P[0],-P[1]), self(P[0],P[1]), algorithm)/2
+            elif (
+                w._coeff(x, -y) * x.derivative() / (-2 * y)
+                + w._coeff(x, y) * x.derivative() / (2 * y)
+                == 0
+            ):
+                return (
+                    -self.coleman_integral(
+                        w, self(P[0], -P[1]), self(P[0], P[1]), algorithm
+                    )
+                    / 2
+                )
             else:
-                raise ValueError("The differential is not odd: use coleman_integral_from_weierstrass_via_boundary")
+                raise ValueError(
+                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+                )
         else:
-            return f(Q[0], Q[1]) - f(P[0], P[1]) + sum([vec[i] * basis_values[i] for i in range(dim)]) # this is just a dot product...
-
-    def newton_sqrt(self, f, x0, prec):
-        r"""
-        Take the square root of the power series `f` by Newton's method.
-
-        NOTE:
-
-        this function should eventually be moved to `p`-adic power series ring
-
-        INPUT:
-
-        - ``f`` -- power series with coefficients in `\QQ_p` or an extension
-        - ``x0`` -- seeds the Newton iteration
-        - ``prec`` -- precision
-
-        OUTPUT: the square root of `f`
-
-        EXAMPLES::
-
-            TODO
-
-        AUTHOR:
-
-        - Jennifer Balakrishnan
-        """
-        z = x0
-        loop_prec = log(RR(prec), 2).ceil()
-        for i in range(loop_prec):
-            z = (z + f / z) / 2
-        return z
+            return (
+                f(Q[0], Q[1])
+                - f(P[0], P[1])
+                + sum([vec[i] * basis_values[i] for i in range(dim)])
+            )  # this is just a dot product...
 
     def curve_over_ram_extn(self, deg):
         r"""
@@ -732,9 +732,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         K = self.base_ring()
         p = K.prime()
-        A = PolynomialRing(QQ,'x')
+        A = PolynomialRing(QQ, "x")
         x = A.gen()
-        J = K.extension(x**deg-p,names='a')
+        J = K.extension(x**deg - p, names="a")
         pol = self.hyperelliptic_polynomials()[0]
         H = EllipticCurve(A(pol))
         HJ = H.change_ring(J)
@@ -765,8 +765,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         J = curve_over_extn.base_ring()
         a = J.gen()
         prec2 = J.precision_cap()
-        x,y = self.local_coord(P,prec2)
-        return curve_over_extn(x(a),y(a))
+        x, y = self.local_coord(P, prec2)
+        return curve_over_extn(x(a), y(a))
 
     def P_to_S(self, P, S):
         r"""
@@ -790,10 +790,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         prec = self.base_ring().precision_cap()
         deg = (S[0]).parent().defining_polynomial().degree()
-        prec2 = prec*deg
-        x,y = self.local_coord(P,prec2)
-        g = self.genus()
-        integrals = [((x**k*x.derivative()/(2*y)).integral()) for k in range(2*g)]
+        prec2 = prec * deg
+        x, y = self.local_coord(P, prec2)
+        integrals = [((x**k * x.derivative() / (2 * y)).integral()) for k in range(2)]
         val = [I(S[1]) for I in integrals]
         return vector(val)
 
@@ -822,8 +821,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         prec = self.base_ring().precision_cap()
         deg = S[0].parent().defining_polynomial().degree()
         prec2 = prec * deg
-        x,y = self.local_coord(P,prec2)
-        int_sing = (w.coeff()(x,y)*x.derivative()/(2*y)).integral()
+        x, y = self.local_coord(P, prec2)
+        int_sing = (w.coeff()(x, y) * x.derivative() / (2 * y)).integral()
         int_sing_a = int_sing(S[1])
         return int_sing_a
 
@@ -853,33 +852,39 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Jennifer Balakrishnan
         """
         FS = self.frobenius(S)
-        FS = (FS[0],FS[1])
+        FS = (FS[0], FS[1])
         FQ = self.frobenius(Q)
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
+
         try:
             M_frob, forms = self._frob_calc
         except AttributeError:
-            M_frob, forms = self._frob_calc = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+            M_frob, forms = self._frob_calc = (
+                monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
+            )
         try:
             HJ = self._curve_over_ram_extn
             K = HJ.base_ring()
         except AttributeError:
             HJ = S.scheme()
             K = self.base_ring()
-        g = self.genus()
+
         prec2 = K.precision_cap()
         p = K.prime()
-        dim = 2*g
-        V = VectorSpace(K,dim)
+        dim = 2
+        V = VectorSpace(K, dim)
         if S == FS:
-            S_to_FS = V(dim*[0])
+            S_to_FS = V(dim * [0])
         else:
-            P = self(ZZ(FS[0].expansion(0)),ZZ(FS[1].expansion(0)))
-            x,y = self.local_coord(P,prec2)
-            integrals = [(x**i*x.derivative()/(2*y)).integral() for i in range(dim)]
-            S_to_FS = vector([I.polynomial()(FS[1]) - I.polynomial()(S[1]) for I in integrals])
-        if HJ(Q[0],Q[1]) == HJ(FQ):
-            FQ_to_Q = V(dim*[0])
+            P = self(ZZ(FS[0].expansion(0)), ZZ(FS[1].expansion(0)))
+            x, y = self.local_coord(P, prec2)
+            integrals = [
+                (x**i * x.derivative() / (2 * y)).integral() for i in range(dim)
+            ]
+            S_to_FS = vector(
+                [I.polynomial()(FS[1]) - I.polynomial()(S[1]) for I in integrals]
+            )
+        if HJ(Q[0], Q[1]) == HJ(FQ):
+            FQ_to_Q = V(dim * [0])
         else:
             FQ_to_Q = V(self.tiny_integrals_on_basis(FQ, Q))
         try:
@@ -889,11 +894,11 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             L = [f(S[0], S[1]) - f(Q[0], Q[1]) for f in forms]
         b = V(L)
         M_sys = matrix(K, M_frob).transpose() - 1
-        B = (~M_sys)
+        B = ~M_sys
         vv = min(c.valuation() for c in B.list())
-        B = (p**(-vv)*B).change_ring(K)
-        B = p**(vv)*B
-        return B*(b-S_to_FS-FQ_to_Q)
+        B = (p ** (-vv) * B).change_ring(K)
+        B = p ** (vv) * B
+        return B * (b - S_to_FS - FQ_to_Q)
 
     def coleman_integral_S_to_Q(self, w, S, Q):
         r"""
@@ -918,15 +923,14 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan
         """
-        import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         K = self.base_ring()
         R = monsky_washnitzer.SpecialHyperellipticQuotientRing(self, K)
         MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(R)
         w = MW(w)
         f, vec = w.reduce_fast()
-        g = self.genus()
-        const = f(Q[0],Q[1])-f(S[0],S[1])
-        if vec == vector(2*g*[0]):
+
+        const = f(Q[0], Q[1]) - f(S[0], S[1])
+        if vec == vector([0, 0]):
             return const
         else:
             basis_values = self.S_to_Q(S, Q)
