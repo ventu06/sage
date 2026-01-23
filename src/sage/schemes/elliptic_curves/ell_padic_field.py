@@ -122,6 +122,91 @@ class EllipticCurve_padic_field(EllipticCurve_field):
     # and specialised to genus one in preparation of the hyperelliptic curve code
     # moving to the weighted projective model.
     # =============================================================================
+    def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
+        """
+        TODO
+
+        For a non-Weierstrass point `P = (a,b)` on the hyperelliptic
+        curve `y^2 = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
+        where `t = x - a` is the local parameter.
+
+        INPUT:
+
+        - ``P = (a, b)`` -- a non-Weierstrass point on ``self``
+        - ``prec`` -- desired precision of the local coordinates
+        - ``name`` -- gen of the power series ring (default: ``t``)
+
+        OUTPUT:
+
+        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = x - a`
+        is the local parameter at `P`
+
+        EXAMPLES::
+
+            TODO
+
+        AUTHOR:
+
+        - Jennifer Balakrishnan (2007-12)
+        """
+        d = P[1]
+        if d == 0:
+            raise TypeError(
+                f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
+            )
+        pol = self.hyperelliptic_polynomials()[0]
+        L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
+        t = L.gen()
+        K = PowerSeriesRing(L, "x")
+        pol = K(pol)
+        b = P[0]
+        f = pol(t + b)
+        for _ in range(prec.bit_length()):
+            d = (d + f / d) / 2
+        return t + b + O(t ** (prec)), d + O(t ** (prec))
+
+    def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
+        """
+        TODO
+
+        For a finite Weierstrass point on the hyperelliptic
+        curve `y^2 = f(x)`, returns `(x(t), y(t))` such that
+        `(y(t))^2 = f(x(t))`, where `t = y` is the local parameter.
+
+        INPUT:
+
+        - ``P`` -- a finite Weierstrass point on ``self``
+        - ``prec`` -- desired precision of the local coordinates
+        - ``name`` -- gen of the power series ring (default: `t`)
+
+        OUTPUT:
+
+        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = y`
+        is the local parameter at `P`
+
+        EXAMPLES::
+
+            TODO
+
+        AUTHOR:
+          - Jennifer Balakrishnan (2007-12)
+          - Francis Clarke (2012-08-26)
+        """
+        if P[1] != 0:
+            raise TypeError(
+                f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
+            )
+        L = PowerSeriesRing(self.base_ring(), name)
+        t = L.gen()
+        pol = self.hyperelliptic_polynomials()[0]
+        pol_prime = pol.derivative()
+        b = P[0]
+        t2 = t**2
+        c = b + t2 / pol_prime(b)
+        c = c.add_bigoh(prec)
+        for _ in range(prec.bit_length()):
+            c -= (pol(c) - t2) / pol_prime(c)
+        return (c, t.add_bigoh(prec))
 
     def local_coordinates_at_infinity(self, prec=20, name="t"):
         """
