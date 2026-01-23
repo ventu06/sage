@@ -38,6 +38,7 @@ from sage.rings.integer_ring import ZZ
 lazy_import("sage.functions.all", "log")
 lazy_import("sage.rings.padics.factory", "Qp", as_="pAdicField")
 
+
 class EllipticCurve_padic_field(EllipticCurve_field):
     """
     Elliptic curve over a `p`-adic field.
@@ -200,7 +201,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
     def monsky_washnitzer_gens(self):
         """
         TODO: Docstring for monsky_washnitzer_gens
-        
+
         EXAMPLES::
 
             TODO
@@ -208,7 +209,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         import sage.schemes.hyperelliptic_curves.monsky_washnitzer as monsky_washnitzer
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
         return S.gens()
-    
+
     def invariant_differential(self):
         """
         Return `dx/2y`, as an element of the Monsky-Washnitzer cohomology
@@ -298,7 +299,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         EXAMPLES::
 
             TODO
-    
+
         AUTHOR:
 
         - Jennifer Balakrishnan (2010-02)
