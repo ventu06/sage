@@ -52,33 +52,25 @@ AUTHORS:
 from __future__ import annotations
 
 import itertools
-from typing import Self, TYPE_CHECKING
 import random
+from typing import TYPE_CHECKING, Self
 
+from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
+from sage.categories.homset import Hom
+from sage.categories.morphism import SetMorphism
 from sage.misc.cachefunc import cached_method
 from sage.misc.latex import latex
 from sage.misc.superseded import deprecation
-
-from sage.arith.functions import lcm
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import ModuleElement
-from sage.structure.richcmp import richcmp
-
-from sage.categories.homset import Hom
-from sage.categories.morphism import SetMorphism
-from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-
-from sage.matrix.constructor import matrix
-
 from sage.modules.free_module_element import vector
-
-from sage.rings.integer_ring import IntegerRing
-from sage.rings.integer import Integer
-
 from sage.rings.function_field import riemann_roch
-from .place import PlaceSet, FunctionFieldPlace
+from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing
+from sage.structure.element import ModuleElement
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
+
+from .place import FunctionFieldPlace, PlaceSet
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
@@ -695,7 +687,9 @@ class FunctionFieldDivisor(ModuleElement):
             return vector(coordinates(f))
 
         from sage.rings.function_field.maps import (
-            FunctionFieldLinearMap, FunctionFieldLinearMapSection)
+            FunctionFieldLinearMap,
+            FunctionFieldLinearMapSection,
+        )
 
         mor_from_V = FunctionFieldLinearMap(Hom(V, F), from_V)
         mor_to_V = FunctionFieldLinearMapSection(Hom(F, V), to_V)
@@ -799,7 +793,9 @@ class FunctionFieldDivisor(ModuleElement):
             return vector(coordinates(w._f))
 
         from sage.rings.function_field.maps import (
-            FunctionFieldLinearMap, FunctionFieldLinearMapSection)
+            FunctionFieldLinearMap,
+            FunctionFieldLinearMapSection,
+        )
 
         mor_from_V = FunctionFieldLinearMap(Hom(V, W), from_V)
         mor_to_V = FunctionFieldLinearMapSection(Hom(W, V), to_V)

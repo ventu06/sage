@@ -58,13 +58,14 @@ AUTHORS:
 # ****************************************************************************
 
 from __future__ import annotations
+
 from typing import TYPE_CHECKING
 
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.parent import Parent
-from sage.structure.element import Element
-from sage.structure.richcmp import richcmp
 from sage.categories.sets_cat import Sets
+from sage.structure.element import Element
+from sage.structure.parent import Parent
+from sage.structure.richcmp import richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
 if TYPE_CHECKING:
     from .divisor import FunctionFieldDivisor

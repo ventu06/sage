@@ -29,7 +29,7 @@ Function Fields: extension
 
 from __future__ import annotations
 
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from sage.arith.functions import lcm
 from sage.categories.function_fields import FunctionFields
@@ -39,14 +39,16 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.element_polymod import FunctionFieldElement_polymod
-from .function_field import FunctionField
-from .function_field_rational import RationalFunctionField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.qqbar_decorators import handle_AA_and_QQbar
 
+from .function_field import FunctionField
+from .function_field_rational import RationalFunctionField
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from .place_polymod import FunctionFieldPlace_polymod
 
 
@@ -2484,6 +2486,7 @@ class FunctionField_integral(FunctionField_simple):
             pols_in_S = _singular_normal(S.ideal(g))[0]
 
         from sage.matrix.constructor import matrix
+
         from .hermite_form_polynomial import reversed_hermite_form
 
         # reconstruct the polynomials in the function field

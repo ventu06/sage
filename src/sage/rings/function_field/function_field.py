@@ -257,7 +257,7 @@ if TYPE_CHECKING:
     from .function_field_rational import RationalFunctionField
     from .jacobian_base import Jacobian_base
     from .maps import FunctionFieldCompletion
-    from .place import PlaceSet, FunctionFieldPlace
+    from .place import FunctionFieldPlace, PlaceSet
     from .valuation import FunctionFieldValuation_base
 
 

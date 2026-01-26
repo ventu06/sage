@@ -112,11 +112,14 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.categories.integral_domains import IntegralDomains
-from sage.structure.parent import Parent
-from sage.structure.unique_representation import CachedRepresentation, UniqueRepresentation
 from sage.misc.cachefunc import cached_method
+from sage.structure.parent import Parent
+from sage.structure.unique_representation import (
+    CachedRepresentation,
+    UniqueRepresentation,
+)
 
-from .ideal import IdealMonoid, FunctionFieldIdeal
+from .ideal import FunctionFieldIdeal, IdealMonoid
 
 
 class FunctionFieldOrder_base(CachedRepresentation, Parent):

@@ -119,28 +119,25 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, op_NE, richcmp
-
-from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.homset import Hom
-
-from sage.matrix.constructor import matrix
-
+from sage.categories.map import Map
 from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+from sage.matrix.constructor import matrix
+from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from .place import FunctionFieldPlace
 from .divisor import FunctionFieldDivisor
-
-from .jacobian_base import (Jacobian_base,
-                            JacobianGroup_base,
-                            JacobianGroup_finite_field_base,
-                            JacobianPoint_base,
-                            JacobianPoint_finite_field_base)
+from .jacobian_base import (
+    Jacobian_base,
+    JacobianGroup_base,
+    JacobianGroup_finite_field_base,
+    JacobianPoint_base,
+    JacobianPoint_finite_field_base,
+)
+from .place import FunctionFieldPlace
 
 
 class JacobianPoint(JacobianPoint_base):
@@ -619,7 +616,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         elif model == 'medium':
             div_L = 2 * D0
             L, from_L, to_L = V(2)
-            from sage.rings.function_field.khuri_makdisi import KhuriMakdisi_medium as KM
+            from sage.rings.function_field.khuri_makdisi import (
+                KhuriMakdisi_medium as KM,
+            )
         elif model == 'small':
             div_L = 3 * D0
             L, from_L, to_L = V(3)

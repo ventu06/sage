@@ -62,35 +62,26 @@ AUTHORS:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
-
-from sage.misc.cachefunc import cached_method
-from sage.misc.superseded import deprecation
-
-from sage.structure.unique_representation import UniqueRepresentation
-from sage.structure.richcmp import op_EQ, op_NE, richcmp
-
-from sage.categories.map import Map
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.homset import Hom
-
-from sage.arith.misc import integer_ceil
-from sage.arith.functions import lcm
-
+from sage.categories.map import Map
+from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
+from sage.misc.cachefunc import cached_method
+from sage.misc.superseded import deprecation
 from sage.rings.function_field import riemann_roch
 from sage.rings.integer import Integer
-from sage.matrix.constructor import matrix
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
+from sage.structure.unique_representation import UniqueRepresentation
 
-from sage.combinat.integer_vector_weighted import WeightedIntegerVectors
-
-from .place import FunctionFieldPlace
 from .divisor import FunctionFieldDivisor
-
-from .jacobian_base import (Jacobian_base,
-                            JacobianGroup_base,
-                            JacobianGroup_finite_field_base,
-                            JacobianPoint_base,
-                            JacobianPoint_finite_field_base)
+from .jacobian_base import (
+    Jacobian_base,
+    JacobianGroup_base,
+    JacobianGroup_finite_field_base,
+    JacobianPoint_base,
+    JacobianPoint_finite_field_base,
+)
+from .place import FunctionFieldPlace
 
 
 class JacobianPoint(JacobianPoint_base):

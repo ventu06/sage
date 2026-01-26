@@ -39,7 +39,6 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 
 import sage.groups.generic as groups_generic
-from sage.categories.map import Map
 from sage.matrix.constructor import matrix
 from sage.misc.cachefunc import cached_method
 from sage.rings.function_field import riemann_roch

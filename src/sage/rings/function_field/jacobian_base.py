@@ -116,17 +116,14 @@ from __future__ import annotations
 import math
 from typing import TYPE_CHECKING
 
-from sage.arith.misc import integer_floor, integer_ceil
-
-from sage.structure.parent import Parent
-from sage.structure.element import AdditiveGroupElement
-
+from sage.arith.misc import integer_ceil, integer_floor
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
-from sage.categories.schemes import Jacobians
 from sage.categories.pushout import ConstructionFunctor, pushout
-
-from sage.rings.integer_ring import IntegerRing
+from sage.categories.schemes import Jacobians
 from sage.rings.integer import Integer
+from sage.rings.integer_ring import IntegerRing
+from sage.structure.element import AdditiveGroupElement
+from sage.structure.parent import Parent
 
 if TYPE_CHECKING:
     from sage.categories.map import Map

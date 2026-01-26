@@ -27,7 +27,7 @@ Function Fields: rational
 
 from __future__ import annotations
 
-from typing import Literal, TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 from sage.arith.functions import lcm
 from sage.categories.function_fields import FunctionFields
@@ -36,12 +36,14 @@ from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import LazyImport
 from sage.rings.function_field.element import FunctionFieldElement
 from sage.rings.function_field.element_rational import FunctionFieldElement_rational
-from .function_field import FunctionField
 from sage.rings.integer import Integer
 from sage.structure.category_object import CategoryObject
 
+from .function_field import FunctionField
+
 if TYPE_CHECKING:
     from collections.abc import Iterator
+
     from .place_rational import FunctionFieldPlace_rational
 
 
