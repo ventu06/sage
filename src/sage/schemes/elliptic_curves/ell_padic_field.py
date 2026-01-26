@@ -95,7 +95,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             f = x**3 + a2 * x**2 + a4 * x + a6
             h = f(x**p) - f**p
 
-            # internal function: I don't know how to doctest it...
             def _frob(P):
                 x0 = P[0]
                 y0 = P[1]
@@ -164,7 +163,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         f = pol(t + b)
         for _ in range(prec.bit_length()):
             d = (d + f / d) / 2
-        return t + b + O(t ** (prec)), d + O(t ** (prec))
+        return t + b + O(t**prec), d + O(t**prec)
 
     def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
