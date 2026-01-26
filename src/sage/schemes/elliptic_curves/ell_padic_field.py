@@ -125,9 +125,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_nonweierstrass(self, P, prec=20, name="t"):
         """
-        TODO: rewrite description for elliptic curve
-
-        For a non-Weierstrass point `P = (a,b)` on the hyperelliptic
+        For a non-Weierstrass point `P = (a,b)` on the elliptic
         curve `y^2 = f(x)`, return `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`,
         where `t = x - a` is the local parameter.
 
@@ -144,14 +142,21 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: Qp = pAdicField(13)
+            sage: E = EllipticCurve(Qp,[5,22])
+            sage: P = E([-1,4])
+            sage: xt,yt = E.local_coordinates_at_nonweierstrass(P, prec=5)
+            sage: xt
+            12 + 12*13 + 12*13^2 + 12*13^3 + 12*13^4 + 12*13^5 + 12*13^6 + 12*13^7 + 12*13^8 + 12*13^9 + 12*13^10 + 12*13^11 + 12*13^12 + 12*13^13 + 12*13^14 + 12*13^15 + 12*13^16 + 12*13^17 + 12*13^18 + 12*13^19 + O(13^20) + (1 + O(13^20))*t + O(t^5)
+            sage: yt
+            4 + O(13^20) + (1 + O(13^20))*t + (6 + 6*13 + 6*13^2 + 6*13^3 + 6*13^4 + 6*13^5 + 6*13^6 + 6*13^7 + 6*13^8 + 6*13^9 + 6*13^10 + 6*13^11 + 6*13^12 + 6*13^13 + 6*13^14 + 6*13^15 + 6*13^16 + 6*13^17 + 6*13^18 + 6*13^19 + O(13^20))*t^2 + (10 + 9*13 + 9*13^2 + 9*13^3 + 9*13^4 + 9*13^5 + 9*13^6 + 9*13^7 + 9*13^8 + 9*13^9 + 9*13^10 + 9*13^11 + 9*13^12 + 9*13^13 + 9*13^14 + 9*13^15 + 9*13^16 + 9*13^17 + 9*13^18 + 9*13^19 + O(13^20))*t^3 + (6 + 4*13 + 9*13^2 + 7*13^3 + 12*13^4 + 10*13^5 + 2*13^6 + 13^7 + 6*13^8 + 4*13^9 + 9*13^10 + 7*13^11 + 12*13^12 + 10*13^13 + 2*13^14 + 13^15 + 6*13^16 + 4*13^17 + 9*13^18 + 7*13^19 + O(13^20))*t^4 + O(t^5)
 
         AUTHOR:
 
         - Jennifer Balakrishnan (2007-12)
         """
         d = P[1]
-        if d == 0:
+        if d == 0 or P[2] == 0:
             raise TypeError(
                 f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
             )
@@ -168,10 +173,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
-        TODO: rewrite description for elliptic curve
-
-        For a finite Weierstrass point on the hyperelliptic
-        curve `y^2 = f(x)`, returns `(x(t), y(t))` such that
+        For a finite Weierstrass point on the elliptic
+        curve `y^2 = f(x)`, return `(x(t), y(t))` such that
         `(y(t))^2 = f(x(t))`, where `t = y` is the local parameter.
 
         INPUT:
@@ -187,7 +190,19 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: Q5 = pAdicField(5)
+            sage: E = EllipticCurve(Q5, [1,0])
+            sage: P = E([0,0])
+            sage: xt,yt = E.local_coordinates_at_weierstrass(P, prec=5)
+            sage: xt
+            (1 + O(5^20))*t^2 + O(t^5)
+            sage: yt
+            (1 + O(5^20))*t + O(t^5)
+            sage: O = E([0,1,0])
+            sage: xt,yt = E.local_coordinates_at_weierstrass(O, prec=5)
+            Traceback (most recent call last):
+            ...
+            TypeError:  P = (0 : 1 + O(5^20) : 0) is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!
 
         AUTHOR:
           - Jennifer Balakrishnan (2007-12)
@@ -211,10 +226,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coordinates_at_infinity(self, prec=20, name="t"):
         """
-        TODO: rewrite description for elliptic curve
-
-        For the genus `g` hyperelliptic curve `y^2 = f(x)`, return
-        `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = x^g/y` is
+        For the elliptic curve `y^2 = f(x)`, return
+        `(x(t), y(t))` such that `(y(t))^2 = f(x(t))`, where `t = x/y` is
         the local parameter at infinity
 
         INPUT:
@@ -224,12 +237,18 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         OUTPUT:
 
-        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = x^g/y`
+        `(x(t),y(t))` such that `y(t)^2 = f(x(t))` and `t = x/y`
         is the local parameter at infinity
 
         EXAMPLES::
 
-            TODO
+            sage: Q5 = pAdicField(5)
+            sage: E = EllipticCurve(Q5, [1,0])
+            sage: xt,yt = E.local_coordinates_at_infinity(prec=5)
+            sage: xt[-2]
+            1 + O(5^20)
+            sage: yt[-3]
+            1 + O(5^20)
 
         AUTHOR:
 
@@ -251,7 +270,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def local_coord(self, P, prec=20, name="t"):
         """
-        Call the appropriate local_coordinates function.
+        Return the local coordinates of the elliptic curve at `P`.
+
+        TODO: extend to general Weierstrass form, and move to ell_generic ?
 
         INPUT:
 
@@ -266,7 +287,21 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: Qp = pAdicField(11)
+            sage: E = EllipticCurve(Qp,[0,1,0,0,4])
+            sage: f,_ = E.hyperelliptic_polynomials()
+            sage: P1 = E([-2,0])
+            sage: x1,y1 = E.local_coord(P1, prec=3)
+            sage: y1^2 == f(x1)
+            True
+            sage: P2 = E([6,-16])
+            sage: x2,y2 = E.local_coord(P2, prec=3)
+            sage: y2^2 == f(x2)
+            True
+            sage: O = E.zero()
+            sage: x3,y3 = E.local_coord(O, prec=3)
+            sage: y3^2 == f(x3)
+            True
 
         AUTHOR:
 
@@ -319,11 +354,19 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         Returns a point `X(t) = ( x(t) : y(t) : z(t) )` such that:
 
         (1) `X(0) = P` and `X(1) = Q` if `P, Q` are not in the infinite disc
-        (2) `X(P[0]^g/P[1]) = P` and `X(Q[0]^g/Q[1]) = Q` if `P, Q` are in the infinite disc
+        (2) `X(P[0]/P[1]) = P` and `X(Q[0]/Q[1]) = Q` if `P, Q` are in the infinite disc
 
         EXAMPLES::
 
-            TODO
+            sage: Q7 = pAdicField(7)
+            sage: E = EllipticCurve(Q7,[1,1])
+            sage: P = E.lift_x(2)
+            sage: Q = E.lift_x(9)
+            sage: X = E.local_analytic_interpolation(P,Q)
+            sage: X[0](1) == Q[0]
+            True
+            sage: X[0](0) == P[0]
+            True
 
         AUTHORS:
 
@@ -362,9 +405,22 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         ``self.base_ring()``, that is, the point at infinity and those points
         in the support of the divisor of `y`.
 
+        TODO: move to ell_generic ?
+
         EXAMPLES::
 
-            TODO
+            sage: Q5 = pAdicField(5,10)
+            sage: E = EllipticCurve(Q5,[1,0])
+            sage: E.weierstrass_points()
+            [(0 : 1 + O(5^10) : 0),
+             (2 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9 + O(5^10) : 0 : 1 + O(5^10)),
+             (3 + 3*5 + 2*5^2 + 3*5^3 + 5^4 + 2*5^6 + 5^7 + 4*5^8 + 5^9 + O(5^10) : 0 : 1 + O(5^10)),
+             (O(5^10) : 0 : 1 + O(5^10))]
+
+            sage: Q7 = pAdicField(7,10)
+            sage: E = EllipticCurve(Q7,[1,0])
+            sage: E.weierstrass_points()
+            [(0 : 1 + O(7^10) : 0), (O(7^10) : 0 : 1 + O(7^10))]
         """
         f, h = self.hyperelliptic_polynomials()
         if h != 0:
@@ -391,6 +447,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         Check if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic
         involution).
+
+        TODO: extend this to general Weierstrass form and move to ell_generic ?
+
 
         EXAMPLES::
 
