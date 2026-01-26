@@ -95,7 +95,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             f = x**3 + a2 * x**2 + a4 * x + a6
             h = f(x**p) - f**p
 
-            # internal function: I don't know how to doctest it...
             def _frob(P):
                 x0 = P[0]
                 y0 = P[1]
@@ -169,7 +168,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         f = pol(t + b)
         for _ in range(prec.bit_length()):
             d = (d + f / d) / 2
-        return t + b + O(t ** (prec)), d + O(t ** (prec))
+        return t + b + O(t**prec), d + O(t**prec)
 
     def local_coordinates_at_weierstrass(self, P, prec=20, name="t"):
         """
@@ -649,10 +648,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Robert Bradshaw (2007-03): non-Weierstrass points
         - Jennifer Balakrishnan and Robert Bradshaw (2010-02): Weierstrass points
         """
-        from sage.misc.profiler import Profiler
-
-        prof = Profiler()
-        prof("setup")
         K = self.base_ring()
         p = K.prime()
         prec = K.precision_cap()
@@ -675,15 +670,12 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         elif self.is_same_disc(P, Q):
             return self.tiny_integrals_on_basis(P, Q)
         elif algorithm == "teichmuller":
-            prof("teichmuller")
             PP = TP = self.teichmuller(P)
             QQ = TQ = self.teichmuller(Q)
         else:
-            prof("frobPQ")
             TP = self.frobenius(P)
             TQ = self.frobenius(Q)
             PP, QQ = P, Q
-        prof("tiny integrals")
         if TP is None:
             P_to_TP = V(0)
         else:
@@ -729,17 +721,14 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             TQ_to_Q = V(0)
         else:
             TQ_to_Q = V(self.tiny_integrals_on_basis(TQ, Q))
-        prof("mw calc")
         try:
             M_frob, forms = self._frob_calc
         except AttributeError:
             M_frob, forms = self._frob_calc = (
                 monsky_washnitzer.matrix_of_frobenius_hyperelliptic(self)
             )
-        prof("eval f")
         R = forms[0].base_ring()
         try:
-            prof("eval f %s" % R)
             if PP is None:
                 L = [-ff(R(QQ[0]), R(QQ[1])) for ff in forms]  ##changed
             elif QQ is None:
@@ -747,9 +736,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             else:
                 L = [ff(R(PP[0]), R(PP[1])) - ff(R(QQ[0]), R(QQ[1])) for ff in forms]
         except ValueError:
-            prof("changing rings")
             forms = [ff.change_ring(self.base_ring()) for ff in forms]
-            prof("eval f %s" % self.base_ring())
             if PP is None:
                 L = [-ff(QQ[0], QQ[1]) for ff in forms]  ##changed
             elif QQ is None:
@@ -763,10 +750,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             b -= P_to_TP
         elif algorithm != "teichmuller":
             b -= P_to_TP + TQ_to_Q
-        prof("lin alg")
         M_sys = matrix(K, M_frob).transpose() - 1
         TP_to_TQ = M_sys ** (-1) * b
-        prof("done")
         if algorithm == "teichmuller":
             return P_to_TP + TP_to_TQ + TQ_to_Q
         else:
