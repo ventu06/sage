@@ -74,7 +74,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: J(GF(13)) # indirect doctest
             Abelian group of points on Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + 2*x + 1
         """
-        return f"Abelian group of points on {self.codomain()}"
+        return f"Abelian group of points over {self.domain().coordinate_ring()} on {self.codomain()}"
 
     def _morphism(self, *args, **kwds):
         r"""

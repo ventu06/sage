@@ -83,7 +83,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian()
             sage: D = J(x-1,0)
             sage: D.parent()
-            Set of rational points of Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 1
+            Abelian group of points over Rational Field on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 1
         """
         return self._parent
 
@@ -106,9 +106,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: H = HyperellipticCurve(f)
             sage: F.<a> = NumberField(x^2 - 2, 'a')                                     # needs sage.rings.number_field
             sage: J = H.jacobian()(F); J                                                # needs sage.rings.number_field
-            Set of rational points of Jacobian of Hyperelliptic Curve
-             over Number Field in a with defining polynomial x^2 - 2
-             defined by y^2 = x^5 + x
+            Abelian group of points over Number Field in a with defining polynomial x^2 - 2 on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 + x
+
 
         ::
 
@@ -130,7 +129,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: Q = H([0,0])
             sage: J = H.jacobian()
             sage: D = J(P,Q); D # indirect doctest
-            (x^2, y + x + 1)
+            (x^2, -x - 1 : 0)
         """
         return f"({self._u}, {self._v})"
 
