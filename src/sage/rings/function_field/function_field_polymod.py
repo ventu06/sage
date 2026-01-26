@@ -1963,7 +1963,7 @@ class FunctionField_simple(FunctionField_polymod):
         r"""
         Return an infinite place of degree ``degree`` if one exists.
         If no infinite place of the specified degree exists, return ``None``.
-        
+
         If ``degree`` is ``None``, return any infinite place.
 
         INPUT:
