@@ -182,7 +182,6 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
                     budleg.append(((rlabel, st.label()), 1))
                     aux(st, budleg, budcnt)
                     budleg.append(((rlabel, st.label()), 2))
-            return
 
         # first compute the list of buds and legs
         budleg = [((self._tree.label(),), 1)]
@@ -324,7 +323,6 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
                     yield -1
                     yield from matching_word(t)
                     yield -1
-            return
 
         # case of rebuilding the element
         if isinstance(tree, TamariBlossomingTree):
@@ -947,7 +945,6 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
                     dyck.append(-1)
                     aux(st, buds, dyck)
                     dyck.append(-1)
-            return
 
         buds = [0]  # the root bud
         dyck = [1]  # the root bud
@@ -966,7 +963,7 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
         oneidx, height = 0, 0
         for i, step in enumerate(ndyck):
             height += step
-            if height == 1 and ndyck[i] < 0:
+            if height == 1 and step < 0:
                 oneidx = i
         oneidx += lidx
         if oneidx > len(ndyck):
