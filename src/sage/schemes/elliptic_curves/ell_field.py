@@ -1163,14 +1163,12 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 algorithm = 'divpoly'
 
         if algorithm == 'structure':
-
             T = self.torsion_subgroup().torsion_subgroup(n)
             if T.invariants() != (n, n):
                 raise ValueError(f'curve does not have full rational {n}-torsion')
             return tuple(P.element() for P in T.gens())
 
         elif algorithm == 'divpoly':
-
             from sage.groups.generic import has_order
 
             n = ZZ(n)
