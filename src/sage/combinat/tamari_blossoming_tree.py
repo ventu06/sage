@@ -235,11 +235,16 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
         Internal function serving two purposes:
 
         - Capture any instanciation of such that the constructed instance is
-          always an element of :class:`TamariBlossomingTrees_all` so that the
-          relation Parent/Element is unambiguous. We thus need to construct
-          from the ``element_class`` of :class:`TamariBlossomingTrees_all`. Note
-          that all instances of :class:`TamariBlossomingTree` will have
-          :class:`TamariBlossomingTrees_all` as parent.
+          always an element of
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees_all`
+          so that the relation Parent/Element is unambiguous. We thus need to
+          construct the object using the ``element_class`` method of
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees_all`.
+          Note that all instances of
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`
+          will have
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees_all`
+          as parent.
         - Uniformize the input for cached representation. As we accept nested
           lists representing trees, which is not hashable, we need to convert
           it to :class:`~sage.combinat.ordered_tree.OrderedTree`, which is
@@ -744,7 +749,7 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
             We use a feature of :meth:`from_plane_tree` instead of using the
             usual
             :meth:`~sage.combinat.binary_tree.BinaryTree.left_right_symmetry`
-            in :class:`~sage.combinat.binary_tree.BinaryTree`` to avoid
+            in :class:`~sage.combinat.binary_tree.BinaryTree` to avoid
             exceeding the limit on the number of recursions when tree size is
             large.
 
@@ -870,8 +875,6 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
         r"""
         Return latex code for the meandric drawing of the current blossoming
         tree.
-
-        TODO: fix when doing view(T) the image is not shown properly.
 
         EXAMPLES::
 
@@ -1106,7 +1109,7 @@ class TamariBlossomingTree(Element, UniqueRepresentation,
         def traverse(node, parent, cycord):
             """
             Internal function, construct a plane tree out of the cycle order.
-            The parameter ``parent`` is for knowing where to cut
+            The parameter ``parent`` is for knowing where to cut.
             """
             pidx = cycord[node].index(parent)
             stnodes = cycord[node][pidx + 1:] + cycord[node][:pidx]
@@ -1734,7 +1737,7 @@ class TamariBlossomingTrees(UniqueRepresentation, Parent):
 
     An object representing the set of Tamari blossoming trees of the given size.
 
-    EXAMPLES:
+    EXAMPLES::
 
         sage: from sage.combinat.tamari_blossoming_tree import (
         ....:     TamariBlossomingTrees)
@@ -1759,7 +1762,8 @@ class TamariBlossomingTrees(UniqueRepresentation, Parent):
           default: None, standing for Tamari blossoming trees of all sizes)
 
         We use the private version here to avoid infinite recursion when
-        initializing :class:`TamariBlossomingTrees_all`.
+        initializing
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTrees_all`.
 
         TESTS::
 
@@ -1895,7 +1899,7 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
     @lazy_attribute
     def element_class(self):
         """
-        Overriding the original ``element_class`` method to make the element
+        Overriding the original method of the base class to make the element
         class uniform across all implementation of sets of Tamari blossoming
         trees.
 
@@ -2157,8 +2161,8 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
         .. NOTE::
 
             This is a thin wrapper of the random generation in
-            ``_SynchronizedBlossomingTreeFactory``, which automatically cache
-            the instance.
+            :class:`~sage.combinat.tamari_blossoming_tree.SynchronizedBlossomingTreeFactory`,
+            which automatically cache the instance.
 
         EXAMPLES::
 
@@ -2184,8 +2188,9 @@ class TamariBlossomingTrees_size(TamariBlossomingTrees):
         .. NOTE::
 
             This is a thin wrapper of the random generation facility in
-            ``_ModernBlossomingTreeFactory``, which automatically cache the
-            instance, thus also the precomputation within.
+            :class:`~sage.combinat.tamari_blossoming_tree.ModernBlossomingTreeFactory`,
+            which automatically cache the instance, thus also the
+            precomputation within.
 
         EXAMPLES::
 
@@ -2205,7 +2210,7 @@ class SynchronizedBlossomingTreeFactory(SageObject, UniqueRepresentation):
     This class is for uniform random generation of synchronized blossoming
     trees, which are in bijection with modern Tamari intervals, of a given
     size. No precomputation is needed here, but we keep the same convention as
-    :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTreeFactory`
+    :class:`~sage.combinat.tamari_blossoming_tree.ModernBlossomingTreeFactory`
     for the methods.
 
     EXAMPLES::

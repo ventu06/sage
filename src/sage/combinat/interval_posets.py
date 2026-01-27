@@ -1942,8 +1942,9 @@ class TamariIntervalPoset(Element,
 
     def blossoming_tree(self) -> TamariBlossomingTree:
         r"""
-        Return the Tamari blossoming tree of type :class:`TamariBlossomingTree`
-        in bijection with the Tamari interval represented by ``self``.
+        Return the Tamari blossoming tree of type
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree` in
+        bijection with the Tamari interval represented by ``self``.
 
         EXAMPLES::
 
@@ -3369,13 +3370,16 @@ class TamariIntervalPosets(UniqueRepresentation, Parent):
         r"""
         Return the interval poset corresponding to the Tamari interval in
         bijection with the blossoming tree ``B`` of type
-        :class:`TamariBlossomingTree`.
+        :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`.
 
         INPUT:
 
-        - ``B``: a blossoming tree of type :class:`TamariBlossomingTree`, which
-          is in bijection with an interval in the Tamari lattice. See [FFN2025]_
-          and the class :class:`TamariBlossomingTree` for details.
+        - ``B``: a blossoming tree of type
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`,
+          which is in bijection with an interval in the Tamari lattice. See
+          [FFN2025]_ and the documentation of
+          :class:`~sage.combinat.tamari_blossoming_tree.TamariBlossomingTree`.
+          for details.
 
         EXAMPLES::
 
@@ -3897,7 +3901,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
         Return a random Tamari interval poset of fixed size.
 
         This is obtained using the class
-        :class:`~sage.tamari_blossoming_tree.TamariBlossomingTrees`,
+        :class:`~sage.tamari_blossoming_tree.TamariBlossomingTrees_size`,
         which generates blossoming trees uniformly at random. A bijection is
         then performed to obtain a Tamari interval poset.
 
