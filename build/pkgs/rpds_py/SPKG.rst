@@ -36,10 +36,10 @@ Upstream Contact
 Dependencies
 ------------
 
-Python (>= 3.10)
+Python (>= 3.12)
 
-Build dependencies: Rust toolchain (automatically handled by pip when
-installing from source)
+Build dependencies: Rust toolchain (required only when building from source,
+i.e., when no compatible binary wheel is available)
 
 Special Notes
 -------------
@@ -47,10 +47,13 @@ Special Notes
 This package provides platform-specific binary wheels for multiple Python
 versions and platforms:
 
-* Python 3.11, 3.12, 3.13, 3.14 (including free-threaded 3.13t and 3.14t)
-* Linux (x86_64, aarch64, musllinux)
+* Python 3.12, 3.13, 3.14 (including free-threaded 3.14t)
+* Linux (x86_64, aarch64, armv7l, ppc64le, s390x, i686, musllinux variants)
 * macOS (x86_64, arm64)
 * Windows (win32, win_amd64, win_arm64)
 
 The Sage build system automatically selects and downloads the appropriate
-wheel for your platform and Python version using the packaging library's compatibility tags.
+wheel for your platform and Python version using the packaging library's
+compatibility tags. If no compatible binary wheel is available for your
+platform, pip will attempt to build from source, which requires a Rust
+toolchain to be installed.
