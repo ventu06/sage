@@ -300,6 +300,59 @@ class LatticePosets(Category):
                 """
                 return True
 
+            def kappa(self, a):
+                H = self._hasse_diagram
+                k = H.kappa(self._element_to_vertex(a))
+                return self._vertex_to_element(k)
+
+            def kappa_dual(self, a):
+                H = self._hasse_diagram
+                k = H.kappa_dual(self._element_to_vertex(a))
+                return self._vertex_to_element(k)
+
+            def rowmotion_semidistributive(self, a):
+                r"""
+                Return the image of the element ``a`` under
+                semidistributive rowmotion in ``self``.
+
+                Classical rowmotion is usually defined as an
+                automorphism on the set of order ideals `J(P)` of a
+                finite poset `P`.  It is a special case of
+                semidistributive rowmotion because every distributive
+                lattice is isomorphic to `J(P)` for some `P` by
+                Birkhoff's representation theorem.
+
+                EXAMPLES::
+
+                    sage: L = posets.TamariLattice(3)
+                    sage: row = L.rowmotion_semidistributive
+                    sage: DS = DiscreteDynamicalSystem(L, row)
+                    sage: [[DyckWord(x[:-1]) for x in c] for c in DS.cycles()]]
+                    [[[1, 1, 1, 0, 0, 0], [1, 0, 1, 0, 1, 0]],
+                     [[1, 1, 0, 1, 0, 0], [1, 1, 0, 0, 1, 0], [1, 0, 1, 1, 0, 0]]]
+                    sage: L = posets.TamariLattice(4)
+                    sage: L.rowmotion_semidistributive((1,1,0,1,1,0,0,0,0))
+                    (1, 1, 0, 0, 1, 0, 1, 0, 0)
+
+                Check that classical rowmotion is a special case of
+                semidistributive rowmotion::
+
+                    sage: T = posets.TamariLattice(3)
+                    sage: L = T.order_ideals_lattice()
+                    sage: L = LatticePoset(L, category=FiniteLatticePosets().Semidistributive())
+                    sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
+                    True
+
+                    sage: P = posets.UpDownPoset(10)
+                    sage: L = T.order_ideals_lattice()
+                    sage: L = LatticePoset(L, category=FiniteLatticePosets().Semidistributive())
+                    sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
+                    True
+                """
+                d = self.canonical_meetands(a)
+                kd = [self.kappa_dual(a) for a in d]
+                return self.join(kd)
+
     class CongruenceUniform(CategoryWithAxiom):
         """
         The category of congruence uniform lattices.
