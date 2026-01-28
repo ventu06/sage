@@ -1755,7 +1755,7 @@ class WittVectorVerschiebung(RingMap):
         R = W.coefficient_ring()
         return W((R.zero(),) + x.coordinates())
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
