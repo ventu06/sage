@@ -404,7 +404,7 @@ class WittVector(CommutativeRingElement):
         """
         return self._coordinates
 
-    def is_unit(self):
+    def is_unit(self) -> bool:
         """
         Return ``True`` if ``self`` has a multiplicative inverse.
 
