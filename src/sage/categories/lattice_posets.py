@@ -481,6 +481,22 @@ class DistributiveLattices(CategoryWithAxiom):
     _base_category_class_and_axiom = (LatticePosets.Trim,
                                       "ChainGraded")
 
+    @cached_method
+    def extra_super_categories(self) -> list:
+        r"""
+        Return a list of the super categories of ``self``.
+
+        This encode implications between properties.
+
+        EXAMPLES::
+
+            sage: LatticePosets().Distributive().super_categories()
+            [Category of congruence uniform lattice posets,
+             Category of trim lattice posets,
+             Category of chain graded lattice posets]
+        """
+        return [LatticePosets().CongruenceUniform()]
+
     class Finite(CategoryWithAxiom):
         pass
 
