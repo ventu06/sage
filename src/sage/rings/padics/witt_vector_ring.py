@@ -1061,10 +1061,10 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         Return the Verschiebung map of this ring of Witt vectors.
 
+        INPUT:
+
         - ``extend`` -- boolean (default: ``False``); whether the codomain of
           the map has precision `1` more than ``self``.
-
-        INPUT:
 
         EXAMPLES::
 

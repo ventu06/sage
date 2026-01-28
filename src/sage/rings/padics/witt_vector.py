@@ -383,9 +383,10 @@ class WittVector(CommutativeRingElement):
         """
         order = Integer(1)
         w = self
+        oo = PlusInfinity()
         for i in range(self.parent().precision()):
             elem_ord = w[i].additive_order()
-            if elem_ord is PlusInfinity():
+            if elem_ord is oo:
                 return elem_ord
             order *= elem_ord
             w *= elem_ord
