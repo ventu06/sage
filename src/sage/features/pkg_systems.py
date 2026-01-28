@@ -183,7 +183,7 @@ class PipPackageSystem(PackageSystem):
         EXAMPLES::
 
             sage: from sage.features.pkg_systems import PipPackageSystem
-            sage: bool(PipPackageSystem().is_present())    # indirect doctest
+            sage: bool(PipPackageSystem().is_present())    # indirect doctest, needs pip
             True
         """
         from subprocess import run, DEVNULL, CalledProcessError
