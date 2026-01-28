@@ -757,7 +757,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         return self._gens
 
-    def is_exact(self):
+    def is_exact(self) -> bool:
         """
         Return whether the elements of ``self`` are represented exactly.
 
