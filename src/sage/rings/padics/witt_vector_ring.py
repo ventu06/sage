@@ -725,7 +725,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         return self.gens()[int(n)]
 
-    def gens(self):
+    def gens(self) -> tuple:
         """
         Return a tuple of generators of ``self`` as a ring.
 
