@@ -1588,7 +1588,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
         Wcod = self.codomain()
         return Wcod(phantom=[phantom[i] for i in range(1, W.precision())])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a `\LaTeX` representation of ``self``.
 
