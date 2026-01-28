@@ -253,7 +253,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -327,25 +327,23 @@ class LatticePosets(Category):
                     sage: L = posets.TamariLattice(3)
                     sage: row = L.rowmotion_semidistributive
                     sage: DS = DiscreteDynamicalSystem(L, row)
-                    sage: [[DyckWord(x[:-1]) for x in c] for c in DS.cycles()]]
+                    sage: [[DyckWord(x[:-1]) for x in c] for c in DS.cycles()]
                     [[[1, 1, 1, 0, 0, 0], [1, 0, 1, 0, 1, 0]],
-                     [[1, 1, 0, 1, 0, 0], [1, 1, 0, 0, 1, 0], [1, 0, 1, 1, 0, 0]]]
+                     [[1, 1, 0, 1, 0, 0], [1, 0, 1, 1, 0, 0], [1, 1, 0, 0, 1, 0]]]
                     sage: L = posets.TamariLattice(4)
                     sage: L.rowmotion_semidistributive((1,1,0,1,1,0,0,0,0))
-                    (1, 1, 0, 0, 1, 0, 1, 0, 0)
+                     (1, 0, 1, 1, 0, 0, 1, 0, 0)
 
                 Check that classical rowmotion is a special case of
                 semidistributive rowmotion::
 
                     sage: T = posets.TamariLattice(3)
                     sage: L = T.order_ideals_lattice()
-                    sage: L = LatticePoset(L, category=FiniteLatticePosets().Semidistributive())
                     sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
                     True
 
                     sage: P = posets.UpDownPoset(10)
                     sage: L = T.order_ideals_lattice()
-                    sage: L = LatticePoset(L, category=FiniteLatticePosets().Semidistributive())
                     sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
                     True
                 """
@@ -369,7 +367,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -409,7 +407,7 @@ class LatticePosets(Category):
             r"""
             Return a list of the super categories of ``self``.
 
-            This encode implications between properties.
+            These encode implications between properties.
 
             EXAMPLES::
 
@@ -486,7 +484,7 @@ class DistributiveLattices(CategoryWithAxiom):
         r"""
         Return a list of the super categories of ``self``.
 
-        This encode implications between properties.
+        These encode implications between properties.
 
         EXAMPLES::
 
