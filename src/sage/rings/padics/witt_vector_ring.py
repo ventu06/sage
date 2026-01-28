@@ -1543,7 +1543,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
 
     def _call_char_p(self, x):
         """
-        Evaluate ``self`` at ``x`` when the coefficient ring has charaterisic `p`
+        Evaluate ``self`` at ``x`` when the coefficient ring has characteristic `p`
         for the non truncated Frobenius.
 
         EXAMPLES::
