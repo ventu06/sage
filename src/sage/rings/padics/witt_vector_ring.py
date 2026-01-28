@@ -901,7 +901,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         return self._prec.is_one() and self._coefficient_ring.is_prime_field()
 
-    def ngens(self):
+    def ngens(self) -> int:
         """
         Return the number of generators of ``self``.
 
