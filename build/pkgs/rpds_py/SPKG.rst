@@ -54,6 +54,3 @@ versions and platforms:
 
 The Sage build system automatically selects and downloads the appropriate
 wheel for your platform and Python version using the packaging library's compatibility tags.
-
-When building from source, a Rust toolchain is required as rpds-py contains
-Rust extensions for performance.
