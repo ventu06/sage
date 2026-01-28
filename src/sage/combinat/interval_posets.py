@@ -3777,7 +3777,7 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
 
             sage: S = TamariIntervalPosets(3)
             sage: assert S is TamariIntervalPosets(3)
-            sage: for i in range(1, 6):
+            sage: for i in range(5):
             ....:     TestSuite(TamariIntervalPosets(i)).run()
         """
         # there is a natural order on interval-posets through inclusions
@@ -3918,6 +3918,8 @@ class TamariIntervalPosets_size(TamariIntervalPosets):
             sage: len(u)
             8
         """
+        if self._size == 0:
+            return self.first()
         if not hasattr(self, 'factory'):
             self.factory = TamariBlossomingTrees(self._size)
         return self.factory.random_element().to_TIP()
