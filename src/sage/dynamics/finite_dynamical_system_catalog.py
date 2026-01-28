@@ -319,6 +319,29 @@ def order_ideal_rowmotion(P):
     return InvertibleFiniteDynamicalSystem(X, phi, inverse=psi)
 
 
+def semidistributive_rowmotion(L):
+    r"""
+    Return the invertible finite discrete dynamical system
+    consisting of the elements of the semidistributive lattice ``L``,
+    evolving according to (semidistributive) rowmotion.
+
+    EXAMPLES::
+
+        sage: L = posets.TamariLattice(3)
+        sage: row = finite_dynamical_systems.semidistributive_rowmotion(L)
+        sage: all(L.rowmotion_semidistributive(a) == row.evolution()(a) for a in L)
+        True
+
+    """
+    kd = {a: L.kappa_dual(a) for a in L.meet_irreducibles()}
+    row0 = {a: L.join(kd[e] for e in L.canonical_meetands(a))
+            for a in L}
+    ku = {a: L.kappa(a) for a in L.join_irreducibles()}
+    row1 = {a: L.meet(ku[e] for e in L.canonical_joinands(a))
+            for a in L}
+    return InvertibleFiniteDynamicalSystem(L, lambda a: row0[a], inverse=lambda a: row1[a])
+
+
 def bulgarian_solitaire(n):
     r"""
     Return the finite discrete dynamical system defined

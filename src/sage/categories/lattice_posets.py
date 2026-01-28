@@ -349,8 +349,7 @@ class LatticePosets(Category):
                     sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
                     True
                 """
-                d = self.canonical_meetands(a)
-                kd = [self.kappa_dual(a) for a in d]
+                kd = [self.kappa_dual(e) for e in self.canonical_meetands(a)]
                 return self.join(kd)
 
     class CongruenceUniform(CategoryWithAxiom):
