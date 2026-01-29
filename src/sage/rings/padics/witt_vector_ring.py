@@ -1463,11 +1463,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
         coeff_ring = domain.coefficient_ring()
 
         if not truncate:
-            if (isinstance(domain, WittVectorRing_standard)
-                    and coeff_ring.characteristic() != domain.prime()):
-                truncate = True
-
-            elif isinstance(domain, WittVectorRing_pinvertible):
+            if coeff_ring.characteristic() != domain.prime():
                 truncate = True
 
             else:
