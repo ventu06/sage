@@ -31,6 +31,7 @@ from collections.abc import Iterator
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
+from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom
 from sage.categories.integral_domains import IntegralDomains
 from sage.combinat.tuple import Tuples
@@ -155,7 +156,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
     - ``phantom`` -- computes the ring laws using the phantom components
       using a lift of ``coefficient_ring``, assuming that it is either
-      `\mathbb F_q` for a power `q` of `p`, or a polynomial ring on that field;
+      `\GF{q}` for a power `q` of `p`, or a polynomial ring on that field;
 
     - ``p_invertible`` -- uses some optimisations when `p` is invertible
       in the coefficient ring.
@@ -440,6 +441,13 @@ class WittVectorRing(Parent, UniqueRepresentation):
             return
 
         vec = [self._coefficient_ring.zero()] * self._prec
+
+        # The Teichmüller representatives of the generators of a finite field
+        # generate its associated ring of Witt vectors
+        if (self._coefficient_ring.characteristic() == p and
+                self._coefficient_ring in FiniteFields()):
+            self._assign_names(names)
+            return
 
         # Using the formula V(x)V(y)=pV(xy), one can see that
         # if the coefficient ring has characteristic coprime to p
@@ -746,9 +754,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
             sage: F.<a> = GF(27)
             sage: W = WittVectorRing(F, prec=3)
             sage: W.gens()
-            ((a, 0, 0), (0, a, 0), (0, a^2, 0), (0, 0, a), (0, 0, a^2),
-            (0, 0, a^2 + 2*a), (0, 0, 2*a^2 + a + 2), (0, 0, a^2 + 2*a + 2),
-            (0, 0, 2*a^2 + 2))
+            ((a, 0, 0),)
 
             sage: R.<x> = ZZ[]
             sage: W = WittVectorRing(R, p=7, prec=2)
@@ -888,7 +894,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
     def is_prime_field(self):
         r"""
         Return ``True`` if ``self`` is isomorphic to one of the prime fields
-        `\mathbb Q` or `\mathbb F_p`.
+        `\QQ` or `\GF{p}`.
 
         EXAMPLES::
 
@@ -929,7 +935,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
             9
             sage: W = WittVectorRing(GF(9,'a'), p=3, prec=3)
             sage: W.ngens()
-            8
+            1
             sage: W = WittVectorRing(GF(9,'a')['t'], p=3, prec=3)
             sage: W.ngens()
             9
