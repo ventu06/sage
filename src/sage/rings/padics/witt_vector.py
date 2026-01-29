@@ -148,6 +148,12 @@ class WittVector(CommutativeRingElement):
             sage: w = W([1,1,1,1])
             sage: ~w
             (1, -1/4, -81/832, -12887559/359956480)
+            sage: W = WittVectorRing(ZZ, p=7, prec=3)
+            sage: w = W([1,-2,11])
+            sage: ~w
+            Traceback (most recent call last):
+            ...
+            ArithmeticError: inverse of (1, -2, 11) does not exist
         """
         if not self[0].is_unit():
             raise ArithmeticError(f"inverse of {self} does not exist")
@@ -189,7 +195,7 @@ class WittVector(CommutativeRingElement):
                 raise ArithmeticError(f"inverse of {self} does not exist")
             try:
                 inv_vec[i] = P.coefficient_ring()(inv_vec[i])
-            except ValueError:
+            except (TypeError, ValueError):
                 raise ArithmeticError(f"inverse of {self} does not exist")
 
         return P(inv_vec)
@@ -414,11 +420,20 @@ class WittVector(CommutativeRingElement):
             sage: w = W([1,2,10,0])
             sage: w.is_unit()
             True
+            sage: w = W([0,2,10,5])
+            sage: w.is_unit()
+            False
             sage: W = WittVectorRing(ZZ, p=7, prec=3)
             sage: w = W([2,-2,11])
             sage: w.is_unit()
             False
+            sage: w = W([-1,0,0])
+            sage: w.is_unit()
+            True
         """
+        parent = self.parent()
+        if parent.coefficient_ring().characteristic().is_power_of(parent.prime()):
+            return self[0].is_unit()
         try:
             ~self
         except ArithmeticError:
