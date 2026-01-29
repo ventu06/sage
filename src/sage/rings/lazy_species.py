@@ -942,6 +942,21 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         """
         return ArithmeticProductSpeciesElement(self, *args)
 
+    def hadamard_product(self, other):
+        r"""
+        Return the Hadamard product of `F` and `G`.
+
+        EXAMPLES::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: S = E(C)
+            sage: S.hadamard_product(S)[4]
+            E_4 + 3*E_2(E_2) + 6*C_4 + Pb_4 + 6*E_2^2 + 6*E_2(X^2) + 4*X*C_3 + 16*X^4
+        """
+        return HadamardProductSpeciesElement(self, other)
+
 
 class LazyCombinatorialSpeciesElementGeneratingSeriesMixin:
     r"""
@@ -1536,6 +1551,35 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
         super().__init__(P, coeff_stream)
         self._left = left
         self._args = args
+
+
+class HadamardProductSpeciesElement(LazyCombinatorialSpeciesElement):
+    def __init__(self, left, other):
+        r"""
+        Initialize the Hadamard product of species.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: G = C.hadamard_product(E*E)
+            sage: G
+            2*X + (2*E_2+X^2) + (2*C_3+2*X^3) + (2*C_4+E_2(X^2)+3*X^4)
+            + (2*C_5+6*X^5) + (2*C_6+{((1,2,3)(4,5,6),)}+2*E_2(X^3)+9*X^6) + O^7
+
+            sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
+        """
+        # Find a good parent for the result
+        from sage.structure.element import get_coercion_model
+        cm = get_coercion_model()
+        P = cm.common_parent(left.base_ring(), parent(other))
+        R = P._laurent_poly_ring
+
+        coeff_stream = Stream_function(lambda n: left[n].hadamard_product(other[n]), P._sparse, 0)
+        super().__init__(P, coeff_stream)
+        self._left = left
+        self._other = other
 
 
 class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):

@@ -1985,7 +1985,7 @@ class PolynomialSpeciesElement(CombinatorialFreeModule.Element):
                 # loop over representatives
                 new = P.zero()
                 for tau, _ in taus:
-                    G_H = libgap.Intersection(libgap.ConjugateGroup(H, tau), G)
+                    G_H = libgap.Intersection(libgap.ConjugateGroup(G, tau), H)
                     K = PermutationGroup(gap_group=G_H, domain=range(1, tc + 1))
                     F = P(K, pi, check=False)
                     new += F
