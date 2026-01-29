@@ -22,6 +22,7 @@ AUTHORS:
 # ****************************************************************************
 
 
+from sage.misc.cachefunc import cached_method
 from sage.misc.functional import log
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
@@ -130,6 +131,7 @@ class WittVector(CommutativeRingElement):
         """
         return hash(self._coordinates)
 
+    @cached_method
     def __invert__(self):
         """
         Return the inverse of ``self``.
