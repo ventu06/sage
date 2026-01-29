@@ -306,7 +306,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
         return child.__classcall__(child, coefficient_ring, prec, p)
 
-    def __init__(self, coefficient_ring, prec, prime, base) -> None:
+    def __init__(self, coefficient_ring, prec, prime, algorithm) -> None:
         r"""
         Initialise ``self``.
 
@@ -319,17 +319,22 @@ class WittVectorRing(Parent, UniqueRepresentation):
 
             sage: TestSuite(W).run()
         """
-        cring = coefficient_ring
-        self._coefficient_ring = cring
+        self._coefficient_ring = coefficient_ring
         self._prec = prec
         self._prime = prime
 
-        if prec.is_one() and cring in Fields():
+        if prec.is_one() and coefficient_ring in Fields():
             cat = Fields()
-        elif prec.is_one() and cring in IntegralDomains():
+        elif prec.is_one() and coefficient_ring in IntegralDomains():
             cat = IntegralDomains()
         else:
             cat = CommutativeRings()
+
+        if coefficient_ring.base_ring() is coefficient_ring:
+            base = self
+        else:
+            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
+                                  p=prime, algorithm=algorithm)
 
         Parent.__init__(self, base=base, category=cat)
 
@@ -1156,13 +1161,7 @@ class WittVectorRing_finotti(WittVectorRing):
             table.append(row)
         self._binomial_table = table
 
-        if coefficient_ring.base_ring() is coefficient_ring:
-            base = self
-        else:
-            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
-                                  p=prime, algorithm="finotti")
-
-        super().__init__(coefficient_ring, prec, prime, base)
+        super().__init__(coefficient_ring, prec, prime, "finotti")
 
     def _eta_bar(self, vec, eta_index):
         r"""
@@ -1290,13 +1289,7 @@ class WittVectorRing_phantom(WittVectorRing):
                                    WittVectorRing_standard]
             self._coerce_when_different = [WittVectorRing_finotti]
 
-        if coefficient_ring.base_ring() is coefficient_ring:
-            base = self
-        else:
-            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
-                                  p=prime, algorithm="phantom")
-
-        super().__init__(coefficient_ring, prec, prime, base)
+        super().__init__(coefficient_ring, prec, prime, "phantom")
 
 
 class WittVectorRing_pinvertible(WittVectorRing):
@@ -1343,13 +1336,7 @@ class WittVectorRing_pinvertible(WittVectorRing):
                                WittVectorRing_standard]
         self._coerce_when_different = []
 
-        if coefficient_ring.base_ring() is coefficient_ring:
-            base = self
-        else:
-            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
-                                  p=prime, algorithm="p_invertible")
-
-        super().__init__(coefficient_ring, prec, prime, base)
+        super().__init__(coefficient_ring, prec, prime, "p_invertible")
 
 
 class WittVectorRing_standard(WittVectorRing):
@@ -1388,13 +1375,7 @@ class WittVectorRing_standard(WittVectorRing):
 
         self._generate_witt_polynomials(coefficient_ring, prec, prime)
 
-        if coefficient_ring.base_ring() is coefficient_ring:
-            base = self
-        else:
-            base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
-                                  p=prime, algorithm="standard")
-
-        super().__init__(coefficient_ring, prec, prime, base)
+        super().__init__(coefficient_ring, prec, prime, "standard")
 
 
 class WittVectorFrobeniusMorphism(RingHomomorphism):
