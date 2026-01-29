@@ -420,28 +420,8 @@ class WittVectorRing(Parent, UniqueRepresentation):
             sage: R.<x,y> = GF(2)[]
             sage: W = WittVectorRing(R, p=3, prec=3)
             sage: W.gens()  # indirect doctest
-            ((x, 0, 0), (y, 0, 0), (0, 1, 0), (0, x, 0), (0, x^2, 0),
-            (0, y, 0), (0, x*y, 0), (0, x^2*y, 0), (0, y^2, 0), (0, x*y^2, 0),
-            (0, x^2*y^2, 0), (0, 0, 1), (0, 0, x), (0, 0, x^2), (0, 0, x^3),
-            (0, 0, x^4), (0, 0, x^5), (0, 0, x^6), (0, 0, x^7), (0, 0, x^8),
-            (0, 0, y), (0, 0, x*y), (0, 0, x^2*y), (0, 0, x^3*y),
-            (0, 0, x^4*y), (0, 0, x^5*y), (0, 0, x^6*y), (0, 0, x^7*y),
-            (0, 0, x^8*y), (0, 0, y^2), (0, 0, x*y^2), (0, 0, x^2*y^2),
-            (0, 0, x^3*y^2), (0, 0, x^4*y^2), (0, 0, x^5*y^2), (0, 0, x^6*y^2),
-            (0, 0, x^7*y^2), (0, 0, x^8*y^2), (0, 0, y^3), (0, 0, x*y^3),
-            (0, 0, x^2*y^3), (0, 0, x^3*y^3), (0, 0, x^4*y^3), (0, 0, x^5*y^3),
-            (0, 0, x^6*y^3), (0, 0, x^7*y^3), (0, 0, x^8*y^3), (0, 0, y^4),
-            (0, 0, x*y^4), (0, 0, x^2*y^4), (0, 0, x^3*y^4), (0, 0, x^4*y^4),
-            (0, 0, x^5*y^4), (0, 0, x^6*y^4), (0, 0, x^7*y^4), (0, 0, x^8*y^4),
-            (0, 0, y^5), (0, 0, x*y^5), (0, 0, x^2*y^5), (0, 0, x^3*y^5),
-            (0, 0, x^4*y^5), (0, 0, x^5*y^5), (0, 0, x^6*y^5), (0, 0, x^7*y^5),
-            (0, 0, x^8*y^5), (0, 0, y^6), (0, 0, x*y^6), (0, 0, x^2*y^6),
-            (0, 0, x^3*y^6), (0, 0, x^4*y^6), (0, 0, x^5*y^6), (0, 0, x^6*y^6),
-            (0, 0, x^7*y^6), (0, 0, x^8*y^6), (0, 0, y^7), (0, 0, x*y^7),
-            (0, 0, x^2*y^7), (0, 0, x^3*y^7), (0, 0, x^4*y^7), (0, 0, x^5*y^7),
-            (0, 0, x^6*y^7), (0, 0, x^7*y^7), (0, 0, x^8*y^7), (0, 0, y^8),
-            (0, 0, x*y^8), (0, 0, x^2*y^8), (0, 0, x^3*y^8), (0, 0, x^4*y^8),
-            (0, 0, x^5*y^8), (0, 0, x^6*y^8), (0, 0, x^7*y^8), (0, 0, x^8*y^8))
+            ((x, 0, 0), (y, 0, 0), (0, 1, 0), (0, x, 0), (0, y, 0), (0, 0, 1),
+            (0, 0, x), (0, 0, y))
         """
         coeff_ring_gens = self._coefficient_ring.gens()
         coeff_ring_names = self._coefficient_ring.variable_names()
@@ -450,16 +430,37 @@ class WittVectorRing(Parent, UniqueRepresentation):
         p = self._prime
         R = PolynomialRing(self._coefficient_ring, len(coeff_ring_gens), 'T')
         var = R.gens()
-        vec = [self._coefficient_ring.zero()] * self._prec
 
-        if (len(var) == 1 and
-                coeff_ring_gens[0] == self._coefficient_ring.one() and
+        # In this case, 1 is the only generator
+        if (len(var) == 1 and coeff_ring_gens[0].is_one() and
                 (self._coefficient_ring.characteristic() == p
                  or self.base_ring().coefficient_ring()
                  is self._coefficient_ring)):
             self._assign_names(names)
             return
 
+        vec = [self._coefficient_ring.zero()] * self._prec
+
+        # Using the formula V(x)V(y)=pV(xy), one can see that
+        # if the coefficient ring has characteristic coprime to p
+        # then the generators are the V^i([gen]) and the V^i(1)
+        if self._coefficient_ring.characteristic().gcd(p).is_one():
+            l = 0 if len(var) == 1 and coeff_ring_gens[0].is_one() else len(var)
+            for i in range(1, self._prec):
+                power = 0
+                vec[i] = self._coefficient_ring.one()
+                self._gens += (self(vec),)
+                names += (f"V{i}_{power}",)
+                for j in range(l):
+                    power += 1
+                    vec[i] = coeff_ring_gens[j]
+                    self._gens += (self(vec),)
+                    names += (f"V{i}T{coeff_ring_names[j]}_{power}",)
+                vec[i] = self._coefficient_ring.zero()
+            self._assign_names(names)
+            return
+
+        # Handle the general case
         for i in range(1, self._prec):
             p_i = p**i
             degrees = [p_i] * len(var)
@@ -921,7 +922,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
             1
             sage: W = WittVectorRing(GF(2)['t'], p=3, prec=3)
             sage: W.ngens()
-            13
+            5
             sage: W = WittVectorRing(GF(3), p=3, prec=3)
             sage: W.ngens()
             1
