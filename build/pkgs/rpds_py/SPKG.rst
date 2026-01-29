@@ -38,8 +38,7 @@ Dependencies
 
 Python (>= 3.12)
 
-Build dependencies: Rust toolchain (required only when building from source,
-i.e., when no compatible binary wheel is available)
+Build dependencies: pip, packaging
 
 Special Notes
 -------------
@@ -55,5 +54,5 @@ versions and platforms:
 The Sage build system automatically selects and downloads the appropriate
 wheel for your platform and Python version using the packaging library's
 compatibility tags. If no compatible binary wheel is available for your
-platform, pip will attempt to build from source, which requires a Rust
-toolchain to be installed.
+platform, the building system will raise an error indicating that 
+no matching wheels were found.
