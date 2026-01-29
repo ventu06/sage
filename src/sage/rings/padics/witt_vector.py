@@ -25,7 +25,7 @@ AUTHORS:
 from sage.misc.functional import log
 from sage.misc.latex import tuple_function
 from sage.modules.free_module_element import vector
-from sage.rings.infinity import PlusInfinity
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.padics.factory import QqFP, Zp
 from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_base
@@ -383,10 +383,9 @@ class WittVector(CommutativeRingElement):
         """
         order = Integer(1)
         w = self
-        oo = PlusInfinity()
         for i in range(self.parent().precision()):
             elem_ord = w[i].additive_order()
-            if elem_ord is oo:
+            if elem_ord is Infinity:
                 return elem_ord
             order *= elem_ord
             w *= elem_ord
