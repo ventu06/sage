@@ -723,7 +723,7 @@ class WittVectorRing(Parent, UniqueRepresentation):
             ...
             IndexError: tuple index out of range
         """
-        return self.gens()[int(n)]
+        return self.gens()[n]
 
     def gens(self) -> tuple:
         """
