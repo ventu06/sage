@@ -1582,7 +1582,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
         phantom = x.phantom(lift=True)
         W = self.domain()
         Wcod = self.codomain()
-        return Wcod(phantom=[phantom[i] for i in range(1, W.precision())])
+        return Wcod(phantom=phantom[1:])
 
     def _latex_(self) -> str:
         r"""
