@@ -447,15 +447,13 @@ class WittVectorRing(Parent, UniqueRepresentation):
         if self._coefficient_ring.characteristic().gcd(p).is_one():
             l = 0 if len(var) == 1 and coeff_ring_gens[0].is_one() else len(var)
             for i in range(1, self._prec):
-                power = 0
                 vec[i] = self._coefficient_ring.one()
                 self._gens += (self(vec),)
-                names += (f"V{i}_{power}",)
+                names += (f"V{i}_0",)
                 for j in range(l):
-                    power += 1
                     vec[i] = coeff_ring_gens[j]
                     self._gens += (self(vec),)
-                    names += (f"V{i}T{coeff_ring_names[j]}_{power}",)
+                    names += (f"V{i}T{coeff_ring_names[j]}_{j}",)
                 vec[i] = self._coefficient_ring.zero()
             self._assign_names(names)
             return
