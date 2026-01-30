@@ -301,18 +301,77 @@ class LatticePosets(Category):
                 return True
 
             def kappa(self, a):
+                r"""
+                Return the maximum element greater than the element covered
+                by ``a`` but not greater than ``a``.
+
+                Define `\kappa(a)` as the maximum element of
+                `(\uparrow a_*) \setminus (\uparrow a)`, where `a_*` is the element
+                covered by `a`. It is always a meet-irreducible element, if it exists.
+
+                .. NOTE::
+
+                    Element ``a`` is expected to be join-irreducible, and
+                    this is *not* checked.
+
+                INPUT:
+
+                - ``a`` -- a join-irreducible element of the lattice
+
+                OUTPUT:
+
+                The element `\kappa(a)` or ``None`` if there
+                is not a unique greatest element with given constraints.
+
+                EXAMPLES::
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: [(a, L.kappa(a)) for a in L.join_irreducibles()]
+                    [(0, 1), (2, 0), (3, 4), (1, 3)]
+                """
                 H = self._hasse_diagram
                 k = H.kappa(self._element_to_vertex(a))
                 return self._vertex_to_element(k)
 
             def kappa_dual(self, a):
+                r"""
+                Return the minimum element smaller than the element covering
+                ``a`` but not smaller than ``a``.
+
+                Define `\kappa^*(a)` as the minimum element of
+                `(\downarrow a_*) \setminus (\downarrow a)`, where `a_*` is the element
+                covering `a`. It is always a join-irreducible element, if it exists.
+
+                .. NOTE::
+
+                    Element ``a`` is expected to be meet-irreducible, and
+                    this is *not* checked.
+
+                INPUT:
+
+                - ``a`` -- a meet-irreducible element of the lattice
+
+                OUTPUT:
+
+                The element `\kappa^*(a)` or ``None`` if there
+                is not a unique smallest element with given constraints.
+
+                EXAMPLES::
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: [(a, L.kappa_dual(a)) for a in L.meet_irreducibles()]
+                    [(0, 2), (3, 1), (1, 0), (4, 3)]
+                """
                 H = self._hasse_diagram
                 k = H.kappa_dual(self._element_to_vertex(a))
                 return self._vertex_to_element(k)
 
             def rowmotion_semidistributive(self, a):
-                r"""
-                Return the image of the element ``a`` under
+                r"""Return the image of the element ``a`` under
                 semidistributive rowmotion in ``self``.
 
                 Classical rowmotion is usually defined as an
@@ -322,7 +381,21 @@ class LatticePosets(Category):
                 lattice is isomorphic to `J(P)` for some `P` by
                 Birkhoff's representation theorem.
 
+                .. SEEALSO::
+
+                    If the image of rowmotion of several elements is
+                    needed,
+                    :class:`sage.dynamics.finite_dynamical_system_catalog.semidistributive_rowmotion`
+                    is much more efficient.
+
                 EXAMPLES::
+
+
+                    sage: V = ['b', 0, 1, 2, 3, 4, 't']
+                    sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
+                    sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
+                    sage: L.rowmotion_semidistributive(0)
+                    2
 
                     sage: L = posets.TamariLattice(3)
                     sage: row = L.rowmotion_semidistributive
@@ -346,6 +419,7 @@ class LatticePosets(Category):
                     sage: L = T.order_ideals_lattice()
                     sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
                     True
+
                 """
                 kd = [self.kappa_dual(e) for e in self.canonical_meetands(a)]
                 return self.join(kd)

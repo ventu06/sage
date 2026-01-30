@@ -331,13 +331,19 @@ def semidistributive_rowmotion(L):
         sage: row = finite_dynamical_systems.semidistributive_rowmotion(L)
         sage: all(L.rowmotion_semidistributive(a) == row.evolution()(a) for a in L)
         True
-
     """
-    kd = {a: L.kappa_dual(a) for a in L.meet_irreducibles()}
-    row0 = {a: L.join(kd[e] for e in L.canonical_meetands(a))
+    H = L._hasse_diagram
+    d = L._element_to_vertex_dict
+    meet_irr = [u for u in H if sum(1 for _ in H.upper_covers_iterator(u)) == 1]
+    join_irr = [u for u in H if sum(1 for _ in H.lower_covers_iterator(u)) == 1]
+    kappa_dual = {L._vertex_to_element(u): L._vertex_to_element(H.kappa_dual(u))
+                  for u in meet_irr}
+    row0 = {a: L.join(kappa_dual[e] for e in L.canonical_meetands(a))
             for a in L}
-    ku = {a: L.kappa(a) for a in L.join_irreducibles()}
-    row1 = {a: L.meet(ku[e] for e in L.canonical_joinands(a))
+
+    kappa = {L._vertex_to_element(u): L._vertex_to_element(H.kappa(u))
+             for u in join_irr}
+    row1 = {a: L.meet(kappa[e] for e in L.canonical_joinands(a))
             for a in L}
     return InvertibleFiniteDynamicalSystem(L, lambda a: row0[a], inverse=lambda a: row1[a])
 
