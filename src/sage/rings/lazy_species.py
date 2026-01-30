@@ -855,7 +855,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Return the functorial composition of `F` and `G`.
 
-        This is defined on objects as `F\Box G[U] = F[G[U]` and on
+        This is defined on objects as `F\Box G[U] = F[G[U]]` and on
         bijections as `F\Box G[\sigma] = F[G[\sigma]]`.
 
         Thus, `(F+G)\Box H = F\Box H + G\Box H`.  Moreover,
