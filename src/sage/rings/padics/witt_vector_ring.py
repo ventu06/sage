@@ -23,10 +23,9 @@ AUTHORS:
 # ****************************************************************************
 
 
+from collections.abc import Iterator
 from itertools import product
 from math import prod
-
-from collections.abc import Iterator
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.commutative_rings import CommutativeRings
@@ -469,7 +468,6 @@ class WittVectorRing(Parent, UniqueRepresentation):
         # Handle the general case
         for i in range(1, self._prec):
             p_i = p**i
-            degrees = [p_i] * len(var)
             power = -1
 
             for powers in Tuples(IntegerRange(p_i), len(var)):
@@ -1481,48 +1479,6 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
 
         super().__init__(Hom(domain, codomain))
 
-    def _call_standard(self, x):
-        """
-        Evaluate ``self`` at ``x`` using the general algorithm.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(ZZ, p=11, prec=2)
-            sage: w = W([1, 100])
-            sage: frob = W.frobenius_morphism()
-            sage: frob(w)
-            (1101)
-
-        TESTS::
-
-            sage: TestSuite(frob).run(skip="_test_category")
-        """
-        W = self.domain()
-        Wcod = self.codomain()
-        return Wcod([W.frobenius_polynomials()[i](x.coordinates())
-                     for i in range(Wcod.precision())])
-
-    def _call_char_p_truncate(self, x):
-        """
-        Evaluate ``self`` at ``x`` when the coefficient ring has charaterisic `p`
-        for the truncated Frobenius.
-
-        EXAMPLES::
-
-            sage: W = WittVectorRing(GF(7), prec=4, algorithm="finotti")
-            sage: w = W([1, 2, 3, 4])
-            sage: frob = W.frobenius_morphism(truncate=True)
-            sage: frob(w)
-            (1, 2, 3)
-
-        TESTS::
-
-            sage: TestSuite(frob).run(skip="_test_category")
-        """
-        Wcod = self.codomain()
-        F = Wcod.coefficient_ring().frobenius_endomorphism()
-        return Wcod([F(w) for w in x])
-
     def _call_char_p(self, x):
         """
         Evaluate ``self`` at ``x`` when the coefficient ring has characteristic `p`
@@ -1534,7 +1490,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
             sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
             sage: w = W([x, x + y, x*y + y])
             sage: frob = W.frobenius_morphism()
-            sage: frob(w)
+            sage: frob(w)  # indirect doctest
             (x^5, x^5 + y^5, x^5*y^5 + y^5)
 
         TESTS::
@@ -1544,6 +1500,27 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
         W = self.domain()
         F = W.coefficient_ring().frobenius_endomorphism()
         return W([F(w) for w in x])
+
+    def _call_char_p_truncate(self, x):
+        """
+        Evaluate ``self`` at ``x`` when the coefficient ring has charaterisic `p`
+        for the truncated Frobenius.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(GF(7), prec=4, algorithm="finotti")
+            sage: w = W([1, 2, 3, 4])
+            sage: frob = W.frobenius_morphism(truncate=True)
+            sage: frob(w)  # indirect doctest
+            (1, 2, 3)
+
+        TESTS::
+
+            sage: TestSuite(frob).run(skip="_test_category")
+        """
+        Wcod = self.codomain()
+        F = Wcod.coefficient_ring().frobenius_endomorphism()
+        return Wcod([F(w) for w in x])
 
     def _call_phantom_truncate(self, x):
         """
@@ -1557,7 +1534,7 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
             sage: w = W([x, x + y, x*y + y])
             sage: frob = W.frobenius_morphism(truncate=True)
             sage: fw = frob(w)
-            sage: fw.phantom(lift=True)
+            sage: fw.phantom(lift=True)  # indirect doctest
             (x^5 + 5*x + 5*y, x^25 + 5*x^5 + 5^2*x^4*y + 2*5^2*x^3*y^2 +
             2*5^2*x^2*y^3 + 5^2*x*y^4 + 5*y^5 + 5^2*x*y + 5^2*y)
 
@@ -1566,9 +1543,29 @@ class WittVectorFrobeniusMorphism(RingHomomorphism):
             sage: TestSuite(frob).run(skip="_test_category")
         """
         phantom = x.phantom(lift=True)
-        W = self.domain()
         Wcod = self.codomain()
         return Wcod(phantom=phantom[1:])
+
+    def _call_standard(self, x):
+        """
+        Evaluate ``self`` at ``x`` using the general algorithm.
+
+        EXAMPLES::
+
+            sage: W = WittVectorRing(ZZ, p=11, prec=2)
+            sage: w = W([1, 100])
+            sage: frob = W.frobenius_morphism()
+            sage: frob(w)  # indirect doctest
+            (1101)
+
+        TESTS::
+
+            sage: TestSuite(frob).run(skip="_test_category")
+        """
+        W = self.domain()
+        Wcod = self.codomain()
+        return Wcod([W.frobenius_polynomials()[i](x.coordinates())
+                     for i in range(Wcod.precision())])
 
     def _latex_(self) -> str:
         r"""
@@ -1659,23 +1656,30 @@ class WittVectorVerschiebung(RingMap):
             sage: TestSuite(V).run(skip="_test_category")
         """
         if extend:
-            self._call_ = self._call_extend
             prec = domain.precision()
 
             if isinstance(domain, WittVectorRing_finotti):
+                self._call_ = self._call_extend
                 algorithm = "finotti"
             elif isinstance(domain, WittVectorRing_phantom):
+                self._call_ = self._call_phantom_extend
                 algorithm = "phantom"
             elif isinstance(domain, WittVectorRing_pinvertible):
+                self._call_ = self._call_extend
                 algorithm = "p_invertible"
             elif isinstance(domain, WittVectorRing_standard):
+                self._call_ = self._call_extend
                 algorithm = "standard"
 
             codomain = WittVectorRing(domain.coefficient_ring(), prec=prec+1,
                                       p=domain.prime(), algorithm=algorithm)
 
         else:
-            self._call_ = self._call_no_extend
+            if isinstance(domain, WittVectorRing_phantom):
+                self._call_ = self._call_phantom_no_extend
+            else:
+                self._call_ = self._call_no_extend
+
             codomain = domain
 
         super().__init__(domain.Hom(codomain, CommutativeAdditiveGroups()))
@@ -1688,22 +1692,13 @@ class WittVectorVerschiebung(RingMap):
 
             sage: W = WittVectorRing(ZZ, p=11, prec=2)
             sage: w = W([1, 100])
-            sage: V_ZZ = W.verschiebung(extend=True)
-            sage: V_ZZ(w)
+            sage: V = W.verschiebung(extend=True)
+            sage: V(w)  # indirect doctest
             (0, 1, 100)
-
-            sage: R.<x,y> = PolynomialRing(GF(5))
-            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
-            sage: w = W([x, x + y, x*y + y])
-            sage: V_GF = W.verschiebung(extend=True)
-            sage: V_GF(w)
-            (0, x, x + y, x*y + y)
 
         TESTS::
 
-            sage: TestSuite(V_ZZ).run(skip="_test_category")
-            sage: TestSuite(V_GF).run(skip="_test_category")
-
+            sage: TestSuite(V).run(skip="_test_category")
         """
         Wcod = self.codomain()
         R = Wcod.coefficient_ring()
@@ -1717,25 +1712,63 @@ class WittVectorVerschiebung(RingMap):
 
             sage: W = WittVectorRing(GF(7), prec=4, algorithm="finotti")
             sage: w = W([1, 2, 3, 4])
-            sage: V_GF = W.verschiebung()
-            sage: V_GF(w)
+            sage: V = W.verschiebung()
+            sage: V(w)  # indirect doctest
             (0, 1, 2, 3)
-
-            sage: R.<x,y> = PolynomialRing(GF(5))
-            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
-            sage: w = W([x, x + y, x*y + y])
-            sage: V_poly = W.verschiebung()
-            sage: V_poly(w)
-            (0, x, x + y)
 
         TESTS::
 
-            sage: TestSuite(V_GF).run(skip="_test_category")
-            sage: TestSuite(V_poly).run(skip="_test_category")
+            sage: TestSuite(V).run(skip="_test_category")
         """
         W = self.domain()
         R = W.coefficient_ring()
         return W((R.zero(),) + x.coordinates())
+
+    def _call_phantom_extend(self, x):
+        """
+        Evaluate ``self`` at ``x`` for the extended Verschiebung.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
+            sage: w = W([x, x + y, x*y + y])
+            sage: V = W.verschiebung(extend=True)
+            sage: V(w)  # indirect doctest
+            (0, x, x + y, x*y + y)
+
+        TESTS::
+
+            sage: TestSuite(V).run(skip="_test_category")
+        """
+        Wcod = self.codomain()
+        p = Wcod.prime()
+        phantom = x.phantom(lift=True)
+        return Wcod(phantom=((phantom[0].parent().zero(),)
+                             + tuple(p*c for c in phantom)))
+
+    def _call_phantom_no_extend(self, x):
+        """
+        Evaluate ``self`` at ``x`` when the domain is the codomain.
+
+        EXAMPLES::
+
+            sage: R.<x,y> = PolynomialRing(GF(5))
+            sage: W = WittVectorRing(R, prec=3, algorithm="phantom")
+            sage: w = W([x, x + y, x*y + y])
+            sage: V = W.verschiebung()
+            sage: V(w)  # indirect doctest
+            (0, x, x + y)
+
+        TESTS::
+
+            sage: TestSuite(V).run(skip="_test_category")
+        """
+        W = self.domain()
+        p = W.prime()
+        phantom = x.phantom(lift=True)
+        return W(phantom=((phantom[0].parent().zero(),)
+                          + tuple(p*c for c in phantom[:-1])))
 
     def _latex_(self) -> str:
         r"""
