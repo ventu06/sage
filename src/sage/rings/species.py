@@ -75,6 +75,7 @@ from sage.structure.unique_representation import (UniqueRepresentation,
 GAP_FAIL = libgap.eval('fail')
 # for each key (currently size and orbit-sizes) a list of canonical
 # representatives of directly indecomposable groups
+# TODO: most likely, it would be better to store the groups as GAP groups
 _dis_cache = dict()
 
 
@@ -2886,21 +2887,24 @@ def _atomic_set_like_species(n, names):
     if not n:
         return ()
     M1 = MolecularSpecies("X")
+    A1 = AtomicSpecies("X")
     M = MolecularSpecies(names)
+    A = AtomicSpecies(names)
     if n == 1:
-        # TODO: use that this is atomic
-        return tuple([M(_SymmetricGroup(1), {s: [1]}, check=False) for s in range(M._arity)])
+        return tuple([M({A(_SymmetricGroup(1), {s: [1]}, check=False): ZZ.one()},
+                        check=False)
+                      for s in range(M._arity)])
     result = []
     for d in divisors(n):
         if d == 1:
             continue
         if d == n:
-            # TODO: use that this is atomic
-            result.extend(M(_SymmetricGroup(n), {s: range(1, n+1)}, check=False)
+            result.extend(M({A(_SymmetricGroup(n), {s: range(1, n+1)}, check=False): ZZ.one()},
+                            check=False)
                           for s in range(M._arity))
             continue
-        # TODO: use that this is atomic
-        E_d = M1(_SymmetricGroup(d), check=False)
+        E_d = M1({A1(_SymmetricGroup(d), check=False): ZZ.one()},
+                 check=False)
         l = []
         w = []
         for degree in range(1, n // d + 1):
@@ -2908,9 +2912,8 @@ def _atomic_set_like_species(n, names):
             l.extend(a_degree)
             w.extend([degree]*len(a_degree))
         for a in WeightedIntegerVectors(n // d, w):
-            # can we make the following faster?
             G = prod(F ** e for F, e in zip(l, a))
-            F = E_d(G)
+            F = E_d(G)  # TODO: can we make this faster?
             F.support()[0].rename(f"E_{d}({G})")
             result.append(F)
     return tuple(result)
