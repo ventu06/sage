@@ -2069,7 +2069,7 @@ def HyperStarGraph(n, k):
     return Graph(adj, format='dict_of_lists', name=f"HS({n},{k})")
 
 
-def LCFGraph(n, shift_list, repeats, immutable=False):
+def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
     r"""
     Return the cubic graph specified in LCF notation.
 
@@ -2096,6 +2096,9 @@ def LCFGraph(n, shift_list, repeats, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     EXAMPLES::
 
@@ -2150,8 +2153,10 @@ def LCFGraph(n, shift_list, repeats, immutable=False):
     PLOTTING: LCF Graphs are plotted as an `n`-cycle with edges in the
     middle, as described above.
     """
+    if name is None:
+        name = "LCF Graph"
     if not n:
-        return Graph(name="LCF Graph", immutable=immutable)
+        return Graph(name=name, immutable=immutable)
 
     from itertools import chain
     # Edges of a cycle
@@ -2162,7 +2167,7 @@ def LCFGraph(n, shift_list, repeats, immutable=False):
     E3 = ((i % n, (i + shift_list[i % k]) % n) for i in range(repeats * k))
 
     G = Graph([range(n), chain(E1, E2, E3)], format="vertices_and_edges",
-              name="LCF Graph", immutable=immutable)
+              name=name, immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     return G
 
