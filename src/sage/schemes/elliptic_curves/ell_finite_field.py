@@ -1353,7 +1353,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 Q.set_order(multiple=P._order, check=False)
 
             else:
-                raise RuntimeError(f'overwhelmingly unlikely event, or (more likely) a bug in EllipticCurve_finite_field.torsion_subgroup()')
+                raise RuntimeError('overwhelmingly unlikely event, or (more likely) a bug in EllipticCurve_finite_field.torsion_subgroup()')
 
             assert hasattr(P, '_order')
             assert hasattr(Q, '_order')
