@@ -120,6 +120,7 @@ build/temp.*/
 build/bin/sage-build-env-config
 
 # Generated files in build
+build/cp31[1-9]
 build/pkgs/cypari/version_requirements.txt
 build/pkgs/cysignals/version_requirements.txt
 build/pkgs/cython/version_requirements.txt
@@ -243,6 +244,7 @@ src/sage/schemes/hyperelliptic_curves/__init__.py
 src/sage/schemes/berkovich/__init__.py
 src/sage/schemes/generic/__init__.py
 src/sage/schemes/projective/__init__.py
+src/sage/schemes/weighted_projective/__init__.py
 src/sage/schemes/__init__.py
 src/sage/schemes/affine/__init__.py
 src/sage/modular/hecke/__init__.py
