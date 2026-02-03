@@ -371,7 +371,8 @@ class LatticePosets(Category):
                 return self._vertex_to_element(k)
 
             def rowmotion_semidistributive(self, a):
-                r"""Return the image of the element ``a`` under
+                r"""
+                Return the image of the element ``a`` under
                 semidistributive rowmotion in ``self``.
 
                 Classical rowmotion is usually defined as an
@@ -385,7 +386,7 @@ class LatticePosets(Category):
 
                     If the image of rowmotion of several elements is
                     needed,
-                    :class:`sage.dynamics.finite_dynamical_system_catalog.semidistributive_rowmotion`
+                    :class:`~sage.dynamics.finite_dynamical_system_catalog.semidistributive_rowmotion`
                     is much more efficient.
 
                 EXAMPLES::
