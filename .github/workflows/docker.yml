@@ -20,6 +20,8 @@ on:
         default: >-
           [
            "ubuntu-noble",
+           "ubuntu-resolute",
+           "debian-trixie",
            "fedora-42",
            "fedora-43",
            "centos-stream-10",
