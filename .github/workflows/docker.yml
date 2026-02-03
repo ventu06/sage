@@ -22,6 +22,7 @@ on:
            "ubuntu-noble",
            "fedora-40",
            "fedora-41",
+           "centos-stream-10",
            "opensuse-tumbleweed",
           ]
         # 'tox -e update_docker_platforms' updates above
