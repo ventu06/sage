@@ -72,6 +72,10 @@ jobs:
         with:
           python-version: "3.13"
 
+      - name: Install Python packages
+        run: |
+          pip install setuptools
+
       - name: Install dependencies
         run: |
           eval $(build/bin/sage-print-system-package-command homebrew update)
