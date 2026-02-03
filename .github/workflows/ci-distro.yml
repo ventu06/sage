@@ -41,23 +41,6 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
-  linux-minimal:
-    if: ${{ success() || failure() }}
-    uses: ./.github/workflows/docker.yml
-    with:
-      # Build from scratch
-      free_disk_space: true
-      docker_targets: "with-system-packages configured with-targets-pre with-targets with-targets-optional"
-      # FIXME: duplicated from env.TARGETS
-      targets_pre: all-sage-local
-      targets: build
-      targets_optional: ptestlong
-      tox_system_factors: >-
-          ["ubuntu-jammy"]
-      tox_packages_factors: >-
-          ["minimal"]
-      docker_push_repository: ghcr.io/${{ github.repository }}/
-
   linux:
     uses: ./.github/workflows/docker.yml
     with:
