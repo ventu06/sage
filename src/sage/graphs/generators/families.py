@@ -2790,7 +2790,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n, immutable=False):
     return G.comy(immutable=True) if immutable else G
 
 
-def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
+def HanoiTowerGraph(pegs, disks, labels=True, positions=True, immutable=False):
     r"""
     Return the graph whose vertices are the states of the
     Tower of Hanoi puzzle, with edges representing legal moves between states.
@@ -2798,14 +2798,20 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     INPUT:
 
     - ``pegs`` -- the number of pegs in the puzzle, 2 or greater
+
     - ``disks`` -- the number of disks in the puzzle, 1 or greater
+
     - ``labels`` -- (default: ``True``) if ``True`` the graph contains
       more meaningful labels, see explanation below.  For large instances,
       turn off labels for much faster creation of the graph.
+
     - ``positions`` -- (default: ``True``) if ``True`` the graph contains
       layout information.  This creates a planar layout for the case
       of three pegs.  For large instances, turn off layout information
       for much faster creation of the graph.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2927,6 +2933,18 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         ...
         ValueError: Disks for Tower of Hanoi graph should be one or greater (not 0)
 
+    Check the behavior of parameter immutable::
+
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=True, immutable=False)
+        sage: H.is_immutable()
+        False
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=True, immutable=True)
+        sage: H.is_immutable()
+        True
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=False, immutable=True)
+        sage: H.is_immutable()
+        True
+
     AUTHOR:
 
     - Rob Beezer, (2009-12-26), with assistance from Su Doree
@@ -2981,8 +2999,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
             for freea, freeb in Subsets(emptypegs, 2):
                 edges.append([freea*nverts + state, freeb*nverts + state])
 
-    H = Graph({}, loops=False, multiedges=False)
-    H.add_edges(edges)
+    H = Graph(edges, format="list_of_edges", loops=False, multiedges=False,
+              immutable=immutable and not labels)
 
     # Making labels and/or computing positions can take a long time,
     # relative to just constructing the edges on integer vertices.
@@ -3035,7 +3053,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         if labels:
             H.relabel(mapping)
 
-    return H
+    return H.copy(immutable=True) if immutable else H
 
 
 def line_graph_forbidden_subgraphs():
