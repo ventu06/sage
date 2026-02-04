@@ -3290,7 +3290,7 @@ def p2_forbidden_minors():
     return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
 
 
-def SierpinskiGasketGraph(n):
+def SierpinskiGasketGraph(n, immutable=False):
     """
     Return the Sierpinski Gasket graph of generation `n`.
 
@@ -3299,6 +3299,9 @@ def SierpinskiGasketGraph(n):
     INPUT:
 
     - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -3372,10 +3375,10 @@ def SierpinskiGasketGraph(n):
     dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
                 for x, y in dg})
     dg.relabel()
-    return dg
+    return dg.copy(immutable=True) if immutable else dg
 
 
-def GeneralizedSierpinskiGraph(G, k, stretch=None):
+def GeneralizedSierpinskiGraph(G, k, stretch=None, immutable=False):
     r"""
     Return the generalized Sierpinski graph of `G` of dimension `k`.
 
@@ -3402,6 +3405,9 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
       (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -3525,7 +3531,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         H.set_pos({u: (sum(pos[x][0]*stretch**(k-i) for i, x in enumerate(u)),
                        sum(pos[y][1]*stretch**(k-i) for i, y in enumerate(u)))
                    for u in H})
-    return H
+    return H.copy(immutable=True) if immutable else H
 
 
 def WheelGraph(n):
