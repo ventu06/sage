@@ -2633,7 +2633,7 @@ def PaleyGraph(q):
     return g
 
 
-def PasechnikGraph(n):
+def PasechnikGraph(n, immutable=False):
     r"""
     Pasechnik strongly regular graph on `(4n-1)^2` vertices.
 
@@ -2645,6 +2645,13 @@ def PasechnikGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    INPUT:
+
+    - ``n`` -- integer; the returned graph has `(4n - 1)^2` vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2668,10 +2675,10 @@ def PasechnikGraph(n):
     from sage.matrix.constructor import identity_matrix
     H = skew_hadamard_matrix(4 * n)
     M = H[1:].T[1:] - identity_matrix(4 * n - 1)
-    G = Graph(M.tensor_product(M.T), format='seidel_adjacency_matrix')
+    G = Graph(M.tensor_product(M.T), format='seidel_adjacency_matrix',
+              name=f"Pasechnik Graph_{n}")
     G.relabel()
-    G.name("Pasechnik Graph_{}".format(n))
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def SquaredSkewHadamardMatrixGraph(n):
