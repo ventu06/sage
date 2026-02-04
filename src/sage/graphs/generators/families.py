@@ -2787,7 +2787,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n, immutable=False):
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
     G.name("switch skewhad^2+*_" + str(n))
-    return G.comy(immutable=True) if immutable else G
+    return G.copy(immutable=True) if immutable else G
 
 
 def HanoiTowerGraph(pegs, disks, labels=True, positions=True, immutable=False):
@@ -3204,7 +3204,7 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
-def p2_forbidden_minors():
+def p2_forbidden_minors(immutable=False):
     r"""
     Return an array containing the 35 minimal forbidden excluded minors
     of the projective plane.
@@ -3213,12 +3213,16 @@ def p2_forbidden_minors():
     which is a result of Archdeacon and encoded them in graph6 format.
     The order of the graphs is the same as they appear in [WA2025]_.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     TESTS::
 
         sage: len(graphs.families.p2_forbidden_minors())
         35
     """
-
     p2_forbidden_minors_graph6 = [
         'KFz_????wF?[',
         'J~{???F@oM?',
@@ -3257,7 +3261,8 @@ def p2_forbidden_minors():
         'JhEIDSD?ga_'
     ]
 
-    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+    return [Graph(graph_str, format="graph6", immutable=immutable)
+            for graph_str in p2_forbidden_minors_graph6]
 
 
 def SierpinskiGasketGraph(n):
