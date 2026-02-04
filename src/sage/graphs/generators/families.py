@@ -2681,7 +2681,7 @@ def PasechnikGraph(n, immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def SquaredSkewHadamardMatrixGraph(n):
+def SquaredSkewHadamardMatrixGraph(n, immutable=False):
     r"""
     Pseudo-`OA(2n,4n-1)`-graph from a skew Hadamard matrix of order `4n`.
 
@@ -2694,6 +2694,13 @@ def SquaredSkewHadamardMatrixGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2727,7 +2734,7 @@ def SquaredSkewHadamardMatrixGraph(n):
     G = Graph(s, format='seidel_adjacency_matrix')
     G.relabel()
     G.name("skewhad^2_{}".format(n))
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def SwitchedSquaredSkewHadamardMatrixGraph(n):
