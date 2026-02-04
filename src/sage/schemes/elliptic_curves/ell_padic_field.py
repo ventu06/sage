@@ -314,11 +314,17 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def monsky_washnitzer_gens(self):
         """
-        TODO: Docstring for monsky_washnitzer_gens
+        Return the generators of the special hyperelliptic quotient ring.
+
+        TODO: Should this function be available over more general base rings?
 
         EXAMPLES::
 
-            TODO
+            sage: Q5 = pAdicField(5,10)
+            sage: E = EllipticCurve(Q5,[1,0])
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x^3 + x == y^2
+            True
         """
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
         return S.gens()
@@ -330,7 +336,13 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: Q5 = pAdicField(5,10)
+            sage: E = EllipticCurve(Q5,[0,1])
+            sage: w = E.invariant_differential(); w
+            (-((4+4*5+4*5^2+4*5^3+4*5^4+4*5^5+4*5^6+4*5^7+4*5^8+4*5^9+O(5^10)))*1) dx/2y
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: x.diff() == 2*y*w
+            True
         """
         S = monsky_washnitzer.SpecialHyperellipticQuotientRing(self)
         MW = monsky_washnitzer.MonskyWashnitzerDifferentialRing(S)
@@ -404,8 +416,6 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         ``self.base_ring()``, that is, the point at infinity and those points
         in the support of the divisor of `y`.
 
-        TODO: move to ell_generic ?
-
         EXAMPLES::
 
             sage: Q5 = pAdicField(5,10)
@@ -434,7 +444,21 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E([0,3])
+            sage: E.is_in_weierstrass_disc(P)
+            False
+            sage: Q = E([0,1,0])
+            sage: E.is_in_weierstrass_disc(Q)
+            True
+            sage: S = E([1,0])
+            sage: E.is_in_weierstrass_disc(S)
+            True
+            sage: T = E.lift_x(1+3*5^2); T
+            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
+            sage: E.is_in_weierstrass_disc(T)
+            True
 
         AUTHOR:
 
@@ -447,12 +471,23 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         Check if `P` is a Weierstrass point (i.e., fixed by the hyperelliptic
         involution).
 
-        TODO: extend this to general Weierstrass form and move to ell_generic ?
-
-
         EXAMPLES::
 
-           TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E([0,3])
+            sage: E.is_weierstrass(P)
+            False
+            sage: Q = E([0,1,0])
+            sage: E.is_weierstrass(Q)
+            True
+            sage: S = E([1,0])
+            sage: E.is_weierstrass(S)
+            True
+            sage: T = E.lift_x(1+3*5^2); T
+            (1 + 3*5^2 + O(5^8) : 3*5 + 4*5^2 + 5^4 + 3*5^5 + 5^6 + O(5^7) : 1 + O(5^8))
+            sage: E.is_weierstrass(T)
+            False
 
         AUTHOR:
 
@@ -467,7 +502,22 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: Q = E([0,1,0])
+            sage: E.find_char_zero_weier_point(Q) == Q
+            True
+
+            sage: S = E([1,0])
+            sage: T = E.lift_x(1+3*5^2)
+            sage: E.find_char_zero_weier_point(T) == S
+            True
+
+            sage: P = E([0,3])
+            sage: E.find_char_zero_weier_point(P)
+            Traceback (most recent call last):
+            ...
+            ValueError: (0 : 3 + O(5^8) : 1 + O(5^8)) is not in a Weierstrass disc
 
         AUTHOR:
 
@@ -482,11 +532,30 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def residue_disc(self, P):
         """
-        Give the residue disc of `P`.
+        Return the residue disc of `P`.
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E.lift_x(5); P
+            (5 + O(5^9) : 2 + 4*5 + 5^2 + 2*5^3 + 5^4 + 2*5^5 + 2*5^6 + 5^7 + O(5^8) : 1 + O(5^8))
+            sage: E.residue_disc(P)
+            (0 : 2 : 1)
+            sage: E.residue_disc(P) == P.change_ring(GF(5))
+            True
+
+        Note that the residue disc can also be computed when
+        the coordinates have negative valuation (in which case
+        `change_ring` does not work)::
+
+            sage: Q = E.lift_x(5^(-2))
+            sage: E.residue_disc(Q)
+            (0 : 1 : 0)
+            sage: Q.change_ring(GF(5))
+            Traceback (most recent call last):
+            ...
+            ValueError: element must have nonnegative valuation in order to compute residue
 
         AUTHOR:
 
@@ -513,11 +582,19 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
     def is_same_disc(self, P, Q):
         """
-        Check if `P,Q` are in same residue disc.
+        Check if `P,Q` are in the same residue disc.
 
         EXAMPLES::
 
-            TODO
+            sage: Q7 = pAdicField(7,6)
+            sage: E = EllipticCurve(Q7,[-16,400])
+            sage: P = E.lift_x(4)
+            sage: Q = E.lift_x(8)
+            sage: R = E.lift_x(11)
+            sage: E.is_same_disc(P,Q) or E.is_same_disc(P,-Q)
+            False
+            sage: E.is_same_disc(P,R) or E.is_same_disc(P,-R)
+            True
         """
         return self.residue_disc(P) == self.residue_disc(Q)
 
@@ -543,7 +620,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             sage: P = E(K(14/3), K(11/2))
             sage: TP = E.teichmuller(P);
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: E.tiny_integrals([1,x],P, TP) == E.tiny_integrals_on_basis(P,TP)
+            sage: E.tiny_integrals([1,x], P, TP) == E.tiny_integrals_on_basis(P, TP)
             True
         """
         x, y, z = self.local_analytic_interpolation(P, Q)  # homogeneous coordinates
@@ -641,7 +718,29 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: S = E(1,0)
+            sage: P = E(0,3)
+            sage: T = E(0,1,0)
+            sage: Q = E.lift_x(5^-2)
+            sage: R = E.lift_x(4*5^-2)
+            sage: E.coleman_integrals_on_basis(S,P)
+            (2*5^2 + 5^4 + 5^5 + 3*5^6 + 3*5^7 + 2*5^8 + O(5^9), 5 + 2*5^2 + 4*5^3 + 2*5^4 + 3*5^6 + 4*5^7 + 2*5^8 + O(5^9))
+            sage: E.coleman_integrals_on_basis(T,P)
+            (2*5^2 + 5^4 + 5^5 + 3*5^6 + 3*5^7 + 2*5^8 + O(5^9), 5 + 2*5^2 + 4*5^3 + 2*5^4 + 3*5^6 + 4*5^7 + 2*5^8 + O(5^9))
+            sage: E.coleman_integrals_on_basis(P,S) == -E.coleman_integrals_on_basis(S,P)
+            True
+            sage: E.coleman_integrals_on_basis(S,Q)
+            (5 + O(5^4), 4*5^-1 + 4 + 4*5 + 4*5^2 + O(5^3))
+            sage: E.coleman_integrals_on_basis(Q,R)
+            (5 + 2*5^2 + 2*5^3 + 2*5^4 + 3*5^5 + 3*5^6 + 3*5^7 + 5^8 + O(5^9), 3*5^-1 + 2*5^4 + 5^5 + 2*5^6 + O(5^7))
+            sage: E.coleman_integrals_on_basis(S,R) == E.coleman_integrals_on_basis(S,Q) + E.coleman_integrals_on_basis(Q,R)
+            True
+            sage: E.coleman_integrals_on_basis(T,T)
+            (0, 0)
+            sage: E.coleman_integrals_on_basis(S,T)
+            (0, 0)
 
         AUTHORS:
 
@@ -773,11 +872,76 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES:
 
-        Example of Leprevost from Kiran Kedlaya
-        The first two should be zero as `(P-Q) = 30(P-Q)` in the Jacobian
-        and `dx/2y` and `x dx/2y` are holomorphic. ::
+        A simple example, integrating dx::
 
-            TODO
+            sage: K = Qp(5,10)
+            sage: E = EllipticCurve(K, [-4,4])
+            sage: P = E(2, 2)
+            sage: Q = E.teichmuller(P)
+            sage: x, y = E.monsky_washnitzer_gens()
+            sage: E.coleman_integral(x.diff(), P, Q)
+            5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9 + O(5^10)
+            sage: Q[0] - P[0]
+            5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9 + O(5^10)
+
+        Another example::
+
+            sage: K = Qp(7,10)
+            sage: E = EllipticCurve(K, [0,8,0,-9,0])
+            sage: _, forms = monsky_washnitzer.matrix_of_frobenius_hyperelliptic(E)
+            sage: w = E.invariant_differential()
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: f = forms[0]
+            sage: S = E(9,36)
+            sage: Q = E.teichmuller(S)
+            sage: P = E(-1,4)
+            sage: b = x*w*w._coeff.parent()(f)
+            sage: E.coleman_integral(b,P,Q)
+            7 + 7^2 + 4*7^3 + 5*7^4 + 3*7^5 + 7^6 + 5*7^7 + 3*7^8 + 4*7^9 + 4*7^10 + O(7^11)
+
+        ::
+
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [0,1])
+            sage: w = E.invariant_differential()
+            sage: P = E(0,1)
+            sage: Q = E(5, 1 + 3*5^3 + 2*5^4 + 2*5^5 + 3*5^7)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: (2*y*w).coleman_integral(P,Q)
+            5 + O(5^9)
+            sage: xloc,yloc,zloc = E.local_analytic_interpolation(P,Q)
+            sage: I2 = (xloc.derivative()/(2*yloc)).integral()
+            sage: I2.polynomial()(1) - I2(0)
+            3*5 + 2*5^2 + 2*5^3 + 5^4 + 4*5^6 + 5^7 + O(5^9)
+            sage: E.coleman_integral(w,P,Q)
+            3*5 + 2*5^2 + 2*5^3 + 5^4 + 4*5^6 + 5^7 + O(5^9)
+
+        Integrals involving Weierstrass points::
+
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: S = E(1,0)
+            sage: P = E(0,3)
+            sage: negP = E(0,-3)
+            sage: T = E(0,1,0)
+            sage: w = E.invariant_differential()
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: E.coleman_integral(w*x^3,S,T)
+            0
+            sage: E.coleman_integral(w*x^3,T,S)
+            0
+            sage: E.coleman_integral(w,S,P)
+            2*5^2 + 5^4 + 5^5 + 3*5^6 + 3*5^7 + 2*5^8 + O(5^9)
+            sage: E.coleman_integral(w,T,P)
+            2*5^2 + 5^4 + 5^5 + 3*5^6 + 3*5^7 + 2*5^8 + O(5^9)
+            sage: E.coleman_integral(w*x^3,T,P)
+            5^2 + 2*5^3 + 3*5^6 + 3*5^7 + O(5^8)
+            sage: E.coleman_integral(w*x^3,S,P)
+            5^2 + 2*5^3 + 3*5^6 + 3*5^7 + O(5^8)
+            sage: E.coleman_integral(w, P, negP, algorithm='teichmuller')
+            5^2 + 4*5^3 + 2*5^4 + 2*5^5 + 3*5^6 + 2*5^7 + 4*5^8 + O(5^9)
+            sage: E.coleman_integral(w, P, negP)
+            5^2 + 4*5^3 + 2*5^4 + 2*5^5 + 3*5^6 + 2*5^7 + 4*5^8 + O(5^9)
 
         AUTHORS:
 
@@ -852,7 +1016,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,8)
+            sage: E = EllipticCurve(K, [0,1])
+            sage: E.curve_over_ram_extn(2)
+            Elliptic Curve defined by y^2 = x^3 + (1+O(a^16)) over 5-adic Eisenstein Extension Field in a defined by x^2 - 5
 
         AUTHOR:
 
@@ -863,12 +1030,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         A = PolynomialRing(QQ, "x")
         x = A.gen()
         J = K.extension(x**deg - p, names="a")
-        pol = self.hyperelliptic_polynomials()[0]
-        H = EllipticCurve(A(pol))
-        HJ = H.change_ring(J)
-        self._curve_over_ram_extn = HJ
+        EJ = self.change_ring(J)
+        self._curve_over_ram_extn = EJ
         self._curve_over_ram_extn._curve_over_Qp = self
-        return HJ
+        return EJ
 
     def get_boundary_point(self, curve_over_extn, P):
         """
@@ -884,7 +1049,14 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(3,6)
+            sage: E = EllipticCurve(K,[-10,9])
+            sage: P = E(1,0)
+            sage: J.<a> = K.extension(x^30-3)
+            sage: EJ  = E.change_ring(J)
+            sage: S = E.get_boundary_point(EJ,P)
+            sage: S
+            (1 + 2*a^2 + 2*a^6 + 2*a^18 + a^32 + a^34 + a^36 + 2*a^38 + 2*a^40 + a^42 + 2*a^44 + a^48 + 2*a^50 + 2*a^52 + a^54 + a^56 + 2*a^60 + 2*a^62 + a^70 + 2*a^72 + a^76 + 2*a^78 + a^82 + a^88 + a^96 + 2*a^98 + 2*a^102 + a^104 + 2*a^106 + a^108 + 2*a^110 + a^112 + 2*a^116 + a^126 + 2*a^130 + 2*a^132 + a^144 + 2*a^148 + 2*a^150 + a^152 + 2*a^154 + a^162 + a^164 + a^166 + a^168 + a^170 + a^176 + a^178 + O(a^180) : a + O(a^180) : 1 + O(a^180))
 
         AUTHOR:
 
@@ -910,7 +1082,13 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,4)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E(1,0)
+            sage: EJ = E.curve_over_ram_extn(10)
+            sage: S = E.get_boundary_point(EJ,P)
+            sage: E.P_to_S(P, S)
+            (2*a + 4*a^3 + 2*a^11 + 4*a^13 + 2*a^17 + 2*a^19 + a^21 + 4*a^23 + a^25 + 2*a^27 + 2*a^29 + 3*a^31 + 4*a^33 + O(a^35), a^-5 + 2*a + 2*a^3 + a^7 + 3*a^11 + a^13 + 3*a^15 + 3*a^17 + 2*a^19 + 4*a^21 + 4*a^23 + 4*a^25 + 2*a^27 + a^29 + a^31 + O(a^33))
 
         AUTHOR:
 
@@ -940,7 +1118,17 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,4)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E(1,0)
+            sage: J.<a> = K.extension(x^10-5)
+            sage: EJ  = E.change_ring(J)
+            sage: S = E.get_boundary_point(EJ,P)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: S[0]-P[0] == E.coleman_integral_P_to_S(x.diff(),P,S)
+            True
+            sage: E.coleman_integral_P_to_S(E.invariant_differential(),P,S) == E.P_to_S(P,S)[0]
+            True
 
         AUTHOR:
 
@@ -973,7 +1161,21 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,6)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: J.<a> = K.extension(x^20-5)
+            sage: EJ  = E.change_ring(J)
+            sage: w = E.invariant_differential()
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: P = E(1,0)
+            sage: Q = E(0,3)
+            sage: S = E.get_boundary_point(EJ,P)
+            sage: P_to_S = E.P_to_S(P,S)
+            sage: S_to_Q = EJ.S_to_Q(S,Q)
+            sage: P_to_S + S_to_Q
+            (2*a^40 + a^80 + a^100 + O(a^105), a^20 + 2*a^40 + 4*a^60 + 2*a^80 + O(a^103))
+            sage: E.coleman_integrals_on_basis(P,Q)
+            (2*5^2 + 5^4 + 5^5 + 3*5^6 + O(5^7), 5 + 2*5^2 + 4*5^3 + 2*5^4 + 5^6 + O(5^7))
 
         AUTHOR:
 
@@ -1045,7 +1247,20 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,6)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: J.<a> = K.extension(x^20-5)
+            sage: EJ = E.change_ring(J)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: P = E(1,0)
+            sage: Q = E(0,3)
+            sage: S = E.get_boundary_point(EJ,P)
+            sage: P_to_S = E.coleman_integral_P_to_S(y.diff(),P,S)
+            sage: S_to_Q = EJ.coleman_integral_S_to_Q(y.diff(),S,Q)
+            sage: P_to_S + S_to_Q
+            3 + O(a^119)
+            sage: E.coleman_integral(y.diff(),P,Q)
+            3 + O(5^6)
 
         AUTHOR:
 
@@ -1085,7 +1300,20 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         EXAMPLES::
 
-            TODO
+            sage: K = Qp(5,6)
+            sage: E = EllipticCurve(K, [-10,9])
+            sage: P = E(1,0)
+            sage: Q = E(0,3)
+            sage: x,y = E.monsky_washnitzer_gens()
+            sage: E.coleman_integral_from_weierstrass_via_boundary(y.diff(),P,Q,20)
+            3 + O(a^119)
+            sage: E.coleman_integral(y.diff(),P,Q)
+            3 + O(5^6)
+            sage: w = E.invariant_differential()
+            sage: E.coleman_integral_from_weierstrass_via_boundary(w,P,Q,20)
+            2*a^40 + a^80 + a^100 + O(a^105)
+            sage: E.coleman_integral(w,P,Q)
+            2*5^2 + 5^4 + 5^5 + 3*5^6 + O(5^7)
 
         AUTHOR:
 
