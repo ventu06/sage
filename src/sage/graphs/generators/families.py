@@ -3056,7 +3056,7 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True, immutable=False):
     return H.copy(immutable=True) if immutable else H
 
 
-def line_graph_forbidden_subgraphs():
+def line_graph_forbidden_subgraphs(immutable=False):
     r"""
     Return the 9 forbidden subgraphs of a line graph.
 
@@ -3064,6 +3064,11 @@ def line_graph_forbidden_subgraphs():
 
     The graphs are returned in the ordering given by the Wikipedia
     drawing, read from left to right and from top to bottom.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3078,66 +3083,21 @@ def line_graph_forbidden_subgraphs():
         Graph on 6 vertices,
         Graph on 5 vertices]
     """
-    from sage.graphs.graph import Graph
     from sage.graphs.generators.basic import ClawGraph
-    graphs = [ClawGraph()]
+    L = [ClawGraph(immutable=immutable)]
 
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2],
-                5: [3]
-                }))
+    dd = [{0: [1, 2, 3], 1: [2, 3], 4: [2], 5: [3]},
+          {0: [1, 2, 3, 4], 1: [2, 3, 4], 3: [4], 2: [5]},
+          {0: [1, 2, 3], 1: [2, 3], 4: [2, 3]},
+          {0: [1, 2, 3], 1: [2, 3], 4: [2], 5: [3, 4]},
+          {0: [1, 2, 3, 4], 1: [2, 3, 4], 3: [4], 5: [2, 0, 1]},
+          {5: [0, 1, 2, 3, 4], 0: [1, 4], 2: [1, 3], 3: [4]},
+          {1: [0, 2, 3, 4], 3: [0, 4], 2: [4, 5], 4: [5]},
+          {0: [1, 2, 3], 1: [2, 3, 4], 2: [3, 4], 3: [4]}]
 
-    graphs.append(Graph({
-                0: [1, 2, 3, 4],
-                1: [2, 3, 4],
-                3: [4],
-                2: [5]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2, 3]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2],
-                5: [3, 4]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3, 4],
-                1: [2, 3, 4],
-                3: [4],
-                5: [2, 0, 1]
-                }))
-
-    graphs.append(Graph({
-                5: [0, 1, 2, 3, 4],
-                0: [1, 4],
-                2: [1, 3],
-                3: [4]
-                }))
-
-    graphs.append(Graph({
-                1: [0, 2, 3, 4],
-                3: [0, 4],
-                2: [4, 5],
-                4: [5]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3, 4],
-                2: [3, 4],
-                3: [4]
-                }))
-
-    return graphs
+    for d in dd:
+        L.append(Graph(d, format="dict_of_lists", immutable=immutable))
+    return L
 
 
 def petersen_family(generate=False):
