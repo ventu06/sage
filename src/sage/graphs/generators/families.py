@@ -2737,7 +2737,7 @@ def SquaredSkewHadamardMatrixGraph(n, immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def SwitchedSquaredSkewHadamardMatrixGraph(n):
+def SwitchedSquaredSkewHadamardMatrixGraph(n, immutable=False):
     r"""
     A strongly regular graph in Seidel switching class of
     :meth:`~sage.graphs.graph_generators.GraphGenerators.SquaredSkewHadamardMatrixGraph`.
@@ -2755,6 +2755,13 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_switch_skewhad`
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2780,7 +2787,7 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
     G.name("switch skewhad^2+*_" + str(n))
-    return G
+    return G.comy(immutable=True) if immutable else G
 
 
 def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
