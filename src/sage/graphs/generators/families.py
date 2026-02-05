@@ -4599,7 +4599,7 @@ def BiwheelGraph(n, immutable=False):
     return G
 
 
-def TruncatedBiwheelGraph(n):
+def TruncatedBiwheelGraph(n, immutable=False):
     r"""
     Return a truncated biwheel graph with `2n` nodes
 
@@ -4622,6 +4622,9 @@ def TruncatedBiwheelGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4677,17 +4680,14 @@ def TruncatedBiwheelGraph(n):
         raise ValueError("parameter n must be at least 3")
 
     pos_dict = {2*n - 2: (0, n), 2*n - 1: (0, -n)}
-    edges = [(0, 2*n - 2), (2*n - 3, 2*n - 1)]
-
     for v in range(2*n - 2):
         pos_dict[v] = (2*(v-n) + 3, 0)
-        if v % 2 == 0:
-            edges += [(v, 2*n - 1)]
-        else:
-            edges += [(v, 2*n - 2)]
 
-    G = Graph(2 * n, pos=pos_dict, name="Truncated biwheel graph")
-    G.add_path(list(range(2*n - 2)))
-    G.add_edges(edges)
-
-    return G
+    from itertools import chain
+    E1 = ((0, 2*n - 2), (2*n - 3, 2*n - 1))
+    E2 = ((i, i + 1) for i in range(2*n - 3))
+    S1 = ((v, 2*n - 1) for v in range(0, 2*n - 2, 2))
+    S2 = ((v, 2*n - 2) for v in range(1, 2*n - 2, 2))
+    return Graph([range(2 * n), chain(E1, E2, S1, S2)],
+                 format="vertices_and_edges", pos=pos_dict,
+                 name="Truncated biwheel graph", immutable=immutable)
