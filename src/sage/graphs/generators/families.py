@@ -1681,7 +1681,7 @@ def FuzzyBallGraph(partition, q, immutable=False):
                  name=f"Fuzzy-Ball({partition}, {q})")
 
 
-def GeneralizedPetersenGraph(n, k, immutable=False):
+def GeneralizedPetersenGraph(n, k, immutable=False, name=None):
     r"""
     Return a generalized Petersen graph with `2n` nodes. The variables
     `n`, `k` are integers such that `n>2` and `0<k\leq\lfloor(n-1)`/`2\rfloor`
@@ -1700,6 +1700,9 @@ def GeneralizedPetersenGraph(n, k, immutable=False):
 
     - ``immutable`` -- boolean (default: ``False``); whether to return an
       immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     PLOTTING: Upon construction, the position dictionary is filled to
     override the spring-layout algorithm. By convention, the generalized
@@ -1747,13 +1750,14 @@ def GeneralizedPetersenGraph(n, k, immutable=False):
         raise ValueError("n must be larger than 2")
     if k < 1 or k > (n - 1) // 2:
         raise ValueError("k must be in 1<= k <=floor((n-1)/2)")
+    if name is None:
+        name = f"Generalized Petersen graph (n={n},k={k})"
     from itertools import chain
     E1 = ((i, (i + 1) % n) for i in range(n))
     E2 = ((i, i + n) for i in range(n))
     E3 = (( i + n, n + (i + k) % n) for i in range(n))
     G = Graph([range(2*n), chain(E1, E2, E3)], format="vertices_and_edges",
-              name=f"Generalized Petersen graph (n={n},k={k})",
-              immutable=immutable)
+              name=name, immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     G._circle_embedding(list(range(n, 2*n)), radius=.5, angle=pi/2)
     return G
@@ -3101,7 +3105,7 @@ def line_graph_forbidden_subgraphs():
     return graphs
 
 
-def petersen_family(generate=False):
+def petersen_family(generate=False, immutable=False):
     r"""
     Return the Petersen family.
 
@@ -3114,6 +3118,9 @@ def petersen_family(generate=False):
     - ``generate`` -- boolean; whether to generate the family from the
       `\Delta-Y` transformations. When set to ``False`` (default) a hardcoded
       version of the graphs (with a prettier layout) is returned.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return immutable
+      or mutable graphs
 
     EXAMPLES::
 
@@ -3134,27 +3141,47 @@ def petersen_family(generate=False):
         sage: F2 = [g.canonical_label().graph6_string() for g in F2]                    # needs sage.modules
         sage: set(F1) == set(F2)                                                        # needs sage.modules
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: F = graphs.petersen_family(generate=False, immutable=False)
+        sage: any(g.is_immutable() for g in F)
+        False
+        sage: F = graphs.petersen_family(generate=False, immutable=True)
+        sage: all(g.is_immutable() for g in F)
+        True
+
+        sage: # needs sage.modules
+        sage: F = graphs.petersen_family(generate=True, immutable=False)
+        sage: any(g.is_immutable() for g in F)
+        False
+        sage: F = graphs.petersen_family(generate=True, immutable=True)
+        sage: all(g.is_immutable() for g in F)
+        True
     """
     from sage.graphs.generators.smallgraphs import PetersenGraph
     if not generate:
         from sage.graphs.generators.basic import CompleteGraph, \
              CompleteBipartiteGraph, CompleteMultipartiteGraph
-        l = [PetersenGraph(), CompleteGraph(6),
-             CompleteMultipartiteGraph([3, 3, 1])]
+        l = [PetersenGraph(immutable=immutable),
+             CompleteGraph(6, immutable=immutable),
+             CompleteMultipartiteGraph([3, 3, 1], immutable=immutable)]
         g = CompleteBipartiteGraph(4, 4)
         g.delete_edge(0, 4)
         g.name("")
-        l.append(g)
-        g = Graph('HKN?Yeb')
+        l.append(g.copy(immutable=True) if immutable else g)
+        g = Graph('HKN?Yeb', format="graph6", immutable=immutable)
         g._circle_embedding([1, 2, 4, 3, 0, 5])
         g._circle_embedding([6, 7, 8], radius=.6, shift=1.25)
         l.append(g)
-        g = Graph('Fs\\zw')
+        g = Graph('Fs\\zw', format="graph6", immutable=immutable)
         g._circle_embedding([1, 2, 3])
         g._circle_embedding([4, 5, 6], radius=.7)
         g._pos[0] = (0, 0)
         l.append(g)
-        g = Graph('GYQ[p{')
+        g = Graph('GYQ[p{', format="graph6", immutable=immutable)
         g._circle_embedding([1, 4, 6, 0, 5, 7, 3], shift=0.25)
         g._pos[2] = (0, 0)
         l.append(g)
@@ -3189,7 +3216,7 @@ def petersen_family(generate=False):
     l_new = [P.canonical_label().graph6_string()]
 
     while l_new:
-        g = l_new.pop(0)
+        g = l_new.pop()
         if g in l:
             continue
         l.add(g)
@@ -3202,7 +3229,7 @@ def petersen_family(generate=False):
             if g.degree(v) == 3:
                 l_new.append(YDeltaTrans(g, v).graph6_string())
 
-    return [Graph(x) for x in l]
+    return [Graph(x, immutable=immutable) for x in l]
 
 
 def p2_forbidden_minors():
