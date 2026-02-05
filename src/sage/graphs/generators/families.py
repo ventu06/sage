@@ -4295,7 +4295,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
     return V.copy(immutable=True) if immutable else V
 
 
-def CubeConnectedCycle(d):
+def CubeConnectedCycle(d, immutable=False):
     r"""
     Return the cube-connected cycle of dimension `d`.
 
@@ -4317,6 +4317,9 @@ def CubeConnectedCycle(d):
     - ``d`` -- positive integer; the dimension of the desired hypercube as well
       as the length of the cycle to be placed at each vertex of the
       `d`-dimensional hypercube
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4351,30 +4354,32 @@ def CubeConnectedCycle(d):
     if d < 1:
         raise ValueError('the dimension d must be greater than 0')
 
-    G = Graph(name=f"Cube-Connected Cycle of dimension {d}")
+    name = f"Cube-Connected Cycle of dimension {d}"
 
     if d == 1:
-        G.allow_loops(True)
         # only d = 1 requires loops
-        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 0)), ((0, 1), (0, 1))])
-        return G
+        return Graph([((0, 0), (0, 1)), ((0, 0), (0, 0)), ((0, 1), (0, 1))],
+                     format="list_of_edges", loops=True, name=name,
+                     immutable=immutable)
 
     if d == 2:
         # only d = 2 require multiple edges
-        G.allow_multiple_edges(True)
-        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
-                     ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
-                     ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
-                     ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))])
-        return G
+        return Graph([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
+                      ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
+                      ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
+                      ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))],
+                     format="list_of_edges", multiedges=True, name=name,
+                     immutable=immutable)
 
-    for x in range(1 << d):
-        G.add_cycle([(x, y) for y in range(d)])
+    from itertools import chain
+    def cycle(x, d):
+        return chain((((x, y), (x, y + 1)) for y in range(d - 1)),
+                     (((x, 0), (x, d - 1)),))
 
-    for x, y in G:
-        G.add_edge((x, y), (x ^ (1 << y), y))
-
-    return G
+    cycles = chain(*(cycle(x, d) for x in range(1 << d)))
+    cube = (((x, y), (x ^ (1 << y), y)) for x in range(1 << d) for y in range(d))
+    return Graph(chain(cycles, cube), format="list_of_edges", name=name,
+                 immutable=immutable)
 
 
 def StaircaseGraph(n):
