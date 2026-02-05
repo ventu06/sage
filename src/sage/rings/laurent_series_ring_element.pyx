@@ -167,6 +167,18 @@ cdef class LaurentSeries(AlgebraElement):
                 self.__u = parent._power_series_ring(f >> val)
 
     def __reduce__(self):
+        """
+        For pickling.
+
+        EXAMPLES::
+
+            sage: R.<q> = LaurentSeriesRing(ZZ)
+            sage: p = R([1,2,3])
+            sage: loads(dumps(p)) == p
+            True
+            sage: type(p)
+            <class 'sage.rings.laurent_series_ring_element.LaurentSeries'>
+        """
         return self._parent, (self.__u, self.__n)
 
     def change_ring(self, R):
@@ -496,6 +508,16 @@ cdef class LaurentSeries(AlgebraElement):
         return s[1:]
 
     def __hash__(self):
+        """
+        Return the hash of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(QQ)
+            sage: f = -5/t^(10) + t + t^2 - 10/3*t^3
+            sage: hash(f)  # random
+            -3700306575898560102
+        """
         return hash(self.__u) ^ self.__n
 
     def __getitem__(self, i):
@@ -925,9 +947,29 @@ cdef class LaurentSeries(AlgebraElement):
                           self.__n + right.__n)
 
     cpdef _rmul_(self, Element c):
+        """
+        Multiply ``self`` on the right by a scalar ``c``.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(GF(7))
+            sage: f = t^(-1) + 3*t^4 + O(t^11)
+            sage: f * GF(7)(3)
+            3*t^-1 + 2*t^4 + O(t^11)
+        """
         return type(self)(self._parent, self.__u._rmul_(c), self.__n)
 
     cpdef _lmul_(self, Element c):
+        """
+        Multiply ``self`` on the left by a scalar ``c``.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(GF(11))
+            sage: f = t^(-2) + 1 + 3*t^4 + O(t^120)
+            sage: 2 * f
+            2*t^-2 + 2 + 6*t^4 + O(t^120)
+        """
         return type(self)(self._parent, self.__u._lmul_(c), self.__n)
 
     def __pow__(_self, r, dummy):
@@ -1013,9 +1055,31 @@ cdef class LaurentSeries(AlgebraElement):
         return type(self)(self._parent, self.__u, self.__n + k)
 
     def __lshift__(LaurentSeries self, k):
+        """
+        Shift ``self`` to the left by ``k``, i.e. multiply by `x^k`.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(QQ)
+            sage: f = t^(-6) + 1 + t + t^4
+            sage: f << 1
+            t^-5 + t + t^2 + t^5
+        """
         return type(self)(self._parent, self.__u, self.__n + k)
 
     def __rshift__(LaurentSeries self, k):
+        """
+        Shift ``self`` to the right by ``k``, i.e. multiply by `x^{-k}`.
+
+        EXAMPLES::
+
+            sage: R.<t> = LaurentSeriesRing(GF(2))
+            sage: f = t + t^4 + O(t^7)
+            sage: f >> 1
+            1 + t^3 + O(t^6)
+            sage: f >> 10
+            t^-9 + t^-6 + O(t^-3)
+        """
         return type(self)(self._parent, self.__u, self.__n - k)
 
     def truncate(self, long n):
@@ -1404,6 +1468,17 @@ cdef class LaurentSeries(AlgebraElement):
             return self.prec() - self.valuation()
 
     def __copy__(self):
+        """
+        Return a copy of ``self``.
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentSeriesRing(ZZ)
+            sage: f = R.random_element()
+            sage: g = copy(f)
+            sage: g == f
+            True
+        """
         return type(self)(self._parent, self.__u.__copy__(), self.__n)
 
     def reverse(self, precision=None):
