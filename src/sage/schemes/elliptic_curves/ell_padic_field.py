@@ -12,7 +12,7 @@ Elliptic curves over `p`-adic fields
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #    General Public License for more details.
-#
+#q
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
@@ -564,18 +564,24 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         xPv = P[0].valuation()
         yPv = P[1].valuation()
         F = self.base_ring().residue_field()
-        HF = self.change_ring(F)
+        try:
+            HF = self.change_ring(F)
+        except:
+            raise ValueError(
+                "The base change of the elliptic curve to the residue field is not well-defined."
+                )
+
         if P == self(0, 1, 0):
             return HF(0, 1, 0)
         elif yPv > 0:
             if xPv > 0:
                 return HF(0, 0, 1)
-            if xPv == 0:
+            else:
                 return HF(P[0].expansion(0), 0, 1)
         elif yPv == 0:
             if xPv > 0:
                 return HF(0, P[1].expansion(0), 1)
-            if xPv == 0:
+            else:
                 return HF(P[0].expansion(0), P[1].expansion(0), 1)
         else:
             return HF(0, 1, 0)
