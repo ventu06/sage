@@ -4033,7 +4033,8 @@ def TuranGraph(n, r, immutable=False):
     return g
 
 
-def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
+def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
+                    immutable=False):
     r"""
     Return a strongly regular graph of S6 type from [Muz2007]_ on
     `n^d((n^d-1)/(n-1)+1)` vertices.
@@ -4078,6 +4079,9 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     - ``verbose`` -- boolean (default: ``False``); if ``True``, print progress
       information
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -4288,7 +4292,7 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     V.name('Muzychuk S6 graph with parameters ('+str(n)+','+str(d)+')')
     if verbose:
         print('finished at %f (+%f)' % ((time() - t), time() - t1))
-    return V
+    return V.copy(immutable=True) if immutable else V
 
 
 def CubeConnectedCycle(d):
