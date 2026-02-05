@@ -3756,7 +3756,7 @@ def RingedTree(k, vertex_labels=True, immutable=False):
     return g.copy(immutable=True) if immutable else g
 
 
-def MathonPseudocyclicMergingGraph(M, t):
+def MathonPseudocyclicMergingGraph(M, t, immutable=False):
     r"""
     Mathon's merging of classes in a pseudo-cyclic 3-class association scheme.
 
@@ -3768,6 +3768,9 @@ def MathonPseudocyclicMergingGraph(M, t):
       the identity matrix must be the first entry
 
     - ``t`` -- integer; the number of the graph, from 0 to 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -3801,7 +3804,6 @@ def MathonPseudocyclicMergingGraph(M, t):
         ...
         AssertionError...
     """
-    from sage.graphs.graph import Graph
     from sage.matrix.constructor import identity_matrix
     assert len(M) == 4
     assert M[0] == identity_matrix(M[0].nrows())
@@ -3810,7 +3812,7 @@ def MathonPseudocyclicMergingGraph(M, t):
         A += sum(x.tensor_product(M[0]) for x in M[1:])
     if t > 1:
         A += sum(M[0].tensor_product(x) for x in M[1:])
-    return Graph(A)
+    return Graph(A, immutable=immutable)
 
 
 def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
