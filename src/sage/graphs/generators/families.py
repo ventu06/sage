@@ -4496,7 +4496,7 @@ def StaircaseGraph(n, immutable=False):
                  format="vertices_and_edges", pos=pos_dict, immutable=immutable)
 
 
-def BiwheelGraph(n):
+def BiwheelGraph(n, immutable=False):
     r"""
     Return a biwheel graph with `2n` nodes
 
@@ -4521,6 +4521,9 @@ def BiwheelGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 4; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4579,29 +4582,20 @@ def BiwheelGraph(n):
     if n < 4:
         raise ValueError("parameter n must be at least 4")
 
-    angle_param = 0
-
-    if n % 2:
-        from math import pi
-        angle_param = pi / (2*n - 2)
-
-    G = Graph(2 * n, name="Biwheel graph")
-    pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
-    edges = []
+    from itertools import chain
+    C1 = ((i, i + 1) for i in range(2*n - 3))
+    C2 = ((0, 2*n - 3),)
+    S1 = ((i, 2*n - 1) for i in range(0, 2*n - 2, 2))
+    S2 = ((i, 2*n - 2) for i in range(1, 2*n - 2, 2))
+    G = Graph([range(2*n), chain(C1, C2, S1, S2)], format="vertices_and_edges",
+              name="Biwheel graph", immutable=immutable)
 
     from sage.rings.rational_field import QQ
+    angle_param = (pi / (2*n - 2)) if n % 2 else 0
+    pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
     pos_dict[2*n - 2] = (-QQ((1, 3)), 0)
     pos_dict[2*n - 1] = (QQ((1, 3)), 0)
-
-    for i in range(2*n - 2):
-        if i % 2 == 0:
-            edges += [(i, 2*n - 1)]
-        else:
-            edges += [(i, 2*n - 2)]
-
     G.set_pos(pos_dict)
-    G.add_cycle(list(range(2*n - 2)))
-    G.add_edges(edges)
     return G
 
 
