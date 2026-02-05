@@ -388,9 +388,9 @@ cdef class LaurentSeries(AlgebraElement):
 
             sage: R.<x> = LaurentSeriesRing(QQ)
             sage: f = -1/x + 1 + 2*x^2 + 5*x^5
-            sage: f.V(2)
+            sage: f.verschiebung(2)
             -x^-2 + 1 + 2*x^4 + 5*x^10
-            sage: f.V(-1)
+            sage: f.verschiebung(-1)
             5*x^-5 + 2*x^-2 + 1 - x
             sage: h = f.add_bigoh(7)
             sage: h.V(2)
@@ -1092,7 +1092,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def truncate(self, long n):
         r"""
-        Return the Laurent series of degree ` < n` which is
+        Return the Laurent series of degree `< n` which is
         equivalent to ``self`` modulo `x^n`.
 
         EXAMPLES::
@@ -1112,7 +1112,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def truncate_laurentseries(self, long n):
         r"""
-        Replace any terms of degree >= n by big oh.
+        Replace any terms of degree `\geq n` by big oh.
 
         EXAMPLES::
 
@@ -1423,10 +1423,10 @@ cdef class LaurentSeries(AlgebraElement):
 
     def prec(self):
         """
-        This function returns the n so that the Laurent series is of the
+        This function returns the `n` so that the Laurent series is of the
         form (stuff) + `O(t^n)`. It doesn't matter how many
-        negative powers appear in the expansion. In particular, prec could
-        be negative.
+        negative powers appear in the expansion. In particular, the output
+        could be negative.
 
         EXAMPLES::
 
@@ -1497,15 +1497,16 @@ cdef class LaurentSeries(AlgebraElement):
 
     def reverse(self, precision=None):
         """
-        Return the reverse of f, i.e., the series g such that g(f(x)) = x.
-        Given an optional argument ``precision``, return the reverse with given
-        precision (note that the reverse can have precision at most
-        ``f.prec()``).  If ``f`` has infinite precision, and the argument
-        ``precision`` is not given, then the precision of the reverse defaults
-        to the default precision of ``f.parent()``.
+        Return the reverse of ``self``, i.e., the series ``g`` such that
+        ``g(self(x)) = x``. Given an optional argument ``precision``, return
+        the reverse with given precision (note that the reverse can have
+        precision at most ``self.prec()``).  If ``self`` has infinite
+        precision, and the argument ``precision`` is not given, then the
+        precision of the reverse defaults to the default precision of
+        ``self.parent()``.
 
         Note that this is only possible if the valuation of ``self`` is exactly
-        1.
+        `1`.
 
         The implementation depends on the underlying power series element
         implementing a reverse method.
@@ -1955,7 +1956,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def inverse(self):
         """
-        Return the inverse of self, i.e., self^(-1).
+        Return the inverse of ``self``, i.e., ``self``^(-1).
 
         EXAMPLES::
 
