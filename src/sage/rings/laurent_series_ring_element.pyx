@@ -1981,3 +1981,59 @@ cdef class LaurentSeries(AlgebraElement):
         f = self.__u
         x = f.parent().gen()
         return f.__pari__() * x.__pari__()**self.__n
+
+    def map_coefficients(self, f, new_base_ring=None):
+        """
+        Return the series obtained by applying ``f`` to the nonzero
+        coefficients of ``self``.
+
+        If ``f`` is a :class:`sage.categories.map.Map`, then the resulting
+        series will be defined over the codomain of ``f``. Otherwise, the
+        resulting series will be over the same ring as ``self``. Set
+        ``new_base_ring`` to override this behaviour.
+
+        INPUT:
+
+        - ``f`` -- a callable that will be applied to the coefficients of
+          ``self``
+
+        - ``new_base_ring`` -- commutative ring (default: ``None``) if given,
+          the resulting series will be defined over this ring
+
+        EXAMPLES::
+
+            sage: R.<x> = LaurentSeriesRing(SR)
+            sage: f = (1+I)*x^2 + 3*x - I + x^(-2)
+            sage: f.map_coefficients(lambda z: z.conjugate())
+            x^-2 + I + 3*x + (-I + 1)*x^2
+            sage: R.<x> = LaurentSeriesRing(ZZ)
+            sage: f = x^2 - 2*x + 1 + 2 * x^(-1)
+            sage: f.map_coefficients(lambda t: t - 1)
+            x^-1 - 3*x
+
+        Examples with a new base ring::
+
+            sage: R.<x> = LaurentSeriesRing(ZZ)
+            sage: k = GF(5)
+            sage: residue = lambda x: k(x)
+            sage: f = 4*x^2 + x + 8 + 5*x^(-1) - 1*x^(-2)
+            sage: g = f.map_coefficients(residue); g
+            4*x^-2 + 3 + x + 4*x^2
+            sage: g.parent()
+            Laurent Series Ring in x over Integer Ring
+            sage: g = f.map_coefficients(residue, new_base_ring=k); g
+            4*x^-2 + 3 + x + 4*x^2
+            sage: g.parent()
+            Laurent Series Ring in x over Finite Field of size 5
+            sage: residue = k.coerce_map_from(ZZ)
+            sage: g = f.map_coefficients(residue); g
+            4*x^-2 + 3 + x + 4*x^2
+            sage: g.parent()
+            Laurent Series Ring in x over Finite Field of size 5
+        """
+        unit = self.__u
+        res = unit.map_coefficients(f, new_base_ring)
+        if res.base_ring() != unit.base_ring():
+            return self.parent().change_ring(res.base_ring())(res, self.__n)
+        else:
+            return self.parent()(res, self.__n)

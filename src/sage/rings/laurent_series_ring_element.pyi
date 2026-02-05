@@ -180,5 +180,9 @@ class LaurentSeriesRingElement:
     def __pari__(self) -> Any:
         ...
 
+    def map_coefficients(self, f: Any, new_base_ring: Any = None) -> 'LaurentSeriesRingElement':
+        ...
+
+
 def laurent_series_ring_element(parent: Any, f: Any, n: int = 0) -> LaurentSeriesRingElement:
     return LaurentSeriesRingElement(parent, f, n)
