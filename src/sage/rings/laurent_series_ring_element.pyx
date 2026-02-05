@@ -1956,7 +1956,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def inverse(self):
         """
-        Return the inverse of ``self``, i.e., ``self``^(-1).
+        Return the inverse of ``self``, i.e., ``self`` ^(-1).
 
         EXAMPLES::
 
