@@ -4382,7 +4382,7 @@ def CubeConnectedCycle(d, immutable=False):
                  immutable=immutable)
 
 
-def StaircaseGraph(n):
+def StaircaseGraph(n, immutable=False):
     r"""
     Return a staircase graph with `2n` nodes
 
@@ -4407,6 +4407,9 @@ def StaircaseGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4472,29 +4475,25 @@ def StaircaseGraph(n):
         2*n - 2: (0, -1),
         2*n - 1: (n, -1)
     }
-
-    edges = [
-        (0, n - 1),
-        (0, 2*n - 2),
-        (n - 2, 2*n - 3),
-        (n - 2, 2*n - 1),
-        (n - 1, 2*n - 2),
-        (2*n - 3, 2*n - 1),
-        (2*n - 2, 2*n - 1)
-    ]
-
     for v in range(1, n - 2):
         pos_dict[v] = (v + 1, 1)
-        edges.append((v, v + n - 1))
-
     for v in range(n - 1, 2*n - 2):
         pos_dict[v] = (v - n + 2, 0)
 
-    G = Graph(2 * n, pos=pos_dict, name="Staircase graph")
-    G.add_edges(edges)
-    G.add_path(list(range(n - 1)))
-    G.add_path(list(range(n - 1, 2*n - 2)))
-    return G
+    from itertools import chain
+    E1 = ((0, n - 1),
+          (0, 2*n - 2),
+          (n - 2, 2*n - 3),
+          (n - 2, 2*n - 1),
+          (n - 1, 2*n - 2),
+          (2*n - 3, 2*n - 1),
+          (2*n - 2, 2*n - 1))
+    E2 = ((v, v + n - 1) for v in range(1, n - 2))
+    E3 = ((i, i + 1) for i in range(n - 2))
+    E4 = ((i, i + 1) for i in range(n - 1, 2*n - 3))
+
+    return Graph([range(2 * n), chain(E1, E2, E3, E4)], name="Staircase graph",
+                 format="vertices_and_edges", pos=pos_dict, immutable=immutable)
 
 
 def BiwheelGraph(n):
