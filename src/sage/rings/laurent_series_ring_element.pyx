@@ -226,6 +226,8 @@ cdef class LaurentSeries(AlgebraElement):
 
     def is_zero(self):
         """
+        Return ``True`` is ``self`` is zero.
+
         EXAMPLES::
 
             sage: x = Frac(QQ[['x']]).0
@@ -590,6 +592,12 @@ cdef class LaurentSeries(AlgebraElement):
 
     def list(self):
         """
+        Return the ``list`` method applied to `u`.
+
+        .. SEEALSO::
+
+           :meth:`sage.rings.power_series_ring_element.PowerSeries.list`
+
         EXAMPLES::
 
             sage: R.<t> = LaurentSeriesRing(QQ)
@@ -1349,6 +1357,8 @@ cdef class LaurentSeries(AlgebraElement):
 
     def valuation_zero_part(self):
         """
+        Return the "unit part" of ``self``, that is, `u`.
+
         EXAMPLES::
 
             sage: x = Frac(QQ[['x']]).0
@@ -1365,6 +1375,8 @@ cdef class LaurentSeries(AlgebraElement):
 
     def valuation(self):
         """
+        Return the valuation of ``self``, that is, `n`.
+
         EXAMPLES::
 
             sage: R.<x> = LaurentSeriesRing(QQ)
@@ -1398,6 +1410,8 @@ cdef class LaurentSeries(AlgebraElement):
 
     def variable(self):
         """
+        Return the variable name of the parent of ``self``.
+
         EXAMPLES::
 
             sage: x = Frac(QQ[['x']]).0
