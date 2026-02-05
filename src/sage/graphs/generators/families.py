@@ -3967,7 +3967,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
     return A.copy(immutable=True) if immutable else A
 
 
-def TuranGraph(n, r):
+def TuranGraph(n, r, immutable=False):
     r"""
     Return the Turan graph with parameters `n, r`.
 
@@ -3982,6 +3982,9 @@ def TuranGraph(n, r):
     - ``n`` -- integer; the number of vertices in the graph
 
     - ``r`` -- integer; the number of partitions of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4025,9 +4028,8 @@ def TuranGraph(n, r):
     s = n % r
     vertex_sets = [p]*(r - s) + [p + 1]*s
 
-    g = CompleteMultipartiteGraph(vertex_sets)
-    g.name('Turan Graph with n: {}, r: {}'.format(n, r))
-
+    g = CompleteMultipartiteGraph(vertex_sets, immutable=immutable)
+    g._name = f"Turan Graph with n: {n}, r: {r}"
     return g
 
 
