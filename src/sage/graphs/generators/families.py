@@ -3815,7 +3815,7 @@ def MathonPseudocyclicMergingGraph(M, t, immutable=False):
     return Graph(A, immutable=immutable)
 
 
-def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
+def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
     r"""
     Return a strongly regular graph on `(4t+1)(4t-1)^2` vertices from
     [Mat1978]_.
@@ -3843,6 +3843,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
       otherwise use the user-supplied one. Here non-isomorphic Latin squares
       -- one constructed from `Z/9Z`, and the other from `(Z/3Z)^2` --
       lead to non-isomorphic graphs.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -3961,7 +3964,7 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     A = Graph(block_matrix(p, p, [Acon(i, j) for i in range(p) for j in range(p)]))
     A.name("Mathon's PC SRG on " + str(p*q**2) + " vertices")
     A.relabel()
-    return A
+    return A.copy(immutable=True) if immutable else A
 
 
 def TuranGraph(n, r):
