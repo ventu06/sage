@@ -60,6 +60,7 @@ from sage.modules.free_module_element import vector
 from sage.monoids.indexed_free_monoid import (IndexedFreeAbelianMonoid,
                                               IndexedFreeAbelianMonoidElement)
 from sage.rings.rational_field import QQ
+from sage.rings.infinity import Infinity
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
@@ -67,6 +68,7 @@ from sage.sets.set import Set
 from sage.structure.category_object import normalize_names
 from sage.structure.element import Element, parent
 from sage.structure.factorization import Factorization
+from sage.structure.global_options import GlobalOptions
 from sage.structure.parent import Parent
 from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GT, op_GE
 from sage.structure.unique_representation import (UniqueRepresentation,
@@ -322,6 +324,12 @@ class AtomicSpeciesElement(WithEqualityById,
             sage: a = A(G, {1: [1,2,3,4,5,6,7,8,9,10]}); a
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
+        P = self.parent()
+        if (self._tc not in P._renamed
+            and self._tc <= P.options.rename()):
+            P._rename(self._tc)
+            return repr(self)
+
         if self.parent()._arity == 1:
             return "{" + f"{self._dis.gens()}" + "}"
         dompart = ', '.join("{" + repr(sorted(b))[1:-1] + "}"
@@ -537,6 +545,13 @@ class AtomicSpecies(UniqueRepresentation, Parent):
     - ``names`` -- an iterable of strings for the sorts of the
       species
     """
+    class options(GlobalOptions):
+        NAME = 'species'
+        module = 'sage.rings.species'
+        rename = dict(default=12,
+                      description='the maximal size of set like species to rename',
+                      checker=lambda x: x is Infinity or x in ZZ and x >= 0)
+
     @staticmethod
     def __classcall__(cls, names):
         """
@@ -712,8 +727,6 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 raise ValueError(f"values of pi (={pi.values()}) must partition the domain of G (={G.domain()})")
         dompart = [pi.get(s, []) for s in range(self._arity)]
         elm = self.element_class(self, G, dompart)
-        if elm._tc not in self._renamed:
-            self._rename(elm._tc)
         return elm
 
     def _rename(self, n):
@@ -1104,9 +1117,11 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
           - an element of ``self`` (in this case ``pi`` must be
             ``None``)
           - a permutation group
-          - a triple ``(X, a, side)`` consisting of a finite set, a transitive action and
-            a string 'left' or 'right'; the side can be omitted, it is then assumed to be 'right',
-          - a ``dict`` from ``AtomicSpecies`` to integers
+        - a triple ``(X, a, side)`` consisting of a finite set, a
+            transitive action and a string 'left' or 'right'; the
+            side can be omitted, it is then assumed to be 'right',
+          - a ``dict`` from ``AtomicSpecies`` to integers (in this case ``pi`` must be
+            ``None``)
 
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
@@ -2493,21 +2508,28 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return f"Polynomial species in {', '.join(names)} over {self.base_ring()}"
 
     def _element_constructor_(self, G, pi=None, check=True):
-        r"""
-        Construct the polynomial species with the given data.
+        r"""Construct the polynomial species with the given data.
 
         INPUT:
 
-        - ``G`` -- element of ``self`` (in this case ``pi`` must be
-          ``None``) or permutation group, or triple ``(X, a, side)``
-          consisting of a finite set, an action and a string 'left'
-          or 'right'; the side can be omitted, it is then assumed to
-          be 'right'
+        - ``G`` -- one of the following:
+
+          - an element of ``self``, a ``MolecularSpecies`` or an
+            ``AtomicSpecies`` (in these cases ``pi`` must be
+            ``None``)
+          - a permutation group
+          - a triple ``(X, a, side)`` consisting of a finite set, an action
+            and a string 'left' or 'right'; the side can be omitted, it is
+            then assumed to be 'right'
+          - a ``dict`` from ``MolecularSpecies`` to the base ring (in
+            this case ``pi`` must be ``None``)
+
         - ``pi`` -- ``dict`` mapping sorts to iterables whose union
           is the domain of ``G`` (if ``G`` is a permutation group) or
           the domain of the acting symmetric group (if ``G`` is a
           pair ``(X, a)``); if `k=1` and ``G`` is a permutation
           group, ``pi`` can be omitted
+
         - ``check`` -- boolean (default: ``True``); skip input
           checking if ``False``
 
@@ -2586,10 +2608,38 @@ class PolynomialSpecies(CombinatorialFreeModule):
             ValueError: 1/2 must be an element of the base ring, a permutation
              group or a pair (X, a) specifying a group action of the symmetric
              group on pi=None
+
+        Atomic and molecular species are accepted as arguments::
+
+            sage: from sage.rings.species import AtomicSpecies, PolynomialSpecies
+            sage: P = PolynomialSpecies(ZZ, "X, Y")
+            sage: A = AtomicSpecies("X, Y")
+            sage: P(A(SymmetricGroup(3), {1: [1,2,3]}))
+            E_3(Y)
+
+            sage: A = AtomicSpecies("Z")
+            sage: P(A(SymmetricGroup(3)))
+            Traceback (most recent call last):
+            ...
+            ValueError: all keys of the dict {E_3: 1} must be Atomic species in X, Y
         """
         if parent(G) is self:
             # pi cannot be None because of framework
             raise ValueError("cannot reassign sorts to a polynomial species")
+
+        if isinstance(G, AtomicSpecies.Element):
+            G = self._indices({G: ZZ.one()})
+
+        if isinstance(G, MolecularSpecies.Element):
+            return self._from_dict({G: self.base_ring().one()})
+
+        if isinstance(G, dict):
+            if check:
+                if not all(M.parent() == self._indices for M in G):
+                    raise ValueError(f"all keys of the dict {G} must be {self._indices}")
+                if not all(e in self.base_ring() for e in G.values()):
+                    raise ValueError(f"all values of the dict {G} must be in {self.base_ring()}")
+            return self._from_dict(G)
 
         if isinstance(G, tuple):
             if len(G) == 2:

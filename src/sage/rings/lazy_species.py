@@ -73,7 +73,9 @@ from sage.rings.lazy_series import (LazyCompletionGradedAlgebraElement,
 from sage.rings.lazy_series_ring import (LazyCompletionGradedAlgebra,
                                          LazyPowerSeriesRing,
                                          LazySymmetricFunctions)
-from sage.rings.species import PolynomialSpecies, _label_sets
+from sage.rings.species import (_label_sets,
+                                _SymmetricGroup,
+                                PolynomialSpecies)
 from sage.data_structures.stream import (Stream_zero,
                                          Stream_exact,
                                          Stream_truncated,
@@ -771,7 +773,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             # self = a + b * X; self.revert() = -a/b + 1/b * X
             a = coeff_stream[0]
             b = coeff_stream[1].coefficients()[0]
-            X = R(SymmetricGroup(1))  # as a polynomial species
+            X = R(_SymmetricGroup(1))  # as a polynomial species
             coeff_stream = Stream_exact((-a/b, 1/b * X),
                                         order=0)
             return P.element_class(P, coeff_stream)
@@ -782,7 +784,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             raise ValueError("cannot determine whether the compositional inverse exists")
 
         X_mol = P._laurent_poly_ring._indices.subset(1)[0]  # as a molecular species
-        X = P(SymmetricGroup(1))  # as a lazy species
+        X = P(_SymmetricGroup(1))  # as a lazy species
 
         def coefficient(n):
             if n:
@@ -827,7 +829,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         A1 = M1._indices
 
         def E(mu):
-            return M1({A1(SymmetricGroup(e)): a
+            return M1({A1(_SymmetricGroup(e)): a
                        for e, a in enumerate(mu.to_exp(), 1) if a})
 
         def pi(mu):
@@ -1438,7 +1440,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         R = P._laurent_poly_ring
 
         def coefficient(n):
-            S_n = SymmetricGroup(n)
+            S_n = _SymmetricGroup(n)
             G_n = G[n]
             g_n = factorial(n) * G.generating_series()[n]
             result = R.zero()
@@ -1453,6 +1455,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                     g_act = libgap.FactorCosetAction(S_n, l_G)
                     gens, images = libgap.MappingGeneratorsImages(g_act)
 
+                    # don't cache SymmetricGroup(g_n)
                     f_act = libgap.FactorCosetAction(SymmetricGroup(g_n),
                                                      f.permutation_group()[0])
                     f_images = [libgap.Image(f_act, image) for image in images]
@@ -1657,6 +1660,8 @@ class LazyCombinatorialSpecies(LazyCompletionGradedAlgebra):
         """
         super().__init__(PolynomialSpecies(base_ring, names))
         self._arity = len(names)
+        self.options._add_option('rename',
+                                 {'link_to': (self._laurent_poly_ring._indices._indices.options, 'rename')})
 
 
 class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
@@ -1811,7 +1816,9 @@ class SetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: E is L.Sets()
             True
         """
-        S = parent(SymmetricGroup)
+        P = parent._laurent_poly_ring
+        A = P._indices._indices
+        S = parent(lambda n: A(_SymmetricGroup(n), check=False) if n else P.one())
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):
@@ -1905,8 +1912,15 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
 
             sage: C is L.Cycles()
             True
+
+        We can create large coefficients::
+
+            sage: C[1000].degree()
+            1000
         """
-        S = parent(CyclicPermutationGroup, valuation=1)
+        P = parent._laurent_poly_ring
+        A = P._indices._indices
+        S = parent(lambda n: A(CyclicPermutationGroup(n), check=False), valuation=1)
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):
@@ -1993,7 +2007,9 @@ class PolygonSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: P is L.Polygons()
             True
         """
-        S = parent(DihedralGroup, valuation=3)
+        P = parent._laurent_poly_ring
+        A = P._indices._indices
+        S = parent(lambda n: A(DihedralGroup(n), check=False), valuation=3)
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):
@@ -2023,7 +2039,9 @@ class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             sage: Eo is L.OrientedSets()
             True
         """
-        S = parent(AlternatingGroup, valuation=4)
+        P = parent._laurent_poly_ring
+        A = P._indices._indices
+        S = parent(lambda n: A(AlternatingGroup(n), check=False), valuation=4)
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):

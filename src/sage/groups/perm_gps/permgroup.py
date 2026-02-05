@@ -1542,7 +1542,7 @@ class PermutationGroup_generic(FiniteGroup):
         p = self._libgap_().SmallestMovedPoint()
         return self._domain_from_gap[Integer(p)]
 
-    @cached_method
+#    @cached_method
     def disjoint_direct_product_decomposition(self):
         r"""
         Return the finest partition of the underlying set such that ``self``
