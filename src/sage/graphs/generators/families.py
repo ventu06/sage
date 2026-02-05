@@ -3526,7 +3526,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
     return H
 
 
-def WheelGraph(n):
+def WheelGraph(n, immutable=False):
     """
     Return a Wheel graph with `n` nodes.
 
@@ -3541,6 +3541,13 @@ def WheelGraph(n):
     With the wheel graph, we see that it doesn't take a very large `n` at all
     for the spring-layout to give a counter-intuitive display. (See Graphics
     Array examples below).
+
+    INPUT:
+
+    - ``n`` -- integer; the number of vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3592,19 +3599,25 @@ def WheelGraph(n):
         sage: spring23.show()                   # long time
         sage: posdict23.show()  # long time
     """
-    from sage.graphs.generators.basic import CycleGraph
+    if n < 0:
+        raise ValueError("parameter n must be a positive integer")
     if n < 4:
-        G = CycleGraph(n)
+        from sage.graphs.generators.basic import CycleGraph
+        G = CycleGraph(n, immutable=immutable)
+        G._name = "Wheel graph"
     else:
-        G = CycleGraph(n-1)
-        G.relabel(perm=list(range(1, n)), inplace=True)
-        G.add_edges([(0, i) for i in range(1, n)])
+        from itertools import chain
+        E1 = ((i, i + 1) for i in range(1, n - 1))
+        E2 = ((1, n - 1),)
+        E3 = ((0, i) for i in range(1, n))
+        G = Graph([range(n), chain(E1, E2, E3)], format="vertices_and_edges",
+                  immutable=immutable, name="Wheel graph")
+        G._circle_embedding(list(range(1, n)), angle=pi/2)
         G._pos[0] = (0, 0)
-    G.name("Wheel graph")
     return G
 
 
-def WindmillGraph(k, n):
+def WindmillGraph(k, n, immutable=False):
     r"""
     Return the Windmill graph `Wd(k, n)`.
 
@@ -3621,6 +3634,15 @@ def WindmillGraph(k, n):
         - :wikipedia:`Windmill_graph`
         - :meth:`GraphGenerators.StarGraph`
         - :meth:`GraphGenerators.FriendshipGraph`
+
+    INPUT:
+
+    - ``k`` -- integer; the number of vertices of the complete graphs
+
+    - ``n`` -- integer; the number of copies of the complete graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -3667,9 +3689,11 @@ def WindmillGraph(k, n):
     if k < 2 or n < 2:
         raise ValueError('parameters k and n must be >= 2')
 
+    name = f"Windmill graph Wd({k}, {n})"
     if k == 2:
         from sage.graphs.generators.basic import StarGraph
-        G = StarGraph(n)
+        G = StarGraph(n, immutable=immutable)
+        G._name = name
     else:
         sector = 2*pi/n
         slide = 1/sin(sector/4)
@@ -3680,20 +3704,21 @@ def WindmillGraph(k, n):
             y = float(sin(i*pi/(k-2))) + slide
             pos_dict[i] = (x, y)
 
-        G = Graph()
-        pos = {0: [0, 0]}
+        pos = {0: (0, 0)}
         for i in range(n):
-            V = list(range(i*(k - 1) + 1, (i + 1)*(k - 1) + 1))
-            G.add_clique([0]+V)
+            V = range(i*(k - 1) + 1, (i + 1)*(k - 1) + 1)
             for j, v in enumerate(V):
                 x, y = pos_dict[j]
                 xv = x*cos(i*sector) - y*sin(i*sector)
                 yv = x*sin(i*sector) + y*cos(i*sector)
-                pos[v] = [xv, yv]
+                pos[v] = (xv, yv)
 
-        G.set_pos(pos)
-
-    G.name("Windmill graph Wd({}, {})".format(k, n))
+        from itertools import chain, combinations
+        K = chain(*(combinations(range(i*(k - 1) + 1, (i + 1)*(k - 1) + 1), 2)
+                    for i in range(n)))
+        S = ((0, i) for i in range(1, n*(k - 1) + 1))
+        G = Graph([range((k - 1) * n + 1), chain(K, S)], format="vertices_and_edges",
+                  name=name, immutable=immutable, pos=pos)
     return G
 
 
