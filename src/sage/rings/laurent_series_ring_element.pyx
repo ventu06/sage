@@ -1669,7 +1669,7 @@ cdef class LaurentSeries(AlgebraElement):
 
         # Case 3: The unit part must be a square
         unit_part = (self >> v).power_series()
-        
+
         # We use a try-except block to handle inconsistent API in base rings
         try:
             # Check is_square without keyword args first (safest)
@@ -1689,7 +1689,7 @@ cdef class LaurentSeries(AlgebraElement):
                 sqrt_unit = unit_part.sqrt()
             except (ValueError, ArithmeticError):
                 return False, None
-                
+
             # Reconstruct: t^(v/2) * sqrt(unit)
             return True, self.parent()(sqrt_unit) << (v // 2)
         else:

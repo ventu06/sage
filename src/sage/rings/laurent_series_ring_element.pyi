@@ -1,5 +1,6 @@
 from typing import Any, Optional, Union
 
+
 class LaurentSeriesRingElement:
     def __init__(self, parent: Any, f: Any, n: int = 0) -> None:
         ...
