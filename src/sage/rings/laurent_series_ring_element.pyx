@@ -78,14 +78,6 @@ from sage.structure.richcmp cimport richcmp_not_equal, rich_to_bool
 from sage.misc.derivative import multi_derivative
 
 
-def is_LaurentSeries(x):
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38266,
-                       "The function is_LaurentSeries is deprecated; "
-                       "use 'isinstance(..., LaurentSeries)' instead.")
-    return isinstance(x, LaurentSeries)
-
-
 cdef class LaurentSeries(AlgebraElement):
     r"""
     A Laurent Series.
