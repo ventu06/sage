@@ -3670,7 +3670,7 @@ def WindmillGraph(k, n):
     return G
 
 
-def RingedTree(k, vertex_labels=True):
+def RingedTree(k, vertex_labels=True, immutable=False):
     r"""
     Return the ringed tree on k-levels.
 
@@ -3690,6 +3690,9 @@ def RingedTree(k, vertex_labels=True):
 
     - ``vertex_labels`` -- boolean; whether to label vertices as binary words
       (default) or as integers
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3750,7 +3753,7 @@ def RingedTree(k, vertex_labels=True):
 
     g.relabel(vertices)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def MathonPseudocyclicMergingGraph(M, t):
