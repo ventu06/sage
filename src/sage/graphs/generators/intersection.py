@@ -386,7 +386,7 @@ def ToleranceGraph(tolrep, immutable=False):
     return g
 
 
-def OrthogonalArrayBlockGraph(k, n, OA=None):
+def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
     r"""
     Return the graph of an `OA(k,n)`.
 
@@ -429,6 +429,9 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
     - ``OA`` -- an orthogonal array; if set to ``None`` (default) then
       :func:`~sage.combinat.designs.orthogonal_arrays.orthogonal_array` is
       called to compute an `OA(k,n)`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -520,14 +523,11 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
         for i, x in enumerate(R):
             d[i][x].append(R)
 
-    g = Graph()
-    for L in d:
-        for ll in L:
-            g.add_edges(combinations(ll, 2))
+    from itertools import chain, combinations
+    edges = chain(*(combinations(ll, 2) for L in d for ll in L))
 
-    g.name("OA({},{})".format(k, n))
-
-    return g
+    return Graph(edges, format="list_of_edges", immutable=immutable,
+                 name=f"OA({k},{n})")
 
 
 def IntersectionGraph(S):
