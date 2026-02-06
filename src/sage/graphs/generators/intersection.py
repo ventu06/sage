@@ -530,7 +530,7 @@ def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
                  name=f"OA({k},{n})")
 
 
-def IntersectionGraph(S):
+def IntersectionGraph(S, immutable=False):
     r"""
     Return the intersection graph of the family `S`.
 
@@ -546,6 +546,9 @@ def IntersectionGraph(S):
 
             The elements of `S` must be finite, hashable, and the elements of
             any `s\in S` must be hashable too.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -572,9 +575,9 @@ def IntersectionGraph(S):
                 ground_set_to_sets[x] = []
             ground_set_to_sets[x].append(s)
 
-    g = Graph(name="Intersection Graph")
-    g.add_vertices(S)
-    for clique in ground_set_to_sets.values():
-        g.add_clique(set(clique))
+    from itertools import chain, combinations
+    edges = chain(*(combinations(set(clique), 2)
+                    for clique in ground_set_to_sets.values()))
 
-    return g
+    return Graph([S, edges], format="vertices_and_edges",
+                 name="Intersection Graph", immutable=immutable)
