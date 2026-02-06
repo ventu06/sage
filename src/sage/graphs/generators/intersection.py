@@ -20,7 +20,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 
 
-def IntervalGraph(intervals, points_ordered=False):
+def IntervalGraph(intervals, points_ordered=False, immutable=False):
     r"""
     Return the graph corresponding to the given intervals.
 
@@ -36,6 +36,9 @@ def IntervalGraph(intervals, points_ordered=False):
     - ``points_ordered`` -- states whether every interval `(a_i,b_i)` of
       `intervals` satisfies `a_i<b_i`. If satisfied then setting
       ``points_ordered`` to ``True`` will speed up the creation of the graph.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. NOTE::
 
@@ -88,25 +91,30 @@ def IntervalGraph(intervals, points_ordered=False):
     """
     intervals = list(intervals)
     n = len(intervals)
-    g = Graph(n)
 
     if points_ordered:
-        for i in range(n - 1):
-            li, ri = intervals[i]
-            for j in range(i + 1, n):
-                lj, rj = intervals[j]
-                if ri < lj or rj < li:
-                    continue
-                g.add_edge(i, j)
+        def edges():
+            for i in range(n - 1):
+                li, ri = intervals[i]
+                for j in range(i + 1, n):
+                    lj, rj = intervals[j]
+                    if ri < lj or rj < li:
+                        continue
+                    yield (i, j)
+
     else:
-        for i in range(n - 1):
-            min_I = min(intervals[i])
-            max_I = max(intervals[i])
-            for j in range(i + 1, n):
-                J = intervals[j]
-                if max_I < min(J) or max(J) < min_I:
-                    continue
-                g.add_edge(i, j)
+        def edges():
+            for i in range(n - 1):
+                min_I = min(intervals[i])
+                max_I = max(intervals[i])
+                for j in range(i + 1, n):
+                    J = intervals[j]
+                    if max_I < min(J) or max(J) < min_I:
+                        continue
+                    yield (i, j)
+
+    g = Graph([range(n), edges()], format="vertices_and_edges",
+              immutable=immutable)
 
     rep = dict(zip(range(n), intervals))
     g.set_vertices(rep)
