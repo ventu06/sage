@@ -419,7 +419,6 @@ class LatticePosets(Category):
                     sage: L = T.order_ideals_lattice()
                     sage: all(L.rowmotion_semidistributive(a) == T.rowmotion(a) for a in L)
                     True
-
                 """
                 kd = [self.kappa_dual(e) for e in self.canonical_meetands(a)]
                 return self.join(kd)
