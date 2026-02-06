@@ -2352,13 +2352,13 @@ def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
     if not n:
         return Graph(name=name, immutable=immutable)
 
-    from itertools import chain
+    from itertools import chain, repeat
     # Edges of a cycle
     E1 = ((i, i + 1) for i in range(n - 1))
     E2 = ((0, n - 1),)
     # Edges obtained from repeated iterations over the shift list
-    k = len(shift_list)
-    E3 = ((i % n, (i + shift_list[i % k]) % n) for i in range(repeats * k))
+    E3 = ((i % n, (i + shift) % n)
+          for i, shift in enumerate(chain(*repeat(shift_list, repeats))))
 
     G = Graph([range(n), chain(E1, E2, E3)], format="vertices_and_edges",
               name=name, immutable=immutable)
