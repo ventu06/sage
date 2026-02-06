@@ -122,7 +122,8 @@ def IntervalGraph(intervals, points_ordered=False, immutable=False):
     return g
 
 
-def PermutationGraph(second_permutation, first_permutation=None):
+def PermutationGraph(second_permutation, first_permutation=None,
+                     immutable=False):
     r"""
     Build a permutation graph from one permutation or from two lists.
 
@@ -182,6 +183,9 @@ def PermutationGraph(second_permutation, first_permutation=None):
       When ``first_permutation is None`` (default), it is set to be equal to
       ``sorted(second_permutation)``, which yields the expected ordering when
       the elements of the graph are integers.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -276,13 +280,12 @@ def PermutationGraph(second_permutation, first_permutation=None):
     p2 = Permutation([vertex_to_index[x] for x in second_permutation])
     p2 = p2.inverse()
 
-    g = Graph(name="Permutation graph for "+str(second_permutation))
-    g.add_vertices(second_permutation)
+    edges = ((first_permutation[u - 1], first_permutation[v - 1])
+             for u, v in p2.inversions())
 
-    for u, v in p2.inversions():
-        g.add_edge(first_permutation[u - 1], first_permutation[v - 1])
-
-    return g
+    return Graph([second_permutation, edges], format="vertices_and_edges",
+                 name=f"Permutation graph for {second_permutation}",
+                 immutable=immutable)
 
 
 def ToleranceGraph(tolrep):
