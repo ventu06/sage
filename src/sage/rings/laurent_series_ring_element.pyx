@@ -1506,7 +1506,7 @@ cdef class LaurentSeries(AlgebraElement):
         ``self.parent()``.
 
         Note that this is only possible if the valuation of ``self`` is exactly
-        `1`.
+        1.
 
         The implementation depends on the underlying power series element
         implementing a reverse method.
