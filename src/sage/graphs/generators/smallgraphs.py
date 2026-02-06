@@ -2489,12 +2489,17 @@ def DyckGraph(immutable=False):
                  name="Dyck graph", immutable=immutable)
 
 
-def HortonGraph():
+def HortonGraph(immutable=False):
     r"""
     Return the Horton Graph.
 
     The Horton graph is a cubic 3-connected non-hamiltonian graph. For more
     information, see the :wikipedia:`Horton_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2555,7 +2560,7 @@ def HortonGraph():
 
     g.relabel()
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def EllinghamHorton54Graph(immutable=False):
