@@ -17,7 +17,7 @@ The methods defined here appear in :mod:`sage.graphs.graph_generators`.
 from sage.graphs.graph import Graph
 
 
-def AfricaMap(continental=False, year=2018):
+def AfricaMap(continental=False, year=2018, immutable=False):
     """
     Return African states as a graph of common border.
 
@@ -32,6 +32,9 @@ def AfricaMap(continental=False, year=2018):
 
     - ``year`` -- integer (default: 2018); reserved for future use
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: Africa = graphs.AfricaMap(); Africa
@@ -44,6 +47,8 @@ def AfricaMap(continental=False, year=2018):
         48
         sage: 'Madagaskar' in cont_Africa
         False
+        sage: cont_Africa.is_connected()
+        True
 
     TESTS::
 
@@ -91,16 +96,14 @@ def AfricaMap(continental=False, year=2018):
     no_land_border = ['Cape Verde', 'Seychelles', 'Mauritius',
                       'São Tomé and Príncipe', 'Madagascar', 'Comoros']
 
-    G = Graph(common_border, format='dict_of_lists')
-
     if continental:
-        G = G.subgraph(G.connected_component_containing_vertex('Central Africa', sort=False))
-        G.name(new="Continental Africa Map")
+        name = "Continental Africa Map"
     else:
-        G.add_vertices(no_land_border)
-        G.name(new="Africa Map")
+        common_border.update((c, []) for c in no_land_border)
+        name = "Africa Map"
 
-    return G
+    return Graph(common_border, format='dict_of_lists',
+                 name=name, immutable=immutable)
 
 
 def EuropeMap(continental=False, year=2018):
