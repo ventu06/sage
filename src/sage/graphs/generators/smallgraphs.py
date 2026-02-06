@@ -5144,7 +5144,7 @@ def TricornGraph(immutable=False):
                  name="Tricorn Graph", immutable=immutable)
 
 
-def TruncatedIcosidodecahedralGraph():
+def TruncatedIcosidodecahedralGraph(immutable=False):
     r"""
     Return the truncated icosidodecahedron.
 
@@ -5152,6 +5152,11 @@ def TruncatedIcosidodecahedralGraph():
     faces, 20 regular hexagonal faces, 12 regular decagonal faces, 120 vertices
     and 180 edges. For more information, see the
     :wikipedia:`Truncated_icosidodecahedron`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -5166,8 +5171,9 @@ def TruncatedIcosidodecahedralGraph():
     """
     from sage.geometry.polyhedron.library import polytopes
     # note that dropping exact=False here makes the construction take forever
-    G = polytopes.icosidodecahedron(exact=False).truncation().graph()
-    G.name("Truncated Icosidodecahedron")
+    T = polytopes.icosidodecahedron(exact=False).truncation()
+    G = T.graph(immutable=immutable)
+    G._name = "Truncated Icosidodecahedron"
     return G
 
 
