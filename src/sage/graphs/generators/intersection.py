@@ -507,8 +507,6 @@ def OrthogonalArrayBlockGraph(k, n, OA=None, immutable=False):
     if n > 1 and k >= n + 2:
         raise ValueError("There is no OA({},{}). Beware, Brouwer's website uses OA(n,k) instead of OA(k,n) !".format(k, n))
 
-    from itertools import combinations
-
     if OA is None:
         from sage.combinat.designs.orthogonal_arrays import orthogonal_array
         OA = orthogonal_array(k, n)
