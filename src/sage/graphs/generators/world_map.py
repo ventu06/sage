@@ -305,7 +305,7 @@ def USAMap(continental=False, immutable=False):
     return Graph(states, format='dict_of_lists', name=name, immutable=immutable)
 
 
-def WorldMap():
+def WorldMap(immutable=False):
     """
     Return the Graph of all the countries, in which two countries are adjacent
     in the graph if they have a common boundary.
@@ -315,6 +315,11 @@ def WorldMap():
 
     The returned graph ``G`` has a member ``G.gps_coordinates`` equal to a
     dictionary containing the GPS coordinates of each country's capital city.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -731,9 +736,7 @@ def WorldMap():
         'Zambia': [[15, 'S'], [30, 'E']],
         'Zimbabwe': [[20, 'S'], [30, 'E']]
         }
-    g = Graph()
-    g.add_edges(edges)
-    g.add_vertices(gps_coordinates)
+    g = Graph([gps_coordinates, edges], format="vertices_and_edges",
+              name="World Map", immutable=immutable)
     g.gps_coordinates = gps_coordinates
-    g.name("World Map")
     return g
