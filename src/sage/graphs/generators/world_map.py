@@ -193,7 +193,7 @@ def EuropeMap(continental=False, year=2018, immutable=False):
     return G
 
 
-def USAMap(continental=False):
+def USAMap(continental=False, immutable=False):
     """
     Return states of USA as a graph of common border.
 
@@ -205,6 +205,9 @@ def USAMap(continental=False):
 
     - ``continental`` -- boolean (default: ``False``); whether to exclude Alaska
       and Hawaii
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -299,7 +302,7 @@ def USAMap(continental=False):
         states['Hawaii'] = []
         name = "USA Map"
 
-    return Graph(states, format='dict_of_lists', name=name)
+    return Graph(states, format='dict_of_lists', name=name, immutable=immutable)
 
 
 def WorldMap():
