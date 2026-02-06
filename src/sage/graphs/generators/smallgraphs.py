@@ -349,7 +349,7 @@ def HarriesWongGraph(embedding=1):
         raise ValueError("the value of embedding must be 1 or 2")
 
 
-def WellsGraph():
+def WellsGraph(immutable=False):
     r"""
     Return the Wells graph.
 
@@ -363,6 +363,11 @@ def WellsGraph():
     is quite unlikely that this could become the most time-consuming operation
     in any sensible algorithm, and .... "preserves knowledge", which is what
     open-source software is meant to do.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -453,7 +458,7 @@ def WellsGraph():
     g._circle_embedding(p[2], radius=.8)
     g._circle_embedding(p[3], radius=.7)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def Cell600(embedding=1, immutable=False):
