@@ -391,7 +391,6 @@ class LatticePosets(Category):
 
                 EXAMPLES::
 
-
                     sage: V = ['b', 0, 1, 2, 3, 4, 't']
                     sage: C = [['b', 0], ['b', 1], [0, 2], [2, 3], [2, 4], [3, 't'], [1, 4], [4, 't']]
                     sage: L = LatticePoset([V, C], category=LatticePosets().Finite().Semidistributive())
