@@ -1956,7 +1956,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def inverse(self):
         """
-        Return the inverse of ``self``, i.e., ``self`` ^(-1).
+        Return the inverse of ``self``, i.e., ``self^(-1)``.
 
         EXAMPLES::
 
@@ -2076,10 +2076,9 @@ cdef class LaurentSeries(AlgebraElement):
 
         INPUT:
 
-        - ``f`` -- a callable that will be applied to the coefficients of
-          ``self``
-
-        - ``new_base_ring`` -- commutative ring (default: ``None``) if given,
+        - ``f`` -- a callable that will be applied to the coefficients
+          of``self``
+        - ``new_base_ring`` -- commutative ring (optional) if given,
           the resulting series will be defined over this ring
 
         EXAMPLES::
@@ -2117,5 +2116,4 @@ cdef class LaurentSeries(AlgebraElement):
         res = unit.map_coefficients(f, new_base_ring)
         if res.base_ring() != unit.base_ring():
             return self.parent().change_ring(res.base_ring())(res, self.__n)
-        else:
-            return self.parent()(res, self.__n)
+        return self.parent()(res, self.__n)
