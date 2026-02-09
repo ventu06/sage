@@ -115,9 +115,10 @@ class EllipticCurve_padic_field(EllipticCurve_field):
     # The functions below were prototyped at the 2007 Arizona Winter School by
     # Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and
     # Kiran Kedlaya
+    # 
     # All of the below is with respect to the Monsky Washnitzer cohomology.
     #
-    # These functions were then taken from the generic hyperelliptic curve code
+    # NOTE: these functions were then taken from the generic HyperellipticCurve
     # and specialised to genus one in preparation of the hyperelliptic curve code
     # moving to the weighted projective model.
     # =============================================================================
