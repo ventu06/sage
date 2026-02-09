@@ -592,7 +592,7 @@ cdef class LaurentSeries(AlgebraElement):
 
     def list(self):
         """
-        Return the ``list`` method applied to `u`.
+        Return ``self`` as a ``list``.
 
         .. SEEALSO::
 
@@ -1357,7 +1357,13 @@ cdef class LaurentSeries(AlgebraElement):
 
     def valuation_zero_part(self):
         """
-        Return the "unit part" of ``self``, that is, `u`.
+        Return the part of ``self`` that has valuation 0.
+
+        We can write every nonzero Laurent series uniquely as
+        `l(x) = x^v u(x)`, where `u(x)` is a power series with a nonzero
+        constant (i.e., `u(0) \neq 0`). Thus `u(x)` has valuation zero
+        and could be called the "unit part" as it is invertible
+        (assuming the leading coefficient is a unit).
 
         EXAMPLES::
 
@@ -1375,7 +1381,9 @@ cdef class LaurentSeries(AlgebraElement):
 
     def valuation(self):
         """
-        Return the valuation of ``self``, that is, `n`.
+        Return the valuation of ``self``, that is, the minimal `n`
+        such that the coefficient of `x^n` is nonzero (by convention
+        this is `\infty` if ``self`` is zero).
 
         EXAMPLES::
 
