@@ -1356,7 +1356,7 @@ cdef class LaurentSeries(AlgebraElement):
         return rich_to_bool(op, 0)
 
     def valuation_zero_part(self):
-        """
+        r"""
         Return the part of ``self`` that has valuation 0.
 
         We can write every nonzero Laurent series uniquely as
