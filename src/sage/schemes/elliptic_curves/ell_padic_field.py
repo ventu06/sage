@@ -165,11 +165,15 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan (2007-12)
         """
+        if P[2].is_zero():
+            raise TypeError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
+
         d = P[1]
-        if d == 0 or P[2] == 0:
+        if d.is_zero():
             raise TypeError(
                 f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
             )
+
         pol = self.hyperelliptic_polynomials()[0]
         L = PowerSeriesRing(self.base_ring(), name, default_prec=prec)
         t = L.gen()
@@ -218,10 +222,15 @@ class EllipticCurve_padic_field(EllipticCurve_field):
           - Jennifer Balakrishnan (2007-12)
           - Francis Clarke (2012-08-26)
         """
-        if P[1] != 0:
+        #  Ensure the input point is Weierstrass
+        if not P[1].is_zero():
             raise TypeError(
-                f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
-            )
+                    f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
+                )
+
+        if P[2].is_zero():
+            raise TypeError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
+
         L = PowerSeriesRing(self.base_ring(), name)
         t = L.gen()
         pol = self.hyperelliptic_polynomials()[0]
@@ -317,9 +326,9 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan (2007-12)
         """
-        if P[1] == 0:
+        if P[1].is_zero():
             return self.local_coordinates_at_weierstrass(P, prec, name)
-        if P[2] == 0:
+        if P[2].is_zero():
             return self.local_coordinates_at_infinity(prec, name)
         return self.local_coordinates_at_nonweierstrass(P, prec, name)
 
@@ -443,7 +452,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             [(0 : 1 + O(7^10) : 0), (O(7^10) : 0 : 1 + O(7^10))]
         """
         f, h = self.hyperelliptic_polynomials()
-        if h != 0:
+        if not h.is_zero():
             raise NotImplementedError()
         return [self((0, 1, 0))] + [
             self((x, 0, 1)) for x in f.roots(multiplicities=False)
@@ -504,7 +513,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
 
         - Jennifer Balakrishnan (2010-02)
         """
-        return P[1] == 0 or P[2] == 0
+        return P[1].is_zero() or P[2].is_zero()
 
     def find_char_zero_weier_point(self, Q):
         """
