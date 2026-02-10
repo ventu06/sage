@@ -2933,7 +2933,7 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         - ``base_div`` -- an effective divisor for the model
 
-        -- ``kwargs`` -- passed on to :meth:`sage.rings.function_field.FunctionField.jacobian`
+        -- ``kwargs`` -- passed on to :meth:`sage.rings.function_field.function_field.FunctionField.jacobian`
 
         The degree of the base divisor should satisfy certain degree condition
         corresponding to the model used. The following table lists these
