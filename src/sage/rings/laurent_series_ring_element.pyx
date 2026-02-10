@@ -2073,7 +2073,7 @@ cdef class LaurentSeries(AlgebraElement):
         return f.__pari__() * x.__pari__()**self.__n
 
     def map_coefficients(self, f, new_base_ring=None):
-        """
+        r"""
         Return the series obtained by applying ``f`` to the nonzero
         coefficients of ``self``.
 
