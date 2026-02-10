@@ -1380,7 +1380,7 @@ cdef class LaurentSeries(AlgebraElement):
         return self.__u
 
     def valuation(self):
-        """
+        r"""
         Return the valuation of ``self``, that is, the minimal `n`
         such that the coefficient of `x^n` is nonzero (by convention
         this is `\infty` if ``self`` is zero).
