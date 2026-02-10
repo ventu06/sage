@@ -1,10 +1,20 @@
 # sage.doctest: needs sage.rings.padics
 """
 Elliptic curves over `p`-adic fields
+
+AUTHORS:
+
+    - Robert Bradshaw
+    - Miljan Brakovevic
+    - Kiran Kedlaya
+    - William Stein
 """
-# ****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
-#                          William Stein   <wstein@gmail.com>
+#                          Miljan Brakovevic
+#                          Ralf Gerkmann
+#                          Kiran Kedlaya <kedlaya@math.mit.edu>
+#                          William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
@@ -12,11 +22,11 @@ Elliptic curves over `p`-adic fields
 #    but WITHOUT ANY WARRANTY; without even the implied warranty of
 #    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
 #    General Public License for more details.
-#q
+#
 #  The full text of the GPL is available at:
 #
 #                  https://www.gnu.org/licenses/
-# ****************************************************************************
+# ***************************************************************************
 
 from .ell_field import EllipticCurve_field
 from .constructor import EllipticCurve
