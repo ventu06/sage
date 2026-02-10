@@ -2941,6 +2941,8 @@ class IntegralProjectiveCurve(ProjectiveCurve_field):
 
         - ``hess``: ideal-based arithmetic; requires base divisor of degree `g`
 
+        - ``unique_hess``: ideal-based arithmetic; requires base place of degree 1
+
         - ``km_large``: Khuri-Makdisi's large model; requires base divisor of
           degree at least `2g + 1`
 
