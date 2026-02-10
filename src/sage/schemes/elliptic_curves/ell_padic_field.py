@@ -125,7 +125,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
     # The functions below were prototyped at the 2007 Arizona Winter School by
     # Robert Bradshaw and Ralf Gerkmann, working with Miljan Brakovevic and
     # Kiran Kedlaya
-    # 
+    #
     # All of the below is with respect to the Monsky Washnitzer cohomology.
     #
     # NOTE: these functions were then taken from the generic HyperellipticCurve
@@ -587,7 +587,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         F = self.base_ring().residue_field()
         try:
             HF = self.change_ring(F)
-        except:
+        except ValueError:
             raise ValueError(
                 "The base change of the elliptic curve to the residue field is not well-defined."
                 )
