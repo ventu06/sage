@@ -213,12 +213,16 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         self._maximal_order_finite = self._function_field.maximal_order()
         self._maximal_order_infinite = self._function_field.maximal_order_infinite()
 
-        if parent._cache_infinite_ideals:
+        self._cache_infinite_ideals = parent._cache_infinite_ideals
+        self._noncaching_infinite_ideal_mult = lambda J1, J2: J1 * J2
+        self._noncaching_inverse_infinite_matrix = lambda J: matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
+
+        if self._cache_infinite_ideals:
             self._infinite_ideal_mult = self._cached_ideal_mult
             self._inverse_infinite_matrix = self._cached_inverse_infinite_matrix
         else:
-            self._infinite_ideal_mult = lambda J1, J2: J1 * J2
-            self._inverse_infinite_matrix = lambda J: matrix([self._to_vector_space(b) for b in J.gens_over_base()]).inverse()
+            self._infinite_ideal_mult = self._noncaching_infinite_ideal_mult
+            self._inverse_infinite_matrix = self._noncaching_inverse_infinite_matrix
 
         # Ideal multiplication is expensive, so we want to avoid unnecessary multiplication by identity.
         # We define functions to handle this so that we don't need to complicate our reduction logic with branching.
@@ -288,7 +292,57 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         fI = self._maximal_order_finite.ideal(f_inv)
         fJ = self._maximal_order_infinite.ideal(f_inv)
 
-        return I * fI, self._cached_ideal_mult(J, fJ), r
+        return I * fI, self._infinite_ideal_mult(J, fJ), r
+
+    def _use_caching(self, caching: bool):
+        r"""
+        Change whether we use caching or not.
+
+        Used to internally turn off caching when reducing elements provided by
+        the user, as valid input from users exceeds the values that will be
+        encountered when doing a series of operations with reduced elements,
+        causing potentially unbounded memory use.
+
+        If the Jacobian model was not initialized to use caching, this method does nothing.
+
+        TESTS::
+
+            sage: K = GF(2)
+            sage: Kx.<x> = FunctionField(K)
+            sage: t = polygen(Kx)
+            sage: F.<y> = Kx.extension(t^3 + (x^2 + x + 1)*t^2 + (x^3 + x + 1)*t + x^5 + x^4)
+            sage: J = F.jacobian(model='unique_hess', extra_caching=True)
+            sage: G = J.group()
+            sage: len(G._infinite_ideal_mult.cache)
+            0
+            sage: len(G._inverse_infinite_matrix.cache)
+            0
+            sage: zero = J(0)
+            sage: len(G._infinite_ideal_mult.cache)
+            0
+            sage: len(G._inverse_infinite_matrix.cache)
+            0
+            sage: D1, D2, D3 = G.get_points(3)
+            sage: len(G._infinite_ideal_mult.cache)
+            0
+            sage: len(G._inverse_infinite_matrix.cache)
+            0
+            sage: _ = D2 + D3
+            sage: len(G._infinite_ideal_mult.cache) > 0
+            True
+            sage: len(G._inverse_infinite_matrix.cache) > 0
+            True
+        """
+        if not self._cache_infinite_ideals:
+            pass
+
+        if caching:
+            self._infinite_ideal_mult = self._cached_ideal_mult
+            self._inverse_infinite_matrix = self._cached_inverse_infinite_matrix
+        else:
+            self._infinite_ideal_mult = self._noncaching_infinite_ideal_mult
+            self._inverse_infinite_matrix = self._noncaching_inverse_infinite_matrix
+
 
     @cached_method
     def _cached_inverse_infinite_matrix(self, J):
@@ -333,8 +387,12 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
         """
         if divisor.degree() != 0:
             raise ValueError('divisor not of degree zero')
+
         I, J = riemann_roch._divisor_to_inverted_ideals(divisor)
-        return self.element_class(self, I, J)
+        self._use_caching(False)
+        D = self.element_class(self, I, J)
+        self._use_caching(True)  # Does nothing if we weren't already using caching
+        return D
 
     @cached_method
     def zero(self) -> JacobianPoint:

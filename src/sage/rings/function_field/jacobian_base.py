@@ -671,7 +671,7 @@ class JacobianGroup_finite_field_base(JacobianGroup_base):
 
         return lst
 
-    def some_elements(self):
+    def some_elements(self) -> list[JacobianPoint_finite_field_base]:
         return self.get_points(4)
 
 
