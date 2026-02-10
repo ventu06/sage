@@ -143,7 +143,7 @@ This will install Sage in the current Conda environment.
 You can then start Sage from the command line with ``sage``.
 
 For more information on building Sage we refer to the section `building
-from source <../installation/meson.html>`_ in the Sage installation guide.
+from source <../installation/source.html>`_ in the Sage installation guide.
 
 .. _section-walkthrough-branch:
 
