@@ -144,7 +144,7 @@ class JacobianPoint(JacobianPoint_base):
             sage: P2.<x,y,z> = ProjectiveSpace(GF(29), 2)
             sage: C = Curve(x^3 + 5*z^3 - y^2*z, P2)
             sage: b = C([0,1,0]).place()
-            sage: G = C.jacobian(model='unique_hess', base_div=b).group()
+            sage: G = C.jacobian(model='unique_hess', base_div=b, extra_caching=False).group()
             sage: p = C([-1,2,1]).place()
             sage: pt = G.point(p - b)
             sage: pt.effective_part() == p
