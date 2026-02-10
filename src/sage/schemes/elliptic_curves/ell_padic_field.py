@@ -336,7 +336,8 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         Return the generators of the special hyperelliptic quotient ring.
 
-        TODO: Should this function be available over more general base rings?
+        TODO: Should this function be moved to ell_generic and made available over
+        more general base rings?
 
         EXAMPLES::
 
