@@ -4,10 +4,13 @@ Elliptic curves over `p`-adic fields
 
 AUTHORS:
 
-    - Robert Bradshaw
-    - Miljan Brakovevic
-    - Kiran Kedlaya
-    - William Stein
+- Robert Bradshaw
+- William Stein
+- Miljan Brakovevic
+- Ralf Gerkmann
+- Kiran Kedlaya
+- Jennifer Balakrishnan
+- Francis Clarke
 """
 # ***************************************************************************
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
@@ -166,11 +169,11 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         - Jennifer Balakrishnan (2007-12)
         """
         if P[2].is_zero():
-            raise TypeError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
+            raise ValueError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
 
         d = P[1]
         if d.is_zero():
-            raise TypeError(
+            raise ValueError(
                 f"P = {P} is a Weierstrass point. Use local_coordinates_at_weierstrass instead!"
             )
 
@@ -216,7 +219,7 @@ class EllipticCurve_padic_field(EllipticCurve_field):
             sage: xt,yt = E.local_coordinates_at_weierstrass(O, prec=5)
             Traceback (most recent call last):
             ...
-            TypeError:  P = (0 : 1 + O(5^20) : 0) is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!
+            ValueError:  P = (0 : 1 + O(5^20) : 0) is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!
 
         AUTHOR:
           - Jennifer Balakrishnan (2007-12)
@@ -224,12 +227,12 @@ class EllipticCurve_padic_field(EllipticCurve_field):
         """
         #  Ensure the input point is Weierstrass
         if not P[1].is_zero():
-            raise TypeError(
+            raise ValueError(
                     f"P = {P} is not a finite Weierstrass point. Use local_coordinates_at_nonweierstrass instead!"
                 )
 
         if P[2].is_zero():
-            raise TypeError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
+            raise ValueError(f"P = {P} is the point at infinity. Use local_coordinates_at_infinity instead!")
 
         L = PowerSeriesRing(self.base_ring(), name)
         t = L.gen()
