@@ -3409,12 +3409,8 @@ def random_bistochastic_matrix(parent):
                          "numbers")
 
     B = random_unitary_matrix(parent)
-    n = B.nrows()
-    for i in range(n):
-        for j in range(n):
-            # Square every entry.
-            B[i, j] **= 2
-    return B
+    # Squaring every entry.
+    return B.elementwise_product(B)
 
 @matrix_method
 def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
