@@ -3358,7 +3358,7 @@ def random_bistochastic_matrix(parent):
         sage: B.is_bistochastic()  # random
         False
 
-    It only works over subfields of the real numbers::
+    It only works over subfields of the real numbers and for square matrices::
 
         sage: from sage.matrix.constructor import random_bistochastic_matrix
         sage: MS = MatrixSpace(CC, 4)
@@ -3367,6 +3367,13 @@ def random_bistochastic_matrix(parent):
         ...
         ValueError: base ring of parent must be a subfield of the real numbers
 
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
     TESTS:
 
         sage: from sage.matrix.constructor import random_bistochastic_matrix
@@ -3374,6 +3381,13 @@ def random_bistochastic_matrix(parent):
         sage: B = random_bistochastic_matrix(MS)
         sage: B.is_bistochastic()
         True
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
 
         sage: from sage.matrix.constructor import random_bistochastic_matrix
         sage: MS = MatrixSpace(GF(2), 4)
