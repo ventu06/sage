@@ -2947,6 +2947,19 @@ cdef class GapElement_List(GapElement):
             Traceback (most recent call last):
             ...
             ValueError: too many indices
+
+        TESTS:
+
+        Check that :issue:`41595` is fixed::
+
+            sage: W = WeylGroup("E8", implementation='permutation')
+            sage: s = W.gens()
+            sage: G = W.subgroup([s[0], s[1], s[2], s[3], s[4], s[6], s[7]])
+            sage: R = libgap.RightTransversal(W, G)
+            sage: len(R)
+            60480
+            sage: for w in R:  # long time
+            ....:     v = W(w)
         """
         cdef int j
         cdef Obj obj = self.value
