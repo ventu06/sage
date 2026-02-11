@@ -13,11 +13,13 @@ AUTHORS:
 - Francis Clarke
 """
 # ***************************************************************************
-#       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
-#                          Miljan Brakovevic
-#                          Ralf Gerkmann
-#                          Kiran Kedlaya <kedlaya@math.mit.edu>
-#                          William Stein <wstein@gmail.com>
+#       Copyright (C) 2007-2010 Robert Bradshaw <robertwb@math.washington.edu>
+#                     2007      William Stein   <wstein@gmail.com>
+#                     2007      Miljan Brakovevic
+#                     2007      Ralf Gerkmann
+#                     2007-2008 Kiran Kedlaya <kedlaya@math.mit.edu>
+#                     2007-2010 Jennifer Balakrishnan
+#                     2012      Francis Clarke
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
 #
