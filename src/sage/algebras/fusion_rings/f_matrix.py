@@ -892,7 +892,8 @@ class FMatrix(SageObject):
              100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100, 100)
         """
         nonz = {idx: 100 for idx in self._singles}
-        for idx in self._ks:
+        # The noqa here is because self._ks is not a dict
+        for idx, _ in self._ks.items():  # noqa: PERF102
             nonz[idx] = 100
         return ETuple(nonz, self._poly_ring.ngens())
 
