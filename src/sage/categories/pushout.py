@@ -2678,7 +2678,7 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that :issue:`12353` has been resolved::
 
-            sage: RIF(1) > RR(1)                                                        # needs sage.rings.real_interval_field
+            sage: RIF(1) > RR(1)
             Traceback (most recent call last):
             ...
             TypeError: unsupported operand parent(s) for >:
@@ -2686,7 +2686,6 @@ class CompletionFunctor(ConstructionFunctor):
 
         We check that various pushouts work::
 
-            sage: # needs sage.rings.real_interval_field sage.rings.real_mpfr
             sage: R0 = RealIntervalField(30)
             sage: R1 = RealIntervalField(30, sci_not=True)
             sage: R2 = RealIntervalField(53)
@@ -3294,7 +3293,12 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
                 if latex_names[i] == latex_variable_name(name):
                     latex_names[i] = None
         self.latex_names = latex_names
-        self.kwds = kwds
+        kwds_self = dict(kwds.items())
+        if 'implementation' in kwds_self:
+            assert len(self.polys) == 1
+            self.implementations = [kwds_self['implementation']]
+            del kwds_self['implementation']
+        self.kwds = kwds_self
 
     def _apply_functor(self, R):
         """
@@ -3529,11 +3533,7 @@ class AlgebraicExtensionFunctor(ConstructionFunctor):
         # integers to encode degrees of extensions.
         from sage.rings.integer import Integer
         kwds_self = dict(self.kwds.items())
-        if 'impl' in kwds_self:
-            del kwds_self['impl']
         kwds_other = dict(other.kwds.items())
-        if 'impl' in kwds_other:
-            del kwds_other['impl']
         if (isinstance(self.polys[0], Integer)
                 and isinstance(other.polys[0], Integer)
                 and self.embeddings == other.embeddings == [None]

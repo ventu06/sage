@@ -8,8 +8,9 @@ Sage-the-distribution (classical build)
 .. note::
 
    This section describes the classical build process using
-   ``./configure && make``.
-   It is recommended to use the modern Meson build system instead;
+   ``./configure && make``, which at the end will invoke Meson build system
+   to build the main sagelib Python module. However,
+   it is recommended to use the modern Meson build system directly;
    see :ref:`section-build-source`.
 
 
@@ -992,10 +993,6 @@ Environment variables controlling the documentation build
 
   - add ``--no-plot`` to this variable to avoid building the graphics coming from
     the ``.. PLOT`` directive within the documentation,
-
-  - add ``--no-preparsed-examples`` to only show the original Sage code of
-    "EXAMPLES" blocks, suppressing the tab with the preparsed, plain Python
-    version, or
 
   - add ``--include-tests-blocks`` to include all "TESTS" blocks in the reference
     manual.

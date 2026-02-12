@@ -300,6 +300,16 @@ REFERENCES:
 .. [Ap1997] \T. Apostol, Modular functions and Dirichlet series in
             number theory, Springer, 1997 (2nd ed), section 3.7--3.9.
 
+.. [AP2010] Federico Ardila and Alexander Postnikov.
+            *Combinatorics and geometry of power ideals*.
+            Trans. Amer. Math. Soc. **362** no. 8 (2010), pp. 4357-4384.
+            :arxiv:`0809.2143`.
+
+.. [AP2015] Federico Ardila and Alexander Postnikov. *Correction to
+            "Combinatorics and geometry of power ideals": Two counterexamples
+            for power ideals of hyperplane arrangements*. Trans. Amer. Math.
+            Soc. **367** (2015). :doi:`10.1090/S0002-9947-2015-06071-1`.
+
 .. [AP2024] William Atherton, Dmitrii V. Pasechnik, *Decline and Fall of the
             ICALP 2008 Modular Decomposition algorithm*, 2024.
             :arxiv:`2404.14049`.
@@ -563,6 +573,11 @@ REFERENCES:
 .. [BCDGNPY2019] \Z. Bao, A. Chakraborti, N. Datta, J. Guo, M. Nandi, T. Peyrin, K. Yasuda.
                  "PHOTON-BeetleAuthenticated Encryption and Hash Family"
                  https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/PHOTON-Beetle-spec.pdf
+
+.. [BF1976] George Phillip Barker and James Foran.
+            *Self-Dual Cones in Euclidean Spaces*.
+            Linear Algebra and its Applications, 13(1-2):147-155, 1976.
+            :doi:`10.1016/0024-3795(76)90053-7`.
 
 .. [BH1965] \L. D. Baumert, M. Hall Jr.
             *A new construction for Hadamard matrices*.
@@ -910,7 +925,7 @@ REFERENCES:
               Ann. Math. (2) 192, No. 3, 821-891 (2020).
               :arxiv:`1902.03719`, :doi:`10.4007/annals.2020.192.3.4`.
 
-.. [Bru2014] Erwan Brugalle and Kristin Shaw. *A bit of tropical geometry*.
+.. [Bru2014] Erwan Brugallé and Kristin Shaw. *A bit of tropical geometry*.
              Amer. Math. Monthly, 121(7):563-589, 2014.
 
 .. [BHNR2004] \S. Brlek, S. Hamel, M. Nivat, C. Reutenauer, On the
@@ -1428,9 +1443,16 @@ REFERENCES:
              The Open Book Series, Vol. 2 (2019), No. 1, pp. 155-171,
              https://msp.org/obs/2019/2-1/p10.xhtml
 
+.. [BTTM2024] \L. Bossinger, M. L. Telek, H. Tillmann-Morris,
+              *Binary Geometries From Pellytopes*,
+              :arxiv:`2410.08002`
+
 .. [BUVO2007] Johannes Buchmann, Ullrich Vollmer: Binary Quadratic Forms,
               An Algorithmic Approach, Algorithms and Computation in Mathematics,
               Volume 20, Springer (2007)
+
+.. [But2010] Peter Butkovič, *Max-linear systems. Theory and algorithms.*
+             Springer Monographs in Mathematics. London: Springer. xvii, 272 p. (2010). 
 
 .. [Buell89] Duncan A. Buell.
              *Binary Quadratic Forms: Classical Theory and Modern Computations.*
@@ -1685,8 +1707,12 @@ REFERENCES:
 .. [Conr] Keith Conrad, *Artin-Hasse-Type Series and Roots of Unity*,
           http://www.math.uconn.edu/~kconrad/blurbs/gradnumthy/AHrootofunity.pdf
 
-.. [Coron2023] Basile Coron *Supersolvability of built lattices and Koszulness
+.. [Coron2023] Basile Coron. *Supersolvability of built lattices and Koszulness
                of generalized Chow rings*. Preprint, :arxiv:`2302.13072` (2023).
+
+.. [Cos2020] Craig Costello. *Supersingular Isogeny Key Exchange for Beginners*,
+             Selected Areas in Cryptography -- SAC 2019. Lecture Notes in Computer
+             Science, vol 11959. Springer, Cham. :doi:`10.1007/978-3-030-38471-5_2`.
 
 .. [CGMRV16] \A. Conte, R. Grossi, A. Marino, R. Rizzi, L. Versari,
              *Directing Road Networks by Listing Strong Orientations*,
@@ -2279,6 +2305,10 @@ REFERENCES:
             Journal of Combinatorial Designs 22(6) (2014): 270-277.
             :doi:`10.1002/jcd.21358`
 
+.. [DGM2002] \S. N. Dorogovtsev, A. V. Goltsev and J. F. F. Mendes.
+             *Pseudofractal scale-free web*, Physical Review E 066122, 2002.
+             :doi:`10.1103/PhysRevE.65.066122`
+
 .. [DGMPPS2019] \N. Datta, A. Ghoshal, D. Mukhopadhyay, S. Patranabis,
                 S. Picek, R. Sashukhan. "TRIFLE"
                 https://csrc.nist.gov/CSRC/media/Projects/Lightweight-Cryptography/documents/round-1/spec-doc/trifle-spec.pdf
@@ -2426,8 +2456,8 @@ REFERENCES:
 
 .. [DP2011] \B. Deconinck and M. S. Patterson, *Computing with plane algebraic
             curves and Riemann surfaces: The algorithms of the Maple package
-            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational 
-            approach to Riemann surfaces. Lecture Notes in Mathematics 2013. 
+            "Algcurves"*, In: A. Bobenko and C. Klein (eds) Computational
+            approach to Riemann surfaces. Lecture Notes in Mathematics 2013.
             Springer, Berlin, Heidelberg. (2011).
             :doi:`10.1007/978-3-642-17413-1_2`
 
@@ -2584,7 +2614,7 @@ REFERENCES:
 
 .. [Eh2013] Ehrhardt, Wolfgang. *The AMath and DAMath Special
             Functions: Reference Manual and Implementation Notes*,
-            Version 1.3. 2013. 
+            Version 1.3. 2013.
             https://web.archive.org/web/20131210061646/http://www.wolfgang-ehrhardt.de/specialfunctions.pdf.
 
 .. [EL2002] Ekedahl, Torsten & Laksov, Dan. (2002). *Splitting algebras, Symmetric functions and
@@ -3570,6 +3600,10 @@ REFERENCES:
 .. [HR2005]  Tom Halverson and Arun Ram. *Partition algebras*.
              Euro. J. Combin. **26** (2005) 869--921.
 
+.. [HR2011]  Olga Holtz and Amos Ron. *Zonotopal algebra*.
+             Adv. Math. **227**, no. 2, (2011) 847--894.
+             doi:`10.1016/j.aim.2011.02.012`, :arxiv:`0708.2632`.
+
 .. [HR2016]  Clemens Heuberger and Roswitha Rissner, *Computing
              `J`-Ideals of a Matrix Over a Principal Ideal Domain*,
              :arxiv:`1611.10308`, 2016.
@@ -3774,6 +3808,15 @@ REFERENCES:
 
 .. [Ja1971] \N. Jacobson. *Exceptional Lie Algebras*. Marcel Dekker,
             Inc. New York. 1971. IBSN No. 0-8247-1326-5.
+
+.. [Jao2022] David Jao, Reza Azarderakhsh, Matthew Campagna, Craig Costello,
+             Luca De Feo, Basil Hess, Aaron Hutchinson, Amir Jalali,
+             Koray Karabina, Brian Koziel, Brian LaMacchia, Patrick Longa,
+             Michael Naehrig, Geovandro Pereira, Joost Renes,
+             Vladimir Soukharev, and David Urbanik.
+             *Supersingular Isogeny Key Encapsulation*.
+             Technical report, National Institute of Standards and Technology,
+             2022. https://sike.org/files/SIDH-spec.pdf
 
 .. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
              Combinatorica 26, no. 6 (2006): 733-742.
@@ -4431,6 +4474,9 @@ REFERENCES:
              *The Hopf algebra of diagonal rectangulations*,
              \J. Comb. Theory, Ser. A 119, No. 3, 788-824 (2012).
              :doi:`10.1016/j.jcta.2011.09.006`
+
+.. [Law2014] Shirley Law, *Combinatorial realization of the Hopf algebra
+             of sashes*, Proceedings of FPSAC 2014, DMTCS, :arxiv:`1407.4073`
 
 .. [Laz1992] Daniel Lazard, *Solving Zero-dimensional Algebraic
              Systems*, in Journal of Symbolic Computation (1992)
@@ -5108,6 +5154,11 @@ REFERENCES:
              of graphs*, Linear Algebra and its Applications 103 (1988),
              119-131.
 
+.. [MPSW25] Travis Morrison, Lorenz Panny, Jana Sotáková, and Michael Wills:
+            *The SEA algorithm for endomorphisms of supersingular elliptic curves*
+            (2025).
+            :arxiv:`2501.16321`
+
 .. [Most2019] Jacob Mostovoy.
               *The pure cactus group is residually nilpotent*.
               Archiv der Math., **113** (2019). pp. 229-235.
@@ -5257,7 +5308,7 @@ REFERENCES:
              Inventiones Mathematicae **84**, (1986), 1-48.
 
 .. [MT2001] B. Mojar and C. Thomassen. *Graphs on Surfaces*.
-             Johns Hopkins University Press, (2001).  ISBN 9780801866890. 
+             Johns Hopkins University Press, (2001).  ISBN 9780801866890.
 
 .. [Mu1997] Murty, M. Ram. *Congruences between modular forms*. In "Analytic
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
@@ -5270,7 +5321,7 @@ REFERENCES:
 .. [Mur1983] \G. E. Murphy. *The idempotents of the symmetric group
              and Nakayama's conjecture*. J. Algebra **81** (1983). 258-265.
 
-.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*. 
+.. [Mus2023] Yossef Musleh. *Algorithms for Drinfeld Modules*.
              PhD thesis, University of Waterloo, 2023.
 
 .. [Muth2019] Robert Muth. *Super RSK correspondence with symmetry*.
@@ -6429,6 +6480,9 @@ REFERENCES:
 .. [Sti2006] Douglas R. Stinson. *Cryptography: Theory and
              Practice*. 3rd edition, Chapman \& Hall/CRC, 2006.
 
+.. [Stokes1990] Timothy Stokes. *Gröbner bases in exterior algebra*.
+                J. Automat. Reason. **6** (1990) 233-250.
+
 .. [Sto1998] \A. Storjohann, An O(n^3) algorithm for Frobenius normal
              form. Proceedings of the International Symposium on
              Symbolic and Algebraic Computation (ISSAC'98), ACM Press,
@@ -6784,6 +6838,10 @@ REFERENCES:
 .. [Vai1994] \I. Vaisman, *Lectures on the Geometry of Poisson
              Manifolds*, Springer Basel AG (Basel) (1994);
              :doi:`10.1007/978-3-0348-8495-2`
+
+.. [VT2001] Adam Van Tuyl: *Computing the degree of the field of 𝑛‑torsion points*
+            (2001).
+            https://ms.mcmaster.ca/~vantuyl/papers/ntorsion_2001.pdf
 
 .. [Var1984] \V. S. Varadarajan. *Lie groups, Lie algebras, and their
              representations*. Reprint of the 1974 edition. Graduate Texts in
