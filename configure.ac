@@ -335,7 +335,23 @@ m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spk
     ], [AC_MSG_ERROR([could not find bzlib.h - the header of libbz2 library. $SAGE_PREREQ_URL])
    ])
 
+# choose BLAS/LAPACK on Darwin
+AC_ARG_WITH([darwin-accelerate],
+            [AS_HELP_STRING([--with-darwin-accelerate={no (default)},yes}],
+                            [use Darwin (macOS) Accelerate BLAS/LAPACK])],
+            [SAGE_DARWIN_ACCELERATE="$withval"],
+            [SAGE_DARWIN_ACCELERATE="no"])
+AC_SUBST([SAGE_DARWIN_ACCELERATE])
+
 SAGE_DARWIN_PKG_CONFIG_PATH=
+case $host in
+    *-*-darwin*)
+   AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
+    [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"])
+    ;;
+    *)
+esac
+
 # Check for zlib
     PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
       case $host in
@@ -344,7 +360,7 @@ SAGE_DARWIN_PKG_CONFIG_PATH=
          ;;
          *)
          AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
-         esac 
+      esac
     ]) 
     AC_CHECK_LIB([z], [inflateEnd], [],
          [AC_MSG_ERROR([could not find libz. $SAGE_PREREQ_URL])])
