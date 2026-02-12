@@ -325,9 +325,19 @@ class AtomicSpeciesElement(WithEqualityById,
             {((1,2,3,4)(5,6)(7,8)(9,10),): ({}, {1, 2, 3, 4, 5, 6, 7, 8, 9, 10})}
         """
         P = self.parent()
-        if (self._tc not in P._renamed
-            and self._tc <= P.options.rename()):
+        renamed = False
+        if self._tc not in P._renamed:
+            P._renamed.add(self._tc)
             P._rename(self._tc)
+            renamed = True
+        if (self._tc not in P._renamed_set_like
+            and self._tc <= P.options.rename()):
+            P._renamed.add(self._tc)
+            P._renamed_set_like.add(self._tc)
+            _atomic_set_like_species(self._tc, P._names)
+            renamed = True
+
+        if renamed:
             return repr(self)
 
         if self.parent()._arity == 1:
@@ -546,6 +556,45 @@ class AtomicSpecies(UniqueRepresentation, Parent):
       species
     """
     class options(GlobalOptions):
+        r"""
+        Set and display the options for species.
+
+        If no parameters are set, then the function returns a copy of
+        the options dictionary.
+
+        The ``options`` to species can be accessed using
+        :class:`LazyCombinatorialSpecies.options`.
+
+        @OPTIONS@
+
+        EXAMPLES:
+
+        The species corresponding to the symmetric, cyclic, dihedral
+        and alternating groups are always renamed::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: L(SymmetricGroup(20))
+            E_20
+
+        By contrast, the species `E_2(E_3)` of subsets of size three
+        of a six element set is only renamed, if the option
+        ``rename`` is at least six::
+
+           sage: L.options.rename = 5
+           sage: F = L(SymmetricGroup(2))(L(SymmetricGroup(3)))
+           sage: F
+           ({((1,2,4)(3,6),(1,3)(2,5)(4,6))}) + O^13
+
+           sage: L.options.rename = 6
+           sage: F
+           E_2(E_3) + O^13
+
+        The default is chosen such that there is only a small delay
+        when printing a species.  Note that there are already 1001
+        atomic set like species in four alphabets of size twelve.::
+
+            sage: L.options._reset()
+        """
         NAME = 'species'
         module = 'sage.rings.species'
         rename = dict(default=12,
@@ -599,6 +648,8 @@ class AtomicSpecies(UniqueRepresentation, Parent):
 
         # the degrees that have been renamed already
         self._renamed = set()
+        # the degrees of set like species that have been renamed already
+        self._renamed_set_like = set()
 
     def _repr_(self):
         r"""
@@ -746,9 +797,9 @@ class AtomicSpecies(UniqueRepresentation, Parent):
             sage: A(CyclicPermutationGroup(4), {1: range(1, 5)})
             C_4(Y)
             sage: A(DihedralGroup(4), {0: range(1, 5)})
-            E_2(E_2(X))
+            P_4(X)
             sage: A(DihedralGroup(4), {1: range(1, 5)})
-            E_2(E_2(Y))
+            P_4(Y)
             sage: A(AlternatingGroup(4), {0: range(1, 5)})
             Eo_4(X)
             sage: A(AlternatingGroup(4), {1: range(1, 5)})
@@ -760,8 +811,6 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                                                           DihedralGroup,
                                                           SymmetricGroup)
 
-        # prevent infinite recursion in self._element_constructor_
-        self._renamed.add(n)
         for s in range(self._arity):
             pi = {s: range(1, n+1)}
             if n == 1:
@@ -788,8 +837,6 @@ class AtomicSpecies(UniqueRepresentation, Parent):
                 gens = [[(i, n-i+1) for i in range(1, n//2 + 1)],
                         [(i, i+1) for i in range(1, n, 2)]]
                 self(PermutationGroup(gens), pi, check=False).rename(f"Pb_{n}" + sort)
-
-        _atomic_set_like_species(n, self._names)
 
     def __contains__(self, x) -> bool:
         r"""
