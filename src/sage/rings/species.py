@@ -1164,7 +1164,7 @@ class MolecularSpecies(IndexedFreeAbelianMonoid):
           - an element of ``self`` (in this case ``pi`` must be
             ``None``)
           - a permutation group
-        - a triple ``(X, a, side)`` consisting of a finite set, a
+          - a triple ``(X, a, side)`` consisting of a finite set, a
             transitive action and a string 'left' or 'right'; the
             side can be omitted, it is then assumed to be 'right',
           - a ``dict`` from ``AtomicSpecies`` to integers (in this case ``pi`` must be
