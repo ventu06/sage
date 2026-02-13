@@ -347,7 +347,7 @@ SAGE_DARWIN_PKG_CONFIG_PATH=
 case $host in
     *-*-darwin*)
    AS_IF([test x$SAGE_DARWIN_ACCELERATE = xyes],
-    [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"])
+    [SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/accelerate/pkgconfig:"])
     ;;
     *)
 esac
@@ -356,7 +356,7 @@ esac
     PKG_CHECK_MODULES([zlib], [zlib >= 1.2.11], [], [
       case $host in
          *-*-darwin*)
-         SAGE_DARWIN_PKG_CONFIG_PATH=`pwd`"/build/platform/darwin/pkgconfig:"
+	 SAGE_DARWIN_PKG_CONFIG_PATH="$SAGE_DARWIN_PKG_CONFIG_PATH"`pwd`"/build/platform/darwin/zlib/pkgconfig:"
          ;;
          *)
          AC_MSG_ERROR([could not find pkg-config zlib.pc file. $SAGE_PREREQ_URL])
