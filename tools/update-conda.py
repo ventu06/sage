@@ -35,7 +35,7 @@ parser.add_argument(
     choices=platforms.keys(),
 )
 options = parser.parse_args()
-pythons = ["3.12", "3.13"]
+pythons = ["3.12", "3.13", "3.14"]
 tags = [""]
 
 
@@ -317,6 +317,8 @@ def get_dev_dependencies(pyproject: dict) -> list[str]:
     )
     # Remove dependencies that are not available on conda
     dev_dependencies.remove("relint")
+    # Remove cibuildwheel because its dependency bashlex is not available on linux-aarch64
+    dev_dependencies.remove("cibuildwheel")
     return dev_dependencies
 
 
