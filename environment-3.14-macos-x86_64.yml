@@ -104,7 +104,7 @@ dependencies:
   - executing=2.2.1=pyhd8ed1ab_0
   - expat=2.7.3=heffb93a_0
   - fflas-ffpack=2.5.0=h5898d61_0
-  - filelock=3.21.0=pyhd8ed1ab_0
+  - filelock=3.21.2=pyhd8ed1ab_0
   - flake8=7.3.0=pyhd8ed1ab_0
   - flake8-rst-docstrings=0.4.0=pyhd8ed1ab_0
   - fmt=12.1.0=hda137b5_0
@@ -151,7 +151,7 @@ dependencies:
   - hyperframe=6.1.0=pyhd8ed1ab_0
   - icu=75.1=h120a0e1_0
   - idna=3.11=pyhd8ed1ab_0
-  - igraph=0.10.17=h88b1ca6_1
+  - igraph=1.0.1=h049a311_0
   - imagesize=1.4.1=pyhd8ed1ab_0
   - iml=1.0.5=h61918c1_1004
   - importlib-metadata=8.7.0=pyhe01879c_1
@@ -372,8 +372,8 @@ dependencies:
   - ruamel.yaml=0.18.17=py314hd330473_2
   - ruamel.yaml.clib=0.2.15=py314hd330473_1
   - ruamel.yaml.jinja2=0.2.7=pyhd8ed1ab_1
-  - ruff=0.15.0=h5930b28_0
-  - rw=0.9=h10d778d_2
+  - ruff=0.15.1=h5930b28_0
+  - rw=0.7=1
   - sagemath-db-elliptic-curves=0.8.1=hecc5488_0
   - sagemath-db-graphs=20210214=hd8ed1ab_0
   - sagemath-db-polytopes=20170220=1

@@ -100,7 +100,7 @@ dependencies:
   - executing=2.2.1=pyhd8ed1ab_0
   - expat=2.7.3=hfae3067_0
   - fflas-ffpack=2.5.0=h503e619_0
-  - filelock=3.21.0=pyhd8ed1ab_0
+  - filelock=3.21.2=pyhd8ed1ab_0
   - flake8=7.3.0=pyhd8ed1ab_0
   - flake8-rst-docstrings=0.4.0=pyhd8ed1ab_0
   - fmt=12.1.0=h20c602a_0
@@ -395,7 +395,7 @@ dependencies:
   - ruamel.yaml=0.18.17=py314h2e8dab5_2
   - ruamel.yaml.clib=0.2.15=py314h2e8dab5_1
   - ruamel.yaml.jinja2=0.2.7=pyhd8ed1ab_1
-  - ruff=0.15.0=he9a2e21_0
+  - ruff=0.15.1=he9a2e21_0
   - rw=0.9=h31becfc_2
   - sagemath-db-elliptic-curves=0.8.1=hecc5488_0
   - sagemath-db-graphs=20210214=hd8ed1ab_0
