@@ -5,3 +5,5 @@ libtool
 # Python packages needed for configure and build
 python
 setuptools
+xz
+xz

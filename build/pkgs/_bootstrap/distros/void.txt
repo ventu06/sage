@@ -8,3 +8,5 @@ mk-configure
 python3
 python3-devel
 python3-setuptools
+liblzma-devel
+xz

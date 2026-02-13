@@ -4,3 +4,4 @@ automake
 libtool
 # Python packages needed for configure and build
 python3
+xz

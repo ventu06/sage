@@ -318,6 +318,7 @@ if test -z "$MAKE"; then
 fi
 
 m4_pushdef([SAGE_PREREQ_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_prereq.html])
+m4_pushdef([SAGE_BOOTSTRAP_URL],[See https://doc.sagemath.org/html/en/reference/spkg/_bootstrap.html])
 
 # check for boost, hopefully supporting c++17
   AX_BOOST_BASE([1.66.0], [], [
@@ -360,6 +361,11 @@ else
     AC_MSG_ERROR([You do not have a suitable version of Python installed])
 fi
 
+# check for liblzma
+
+PKG_CHECK_MODULES([liblzma], [liblzma], [], [
+    AC_MSG_ERROR([liblzma should be provided. SAGE_BOOTSTRAP_URL])])
+
 ########################################################################
 # Check for Python 3 for venv (required system package)
 ########################################################################
@@ -375,7 +381,7 @@ AS_IF([test x"$with_python" = x3], [
     AC_MSG_NOTICE([The meaning of the option --with-python has changed in Sage 9.2. Ignoring.])
     with_python=''
 ])
-AS_IF([test x"$with_python" = x"no"],
+AS_IFbuild/bin/sage-bootstrap-python([test x"$with_python" = x"no"],
       [AC_MSG_ERROR([building Sage --without-python is not supported])])
 
 ac_path_PYTHON3="$with_python"

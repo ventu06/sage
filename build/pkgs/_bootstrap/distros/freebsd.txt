@@ -5,3 +5,4 @@ libtool
 # Python packages needed for configure and build
 lang/python
 devel/py-setuptools
+archivers/lzma
