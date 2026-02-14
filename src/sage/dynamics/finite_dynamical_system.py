@@ -1081,17 +1081,17 @@ class FiniteDynamicalSystem(DiscreteDynamicalSystem):
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x ** 2) % 6)
             sage: D.cycles()
-            [[1], [4], [3], [0]]
+            [[0], [1], [4], [3]]
             sage: D = DiscreteDynamicalSystem(tuple(range(11)), lambda x: (x ** 2 - 1) % 11)
             sage: D.cycles()
-            [[10, 0], [8], [4]]
+            [[0, 10], [8], [4]]
 
             sage: F = finite_dynamical_systems.one_line([4, 7, 2, 6, 2, 10, 9, 11, 5, 6, 12, 12, 12, 6])
             sage: F.cycles()
-            [[6, 10], [12], [9, 5, 2, 7]]
+            [[6, 10], [2, 7, 9, 5], [12]]
 
         TESTS:
 
@@ -1148,7 +1148,7 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
         sage: D.evolution()(4)
         1
         sage: D.orbits()
-        [[4, 1, 3, 0, 2]]
+        [[0, 2, 4, 1, 3]]
         sage: D.inverse_evolution()(2)
         0
         sage: D.inverse_evolution()(1)
@@ -1192,10 +1192,10 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.orbits()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
 
         TESTS:
 
@@ -1240,10 +1240,10 @@ class InvertibleFiniteDynamicalSystem(InvertibleDiscreteDynamicalSystem, FiniteD
 
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 2) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 1, 3], [4, 0, 2]]
+            [[0, 2, 4], [1, 3, 5]]
             sage: D = DiscreteDynamicalSystem(tuple(range(6)), lambda x: (x + 3) % 6, inverse=True)
             sage: D.cycles()
-            [[5, 2], [4, 1], [3, 0]]
+            [[0, 3], [1, 4], [2, 5]]
         """
         return self.orbits()
 
