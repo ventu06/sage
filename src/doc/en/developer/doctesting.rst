@@ -1766,22 +1766,3 @@ will be tested in sequence.  Using ``--distribution all`` is equivalent
 to a preset list of ``--distribution`` switches.  With the switch
 ``--fixed-point``, the doctest fixer runs the given distributions until
 no more changes are made.
-
-
-Updating baseline files
------------------------
-
-The modularized distribution packages ``pkgs/sagemath-categories`` and
-``pkgs/sagemath-repl`` contain files ``known-test-failures*.json`` for use
-with the option ``--baseline-stats-path``, see section
-:ref:`section-doctest-auxiliary-files`.
-
-After running the doctesters of the distributions, for example, via
-``sage --fixdoctests``, you can use the test results stored in
-``timings2.json`` files to update the ``known-test-failures*.json`` files.
-This update can be done using the command
-
-.. code-block:: console
-
-    $ ./sage --fixdoctests --no-test                        \
-        --update-known-test-failures --distribution all
