@@ -825,11 +825,21 @@ cdef class CircuitsMatroid(Matroid):
             Traceback (most recent call last):
             ...
             ValueError: broken circuit complex of matroid with loops is not defined
+
+        TESTS::
+
+            sage: M = Matroid(circuits=[[1,2,3], [3,4,5], [1,2,4,5]])
+            sage: M.broken_circuit_complex().is_immutable()                             # needs sage.graphs
+            True
         """
         from sage.topology.simplicial_complex import SimplicialComplex
         if self.loops():
             raise ValueError("broken circuit complex of matroid with loops is not defined")
-        return SimplicialComplex(self.no_broken_circuits_facets(ordering, reduced), maximality_check=False)
+        return SimplicialComplex(
+            self.no_broken_circuits_facets(ordering, reduced),
+            maximality_check=False,
+            is_immutable=True,
+        )
 
     # properties
 
