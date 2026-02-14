@@ -1461,10 +1461,9 @@ new failures, then ``sage -t`` will exit with status code 0 (success).
 Options for testing in virtual environments
 -------------------------------------------
 
-The distribution packages of the modularized Sage library can be tested in virtual environments.
-Sage has infrastructure to create such virtual environments using ``tox``, which is explained
-in detail in :ref:`section-modularized-doctesting`.  Our examples in this section
-refer to this setting, but it applies the same to any user-created virtual environments.
+Sage has infrastructure to test virtual environments using
+``tox``. These examples should apply to any user-created virtual
+environments.
 
 The virtual environments, set up in directories such as
 ``pkgs/sagemath-standard/.tox/sagepython-sagewheels-nopypi-norequirements``
