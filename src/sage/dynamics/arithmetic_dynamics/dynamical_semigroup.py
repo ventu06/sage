@@ -1015,6 +1015,8 @@ class DynamicalSemigroup(Parent, metaclass=InheritComparisonClasscallMetaclass):
 
         TESTS::
 
+            sage: A.<x, y, z, w, t, u ,v> = AffineSpace(QQ, 7)
+            sage: f = DynamicalSystem([t + u, v - w, x + y, z^2, u * t, v^2 - w^2, x * y * z], A)
             sage: d = DynamicalSemigroup(f)
             sage: d*d == d^2
             True
