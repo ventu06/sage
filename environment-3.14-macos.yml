@@ -93,7 +93,7 @@ dependencies:
   - docutils=0.21.2=pyhd8ed1ab_1
   - dulwich=0.24.10=py314h8d4a433_1
   - ecl=24.5.10=hc6c598b_1
-  - eclib=20250627=h6592c3b_0
+  - eclib=20250627=hce4aed7_2
   - ecm=7.0.6=hdd59bce_0
   - ensureconda=1.6.0=pyhcf101f3_0
   - epoxy=1.5.10=hc919400_2
@@ -102,7 +102,7 @@ dependencies:
   - execnet=2.1.2=pyhd8ed1ab_0
   - executing=2.2.1=pyhd8ed1ab_0
   - expat=2.7.3=haf25636_0
-  - fflas-ffpack=2.5.0=h4bc3318_0
+  - fflas-ffpack=2.5.0=h5f27e24_2
   - filelock=3.21.2=pyhd8ed1ab_0
   - flake8=7.3.0=pyhd8ed1ab_0
   - flake8-rst-docstrings=0.4.0=pyhd8ed1ab_0
@@ -117,7 +117,7 @@ dependencies:
   - fonttools=4.61.1=pyh7db6752_0
   - fortran-compiler=1.11.0=h81a4f41_0
   - fplll=5.5.0=h2a2278a_0
-  - fpylll=0.6.4=py314h3c405bf_1
+  - fpylll=0.6.4=py314h3c405bf_2
   - freetype=2.14.1=hce30654_0
   - fribidi=1.0.16=hc919400_0
   - frozendict=2.4.7=py314h0612a62_0
@@ -132,7 +132,7 @@ dependencies:
   - gfortran_osx-arm64=14.3.0=h3c33bd0_0
   - gitdb=4.0.12=pyhd8ed1ab_0
   - gitpython=3.1.46=pyhd8ed1ab_0
-  - givaro=4.2.0=h5331fe3_3
+  - givaro=4.2.1=h73034e7_1
   - glib-tools=2.86.3=h60c1bae_1
   - glpk=5.0=h6d7a090_0
   - gmp=6.3.0=h7bae524_2
@@ -205,7 +205,7 @@ dependencies:
   - libev=4.33=h93a5062_2
   - libexpat=2.7.3=haf25636_0
   - libffi=3.5.2=hcf2aa1b_0
-  - libflint=3.2.2=hf825d4a_0
+  - libflint=3.3.1=h7fd091f_1
   - libfreetype=2.14.1=hce30654_0
   - libfreetype6=2.14.1=h6da58f4_0
   - libgcc=15.2.0=hcbb3090_17
@@ -242,7 +242,7 @@ dependencies:
   - libxml2-16=2.15.1=h0ff4647_0
   - libxml2-devel=2.15.1=h9329255_0
   - libzlib=1.3.1=h8359307_2
-  - linbox=1.7.1=h08a833a_0
+  - linbox=1.7.1=hc59a8de_3
   - llvm-openmp=21.1.8=h4a912ad_0
   - llvm-tools=19.1.7=h855ad52_2
   - llvm-tools-19=19.1.7=h91fd4e7_2
@@ -282,7 +282,7 @@ dependencies:
   - networkx=3.6.1=pyhcf101f3_0
   - ninja=1.13.2=h49c215f_0
   - nlohmann_json-abi=3.12.0=h0f90c79_1
-  - ntl=11.4.3=hbb3f309_1
+  - ntl=11.6.0=h99f6ba7_0
   - numpy=2.4.2=py314hae46ccb_1
   - openjpeg=2.5.4=hbfb3c88_0
   - openssl=3.6.1=hd24854e_1
@@ -307,7 +307,7 @@ dependencies:
   - pkgconfig=1.5.5=pyhd8ed1ab_5
   - pkginfo=1.12.1.2=pyhd8ed1ab_0
   - planarity=4.0.1.0=hc919400_0
-  - platformdirs=4.5.1=pyhcf101f3_0
+  - platformdirs=4.7.0=pyhcf101f3_0
   - pluggy=1.6.0=pyhf9edf01_1
   - ppl=1.2=h8b147cf_1006
   - pplpy=0.8.10=py314hd22cf1b_0
@@ -345,7 +345,7 @@ dependencies:
   - python-gil=3.14.3=h4df99d1_101
   - python-installer=0.7.0=pyhff2d567_1
   - python-lrcalc=2.1=py314h4ed92d5_8
-  - python-symengine=0.14.1=py314h42b1784_0
+  - python-symengine=0.14.1=py314hc65a23b_1
   - python-utils=3.9.1=pyhff2d567_1
   - python_abi=3.14=8_cp314
   - pytz=2025.2=pyhd8ed1ab_0
@@ -382,7 +382,7 @@ dependencies:
   - shellingham=1.5.4=pyhd8ed1ab_2
   - sigtool-codesign=0.1.3=h98dc951_0
   - simdjson=4.2.4=ha7d2532_0
-  - singular=4.4.1=h837545d_1
+  - singular=4.4.1=hf33d76d_3
   - sirocco=2.1.1=h24ce579_0
   - six=1.17.0=pyhe01879c_1
   - smmap=5.0.2=pyhd8ed1ab_0
@@ -402,7 +402,7 @@ dependencies:
   - sqlite=3.51.2=h85ec8f2_0
   - stack_data=0.6.3=pyhd8ed1ab_1
   - stdlib-list=0.12.0=pyhd8ed1ab_0
-  - symengine=0.14.0=hddbed1c_1
+  - symengine=0.14.0=h7c98d2b_2
   - symmetrica=3.1.0=hc919400_0
   - sympow=2.023.6=hc13a52f_4
   - sympy=1.14.0=pyh2585a3b_105
@@ -419,7 +419,7 @@ dependencies:
   - traitlets=5.14.3=pyhd8ed1ab_1
   - trove-classifiers=2026.1.14.14=pyhd8ed1ab_0
   - truststore=0.10.4=pyhcf101f3_0
-  - ty=0.0.16=ha73ee7d_0
+  - ty=0.0.17=ha73ee7d_0
   - typing-extensions=4.15.0=h396c80c_0
   - typing-inspection=0.4.2=pyhd8ed1ab_1
   - typing_extensions=4.15.0=pyhcf101f3_0
