@@ -850,7 +850,6 @@ cdef class GraphicMatroid(Matroid):
         """
         cdef list edges = self.groundset_to_edges(X)
         cdef set vertices = set()
-        cdef list vertex_list = []
         cdef list leaves
         cdef tuple leaf
         cdef set edge_set = set()
