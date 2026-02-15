@@ -85,12 +85,14 @@ AUTHORS:
 #  the License, or (at your option) any later version.
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
+from collections import Counter
+from copy import copy
+from itertools import combinations
 
 from sage.matroids.matroid cimport Matroid
-from copy import copy
 from sage.matroids.utilities import newlabel, split_vertex, sanitize_contractions_deletions
-from itertools import combinations
 from sage.sets.disjoint_set cimport DisjointSet_of_hashables
+
 
 cdef class GraphicMatroid(Matroid):
     r"""
@@ -867,17 +869,18 @@ cdef class GraphicMatroid(Matroid):
         else:
             raise ValueError("no circuit in independent set")
 
+        degree = Counter()
         for u, v, _ in edge_set:
-            vertex_list.extend([u, v])
-        leaves = [(u, v, l) for u, v, l in edge_set
-                  if vertex_list.count(u) == 1 or vertex_list.count(v) == 1]
+            degree.update([u, v])
+        leaves = [e for e in edge_set
+                  if degree[e[0]] == 1 or degree[e[1]] == 1]
         while leaves:
             for leaf in leaves:
                 edge_set.remove(leaf)
-                vertex_list.remove(leaf[0])
-                vertex_list.remove(leaf[1])
-            leaves = [(u, v, l) for u, v, l in edge_set
-                      if vertex_list.count(u) == 1 or vertex_list.count(v) == 1]
+                degree[leaf[0]] -= 1
+                degree[leaf[1]] -= 1
+            leaves = [e for e in edge_set
+                      if degree[e[0]] == 1 or degree[e[1]] == 1]
 
         return frozenset([l for _, _, l in edge_set])
 
