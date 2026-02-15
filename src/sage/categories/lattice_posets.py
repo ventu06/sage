@@ -320,8 +320,10 @@ class LatticePosets(Category):
 
                 OUTPUT:
 
-                The element `\kappa(a)` or ``None`` if there
-                is not a unique greatest element with given constraints.
+                the element `\kappa(a)`
+
+                This will raise a :exc:`ValueError` if there is not
+                a unique greatest element with given constraints.
 
                 EXAMPLES::
 
@@ -355,8 +357,10 @@ class LatticePosets(Category):
 
                 OUTPUT:
 
-                The element `\kappa^*(a)` or ``None`` if there
-                is not a unique smallest element with given constraints.
+                the element `\kappa^*(a)`
+
+                This will raise a :exc:`ValueError` if there is not
+                a unique greatest element with given constraints.
 
                 EXAMPLES::
 
