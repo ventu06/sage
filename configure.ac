@@ -353,14 +353,6 @@ SAGE_DARWIN_PKG_CONFIG_PATH=
     AC_CHECK_HEADER([zlib.h], [],
        [AC_MSG_ERROR([cannot find libz headers. $SAGE_PREREQ_URL])])
 
-# Check for system python (bootstrap python for build scripts)
-AC_MSG_CHECKING([for Python])
-if SAGE_BOOTSTRAP_PYTHON=$(build/bin/sage-bootstrap-python -c "import sys; print(sys.executable)"); then
-    AC_MSG_RESULT([$SAGE_BOOTSTRAP_PYTHON])
-else
-    AC_MSG_ERROR([You do not have a suitable version of Python installed])
-fi
-
 # check for liblzma
 
 PKG_CHECK_MODULES([liblzma], [liblzma], [], [
@@ -381,7 +373,7 @@ AS_IF([test x"$with_python" = x3], [
     AC_MSG_NOTICE([The meaning of the option --with-python has changed in Sage 9.2. Ignoring.])
     with_python=''
 ])
-AS_IFbuild/bin/sage-bootstrap-python([test x"$with_python" = x"no"],
+AS_IF([test x"$with_python" = x"no"],
       [AC_MSG_ERROR([building Sage --without-python is not supported])])
 
 ac_path_PYTHON3="$with_python"
