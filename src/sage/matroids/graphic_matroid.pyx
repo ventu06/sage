@@ -871,15 +871,15 @@ cdef class GraphicMatroid(Matroid):
         degree = Counter()
         for u, v, _ in edge_set:
             degree.update([u, v])
-        leaves = [e for e in edge_set
-                  if degree[e[0]] == 1 or degree[e[1]] == 1]
-        while leaves:
-            for leaf in leaves:
+        leaf_edges = [e for e in edge_set
+                      if degree[e[0]] == 1 or degree[e[1]] == 1]
+        while leaf_edges:
+            for leaf in leaf_edges:
                 edge_set.remove(leaf)
                 degree[leaf[0]] -= 1
                 degree[leaf[1]] -= 1
-            leaves = [e for e in edge_set
-                      if degree[e[0]] == 1 or degree[e[1]] == 1]
+            leaf_edges = [e for e in edge_set
+                          if degree[e[0]] == 1 or degree[e[1]] == 1]
 
         return frozenset([l for _, _, l in edge_set])
 
