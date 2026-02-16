@@ -439,8 +439,7 @@ cdef class CircuitsMatroid(Matroid):
         C = []
         for i in self._k_C:
             C += [[d[y] for y in x] for x in self._k_C[i]]
-        M = CircuitsMatroid(groundset=E, circuits=C)
-        return M
+        return CircuitsMatroid(groundset=E, circuits=C)
 
     # enumeration
 

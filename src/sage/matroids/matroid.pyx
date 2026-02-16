@@ -8644,5 +8644,4 @@ cdef class Matroid(SageObject):
             X_inv = frozenset([d_inv[x] for x in X])
             return self._rank(X_inv)
 
-        M = RankMatroid(groundset=E, rank_function=f_relabel)
-        return M
+        return RankMatroid(groundset=E, rank_function=f_relabel)
