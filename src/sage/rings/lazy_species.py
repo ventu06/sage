@@ -1464,8 +1464,13 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             result = R.zero()
             for f, c in left[g_count]:
                 f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
+                if f_g_count == 1:
+                    result += c * R(S_n)
+                    continue
+
+                # the test "!= S_n" can be removed once we have GAP 4.15.1
                 l_G = [H
-                       for g, c in G_n if (H := g.permutation_group()[0])
+                       for g, c in G_n if (H := g.permutation_group()[0]) != S_n
                        for _ in range(c)]
                 g_act = libgap.FactorCosetAction(S_n, l_G)
                 gens, images = libgap.MappingGeneratorsImages(g_act)
@@ -1473,7 +1478,6 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                 f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
                                                  f.permutation_group()[0])
                 f_images = [libgap.Image(f_act, image) for image in images]
-
                 summands = []
                 U = set(range(1, f_g_count + 1))
                 while U:
