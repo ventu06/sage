@@ -857,7 +857,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         r"""
         Return the functorial composition of `F` and `G`.
 
-        This is defined on objects as `F\Box G[U] = F[G[U]` and on
+        This is defined on objects as `F\Box G[U] = F[G[U]]` and on
         bijections as `F\Box G[\sigma] = F[G[\sigma]]`.
 
         Thus, `(F+G)\Box H = F\Box H + G\Box H`.  Moreover,
@@ -918,10 +918,20 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E = L.Sets()
-            sage: E2 = E.restrict(2,2)
-            sage: E3 = E.restrict(3,3)
+            sage: E2 = E.restrict(2, 2)
+            sage: E3 = E.restrict(3, 3)
             sage: (E3^2).functorial_composition(E2^2)
             (E_2(X^2)+2*X*E_3) + O^7
+
+            sage: H = (E^2).functorial_composition(E^2)
+            sage: H.generating_series()
+            2 + 4*X + 8*X^2 + 128/3*X^3 + 8192/3*X^4 + 536870912/15*X^5 + 1152921504606846976/45*X^6 + O(X^7)
+            sage: H[0]
+            2
+            sage: H[1]
+            4*X
+            sage: H[2]
+            8*E_2 + 4*X^2
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
@@ -1441,35 +1451,37 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
         def coefficient(n):
             S_n = _SymmetricGroup(n)
+            g_count = factorial(n) * G.generating_series()[n]
+
+            if n <= 1:  # we act trivially on G[n]
+                f_g_count = left.generating_series()[g_count] * factorial(g_count)
+                return f_g_count * R(S_n)
+
             G_n = G[n]
-            g_n = factorial(n) * G.generating_series()[n]
             result = R.zero()
-            for f, c in left[g_n]:
-                f_g_n = factorial(g_n) / f.permutation_group()[0].cardinality()
-                if f_g_n == 1:  # f is the trivial action
-                    result += c * R(S_n)
-                else:
-                    l_G = [H
-                           for g, c in G_n if (H := g.permutation_group()[0]) != S_n
-                           for _ in range(c)]
-                    g_act = libgap.FactorCosetAction(S_n, l_G)
-                    gens, images = libgap.MappingGeneratorsImages(g_act)
+            for f, c in left[g_count]:
+                f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
+                l_G = [H
+                       for g, c in G_n if (H := g.permutation_group()[0])
+                       for _ in range(c)]
+                g_act = libgap.FactorCosetAction(S_n, l_G)
+                gens, images = libgap.MappingGeneratorsImages(g_act)
+                # maybe it is better not to cache SymmetricGroup(g_count)
+                f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
+                                                 f.permutation_group()[0])
+                f_images = [libgap.Image(f_act, image) for image in images]
 
-                    # don't cache SymmetricGroup(g_n)
-                    f_act = libgap.FactorCosetAction(SymmetricGroup(g_n),
-                                                     f.permutation_group()[0])
-                    f_images = [libgap.Image(f_act, image) for image in images]
+                summands = []
+                U = set(range(1, f_g_count + 1))
+                while U:
+                    u = U.pop()
+                    OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
+                    summands.append(PermutationGroup(gap_group=OS["stabilizer"],
+                                                     domain=S_n.domain()))
+                    U.difference_update(OS["orbit"].sage())
 
-                    summands = []
-                    U = set(range(1, f_g_n + 1))
-                    while U:
-                        u = U.pop()
-                        OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
-                        summands.append(PermutationGroup(gap_group=OS["stabilizer"],
-                                                         domain=S_n.domain()))
-                        U.difference_update(OS["orbit"].sage())
+                result += c * sum(map(R, summands))
 
-                    result += c * sum(map(R, summands))
             return result
 
         coeff_stream = Stream_function(coefficient, P._sparse, 0)
