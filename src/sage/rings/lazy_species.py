@@ -926,12 +926,15 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: H = (E^2).functorial_composition(E^2)
             sage: H.generating_series()
             2 + 4*X + 8*X^2 + 128/3*X^3 + 8192/3*X^4 + 536870912/15*X^5 + 1152921504606846976/45*X^6 + O(X^7)
-            sage: H[0]
-            2
-            sage: H[1]
-            4*X
-            sage: H[2]
-            8*E_2 + 4*X^2
+            sage: H.truncate(4)
+            2 + 4*X + (8*E_2+4*X^2) + (16*E_3+48*X*E_2+16*X^3)
+            sage: H[4]  # long time
+            32*E_4 + 224*X*E_3 + 32*E_2(E_2) + 224*E_2^2 + 1568*X^2*E_2 + 112*E_2(X^2) + 1792*X^4
+
+        Computing the next term is most likely out of reach::
+
+            sage: oeis(H.isotype_generating_series()[:5])  # long time, optional -- internet
+            0: A003180: Number of equivalence classes of Boolean functions of n variables under action of symmetric group.
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
