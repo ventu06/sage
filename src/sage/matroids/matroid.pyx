@@ -8306,9 +8306,7 @@ cdef class Matroid(SageObject):
         TESTS::
 
             sage: M = matroids.catalog.Fano()
-            sage: M.broken_circuit_complex().is_immutable()                             # needs sage.graphs
-            True
-
+            sage: assert M.broken_circuit_complex().is_immutable()                      # needs sage.graphs
             sage: for M in matroids.AllMatroids(5):  # optional - matroid_database
             ....:     r = M.rank()
             ....:     if r > 0 and not M.dual().loops():
