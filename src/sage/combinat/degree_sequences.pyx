@@ -413,6 +413,7 @@ class DegreeSequences:
         """
         yield from init(self._n)
 
+
 cdef class _DegreeSequenceEnumerator:
     """
     Internal enumerator class for degree sequences.
