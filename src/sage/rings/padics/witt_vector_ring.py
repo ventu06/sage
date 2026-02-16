@@ -25,15 +25,12 @@ AUTHORS:
 
 from collections.abc import Iterator
 from itertools import product
-from math import prod
 
 from sage.categories.commutative_additive_groups import CommutativeAdditiveGroups
 from sage.categories.commutative_rings import CommutativeRings
 from sage.categories.fields import Fields
-from sage.categories.finite_fields import FiniteFields
 from sage.categories.homset import Hom
 from sage.categories.integral_domains import IntegralDomains
-from sage.combinat.tuple import Tuples
 from sage.misc.latex import latex
 from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
@@ -50,7 +47,6 @@ from sage.rings.polynomial.multi_polynomial_ring_base import MPolynomialRing_bas
 from sage.rings.polynomial.polynomial_element import Polynomial
 from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-from sage.sets.integer_range import IntegerRange
 from sage.sets.primes import Primes
 from sage.structure.parent import Parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -336,7 +332,9 @@ class WittVectorRing(Parent, UniqueRepresentation):
             base = WittVectorRing(coefficient_ring.base_ring(), prec=prec,
                                   p=prime, algorithm=algorithm)
 
-        Parent.__init__(self, base=base, category=cat)
+        names = tuple('V' + x for x in coefficient_ring.variable_names())
+
+        Parent.__init__(self, base=base, category=cat, names=names)
 
     def __iter__(self) -> Iterator:
         """
@@ -410,93 +408,6 @@ class WittVectorRing(Parent, UniqueRepresentation):
                             for rng in self._coerce_when_different))
         if S is ZZ:
             return True
-
-    def _generate_generators(self):
-        """
-        Generate a list of generators of ``self`` as a ring.
-
-        EXAMPLES::
-
-            sage: R.<x,y> = GF(2)[]
-            sage: W = WittVectorRing(R, p=3, prec=3)
-            sage: W.gens()  # indirect doctest
-            ((x, 0, 0), (y, 0, 0), (0, 1, 0), (0, x, 0), (0, y, 0), (0, 0, 1),
-            (0, 0, x), (0, 0, y))
-        """
-        coeff_ring_gens = self._coefficient_ring.gens()
-        coeff_ring_names = self._coefficient_ring.variable_names()
-        self._gens = tuple(self.teichmuller_lift(x) for x in coeff_ring_gens)
-        names = tuple(f"T{x}" for x in coeff_ring_names)
-        p = self._prime
-        R = PolynomialRing(self._coefficient_ring, len(coeff_ring_gens), 'T')
-        var = R.gens()
-
-        # In this case, 1 is the only generator
-        if (len(var) == 1 and coeff_ring_gens[0].is_one() and
-                (self._coefficient_ring.characteristic() == p
-                 or self.base_ring().coefficient_ring()
-                 is self._coefficient_ring)):
-            self._assign_names(names)
-            return
-
-        vec = [self._coefficient_ring.zero()] * self._prec
-
-        # The Teichmüller representatives of the generators of a finite field
-        # generate its associated ring of Witt vectors
-        if (self._coefficient_ring.characteristic() == p and
-                self._coefficient_ring in FiniteFields()):
-            self._assign_names(names)
-            return
-
-        # Using the formula V(x)V(y)=pV(xy), one can see that
-        # if the coefficient ring has characteristic coprime to p
-        # then the generators are the V^i([gen]) and the V^i(1)
-        if self._coefficient_ring.characteristic().gcd(p).is_one():
-            l = 0 if len(var) == 1 and coeff_ring_gens[0].is_one() else len(var)
-            for i in range(1, self._prec):
-                vec[i] = self._coefficient_ring.one()
-                self._gens += (self(vec),)
-                names += (f"V{i}_0",)
-                for j in range(l):
-                    vec[i] = coeff_ring_gens[j]
-                    self._gens += (self(vec),)
-                    names += (f"V{i}T{coeff_ring_names[j]}_{j}",)
-                vec[i] = self._coefficient_ring.zero()
-            self._assign_names(names)
-            return
-
-        # Handle the general case
-        for i in range(1, self._prec):
-            p_i = p**i
-            power = -1
-
-            for powers in Tuples(IntegerRange(p_i), len(var)):
-                power += 1
-                if (self._coefficient_ring.characteristic() == p and
-                        any((po % p).is_zero() and
-                            not po.is_zero() for po in powers)):
-                    continue
-
-                vec[i] = prod(coeff_ring_gens[j]**powers[j] for j in range(len(var)))
-
-                if (vec[i].is_one() and
-                       self._coefficient_ring.characteristic() == p):
-                    continue
-
-                w = self(vec)
-
-                if w not in self._gens:
-                    self._gens += (w,)
-                    name = f"V{i}T"
-                    for j in range(len(var)):
-                        if not powers[j].is_zero():
-                            name += f"{coeff_ring_names[j]}"
-                    name += f"_{power}"
-                    names += (name,)
-
-            vec[i] = self._coefficient_ring.zero()
-
-        self._assign_names(names)
 
     def _generate_witt_polynomials(self, coefficient_ring, prec, p):
         """
@@ -720,28 +631,41 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         Return the ``n``-th generator of ``self``.
 
+        .. WARNING::
+
+            This is not the ``n``-th generator of ``self`` as a
+            ``self.base_ring()``-algebra.
+
+        .. SEEALSO::
+
+            :meth:`gens`
+
         EXAMPLES::
 
-            sage: R.<x> = ZZ[]
+            sage: R.<x, y> = ZZ[]
             sage: W = WittVectorRing(R, p=3, prec=3)
             sage: W.gen()
             (x, 0, 0)
-            sage: W.gen(n=12)
-            (0, 0, x^8)
-            sage: W.gen(n=13)
+            sage: W.gen(1)
+            (y, 0, 0)
+            sage: W.gen(n=2)
             Traceback (most recent call last):
             ...
-            IndexError: tuple index out of range
+            ValueError: Generator not defined.
         """
-        return self.gens()[n]
+        return self.teichmuller_lift(self._coefficient_ring.gen(n))
 
     def gens(self) -> tuple:
-        """
-        Return a tuple of generators of ``self`` as a ring.
+        r"""
+        Return a tuple of generators of ``self``.
 
-        .. NOTE::
+        .. WARNING::
 
-            This tuple is not necessarily minimal.
+            These are not the generators of ``self`` as a
+            ``self.base_ring()``-algebra. Rather, this set generates a
+            sub-``self.base_ring()``-algebra `A` of ``self`` such that every
+            element of ``self`` can be written as `\sum_{i=0}^{prec}V^i(a_i)`
+            where all `a_i\in A`.
 
         EXAMPLES::
 
@@ -757,13 +681,9 @@ class WittVectorRing(Parent, UniqueRepresentation):
             sage: R.<x> = ZZ[]
             sage: W = WittVectorRing(R, p=7, prec=2)
             sage: W.gens()
-            ((x, 0), (0, 1), (0, x), (0, x^2), (0, x^3), (0, x^4), (0, x^5),
-            (0, x^6))
+            ((x, 0),)
         """
-        if not hasattr(self, "_gens"):
-            self._generate_generators()
-
-        return self._gens
+        return tuple(map(self.teichmuller_lift, self._coefficient_ring.gens()))
 
     def is_exact(self) -> bool:
         """
@@ -913,9 +833,14 @@ class WittVectorRing(Parent, UniqueRepresentation):
         """
         Return the number of generators of ``self``.
 
-        .. NOTE::
+        .. WARNING::
 
-            This number is not necessarily minimal.
+            This is not the number of generators of ``self`` as a
+            ``self.base_ring()``-algebra.
+
+        .. SEEALSO::
+
+            :meth:`gens`
 
         EXAMPLES::
 
@@ -924,19 +849,19 @@ class WittVectorRing(Parent, UniqueRepresentation):
             1
             sage: W = WittVectorRing(GF(2)['t'], p=3, prec=3)
             sage: W.ngens()
-            5
+            1
             sage: W = WittVectorRing(GF(3), p=3, prec=3)
             sage: W.ngens()
             1
             sage: W = WittVectorRing(GF(3)['t'], p=3, prec=3)
             sage: W.ngens()
-            9
+            1
             sage: W = WittVectorRing(GF(9,'a'), p=3, prec=3)
             sage: W.ngens()
             1
             sage: W = WittVectorRing(GF(9,'a')['t'], p=3, prec=3)
             sage: W.ngens()
-            9
+            1
         """
         return len(self.gens())
 
