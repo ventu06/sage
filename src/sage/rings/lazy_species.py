@@ -1449,52 +1449,54 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         args = [P(g) for g in args]
         if len(args) > 1:
             raise NotImplementedError("multisort functorial composition is not yet implemented")
-        G = args[0]
-        R = P._laurent_poly_ring
 
-        def coefficient(n):
-            S_n = _SymmetricGroup(n)
-            g_count = factorial(n) * G.generating_series()[n]
-
-            if n <= 1:  # we act trivially on G[n]
-                f_g_count = left.generating_series()[g_count] * factorial(g_count)
-                return f_g_count * R(S_n)
-
-            G_n = G[n]
-            result = R.zero()
-            for f, c in left[g_count]:
-                f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
-                if f_g_count == 1:
-                    result += c * R(S_n)
-                    continue
-
-                # the test "!= S_n" can be removed once we have GAP 4.15.1
-                l_G = [H
-                       for g, c in G_n if (H := g.permutation_group()[0]) != S_n
-                       for _ in range(c)]
-                g_act = libgap.FactorCosetAction(S_n, l_G)
-                gens, images = libgap.MappingGeneratorsImages(g_act)
-                # maybe it is better not to cache SymmetricGroup(g_count)
-                f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
-                                                 f.permutation_group()[0])
-                f_images = [libgap.Image(f_act, image) for image in images]
-                summands = []
-                U = set(range(1, f_g_count + 1))
-                while U:
-                    u = U.pop()
-                    OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
-                    summands.append(PermutationGroup(gap_group=OS["stabilizer"],
-                                                     domain=S_n.domain()))
-                    U.difference_update(OS["orbit"].sage())
-
-                result += c * sum(map(R, summands))
-
-            return result
-
-        coeff_stream = Stream_function(coefficient, P._sparse, 0)
+        coeff_stream = Stream_function(self._coefficient, P._sparse, 0)
         super().__init__(P, coeff_stream)
         self._left = left
         self._args = args
+
+    def _coefficient(self, n):
+        left = self._left
+        G = self._args[0]
+        R = G.parent()._laurent_poly_ring
+
+        S_n = SymmetricGroup(n)
+        g_count = factorial(n) * G.generating_series()[n]
+        G_n = G[n].monomial_coefficients(copy=False)
+
+        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:  # we act trivially on G[n]
+            f_g_count = left.generating_series()[g_count] * factorial(g_count)
+            return f_g_count * R(S_n)
+
+        result = R.zero()
+        for f, c in left[g_count]:
+            f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
+            if f_g_count == 1:
+                result += c * R(S_n)
+                continue
+
+            # the test "!= S_n" can be removed once we have GAP 4.15.1
+            l_G = [H
+                   for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+                   for _ in range(c)]
+            g_act = libgap.FactorCosetAction(S_n, l_G)
+            gens, images = libgap.MappingGeneratorsImages(g_act)
+
+            f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
+                                             f.permutation_group()[0])
+            f_images = [libgap.Image(f_act, image) for image in images]
+            summands = []
+            U = set(range(1, f_g_count + 1))
+            while U:
+                u = U.pop()
+                OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
+                summands.append(PermutationGroup(gap_group=OS["stabilizer"],
+                                                 domain=S_n.domain()))
+                U.difference_update(OS["orbit"].sage())
+
+            result += c * sum(map(R, summands))
+
+        return result
 
     def generating_series(self):
         r"""
