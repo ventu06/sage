@@ -896,7 +896,7 @@ class AlgebraicScheme_subscheme_projective(AlgebraicScheme_subscheme):
 
         - ``X`` -- a subscheme of projective space. At present, ``X`` is
           required to be an irreducible and reduced hypersurface defined
-          over `\QQ`, a number field or a finite field.
+          over a number field (including `\QQ`) or a finite field.
 
         OUTPUT: the dual of ``X`` as a subscheme of the dual projective space
 
