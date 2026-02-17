@@ -14,3 +14,34 @@ Namely, the following standard tools must be installed on your computer:
   with a high compression ratio.
 - **python**: Python 3.12 or later; it needs to have the development headers and the following standard
   modules available: sqlite3, ctypes, math, hashlib, socket, ssl, ensurepip, zlib
+
+XZ Utils (liblzma) is available with most supported distributions (package
+names such as ``xz-devel`` on Fedora, ``liblzma-dev`` on Debian/Ubuntu).
+It can also be built from source from https://github.com/tukaani-project/xz.
+After downloading and untarring the release archive, and changing to the
+directory with the sources::
+
+    $ ./configure --prefix=/usr/local && make && make install
+
+will install XZ Utils in ``/usr/local``. Instead of ``/usr/local`` one may choose
+another location, say ``/opt/foo``, which then might have to be passed to Sage
+via its ``./configure``, with ``--with-sysroot=/opt/foo`` or by setting
+``CFLAGS`` and ``LDFLAGS`` appropriately.
+
+Python 3.12 (or later) with development headers is available with most
+supported distributions (package names such as ``python3-devel`` on Fedora,
+``python3-dev`` on Debian/Ubuntu).
+It can also be built from source from https://www.python.org/downloads/.
+After downloading and untarring the release archive, and changing to the
+directory with the sources::
+
+    $ ./configure --prefix=/usr/local --enable-optimizations --with-ensurepip=install && make && make install
+
+will install Python in ``/usr/local``; this takes a few minutes on a
+moderately fast machine. Instead of ``/usr/local`` one may choose another
+location, say ``/opt/foo``, which then should be passed to Sage's
+``./configure`` with ``--with-python=/opt/foo/bin/python3``.
+The ``--enable-optimizations`` flag is optional but recommended for
+performance. Make sure that the prerequisites for the required standard
+modules (``sqlite3``, ``ctypes``, ``zlib``, ``ssl``, etc.) are installed
+before building Python; otherwise these modules will be missing.
