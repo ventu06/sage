@@ -3646,7 +3646,7 @@ def compute_isogeny_kernel_polynomial(E1, E2, ell, algorithm=None):
         sage: poly.factor()
         (x + 10) * (x + 12) * (x + 16)
 
-    Check that it works even when the degree is larged compared to the characteristic::
+    Check that it works even when the degree is large compared to the characteristic::
 
         sage: from sage.schemes.elliptic_curves.ell_curve_isogeny import compute_isogeny_kernel_polynomial
         sage: E1 = EllipticCurve(GF(5), [1,1])
