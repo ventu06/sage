@@ -302,9 +302,11 @@ class LatticePosets(Category):
 
             def spine(self):
                 """
-                Return the subposet on the union of longest maximal chains.
+                Return the spine of ``self``.
 
-                This is a distributive lattice, called the spine.
+                For a semidistributive lattice `L`, the *spine* of `L` is
+                the distributive lattice constructed as the subposet
+                on the union of longest maximal chains.
 
                 EXAMPLES::
 
