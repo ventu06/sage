@@ -935,6 +935,38 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: oeis(H.isotype_generating_series()[:5])  # long time, optional -- internet
             0: A003180: Number of equivalence classes of Boolean functions of n variables under action of symmetric group.
+
+        Check that the species of sets is absorbing::
+
+            sage: E.functorial_composition(E^4)
+            1 + X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+
+            sage: (E^4).functorial_composition(E)
+            4 + 4*X + 4*E_2 + 4*E_3 + 4*E_4 + 4*E_5 + 4*E_6 + O^7
+
+            sage: E.functorial_composition(L.Graphs())
+            1 + X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+
+        Check that the species of elements is a neutral element::
+
+            sage: G = L.Graphs()
+            sage: (E*X).functorial_composition(G)[:5] == G[:5]
+            True
+            sage: G.functorial_composition(E*X)[:5] == G[:5]
+            True
+
+        Check that functorial composition is multiplicative with
+        respect to the Hadamard product::
+
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: F = C.hadamard_product(E^2)
+            sage: G = L.Polygons()
+            sage: H = F.functorial_composition(G)
+            sage: H1 = C.functorial_composition(G)
+            sage: H2 = (E^2).functorial_composition(G)
+            sage: H[:5] == H1.hadamard_product(H2)[:5]
+            True
         """
         return FunctorialCompositionSpeciesElement(self, *args)
 
@@ -1460,7 +1492,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         G = self._args[0]
         R = G.parent()._laurent_poly_ring
 
-        S_n = SymmetricGroup(n)
+        S_n = _SymmetricGroup(n)
         g_count = factorial(n) * G.generating_series()[n]
         G_n = G[n].monomial_coefficients(copy=False)
 
