@@ -1500,6 +1500,17 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             f_g_count = left.generating_series()[g_count] * factorial(g_count)
             return f_g_count * R(S_n)
 
+        # lazily create the action corresponding to G
+        G_action = None
+
+        def get_G_action():
+            # the test "!= S_n" can be removed once we have GAP 4.15.1
+            l_G = [H
+                   for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+                   for _ in range(c)]
+            g_act = libgap.FactorCosetAction(S_n, l_G)
+            return libgap.MappingGeneratorsImages(g_act)
+
         result = R.zero()
         for f, c in left[g_count]:
             f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
@@ -1507,21 +1518,17 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                 result += c * R(S_n)
                 continue
 
-            # the test "!= S_n" can be removed once we have GAP 4.15.1
-            l_G = [H
-                   for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
-                   for _ in range(c)]
-            g_act = libgap.FactorCosetAction(S_n, l_G)
-            gens, images = libgap.MappingGeneratorsImages(g_act)
+            if G_action is None:
+                G_action = get_G_action()
 
             f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
                                              f.permutation_group()[0])
-            f_images = [libgap.Image(f_act, image) for image in images]
+            f_images = [libgap.Image(f_act, image) for image in G_action[1]]
             summands = []
             U = set(range(1, f_g_count + 1))
             while U:
                 u = U.pop()
-                OS = libgap.OrbitStabilizer(S_n, u, gens, f_images)
+                OS = libgap.OrbitStabilizer(S_n, u, G_action[0], f_images)
                 summands.append(PermutationGroup(gap_group=OS["stabilizer"],
                                                  domain=S_n.domain()))
                 U.difference_update(OS["orbit"].sage())
