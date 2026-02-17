@@ -853,7 +853,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         F.define(P(coefficient))
         return F
 
-    def functorial_composition(self, *args):
+    def functorial_composition(self, *args, algorithm="orbits"):
         r"""
         Return the functorial composition of `F` and `G`.
 
@@ -914,6 +914,18 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: [(X^factorial(k)).functorial_composition(X^k) - factorial(factorial(k)-1)*X^k for k in range(4)]
             [O^7, O^7, O^7, O^7]
 
+        If the stabilizer subgroups corresponding to the arguments
+        have few subgroups, using the ``"subgroup`` algorithm is
+        feasible, whereas the standard counting algorithm is not::
+
+            sage: C = L.Cycles()
+            sage: C.functorial_composition(X^4, algorithm="subgroups")
+            (20437340160*E_2(X^2)
+             +40874803200*X^2*E_2
+             +11022480*X*C_3
+             +122880*C_4
+             +1077167364089547583440*X^4) + O^7
+
         TESTS::
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
@@ -967,8 +979,9 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: H2 = (E^2).functorial_composition(G)
             sage: H[:5] == H1.hadamard_product(H2)[:5]
             True
+
         """
-        return FunctorialCompositionSpeciesElement(self, *args)
+        return FunctorialCompositionSpeciesElement(self, *args, algorithm=algorithm)
 
     def arithmetic_product(self, other):
         r"""
@@ -1460,7 +1473,7 @@ class CompositionSpeciesElement(LazyCombinatorialSpeciesElementGeneratingSeriesM
 
 
 class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
-    def __init__(self, left, *args):
+    def __init__(self, left, *args, algorithm):
         r"""
         Initialize the functorial composition of species.
 
@@ -1482,10 +1495,101 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if len(args) > 1:
             raise NotImplementedError("multisort functorial composition is not yet implemented")
 
-        coeff_stream = Stream_function(self._coefficient, P._sparse, 0)
+        if algorithm == "orbits":
+            coeff_stream = Stream_function(self._coefficient, P._sparse, 0)
+        elif algorithm == "subgroups":
+            coeff_stream = Stream_function(self._coefficient_subgroups,
+                                           P._sparse, 0)
+        else:
+            raise ValueError(f"{algorithm} is not a known algorithm, use 'orbits' or 'subgroups'")
         super().__init__(P, coeff_stream)
         self._left = left
         self._args = args
+
+    def _coefficient_subgroups(self, n):
+        r"""
+        Return the `n`-th coefficient using Dave Witte Morris'
+        idea, identifying multiplicities of subgroups.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: one = L.one()
+            sage: one.functorial_composition(one, algorithm="subgroups")
+            X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+            sage: one.functorial_composition(X, algorithm="subgroups")
+            1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+        """
+        left = self._left
+        G = self._args[0]
+        G_n = G[n].monomial_coefficients(copy=False)
+        g_count = factorial(n) * G.generating_series()[n]
+        S = _SymmetricGroup(g_count)
+
+        S_n = _SymmetricGroup(n)
+        R = G.parent()._laurent_poly_ring
+
+        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:
+            # we act trivially on G[n]
+            f_g_count = left.generating_series()[g_count] * factorial(g_count)
+            return f_g_count * R(S_n)
+
+        G_action = None  # lazily create the action corresponding to G
+
+        def get_G_action():
+            # the test "!= S_n" can be removed once we have GAP 4.15.1
+            l_G = [H
+                   for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+                   for _ in range(c)]
+            g_act = libgap.FactorCosetAction(S_n, l_G)
+            gens, images = libgap.MappingGeneratorsImages(g_act)
+            group = libgap.Group(images)
+            subgroups = libgap.ConjugacyClassesSubgroups(group)
+            return gens, images, group, subgroups, g_act
+
+        def index(F):
+            return next(i for i, C in enumerate(G_action[3]) if F in C)
+
+        from sage.misc.cachefunc import cached_function
+
+        @cached_function
+        def fixed(i, l_H):
+            F = G_action[3][i].Representative()
+            o = F.Size()
+            k = sum(C.Size().sage() for C in l_H
+                    if (K := C.Representative()).Size() == o
+                    and libgap.IsConjugate(S, K, F))
+            N = libgap.Normalizer(S, F)
+            return k * N.Size().sage()
+
+        @cached_function
+        def points_with_stabilizer(i, l_H):
+            f = fixed(i, l_H)
+            F = G_action[3][i].Representative()
+            G = G_action[2]
+            if F == G:
+                return f
+            return (f - points_with_stabilizer(index(G), l_H)
+                    - sum(points_with_stabilizer(index(F1), l_H)
+                          for F1 in libgap.IntermediateSubgroups(G, F)["subgroups"]))
+
+        result = R.zero()
+        for h, c in left[g_count]:
+            H = h.permutation_group()[0]
+            l_H = libgap.ConjugacyClassesSubgroups(H)
+            if G_action is None:
+                G_action = get_G_action()
+            G = G_action[2]
+            for i, F_C in enumerate(G_action[3]):
+                m = points_with_stabilizer(i, l_H)
+                F = F_C.Representative()
+                N = libgap.Normalizer(G, F)
+                r = m * F.Size().sage() / N.Size().sage() / H.cardinality()
+                if r:
+                    F1 = libgap.PreImage(G_action[4], F.GeneratorsOfGroup()).sage()
+                    result += c * r * R(PermutationGroup(F1, domain=range(1, n+1)))
+
+        return result
 
     def _coefficient(self, n):
         left = self._left
@@ -1496,7 +1600,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         g_count = factorial(n) * G.generating_series()[n]
         G_n = G[n].monomial_coefficients(copy=False)
 
-        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:  # we act trivially on G[n]
+        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:
+            # we act trivially on G[n]
             f_g_count = left.generating_series()[g_count] * factorial(g_count)
             return f_g_count * R(S_n)
 
@@ -1513,7 +1618,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
         result = R.zero()
         for f, c in left[g_count]:
-            f_g_count = factorial(g_count) / f.permutation_group()[0].cardinality()
+            F = f.permutation_group()[0]
+            f_g_count = factorial(g_count) / F.cardinality()
             if f_g_count == 1:
                 result += c * R(S_n)
                 continue
@@ -1521,8 +1627,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             if G_action is None:
                 G_action = get_G_action()
 
-            f_act = libgap.FactorCosetAction(SymmetricGroup(g_count),
-                                             f.permutation_group()[0])
+            f_act = libgap.FactorCosetAction(SymmetricGroup(g_count), F)
             f_images = [libgap.Image(f_act, image) for image in G_action[1]]
             summands = []
             U = set(range(1, f_g_count + 1))
