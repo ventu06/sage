@@ -24,9 +24,12 @@ directory with the sources::
     $ ./configure --prefix=/usr/local && make && make install
 
 will install XZ Utils in ``/usr/local``. Instead of ``/usr/local`` one may choose
-another location, say ``/opt/foo``, which then might have to be passed to Sage
-via its ``./configure``, with ``--with-sysroot=/opt/foo`` or by setting
-``CFLAGS`` and ``LDFLAGS`` appropriately.
+another location, say ``/opt/foo``. A modern xz/liblzma installs a
+``liblzma.pc`` file, and Sage's ``./configure`` checks for it using a
+pkg-config macro. To detect xz/liblzma at a non-standard location, add it
+to ``PKG_CONFIG_PATH``::
+
+    $ export PKG_CONFIG_PATH=$PKG_CONFIG_PATH:/opt/foo/lib/pkgconfig
 
 Python 3.12 (or later) with development headers is available with most
 supported distributions (package names such as ``python3-devel`` on Fedora,
@@ -45,3 +48,6 @@ The ``--enable-optimizations`` flag is optional but recommended for
 performance. Make sure that the prerequisites for the required standard
 modules (``sqlite3``, ``ctypes``, ``zlib``, ``ssl``, etc.) are installed
 before building Python; otherwise these modules will be missing.
+
+It is also possible to use a Python installed by `uv <https://docs.astral.sh/uv/>`_
+in a venv.
