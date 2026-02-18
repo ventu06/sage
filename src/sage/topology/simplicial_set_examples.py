@@ -853,8 +853,8 @@ def PresentationComplex(G):
     """
     O = AbstractSimplex(0)
     SO = O.apply_degeneracies(0)
-    edges = {i + 1: AbstractSimplex(1, name=str(g)) for (i,g) in enumerate(G.gens())}
-    inverseedges = {-i - 1: AbstractSimplex(1, name=str(g.inverse())) for (i,g) in enumerate(G.gens())}
+    edges = {i + 1: AbstractSimplex(1, name=str(g)) for (i, g) in enumerate(G.gens())}
+    inverseedges = {-i - 1: AbstractSimplex(1, name=str(g.inverse())) for (i, g) in enumerate(G.gens())}
     all_edges = {}
     all_edges.update(edges)
     all_edges.update(inverseedges)
