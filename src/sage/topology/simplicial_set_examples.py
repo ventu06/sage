@@ -859,7 +859,7 @@ def PresentationComplex(G):
     all_edges.update(edges)
     all_edges.update(inverseedges)
     triangles = {i + 1 : AbstractSimplex(2, name='T' + str(g)) for (i, g) in enumerate(G.gens())}
-    face_maps = {O : None}
+    face_maps = {O: None}
     face_maps.update({g: [O, O] for g in all_edges.values()})
     face_maps.update({triangles[t]: [all_edges[t], SO, all_edges[-t]] for t in triangles})
     for r in G.relations():
