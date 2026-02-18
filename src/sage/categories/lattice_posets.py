@@ -309,14 +309,14 @@ class LatticePosets(Category):
                 `(\uparrow a_*) \setminus (\uparrow a)`, where `a_*` is the element
                 covered by `a`. It is always a meet-irreducible element, if it exists.
 
-                .. NOTE::
-
-                    Element ``a`` is expected to be join-irreducible, and
-                    this is *not* checked.
-
                 INPUT:
 
                 - ``a`` -- a join-irreducible element of the lattice
+
+                .. WARNING::
+
+                    Element ``a`` is expected to be join-irreducible, and
+                    this is *not* checked.
 
                 OUTPUT:
 
@@ -346,14 +346,14 @@ class LatticePosets(Category):
                 `(\downarrow a_*) \setminus (\downarrow a)`, where `a_*` is the element
                 covering `a`. It is always a join-irreducible element, if it exists.
 
-                .. NOTE::
-
-                    Element ``a`` is expected to be meet-irreducible, and
-                    this is *not* checked.
-
                 INPUT:
 
                 - ``a`` -- a meet-irreducible element of the lattice
+
+                .. WARNING::
+
+                    Element ``a`` is expected to be meet-irreducible, and
+                    this is *not* checked.
 
                 OUTPUT:
 
