@@ -3890,7 +3890,7 @@ cdef class BinaryCodeClassifier:
             [000000000010001011110101]
             [000000000001001101101110]
         """
-        _, labeling, _, _ = self._aut_gp_and_can_label(B)
+        labeling = self._aut_gp_and_can_label(B)[1]
         B._apply_permutation_to_basis(labeling)
         B.put_in_std_form()
 
@@ -4094,7 +4094,7 @@ cdef class BinaryCodeClassifier:
                         rs.append(r)
                     m = BinaryCode(matrix(ZZ, rs))
 
-                    m_aut_gp_gens, _, _, _ = self._aut_gp_and_can_label(m)
+                    m_aut_gp_gens = self._aut_gp_and_can_label(m)[0]
                     if True:  # size*factorial(n-B.ncols) == m_size:
 
                         if len(m_aut_gp_gens) == 0:
