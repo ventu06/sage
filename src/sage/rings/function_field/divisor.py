@@ -1065,13 +1065,13 @@ class DivisorGroup(UniqueRepresentation, Parent):
         INPUT:
 
         - ``of_degree`` -- nonnegative integer; return iterator of all
-                           effective divisors of this degree
+          effective divisors of this degree
 
         - ``max_degree`` -- nonnegative integer; return iterator of all
-                           effective divisors up to this degree
+          effective divisors up to this degree
 
         - ``avoid`` -- collection (list/tuple/set/etc.) of places to exclude
-                       from the support of the returned divisors
+          from the support of the returned divisors
 
 
         EXAMPLES:
