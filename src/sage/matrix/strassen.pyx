@@ -142,7 +142,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     T1.set_to_diff(B11, T0)
 
     # 9 P5 = S1*T1 in C01
-    P5 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    P5 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P5.set_to_prod(S1, T1)
     else:
@@ -153,7 +153,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     S3.set_to_diff(A01, S1)
 
     # 11 P2 = S3*B11 in C00
-    P2 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    P2 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P2.set_to_prod(S3, B11)
     else:
@@ -167,15 +167,15 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
         strassen_window_multiply_c(P0, A00, B00, cutoff)
 
     # 13 U1 = P0+P5 in C01
-    U1 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    U1 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U1.set_to_sum(P0, P5)
 
     # 14 U2 = U1+P6 in C10
-    U2 = C.matrix_window(A_sub_nrows, 0,           A_sub_nrows, B_sub_ncols)
+    U2 = C.matrix_window(A_sub_nrows, 0, A_sub_nrows, B_sub_ncols)
     U2.set_to_sum(U1, P6)
 
     # 15 U3 = U1+P4 in C01
-    U3 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    U3 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U3.set_to_sum(U1, P4)
 
     # 16 U6 = U2+P4 in C11 (final)
@@ -183,7 +183,7 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     U6.set_to_sum(U2, P4)
 
     # 17 U4 = U3+P2 in C01 (final)
-    U4 = C.matrix_window(0,           B_sub_ncols, A_sub_nrows, B_sub_ncols)
+    U4 = C.matrix_window(0, B_sub_ncols, A_sub_nrows, B_sub_ncols)
     U4.set_to_sum(U3, P2)
 
     # 18 T3 = T1-B10 in Y
@@ -191,25 +191,25 @@ cdef strassen_window_multiply_c(MatrixWindow C, MatrixWindow A,
     T3.set_to_diff(T1, B10)
 
     # 19 P3 = A11*T3 in C00
-    P3 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    P3 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P3.set_to_prod(A11, T3)
     else:
         strassen_window_multiply_c(P3, A11, T3, cutoff)
 
     # 20 U5 = U2-P3 in C10 (final)
-    U5 = C.matrix_window(A_sub_nrows, 0,           A_sub_nrows, B_sub_ncols)
+    U5 = C.matrix_window(A_sub_nrows, 0, A_sub_nrows, B_sub_ncols)
     U5.set_to_diff(U2, P3)
 
     # 21 P1 = A01*B10 in C00
-    P1 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    P1 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     if have_cutoff:
         P1.set_to_prod(A01, B10)
     else:
         strassen_window_multiply_c(P1, A01, B10, cutoff)
 
     # 22 U0 = P0+P1 in C00 (final)
-    U0 = C.matrix_window(0,           0,           A_sub_nrows, B_sub_ncols)
+    U0 = C.matrix_window(0, 0, A_sub_nrows, B_sub_ncols)
     U0.set_to_sum(P0, P1)
 
     # Now deal with the leftover row and/or column (if they exist).
