@@ -1328,8 +1328,9 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                     if (F := self.base_field()).is_finite():
                         # We're in luck! Strategy: https://ia.cr/2025/477 §5.5
 
-                        z = F.primitive_element()**(F.order()//l)
-                        profile = lambda U: tuple(B.tate_pairing(U, l, 1).log(z, order=l) for B in (Pl, Ql))
+                        q = F.order()
+                        z = F.primitive_element()**(q//l)
+                        profile = lambda U: tuple(B.tate_pairing(U, l, 1, q=q).log(z, order=l) for B in (Pl, Ql))
 
                         from sage.rings.finite_rings.integer_mod_ring import Zmod
                         from sage.matrix.constructor import matrix
