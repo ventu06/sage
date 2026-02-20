@@ -1239,6 +1239,24 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
                 over Finite Field in t of size 170141183460469231731687303715884105727^2
 
+        A relatively tricky case for ``algorithm="random"``::
+
+            sage: E = EllipticCurve(GF(67^2), [14, 33])
+            sage: A1 = E.torsion_subgroup(12, algorithm='random'); A1
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A2 = E.torsion_subgroup(12, algorithm='divpoly'); A2
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A3 = E.torsion_subgroup(12, algorithm='structure'); A3
+            Additive abelian group isomorphic to Z/12 + Z/4
+              embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 14*x + 33
+                over Finite Field in z2 of size 67^2
+            sage: A1 == A2 == A3
+            True
+
         TESTS:
 
         Check on random curves that all three algorithms return
@@ -1309,14 +1327,14 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 assert Q._order.divides(P._order)
 #                assert generic.has_order(P.weil_pairing(Q, P._order), Q._order, operation='*')
 
-                if Q._order == n:
+                if n.divides(Q._order):
                     P *= P._order // n
+                    Q *= Q._order // n
                     break
 
                 if P._order * Q._order == M:
-                    if P._order > n:
-                        assert n.divides(P._order)
-                        P *= P._order // n
+                    P *= P._order // n.gcd(P._order)
+                    Q *= Q._order // n.gcd(Q._order)
                     break
 
                 cof = N.prime_to_m_part(n)
@@ -1339,9 +1357,6 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
                 T -= x * P
                 T.set_order(multiple=P._order, check=False)
 
-                # for Q we only need the n-torsion part of T
-                T *= T._order // n.gcd(T._order)
-
                 # extend Q as much as possible
                 Q, m = generic.merge_points((Q, Q._order), (T, T._order))
                 Q._order = m
@@ -1357,6 +1372,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
 
             assert hasattr(P, '_order')
             assert hasattr(Q, '_order')
+
+#            if P and Q:
+#                assert Q._order.divides(P._order)
+#                assert generic.has_order(P.weil_pairing(Q, P._order), Q._order, operation='*')
+
             gens = list(filter(bool, [P, Q]))
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt._order for pt in gens])
 
