@@ -1230,7 +1230,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
                 over Finite Field in t of size 170141183460469231731687303715884105727^2
-            sage: EE.torsion_subgroup(2^99, algorithm='divpoly')
+            sage: EE.torsion_subgroup(2^99, algorithm='divpoly')  # long time -- 6s
             Additive abelian group isomorphic to Z/633825300114114700748351602688 + Z/633825300114114700748351602688
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + x
                 over Finite Field in t of size 170141183460469231731687303715884105727^2
