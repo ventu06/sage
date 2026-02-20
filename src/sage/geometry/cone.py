@@ -3318,6 +3318,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         OUTPUT: ``True`` if ``self`` is strictly convex, ``False`` otherwise
 
+        .. SEEALSO::
+
+            :meth:`is_pointed`
+
         EXAMPLES::
 
             sage: cone1 = Cone([(1,0), (0, 1)])
@@ -4671,7 +4675,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         .. SEEALSO::
 
-            :meth:`is_strictly_convex`, :meth:`is_solid`
+            :meth:`is_strictly_convex`,
+            :meth:`is_pointed`,
+            :meth:`is_solid`
 
         EXAMPLES:
 
