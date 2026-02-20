@@ -3309,6 +3309,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     is_compact = is_trivial
 
+    @cached_method
     def is_strictly_convex(self) -> bool:
         r"""
         Check if ``self`` is strictly convex.
@@ -3326,14 +3327,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone2.is_strictly_convex()
             False
         """
-        if "_is_strictly_convex" not in self.__dict__:
-            convex = True
-            for gs in self._PPL_cone().minimized_generators():
-                if gs.is_line():
-                    convex = False
-                    break
-            self._is_strictly_convex = convex
-        return self._is_strictly_convex
+        for gs in self._PPL_cone().minimized_generators():
+            if gs.is_line():
+                return False
+        return True
 
     @cached_method
     def linear_subspace(self):
