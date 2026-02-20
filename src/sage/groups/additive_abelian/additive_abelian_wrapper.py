@@ -353,12 +353,18 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             return all(g.element() in H for g in G.gens())
 
         from sage.structure.richcmp import op_LT, op_LE, op_EQ, op_NE, op_GE, op_GT
-        if op == op_LE: return leq(self, other)
-        if op == op_GE: return leq(other, self)
-        if op == op_EQ: return leq(self, other) and leq(other, self)
-        if op == op_NE: return not (leq(self, other) and leq(other, self))
-        if op == op_LT: return leq(self, other) and not leq(other, self)
-        if op == op_GT: return leq(other, self) and not leq(self, other)
+        if op == op_LE:
+            return leq(self, other)
+        if op == op_GE:
+            return leq(other, self)
+        if op == op_EQ:
+            return leq(self, other) and leq(other, self)
+        if op == op_NE:
+            return not (leq(self, other) and leq(other, self))
+        if op == op_LT:
+            return leq(self, other) and not leq(other, self)
+        if op == op_GT:
+            return leq(other, self) and not leq(self, other)
 
         raise RuntimeError('_richcmp_ received unexpected op')
 
