@@ -351,19 +351,24 @@ class BipartiteGraph(Graph):
         Traceback (most recent call last):
         ...
         ValueError: cannot add edge from 0 to 0 in graph without loops
-        
+
     Check that construction from a file works with immutable graphs::
-    sage: import tempfile, os
-    sage: content = "2 2\n1 1\n1 1\n"
-    sage: fd, path = tempfile.mkstemp()
-    sage: with os.fdopen(fd, 'w') as f:
-    ....:     _ = f.write(content)
-    sage: B = BipartiteGraph(path, immutable=True)
-    sage: B.is_immutable()
-    True
 
+        sage: import tempfile, os
+        sage: content = "2 2\n2 2\n2 2\n2 2\n1 2\n1 2\n1 2\n1 2\n"
+        sage: fd, path = tempfile.mkstemp()
+        sage: with os.fdopen(fd, 'w') as f:
+        ....:     _ = f.write(content)
+        sage: B = BipartiteGraph(path, immutable=False)
+        sage: B.is_immutable()
+        False
+        sage: B = BipartiteGraph(path, immutable=True)
+        sage: B.is_immutable()
+        True
+        sage: set((u, v) for u, v, _ in B.edges()) == {(0,2), (0,3), (1,2), (1,3)}
+        True
+        sage: os.unlink(path)
     """
-
 
     def __init__(self, data=None, partition=None, check=True, hash_labels=None, *args, **kwds):
         """
@@ -427,7 +432,7 @@ class BipartiteGraph(Graph):
                 raise ValueError('loops are not allowed in bipartite graphs')
             kwds['loops'] = False
 
-        immutable_request = kwds.pop("immutable", False)
+        immutable_request = kwds.get("immutable", False)
 
         if data is None:
             if partition is not None and check:
@@ -460,8 +465,8 @@ class BipartiteGraph(Graph):
             alist_file = os.path.exists(data)
             kwds_for_init = kwds
             if alist_file and immutable_request:
-	            kwds_for_init = dict(kwds)
-	            kwds_for_init["immutable"] = False
+                kwds_for_init = dict(kwds)
+                kwds_for_init["immutable"] = False
 
             Graph.__init__(self, data=None if alist_file else data, *args, **kwds_for_init)
 
@@ -587,6 +592,12 @@ class BipartiteGraph(Graph):
         if isinstance(data, str):
             if alist_file:
                 self.load_afile(data)
+                if immutable_request:
+                    from sage.graphs.base.static_sparse_backend import StaticSparseBackend
+                    self._backend = StaticSparseBackend(self,
+                                                        loops=self.allows_loops(),
+                                                        multiedges=self.allows_multiple_edges())
+                    self._immutable = True
 
         if hash_labels is None and hasattr(data, '_hash_labels'):
             hash_labels = data._hash_labels
