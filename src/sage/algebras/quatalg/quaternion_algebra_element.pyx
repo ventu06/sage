@@ -438,8 +438,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     cpdef reduced_trace(self):
         """
-        Return the reduced trace of self: if `\\theta = x + yi + zj +
-        wk`, then `\\theta` has reduced trace `2x`.
+        Return the reduced trace of self: if `\\theta = x + yi + zj + wk`,
+        then `\\theta` has reduced trace `2x`.
 
         EXAMPLES::
 
@@ -453,9 +453,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
 
     cpdef reduced_norm(self):
         """
-        Return the reduced norm of self: if `\\theta = x + yi + zj +
-        wk`, then `\\theta` has reduced norm `x^2 - ay^2 - bz^2 +
-        abw^2`.
+        Return the reduced norm of self: if `\\theta = x + yi + zj + wk`,
+        then `\\theta` has reduced norm `x^2 - ay^2 - bz^2 + abw^2`.
 
         EXAMPLES::
 
