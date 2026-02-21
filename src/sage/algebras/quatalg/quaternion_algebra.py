@@ -4099,14 +4099,19 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     def is_principal(self, certificate=False):
         r"""
-        Check whether ``self`` is principal as a full rank quaternion ideal.
-        Requires the underlying quaternion algebra to be definite.
-        Independent of whether ``self`` is a left or a right ideal.
+        Check whether this quaternion fractional ideal is principal.
+
+        (The answer only depends on the ideal as a lattice inside its
+        ambient quaternion algebra and is independent of whether we
+        view ``self`` as a left or a right ideal.)
+
+        Only implemented if the ambient quaternion algebra is definite.
 
         INPUT:
 
-        - ``certificate`` -- if ``True`` returns a generator alpha s.t.
-          `I = \alpha O` where `O` is the right order of `I`
+        - ``certificate`` (boolean, default ``False``) -- if set to ``True``,
+          returns a generator `\alpha` such that `I = O_L\alpha = \alpha O_R`,
+          where `O_L, O_R` are the left and right orders of `I` respectively.
 
         OUTPUT: boolean, or (boolean, alpha) if ``certificate`` is ``True``
 
@@ -4118,10 +4123,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             sage: while beta.is_zero():
             ....:     beta = O.random_element()
             sage: I = O*beta
-            sage: bool, alpha = I.is_principal(True)
-            sage: bool
+            sage: res, alpha = I.is_principal(True); res
             True
-            sage: I == O*alpha
+            sage: I == I.left_order() * alpha
+            True
+            sage: I == alpha * I.right_order()
             True
         """
         if not self.quaternion_algebra().is_definite():
