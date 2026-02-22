@@ -2716,7 +2716,7 @@ def PaleyGraph(q, immutable=False):
                  loops=False, name=f"Paley graph with parameter {q}")
 
 
-def PasechnikGraph(n):
+def PasechnikGraph(n, immutable=False):
     r"""
     Pasechnik strongly regular graph on `(4n-1)^2` vertices.
 
@@ -2728,6 +2728,13 @@ def PasechnikGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    INPUT:
+
+    - ``n`` -- integer; the returned graph has `(4n - 1)^2` vertices
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2751,13 +2758,13 @@ def PasechnikGraph(n):
     from sage.matrix.constructor import identity_matrix
     H = skew_hadamard_matrix(4 * n)
     M = H[1:].T[1:] - identity_matrix(4 * n - 1)
-    G = Graph(M.tensor_product(M.T), format='seidel_adjacency_matrix')
+    G = Graph(M.tensor_product(M.T), format='seidel_adjacency_matrix',
+              name=f"Pasechnik Graph_{n}")
     G.relabel()
-    G.name("Pasechnik Graph_{}".format(n))
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def SquaredSkewHadamardMatrixGraph(n):
+def SquaredSkewHadamardMatrixGraph(n, immutable=False):
     r"""
     Pseudo-`OA(2n,4n-1)`-graph from a skew Hadamard matrix of order `4n`.
 
@@ -2770,6 +2777,13 @@ def SquaredSkewHadamardMatrixGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_orthogonal_array_block_graph`
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2803,10 +2817,10 @@ def SquaredSkewHadamardMatrixGraph(n):
     G = Graph(s, format='seidel_adjacency_matrix')
     G.relabel()
     G.name("skewhad^2_{}".format(n))
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def SwitchedSquaredSkewHadamardMatrixGraph(n):
+def SwitchedSquaredSkewHadamardMatrixGraph(n, immutable=False):
     r"""
     A strongly regular graph in Seidel switching class of
     :meth:`~sage.graphs.graph_generators.GraphGenerators.SquaredSkewHadamardMatrixGraph`.
@@ -2824,6 +2838,13 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     .. SEEALSO::
 
         - :func:`~sage.graphs.strongly_regular_db.is_switch_skewhad`
+
+    INPUT:
+
+    - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2849,10 +2870,10 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n):
     G.add_vertex((4 * n - 1)**2)
     G.seidel_switching(list(range((4 * n - 1) * (2 * n - 1))))
     G.name("switch skewhad^2+*_" + str(n))
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
+def HanoiTowerGraph(pegs, disks, labels=True, positions=True, immutable=False):
     r"""
     Return the graph whose vertices are the states of the
     Tower of Hanoi puzzle, with edges representing legal moves between states.
@@ -2860,14 +2881,20 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
     INPUT:
 
     - ``pegs`` -- the number of pegs in the puzzle, 2 or greater
+
     - ``disks`` -- the number of disks in the puzzle, 1 or greater
+
     - ``labels`` -- (default: ``True``) if ``True`` the graph contains
       more meaningful labels, see explanation below.  For large instances,
       turn off labels for much faster creation of the graph.
+
     - ``positions`` -- (default: ``True``) if ``True`` the graph contains
       layout information.  This creates a planar layout for the case
       of three pegs.  For large instances, turn off layout information
       for much faster creation of the graph.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2989,6 +3016,18 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         ...
         ValueError: Disks for Tower of Hanoi graph should be one or greater (not 0)
 
+    Check the behavior of parameter immutable::
+
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=True, immutable=False)
+        sage: H.is_immutable()
+        False
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=True, immutable=True)
+        sage: H.is_immutable()
+        True
+        sage: H = graphs.HanoiTowerGraph(3, 4, labels=False, immutable=True)
+        sage: H.is_immutable()
+        True
+
     AUTHOR:
 
     - Rob Beezer, (2009-12-26), with assistance from Su Doree
@@ -3043,8 +3082,8 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
             for freea, freeb in Subsets(emptypegs, 2):
                 edges.append([freea*nverts + state, freeb*nverts + state])
 
-    H = Graph({}, loops=False, multiedges=False)
-    H.add_edges(edges)
+    H = Graph(edges, format="list_of_edges", loops=False, multiedges=False,
+              immutable=immutable and not labels)
 
     # Making labels and/or computing positions can take a long time,
     # relative to just constructing the edges on integer vertices.
@@ -3097,10 +3136,10 @@ def HanoiTowerGraph(pegs, disks, labels=True, positions=True):
         if labels:
             H.relabel(mapping)
 
-    return H
+    return H.copy(immutable=True) if immutable else H
 
 
-def line_graph_forbidden_subgraphs():
+def line_graph_forbidden_subgraphs(immutable=False):
     r"""
     Return the 9 forbidden subgraphs of a line graph.
 
@@ -3108,6 +3147,11 @@ def line_graph_forbidden_subgraphs():
 
     The graphs are returned in the ordering given by the Wikipedia
     drawing, read from left to right and from top to bottom.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3122,66 +3166,21 @@ def line_graph_forbidden_subgraphs():
         Graph on 6 vertices,
         Graph on 5 vertices]
     """
-    from sage.graphs.graph import Graph
     from sage.graphs.generators.basic import ClawGraph
-    graphs = [ClawGraph()]
+    L = [ClawGraph(immutable=immutable)]
 
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2],
-                5: [3]
-                }))
+    dd = [{0: [1, 2, 3], 1: [2, 3], 4: [2], 5: [3]},
+          {0: [1, 2, 3, 4], 1: [2, 3, 4], 3: [4], 2: [5]},
+          {0: [1, 2, 3], 1: [2, 3], 4: [2, 3]},
+          {0: [1, 2, 3], 1: [2, 3], 4: [2], 5: [3, 4]},
+          {0: [1, 2, 3, 4], 1: [2, 3, 4], 3: [4], 5: [2, 0, 1]},
+          {5: [0, 1, 2, 3, 4], 0: [1, 4], 2: [1, 3], 3: [4]},
+          {1: [0, 2, 3, 4], 3: [0, 4], 2: [4, 5], 4: [5]},
+          {0: [1, 2, 3], 1: [2, 3, 4], 2: [3, 4], 3: [4]}]
 
-    graphs.append(Graph({
-                0: [1, 2, 3, 4],
-                1: [2, 3, 4],
-                3: [4],
-                2: [5]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2, 3]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3],
-                4: [2],
-                5: [3, 4]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3, 4],
-                1: [2, 3, 4],
-                3: [4],
-                5: [2, 0, 1]
-                }))
-
-    graphs.append(Graph({
-                5: [0, 1, 2, 3, 4],
-                0: [1, 4],
-                2: [1, 3],
-                3: [4]
-                }))
-
-    graphs.append(Graph({
-                1: [0, 2, 3, 4],
-                3: [0, 4],
-                2: [4, 5],
-                4: [5]
-                }))
-
-    graphs.append(Graph({
-                0: [1, 2, 3],
-                1: [2, 3, 4],
-                2: [3, 4],
-                3: [4]
-                }))
-
-    return graphs
+    for d in dd:
+        L.append(Graph(d, format="dict_of_lists", immutable=immutable))
+    return L
 
 
 def petersen_family(generate=False):
@@ -3288,7 +3287,7 @@ def petersen_family(generate=False):
     return [Graph(x) for x in l]
 
 
-def p2_forbidden_minors():
+def p2_forbidden_minors(immutable=False):
     r"""
     Return an array containing the 35 minimal forbidden excluded minors
     of the projective plane.
@@ -3297,12 +3296,16 @@ def p2_forbidden_minors():
     which is a result of Archdeacon and encoded them in graph6 format.
     The order of the graphs is the same as they appear in [WA2025]_.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     TESTS::
 
         sage: len(graphs.families.p2_forbidden_minors())
         35
     """
-
     p2_forbidden_minors_graph6 = [
         'KFz_????wF?[',
         'J~{???F@oM?',
@@ -3341,7 +3344,8 @@ def p2_forbidden_minors():
         'JhEIDSD?ga_'
     ]
 
-    return [Graph(graph_str) for graph_str in p2_forbidden_minors_graph6]
+    return [Graph(graph_str, format="graph6", immutable=immutable)
+            for graph_str in p2_forbidden_minors_graph6]
 
 
 def SierpinskiGasketGraph(n):
