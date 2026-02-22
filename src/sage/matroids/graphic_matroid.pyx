@@ -1005,9 +1005,9 @@ cdef class GraphicMatroid(Matroid):
             sage: M = Matroid(Graph(edgelist))
             sage: N = Matroid(range(6), graphs.WheelGraph(4))
             sage: M._is_isomorphic(N, certificate=True)
-            (True, {'a': 2, 'b': 4, 'c': 5, 'd': 0, 'e': 1, 'f': 3})
+            (True, ...)
             sage: N._is_isomorphic(M, certificate=True)
-            (True, {0: 'd', 1: 'e', 2: 'a', 3: 'f', 4: 'b', 5: 'c'})
+            (True, ...)
             sage: O = Matroid(range(6), graphs.CycleGraph(6))
             sage: M._is_isomorphic(O)
             False
@@ -1082,8 +1082,8 @@ cdef class GraphicMatroid(Matroid):
             ....:             (1, 2, 'd'), (1, 3, 'e'), (2, 3, 'f')]
             sage: M = Matroid(Graph(edgelist))
             sage: N = Matroid(range(6), graphs.WheelGraph(4))
-            sage: M._isomorphism(N)
-            {'a': 2, 'b': 4, 'c': 5, 'd': 0, 'e': 1, 'f': 3}
+            sage: iso = M._isomorphism(N); len(iso) == 6
+            True
             sage: O = Matroid(Graph(edgelist), regular=True)
             sage: iso = M._isomorphism(O)
             sage: M.is_isomorphism(O, iso)

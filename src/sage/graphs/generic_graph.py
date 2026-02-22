@@ -24594,8 +24594,8 @@ class GenericGraph(GenericGraph_pyx):
         ::
 
             sage: ss = (graphs.WheelGraph(5)).line_graph(labels=False)
-            sage: ss.coarsest_equitable_refinement(prt)
-            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 4), (0, 2)], [(2, 3), (3, 4)]]
+            sage: [sorted(cell) for cell in ss.coarsest_equitable_refinement(prt)]
+            [[(0, 1)], [(1, 2), (1, 4)], [(0, 3)], [(0, 2), (0, 4)], [(2, 3), (3, 4)]]
 
         ALGORITHM: Brendan D. McKay's Master's Thesis, University of
         Melbourne, 1976.

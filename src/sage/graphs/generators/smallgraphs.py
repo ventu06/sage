@@ -4588,7 +4588,7 @@ def PoussinGraph(immutable=False):
     return g.copy(immutable=True) if immutable else g
 
 
-def PetersenGraph():
+def PetersenGraph(immutable=False):
     r"""
     Return the Petersen Graph.
 
@@ -4597,6 +4597,11 @@ def PetersenGraph():
 
     The Petersen Graph is a common counterexample. For example, it is not
     Hamiltonian.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     PLOTTING: See the plotting section for the generalized Petersen graphs.
 
@@ -4612,8 +4617,8 @@ def PetersenGraph():
         sage: petersen_database.show()          # long time                             # needs sage.plot
     """
     from sage.graphs.generators.families import GeneralizedPetersenGraph
-    P = GeneralizedPetersenGraph(5, 2)
-    P.name("Petersen graph")
+    P = GeneralizedPetersenGraph(5, 2, immutable=immutable,
+                                 name="Petersen graph")
     P.is_projective_planar.set_cache(True)
     return P
 
