@@ -510,13 +510,13 @@ class QuaternionAlgebra_abstract(Parent):
     @cached_method
     def inner_product_matrix(self):
         r"""
-        Return the inner product matrix associated to ``self``.
+        Return the inner product matrix associated to this quaternion algebra,
+        i.e. the Gram matrix of the reduced norm as a quadratic form on ``self``.
 
-        This is the
-        Gram matrix of the reduced norm as a quadratic form on ``self``.
         The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
-        is just the diagonal matrix with diagonal entries `2`, `-2a`, `-2b`,
-        `2ab`.
+        is just the diagonal matrix with diagonal entries `2`, `-2a`, `-2b`, `2ab`.
+
+        Alias: :meth:`gram_matrix`
 
         EXAMPLES::
 
@@ -526,11 +526,22 @@ class QuaternionAlgebra_abstract(Parent):
             [  0  10   0   0]
             [  0   0  38   0]
             [  0   0   0 190]
+
+        ::
+
+            sage: R.<a,b> = QQ[]; Q.<i,j,k> = QuaternionAlgebra(Frac(R),a,b)
+            sage: Q.gram_matrix()
+            [    2     0     0     0]
+            [    0  -2*a     0     0]
+            [    0     0  -2*b     0]
+            [    0     0     0 2*a*b]
         """
         a, b = self._a, self._b
         M = diagonal_matrix(self.base_ring(), [2, -2 * a, -2 * b, 2 * a * b])
         M.set_immutable()
         return M
+
+    gram_matrix = inner_product_matrix  # alias
 
     def is_division_algebra(self) -> bool:
         r"""
@@ -742,8 +753,10 @@ class QuaternionAlgebra_abstract(Parent):
     @cached_method
     def free_module(self):
         r"""
-        Return the free module associated to ``self`` with inner
-        product given by the reduced norm.
+        Return the free module associated to this quaternion algebra
+        with inner product given by the :meth:`inner_product_matrix`.
+
+        Alias: :meth:`vector_space`
 
         EXAMPLES::
 
@@ -757,15 +770,6 @@ class QuaternionAlgebra_abstract(Parent):
               [0 2 0 0]
               [0 0 t 0]
               [0 0 0 t]
-        """
-        return FreeModule(self.base_ring(), 4, inner_product_matrix=self.inner_product_matrix())
-
-    def vector_space(self):
-        r"""
-        Alias for :meth:`free_module`.
-
-        EXAMPLES::
-
             sage: QuaternionAlgebra(-3,19).vector_space()
             Ambient quadratic space of dimension 4 over Rational Field
             Inner product matrix:
@@ -774,7 +778,9 @@ class QuaternionAlgebra_abstract(Parent):
               [   0    0  -38    0]
               [   0    0    0 -114]
         """
-        return self.free_module()
+        return FreeModule(self.base_ring(), 4, inner_product_matrix=self.inner_product_matrix())
+
+    vector_space = free_module  # alias
 
 
 class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
@@ -1307,32 +1313,6 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             'Quaternion Algebra (-5, -2) with base ring Rational Field'
         """
         return f"Quaternion Algebra ({self._a!r}, {self._b!r}) with base ring {self.base_ring()}"
-
-    def inner_product_matrix(self):
-        r"""
-        Return the inner product matrix associated to ``self``, i.e. the
-        Gram matrix of the reduced norm as a quadratic form on ``self``.
-        The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
-        is just the diagonal matrix with diagonal entries `1`, `a`, `b`, `ab`.
-
-        EXAMPLES::
-
-            sage: Q.<i,j,k> = QuaternionAlgebra(-5,-19)
-            sage: Q.inner_product_matrix()
-            [  2   0   0   0]
-            [  0  10   0   0]
-            [  0   0  38   0]
-            [  0   0   0 190]
-
-            sage: R.<a,b> = QQ[]; Q.<i,j,k> = QuaternionAlgebra(Frac(R),a,b)
-            sage: Q.inner_product_matrix()
-            [    2     0     0     0]
-            [    0  -2*a     0     0]
-            [    0     0  -2*b     0]
-            [    0     0     0 2*a*b]
-        """
-        a, b = self._a, self._b
-        return diagonal_matrix(self.base_ring(), [2, -2*a, -2*b, 2*a*b])
 
     def is_definite(self):
         r"""
