@@ -77,7 +77,6 @@ from sage.rings.integer import Integer
 from sage.rings.integer_ring import ZZ
 from sage.rings.number_field.number_field_base import NumberField
 from sage.rings.polynomial.polynomial_ring import polygen
-from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.qqbar import AA
 from sage.rings.rational_field import QQ, RationalField
@@ -1184,7 +1183,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
                 # x = O.random_element((-p/2).floor(), (p/2).ceil())
                 if kronecker_symbol(D, p) == 1:
                     break
-            X = PolynomialRing(GF(p), 'x').gen()
+            X = polygen(GF(p), 'x')
             a = ZZ((X**2 - ZZ(x.reduced_trace()) * X + ZZ(x.reduced_norm())).roots()[0][0])
             I = O._left_ideal_basis([p**r, (x - a)**r])
             O = O._right_order_from_ideal_basis(I)
