@@ -3844,7 +3844,7 @@ def WindmillGraph(k, n, immutable=False):
     return G
 
 
-def RingedTree(k, vertex_labels=True):
+def RingedTree(k, vertex_labels=True, immutable=False):
     r"""
     Return the ringed tree on k-levels.
 
@@ -3864,6 +3864,9 @@ def RingedTree(k, vertex_labels=True):
 
     - ``vertex_labels`` -- boolean; whether to label vertices as binary words
       (default) or as integers
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -3924,10 +3927,10 @@ def RingedTree(k, vertex_labels=True):
 
     g.relabel(vertices)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
-def MathonPseudocyclicMergingGraph(M, t):
+def MathonPseudocyclicMergingGraph(M, t, immutable=False):
     r"""
     Mathon's merging of classes in a pseudo-cyclic 3-class association scheme.
 
@@ -3939,6 +3942,9 @@ def MathonPseudocyclicMergingGraph(M, t):
       the identity matrix must be the first entry
 
     - ``t`` -- integer; the number of the graph, from 0 to 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -3972,7 +3978,6 @@ def MathonPseudocyclicMergingGraph(M, t):
         ...
         AssertionError...
     """
-    from sage.graphs.graph import Graph
     from sage.matrix.constructor import identity_matrix
     assert len(M) == 4
     assert M[0] == identity_matrix(M[0].nrows())
@@ -3981,10 +3986,10 @@ def MathonPseudocyclicMergingGraph(M, t):
         A += sum(x.tensor_product(M[0]) for x in M[1:])
     if t > 1:
         A += sum(M[0].tensor_product(x) for x in M[1:])
-    return Graph(A)
+    return Graph(A, immutable=immutable)
 
 
-def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
+def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
     r"""
     Return a strongly regular graph on `(4t+1)(4t-1)^2` vertices from
     [Mat1978]_.
@@ -4012,6 +4017,9 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
       otherwise use the user-supplied one. Here non-isomorphic Latin squares
       -- one constructed from `Z/9Z`, and the other from `(Z/3Z)^2` --
       lead to non-isomorphic graphs.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -4130,10 +4138,10 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None):
     A = Graph(block_matrix(p, p, [Acon(i, j) for i in range(p) for j in range(p)]))
     A.name("Mathon's PC SRG on " + str(p*q**2) + " vertices")
     A.relabel()
-    return A
+    return A.copy(immutable=True) if immutable else A
 
 
-def TuranGraph(n, r):
+def TuranGraph(n, r, immutable=False):
     r"""
     Return the Turan graph with parameters `n, r`.
 
@@ -4148,6 +4156,9 @@ def TuranGraph(n, r):
     - ``n`` -- integer; the number of vertices in the graph
 
     - ``r`` -- integer; the number of partitions of the graph
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4191,13 +4202,13 @@ def TuranGraph(n, r):
     s = n % r
     vertex_sets = [p]*(r - s) + [p + 1]*s
 
-    g = CompleteMultipartiteGraph(vertex_sets)
-    g.name('Turan Graph with n: {}, r: {}'.format(n, r))
-
+    g = CompleteMultipartiteGraph(vertex_sets, immutable=immutable)
+    g._name = f"Turan Graph with n: {n}, r: {r}"
     return g
 
 
-def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
+def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
+                    immutable=False):
     r"""
     Return a strongly regular graph of S6 type from [Muz2007]_ on
     `n^d((n^d-1)/(n-1)+1)` vertices.
@@ -4242,6 +4253,9 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
 
     - ``verbose`` -- boolean (default: ``False``); if ``True``, print progress
       information
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -4452,10 +4466,10 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False):
     V.name('Muzychuk S6 graph with parameters ('+str(n)+','+str(d)+')')
     if verbose:
         print('finished at %f (+%f)' % ((time() - t), time() - t1))
-    return V
+    return V.copy(immutable=True) if immutable else V
 
 
-def CubeConnectedCycle(d):
+def CubeConnectedCycle(d, immutable=False):
     r"""
     Return the cube-connected cycle of dimension `d`.
 
@@ -4477,6 +4491,9 @@ def CubeConnectedCycle(d):
     - ``d`` -- positive integer; the dimension of the desired hypercube as well
       as the length of the cycle to be placed at each vertex of the
       `d`-dimensional hypercube
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -4511,33 +4528,35 @@ def CubeConnectedCycle(d):
     if d < 1:
         raise ValueError('the dimension d must be greater than 0')
 
-    G = Graph(name=f"Cube-Connected Cycle of dimension {d}")
+    name = f"Cube-Connected Cycle of dimension {d}"
 
     if d == 1:
-        G.allow_loops(True)
         # only d = 1 requires loops
-        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 0)), ((0, 1), (0, 1))])
-        return G
+        return Graph([((0, 0), (0, 1)), ((0, 0), (0, 0)), ((0, 1), (0, 1))],
+                     format="list_of_edges", loops=True, name=name,
+                     immutable=immutable)
 
     if d == 2:
         # only d = 2 require multiple edges
-        G.allow_multiple_edges(True)
-        G.add_edges([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
-                     ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
-                     ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
-                     ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))])
-        return G
+        return Graph([((0, 0), (0, 1)), ((0, 0), (0, 1)), ((0, 0), (1, 0)),
+                      ((0, 1), (2, 1)), ((1, 0), (1, 1)), ((1, 0), (1, 1)),
+                      ((1, 1), (3, 1)), ((2, 0), (2, 1)), ((2, 0), (2, 1)),
+                      ((2, 0), (3, 0)), ((3, 0), (3, 1)), ((3, 0), (3, 1))],
+                     format="list_of_edges", multiedges=True, name=name,
+                     immutable=immutable)
 
-    for x in range(1 << d):
-        G.add_cycle([(x, y) for y in range(d)])
+    from itertools import chain
+    def cycle(x, d):
+        return chain((((x, y), (x, y + 1)) for y in range(d - 1)),
+                     (((x, 0), (x, d - 1)),))
 
-    for x, y in G:
-        G.add_edge((x, y), (x ^ (1 << y), y))
+    cycles = chain(*(cycle(x, d) for x in range(1 << d)))
+    cube = (((x, y), (x ^ (1 << y), y)) for x in range(1 << d) for y in range(d))
+    return Graph(chain(cycles, cube), format="list_of_edges", name=name,
+                 immutable=immutable)
 
-    return G
 
-
-def StaircaseGraph(n):
+def StaircaseGraph(n, immutable=False):
     r"""
     Return a staircase graph with `2n` nodes
 
@@ -4562,6 +4581,9 @@ def StaircaseGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4627,32 +4649,28 @@ def StaircaseGraph(n):
         2*n - 2: (0, -1),
         2*n - 1: (n, -1)
     }
-
-    edges = [
-        (0, n - 1),
-        (0, 2*n - 2),
-        (n - 2, 2*n - 3),
-        (n - 2, 2*n - 1),
-        (n - 1, 2*n - 2),
-        (2*n - 3, 2*n - 1),
-        (2*n - 2, 2*n - 1)
-    ]
-
     for v in range(1, n - 2):
         pos_dict[v] = (v + 1, 1)
-        edges.append((v, v + n - 1))
-
     for v in range(n - 1, 2*n - 2):
         pos_dict[v] = (v - n + 2, 0)
 
-    G = Graph(2 * n, pos=pos_dict, name="Staircase graph")
-    G.add_edges(edges)
-    G.add_path(list(range(n - 1)))
-    G.add_path(list(range(n - 1, 2*n - 2)))
-    return G
+    from itertools import chain
+    E1 = ((0, n - 1),
+          (0, 2*n - 2),
+          (n - 2, 2*n - 3),
+          (n - 2, 2*n - 1),
+          (n - 1, 2*n - 2),
+          (2*n - 3, 2*n - 1),
+          (2*n - 2, 2*n - 1))
+    E2 = ((v, v + n - 1) for v in range(1, n - 2))
+    E3 = ((i, i + 1) for i in range(n - 2))
+    E4 = ((i, i + 1) for i in range(n - 1, 2*n - 3))
+
+    return Graph([range(2 * n), chain(E1, E2, E3, E4)], name="Staircase graph",
+                 format="vertices_and_edges", pos=pos_dict, immutable=immutable)
 
 
-def BiwheelGraph(n):
+def BiwheelGraph(n, immutable=False):
     r"""
     Return a biwheel graph with `2n` nodes
 
@@ -4677,6 +4695,9 @@ def BiwheelGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 4; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4735,33 +4756,24 @@ def BiwheelGraph(n):
     if n < 4:
         raise ValueError("parameter n must be at least 4")
 
-    angle_param = 0
-
-    if n % 2:
-        from math import pi
-        angle_param = pi / (2*n - 2)
-
-    G = Graph(2 * n, name="Biwheel graph")
-    pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
-    edges = []
+    from itertools import chain
+    C1 = ((i, i + 1) for i in range(2*n - 3))
+    C2 = ((0, 2*n - 3),)
+    S1 = ((i, 2*n - 1) for i in range(0, 2*n - 2, 2))
+    S2 = ((i, 2*n - 2) for i in range(1, 2*n - 2, 2))
+    G = Graph([range(2*n), chain(C1, C2, S1, S2)], format="vertices_and_edges",
+              name="Biwheel graph", immutable=immutable)
 
     from sage.rings.rational_field import QQ
+    angle_param = (pi / (2*n - 2)) if n % 2 else 0
+    pos_dict = G._circle_embedding(list(range(2*n - 2)), angle=angle_param, return_dict=True)
     pos_dict[2*n - 2] = (-QQ((1, 3)), 0)
     pos_dict[2*n - 1] = (QQ((1, 3)), 0)
-
-    for i in range(2*n - 2):
-        if i % 2 == 0:
-            edges += [(i, 2*n - 1)]
-        else:
-            edges += [(i, 2*n - 2)]
-
     G.set_pos(pos_dict)
-    G.add_cycle(list(range(2*n - 2)))
-    G.add_edges(edges)
     return G
 
 
-def TruncatedBiwheelGraph(n):
+def TruncatedBiwheelGraph(n, immutable=False):
     r"""
     Return a truncated biwheel graph with `2n` nodes
 
@@ -4784,6 +4796,9 @@ def TruncatedBiwheelGraph(n):
     INPUT:
 
     - ``n`` -- an integer at least 3; number of nodes is `2n`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -4839,17 +4854,14 @@ def TruncatedBiwheelGraph(n):
         raise ValueError("parameter n must be at least 3")
 
     pos_dict = {2*n - 2: (0, n), 2*n - 1: (0, -n)}
-    edges = [(0, 2*n - 2), (2*n - 3, 2*n - 1)]
-
     for v in range(2*n - 2):
         pos_dict[v] = (2*(v-n) + 3, 0)
-        if v % 2 == 0:
-            edges += [(v, 2*n - 1)]
-        else:
-            edges += [(v, 2*n - 2)]
 
-    G = Graph(2 * n, pos=pos_dict, name="Truncated biwheel graph")
-    G.add_path(list(range(2*n - 2)))
-    G.add_edges(edges)
-
-    return G
+    from itertools import chain
+    E1 = ((0, 2*n - 2), (2*n - 3, 2*n - 1))
+    E2 = ((i, i + 1) for i in range(2*n - 3))
+    S1 = ((v, 2*n - 1) for v in range(0, 2*n - 2, 2))
+    S2 = ((v, 2*n - 2) for v in range(1, 2*n - 2, 2))
+    return Graph([range(2 * n), chain(E1, E2, S1, S2)],
+                 format="vertices_and_edges", pos=pos_dict,
+                 name="Truncated biwheel graph", immutable=immutable)
