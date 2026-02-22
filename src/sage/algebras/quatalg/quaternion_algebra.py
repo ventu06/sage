@@ -318,10 +318,9 @@ class QuaternionAlgebraFactory(UniqueFactory):
         sage: ram = QuaternionAlgebra(K, [P, Q], inv_arch).ramified_places()
         sage: set(ram[0]) == set([P,Q]) and ram[1] == emb_arch
         True
-
     """
     def create_key(self, arg0, arg1=None, arg2=None, names='i,j,k'):
-        """
+        r"""
         Create a key that uniquely determines a quaternion algebra.
 
         TESTS::
@@ -437,7 +436,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         return K, a, b, names
 
     def create_object(self, version, key, **extra_args):
-        """
+        r"""
         Create the object from the key (extra arguments are ignored). This is
         only called if the object was not found in the cache.
 
@@ -459,7 +458,7 @@ QuaternionAlgebra = QuaternionAlgebraFactory("QuaternionAlgebra")
 
 class QuaternionAlgebra_abstract(Parent):
     def _repr_(self) -> str:
-        """
+        r"""
         EXAMPLES::
 
             sage: sage.algebras.quatalg.quaternion_algebra.QuaternionAlgebra_abstract(QQ)._repr_()
@@ -468,7 +467,7 @@ class QuaternionAlgebra_abstract(Parent):
         return f"Quaternion Algebra with base ring {self.base_ring()}"
 
     def ngens(self) -> int:
-        """
+        r"""
         Return the number of generators of the quaternion algebra as a K-vector
         space, not including 1.
 
@@ -487,7 +486,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     @cached_method
     def basis(self):
-        """
+        r"""
         Return the fixed basis of ``self``, which is `1`, `i`, `j`, `k`, where
         `i`, `j`, `k` are the generators of ``self``.
 
@@ -511,7 +510,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     @cached_method
     def inner_product_matrix(self):
-        """
+        r"""
         Return the inner product matrix associated to ``self``.
 
         This is the
@@ -535,7 +534,7 @@ class QuaternionAlgebra_abstract(Parent):
         return M
 
     def is_division_algebra(self) -> bool:
-        """
+        r"""
         Check whether this quaternion algebra is a division algebra,
         i.e., whether every nonzero element in it is invertible.
 
@@ -576,7 +575,7 @@ class QuaternionAlgebra_abstract(Parent):
             raise NotImplementedError("base ring must be rational numbers or a number field")
 
     def is_matrix_ring(self) -> bool:
-        """
+        r"""
         Check whether this quaternion algebra is isomorphic to the
         2x2 matrix ring over the base ring.
 
@@ -617,7 +616,7 @@ class QuaternionAlgebra_abstract(Parent):
             raise NotImplementedError("base ring must be rational numbers or a number field")
 
     def is_exact(self) -> bool:
-        """
+        r"""
         Return ``True`` if elements of this quaternion algebra are represented
         exactly, i.e. there is no precision loss when doing arithmetic. A
         quaternion algebra is exact if and only if its base field is
@@ -635,7 +634,7 @@ class QuaternionAlgebra_abstract(Parent):
         return self.base_ring().is_exact()
 
     def is_field(self, proof=True) -> bool:
-        """
+        r"""
         Return ``False`` always, since all quaternion algebras are
         noncommutative and all fields are commutative.
 
@@ -648,7 +647,7 @@ class QuaternionAlgebra_abstract(Parent):
         return False
 
     def is_finite(self) -> bool:
-        """
+        r"""
         Return ``True`` if the quaternion algebra is finite as a set.
 
         Algorithm: A quaternion algebra is finite if and only if the
@@ -666,7 +665,7 @@ class QuaternionAlgebra_abstract(Parent):
         return self.base_ring().is_finite()
 
     def is_integral_domain(self, proof=True) -> bool:
-        """
+        r"""
         Return ``False`` always, since all quaternion algebras are
         noncommutative and integral domains are commutative (in Sage).
 
@@ -679,7 +678,7 @@ class QuaternionAlgebra_abstract(Parent):
         return False
 
     def is_noetherian(self) -> bool:
-        """
+        r"""
         Return ``True`` always, since any quaternion algebra is a Noetherian
         ring (because it is a finitely generated module over a field).
 
@@ -692,7 +691,7 @@ class QuaternionAlgebra_abstract(Parent):
         return True
 
     def order(self):
-        """
+        r"""
         Return the number of elements of the quaternion algebra, or
         ``+Infinity`` if the algebra is not finite.
 
@@ -708,7 +707,7 @@ class QuaternionAlgebra_abstract(Parent):
         return self.base_ring().order()**4
 
     def random_element(self, *args, **kwds):
-        """
+        r"""
         Return a random element of this quaternion algebra.
 
         The ``args`` and ``kwds`` are passed to the ``random_element`` method
@@ -743,7 +742,7 @@ class QuaternionAlgebra_abstract(Parent):
 
     @cached_method
     def free_module(self):
-        """
+        r"""
         Return the free module associated to ``self`` with inner
         product given by the reduced norm.
 
@@ -763,7 +762,7 @@ class QuaternionAlgebra_abstract(Parent):
         return FreeModule(self.base_ring(), 4, inner_product_matrix=self.inner_product_matrix())
 
     def vector_space(self):
-        """
+        r"""
         Alias for :meth:`free_module`.
 
         EXAMPLES::
@@ -780,7 +779,7 @@ class QuaternionAlgebra_abstract(Parent):
 
 
 class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
-    """
+    r"""
     A quaternion algebra of the form `(a, b)_K`.
 
     See ``QuaternionAlgebra`` for many more examples.
@@ -802,7 +801,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         Quaternion Algebra (-7, -21) with base ring Rational Field
     """
     def __init__(self, base_ring, a, b, names='i,j,k') -> None:
-        """
+        r"""
         Create the quaternion algebra with `i^2 = a`, `j^2 = b`, and
         `ij = -ji = k`.
 
@@ -1125,7 +1124,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return self.quaternion_order(e_new)
 
     def order_with_level(self, level):
-        """
+        r"""
         Return an order in this quaternion algebra with given level.
 
         INPUT:
@@ -1195,7 +1194,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return O
 
     def invariants(self):
-        """
+        r"""
         Return the structural invariants `a`, `b` of this quaternion
         algebra: ``self`` is generated by `i`, `j` subject to
         `i^2 = a`, `j^2 = b` and `ji = -ij`.
@@ -1213,7 +1212,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return self._a, self._b
 
     def __eq__(self, other) -> bool:
-        """
+        r"""
         Compare ``self`` and ``other``.
 
         EXAMPLES::
@@ -1228,7 +1227,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return (self.base_ring(), self._a, self._b) == (other.base_ring(), other._a, other._b)
 
     def __ne__(self, other) -> bool:
-        """
+        r"""
         Compare ``self`` and ``other``.
 
         EXAMPLES::
@@ -1241,7 +1240,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return not self.__eq__(other)
 
     def __hash__(self) -> int:
-        """
+        r"""
         Compute the hash of ``self``.
 
         EXAMPLES::
@@ -1255,7 +1254,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return hash((self.base_ring(), self._a, self._b))
 
     def gen(self, i=0):
-        """
+        r"""
         Return the `i`-th generator of ``self``.
 
         INPUT:
@@ -1278,7 +1277,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return self._gens[i]
 
     def gens(self) -> tuple:
-        """
+        r"""
         Return the generators of ``self``.
 
         EXAMPLES::
@@ -1291,7 +1290,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return self._gens
 
     def _repr_(self):
-        """
+        r"""
         Print representation.
 
         TESTS::
@@ -1311,7 +1310,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return f"Quaternion Algebra ({self._a!r}, {self._b!r}) with base ring {self.base_ring()}"
 
     def inner_product_matrix(self):
-        """
+        r"""
         Return the inner product matrix associated to ``self``, i.e. the
         Gram matrix of the reduced norm as a quadratic form on ``self``.
         The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
@@ -1364,7 +1363,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return a < 0 and b < 0
 
     def is_totally_definite(self):
-        """
+        r"""
         Check whether this quaternion algebra is totally definite.
 
         A quaternion algebra defined over a number field is
@@ -1700,7 +1699,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             raise NotImplementedError("base field must be rational numbers or a number field")
 
     def _magma_init_(self, magma):
-        """
+        r"""
         Return Magma version of this quaternion algebra.
 
         EXAMPLES::
@@ -1731,7 +1730,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         return f'QuaternionAlgebra({R.name()},{self._a._magma_init_(magma)},{self._b._magma_init_(magma)})'
 
     def quaternion_order(self, basis, check=True):
-        """
+        r"""
         Return the order of this quaternion order with given basis.
 
         INPUT:
@@ -1935,7 +1934,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
 # Unpickling
 ############################################################
 def unpickle_QuaternionAlgebra_v0(*key):
-    """
+    r"""
     The `0`-th version of pickling for quaternion algebras.
 
     EXAMPLES::
@@ -1954,7 +1953,7 @@ def unpickle_QuaternionAlgebra_v0(*key):
 
 @richcmp_method
 class QuaternionOrder(Parent):
-    """
+    r"""
     An order in a quaternion algebra.
 
     EXAMPLES::
@@ -1965,7 +1964,7 @@ class QuaternionOrder(Parent):
         <class 'sage.algebras.quatalg.quaternion_algebra.QuaternionOrder_with_category'>
     """
     def __init__(self, A, basis, check=True) -> None:
-        """
+        r"""
         INPUT:
 
         - ``A`` -- a quaternion algebra
@@ -2078,7 +2077,7 @@ class QuaternionOrder(Parent):
                         category=Algebras(ZZ).Facade().FiniteDimensional())
 
     def _element_constructor_(self, x):
-        """
+        r"""
         Construct an element of this quaternion order from ``x``,
         or throw an error if ``x`` is not contained in the order.
 
@@ -2109,7 +2108,7 @@ class QuaternionOrder(Parent):
         return y
 
     def one(self):
-        """
+        r"""
         Return the multiplicative unit of this quaternion order.
 
         EXAMPLES::
@@ -2120,7 +2119,7 @@ class QuaternionOrder(Parent):
         return self.quaternion_algebra().one()
 
     def gens(self) -> tuple:
-        """
+        r"""
         Return generators for ``self``.
 
         EXAMPLES::
@@ -2131,7 +2130,7 @@ class QuaternionOrder(Parent):
         return self.__basis
 
     def ngens(self):
-        """
+        r"""
         Return the number of generators (which is 4).
 
         EXAMPLES::
@@ -2142,7 +2141,7 @@ class QuaternionOrder(Parent):
         return 4
 
     def gen(self, n):
-        """
+        r"""
         Return the `n`-th generator.
 
         INPUT:
@@ -2166,7 +2165,7 @@ class QuaternionOrder(Parent):
         return self.__basis[n]
 
     def __richcmp__(self, other, op) -> bool:
-        """
+        r"""
         Compare this quaternion order to ``other``.
 
         EXAMPLES::
@@ -2218,7 +2217,7 @@ class QuaternionOrder(Parent):
         return richcmp(self.unit_ideal(), other.unit_ideal(), op)
 
     def __hash__(self) -> int:
-        """
+        r"""
         Compute the hash of ``self``.
 
         EXAMPLES::
@@ -2232,7 +2231,7 @@ class QuaternionOrder(Parent):
         return hash((self.__quaternion_algebra, self.__basis))
 
     def basis(self):
-        """
+        r"""
         Return fix choice of basis for this quaternion order.
 
         EXAMPLES::
@@ -2243,7 +2242,7 @@ class QuaternionOrder(Parent):
         return self.__basis
 
     def quaternion_algebra(self):
-        """
+        r"""
         Return ambient quaternion algebra that contains this quaternion order.
 
         EXAMPLES::
@@ -2254,7 +2253,7 @@ class QuaternionOrder(Parent):
         return self.__quaternion_algebra
 
     def _repr_(self):
-        """
+        r"""
         Return string representation of this order.
 
         EXAMPLES::
@@ -2267,7 +2266,7 @@ class QuaternionOrder(Parent):
         return f'Order of {self.quaternion_algebra()} with basis {self.basis()}'
 
     def random_element(self, *args, **kwds):
-        """
+        r"""
         Return a random element of this order.
 
         The args and kwds are passed to the random_element method of
@@ -2290,7 +2289,7 @@ class QuaternionOrder(Parent):
         return sum(ZZ.random_element(*args, **kwds) * b for b in self.basis())
 
     def intersection(self, other):
-        """
+        r"""
         Return the intersection of this order with other.
 
         INPUT:
@@ -2421,7 +2420,7 @@ class QuaternionOrder(Parent):
         return self.discriminant() == self.quaternion_algebra().discriminant()
 
     def _left_ideal_basis(self, gens):
-        """
+        r"""
         Return a basis for the left ideal of ``self`` with given generators.
 
         INPUT:
@@ -2441,7 +2440,7 @@ class QuaternionOrder(Parent):
         return basis_for_quaternion_lattice([b * g for b in self.basis() for g in gens])
 
     def _right_order_from_ideal_basis(self, basis):
-        """
+        r"""
         Given a basis for a left ideal `I`, return the right order in
         ``self`` of elements `x` such that `I x` is contained in `I`.
 
@@ -2575,7 +2574,7 @@ class QuaternionOrder(Parent):
 
     @cached_method
     def unit_ideal(self):
-        """
+        r"""
         Return the unit ideal in this quaternion order.
 
         EXAMPLES::
@@ -2625,7 +2624,7 @@ class QuaternionOrder(Parent):
         return matrix(QQ, map(list, self.__basis))
 
     def __mul__(self, other):
-        """
+        r"""
         Every order equals its own unit ideal. Overload ideal multiplication
         and scaling to orders.
 
@@ -2642,7 +2641,7 @@ class QuaternionOrder(Parent):
         return other * self.unit_ideal()
 
     def __add__(self, other):
-        """
+        r"""
         Every order equals its own unit ideal. Overload ideal addition
         to orders.
 
@@ -2656,7 +2655,7 @@ class QuaternionOrder(Parent):
         return self.unit_ideal() + other
 
     def quadratic_form(self):
-        """
+        r"""
         Return the normalized quadratic form associated to this quaternion order.
 
         OUTPUT: quadratic form
@@ -2976,7 +2975,7 @@ class QuaternionFractionalIdeal(Ideal_fractional):
 
 
 class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
-    """
+    r"""
     A fractional ideal in a rational quaternion algebra.
 
     INPUT:
@@ -2986,14 +2985,14 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
     - ``right_order`` -- a quaternion order or ``None``
 
     - ``basis`` -- tuple of length 4 of elements in of ambient
-      quaternion algebra whose `\\ZZ`-span is an ideal
+      quaternion algebra whose `\ZZ`-span is an ideal
 
     - ``check`` -- boolean (default: ``True``); if ``False``, do no type
       checking.
     """
     def __init__(self, Q, basis, left_order=None,
                  right_order=None, check=True) -> None:
-        """
+        r"""
         EXAMPLES::
 
             sage: R = QuaternionAlgebra(-11,-1).maximal_order()
@@ -3104,7 +3103,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                        left_order=left_order, right_order=right_order)
 
     def quaternion_algebra(self):
-        """
+        r"""
         Return the ambient quaternion algebra that contains this fractional ideal.
 
         This is an alias for `self.ring()`.
@@ -3187,7 +3186,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return Q.quaternion_order(ISB)
 
     def left_order(self):
-        """
+        r"""
         Return the left order associated to this fractional ideal.
 
         OUTPUT: an order in a quaternion algebra
@@ -3212,7 +3211,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.__left_order
 
     def right_order(self):
-        """
+        r"""
         Return the right order associated to this fractional ideal.
 
         OUTPUT: an order in a quaternion algebra
@@ -3248,7 +3247,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.__right_order
 
     def __repr__(self) -> str:
-        """
+        r"""
         Return string representation of this quaternion fractional ideal.
 
         EXAMPLES::
@@ -3262,7 +3261,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return f'Fractional ideal {self.gens()}'
 
     def random_element(self, *args, **kwds):
-        """
+        r"""
         Return a random element in the rational fractional ideal ``self``.
 
         EXAMPLES::
@@ -3275,7 +3274,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return sum(ZZ.random_element(*args, **kwds) * g for g in self.gens())
 
     def basis(self):
-        """
+        r"""
         Return a basis for this fractional ideal.
 
         OUTPUT: tuple
@@ -3288,7 +3287,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.gens()
 
     def _richcmp_(self, right, op):
-        """
+        r"""
         Compare this fractional quaternion ideal to ``right``.
 
         EXAMPLES::
@@ -3341,7 +3340,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.free_module().__richcmp__(right.free_module(), op)
 
     def __hash__(self) -> int:
-        """
+        r"""
         Return the hash of ``self``.
 
         EXAMPLES::
@@ -3449,7 +3448,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
 
     @cached_method
     def quadratic_form(self):
-        """
+        r"""
         Return the normalized quadratic form associated to this quaternion ideal.
 
         OUTPUT: quadratic form
@@ -3577,7 +3576,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return M44(m, coerce=False)
 
     def norm(self):
-        """
+        r"""
         Return the reduced norm of this fractional ideal.
 
         OUTPUT: rational number
@@ -3616,7 +3615,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return r.sqrt()
 
     def conjugate(self):
-        """
+        r"""
         Return the ideal with generators the conjugates of the generators for ``self``.
 
         OUTPUT: a quaternionic fractional ideal
@@ -3633,7 +3632,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
                                                right_order=self.__left_order)
 
     def __mul__(self, right):
-        """
+        r"""
         Return the product of the fractional ideals ``self`` and ``right``.
 
         .. NOTE::
@@ -3664,7 +3663,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return A.ideal(basis, check=False)
 
     def __add__(self, other):
-        """
+        r"""
         Return the sum of the fractional ideals ``self`` and ``other``.
 
         EXAMPLES::
@@ -3683,7 +3682,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.quaternion_algebra().ideal(self.basis() + other.basis())
 
     def _acted_upon_(self, other, on_left):
-        """
+        r"""
         Scale a quaternion ideal.
 
         EXAMPLES::
@@ -3764,7 +3763,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return self.basis_matrix().row_module(ZZ)
 
     def intersection(self, J):
-        """
+        r"""
         Return the intersection of the ideals ``self`` and `J`.
 
         EXAMPLES::
@@ -3780,7 +3779,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return A.ideal(gens)
 
     def multiply_by_conjugate(self, J):
-        """
+        r"""
         Return product of ``self`` and the conjugate Jbar of `J`.
 
         INPUT:
@@ -3804,7 +3803,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return R.ideal(basis, check=False)
 
     def pushforward(self, J, side=None):
-        """
+        r"""
         Compute the ideal which is the pushforward of ``self`` through an ideal ``J``.
 
         Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
@@ -3896,7 +3895,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         raise ValueError('side must be "left", "right" or None')
 
     def pullback(self, J, side=None):
-        """
+        r"""
         Compute the ideal which is the pullback of ``self`` through an ideal ``J``.
 
         Uses Lemma 2.1.7 of [Ler2022]_. Only works for integral ideals.
@@ -4145,7 +4144,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         return True, self.minimal_element()
 
     def __contains__(self, x) -> bool:
-        """
+        r"""
         Return whether ``x`` is in ``self``.
 
         EXAMPLES::
