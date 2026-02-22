@@ -121,7 +121,7 @@ def HarborthGraph(immutable=False):
     return g
 
 
-def HarriesGraph(embedding=1):
+def HarriesGraph(embedding=1, immutable=False):
     r"""
     Return the Harries Graph.
 
@@ -152,9 +152,11 @@ def HarriesGraph(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.HarriesGraph()
         sage: g.order()
         70
@@ -169,15 +171,15 @@ def HarriesGraph(embedding=1):
 
     TESTS::
 
-        sage: graphs.HarriesGraph(embedding=3)                                          # needs networkx
+        sage: graphs.HarriesGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
     """
     from sage.graphs.generators.families import LCFGraph
     g = LCFGraph(70, [-29, -19, -13, 13, 21, -27, 27, 33, -13, 13,
-                      19, -21, -33, 29], 5)
-    g.name("Harries Graph")
+                      19, -21, -33, 29], 5,
+                 immutable=immutable, name="Harries Graph")
 
     if embedding == 1:
         gpos = g.get_pos()
@@ -235,7 +237,7 @@ def HarriesGraph(embedding=1):
         raise ValueError("the value of embedding must be 1 or 2")
 
 
-def HarriesWongGraph(embedding=1):
+def HarriesWongGraph(embedding=1, immutable=False):
     r"""
     Return the Harries-Wong Graph.
 
@@ -271,9 +273,11 @@ def HarriesWongGraph(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.HarriesWongGraph()
         sage: g.order()
         70
@@ -288,11 +292,11 @@ def HarriesWongGraph(embedding=1):
 
     Alternative embedding::
 
-        sage: graphs.HarriesWongGraph(embedding=2).show()       # long time             # needs networkx sage.plot
+        sage: graphs.HarriesWongGraph(embedding=2).show()       # long time             # needs sage.plot
 
     TESTS::
 
-        sage: graphs.HarriesWongGraph(embedding=3)                                      # needs networkx
+        sage: graphs.HarriesWongGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -304,8 +308,7 @@ def HarriesWongGraph(embedding=1):
          -27, -21, 15, -9, 29, -29, 33, -9, -25]
 
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(70, L, 1)
-    g.name("Harries-Wong graph")
+    g = LCFGraph(70, L, 1, immutable=immutable, name="Harries-Wong graph")
 
     if embedding == 1:
         d = g.get_pos()
@@ -846,7 +849,7 @@ def HallJankoGraph(from_string=True, immutable=False):
     return g
 
 
-def Balaban10Cage(embedding=1):
+def Balaban10Cage(embedding=1, immutable=False):
     r"""
     Return the Balaban 10-cage.
 
@@ -875,9 +878,11 @@ def Balaban10Cage(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be either 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.Balaban10Cage()
         sage: g.girth()
         10
@@ -891,7 +896,7 @@ def Balaban10Cage(embedding=1):
 
     TESTS::
 
-        sage: graphs.Balaban10Cage(embedding='foo')                                     # needs networkx
+        sage: graphs.Balaban10Cage(embedding='foo')
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -903,8 +908,7 @@ def Balaban10Cage(embedding=1):
          -17, -25, 9, 31, 13, -9, -21, -33, -17, -29, 29]
 
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(70, L, 1)
-    g.name("Balaban 10-cage")
+    g = LCFGraph(70, L, 1, immutable=immutable, name="Balaban 10-cage")
 
     if embedding == 2:
         return g
@@ -932,7 +936,7 @@ def Balaban10Cage(embedding=1):
     return g
 
 
-def Balaban11Cage(embedding=1):
+def Balaban11Cage(embedding=1, immutable=False):
     r"""
     Return the Balaban 11-cage.
 
@@ -953,6 +957,9 @@ def Balaban11Cage(embedding=1):
 
       - The last embedding is the default one produced by the :meth:`LCFGraph`
         constructor.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. NOTE::
 
@@ -977,15 +984,15 @@ def Balaban11Cage(embedding=1):
     Our many embeddings::
 
         sage: g1 = graphs.Balaban11Cage(embedding=1)
-        sage: g2 = graphs.Balaban11Cage(embedding=2)                                    # needs networkx
-        sage: g3 = graphs.Balaban11Cage(embedding=3)                                    # needs networkx
+        sage: g2 = graphs.Balaban11Cage(embedding=2)
+        sage: g3 = graphs.Balaban11Cage(embedding=3)
         sage: g1.show(figsize=[10,10])          # long time                             # needs sage.plot
-        sage: g2.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
-        sage: g3.show(figsize=[10,10])          # long time                             # needs networkx sage.plot
+        sage: g2.show(figsize=[10,10])          # long time                             # needs sage.plot
+        sage: g3.show(figsize=[10,10])          # long time                             # needs sage.plot
 
     Proof that the embeddings are the same graph::
 
-        sage: g1.is_isomorphic(g2)  # g2 and g3 are obviously isomorphic                # needs networkx
+        sage: g1.is_isomorphic(g2)  # g2 and g3 are obviously isomorphic
         True
 
     TESTS::
@@ -1066,9 +1073,10 @@ def Balaban11Cage(embedding=1):
             "165": ["162", "163", "164"],   "175": ["172", "173", "174"]
         }
 
-        return Graph(edge_dict, pos=pos_dict, name="Balaban 11-cage")
+        return Graph(edge_dict, pos=pos_dict, name="Balaban 11-cage",
+                     immutable=immutable)
 
-    elif embedding == 2 or embedding == 3:
+    if embedding == 2 or embedding == 3:
         L = [44, 26, -47, -15, 35, -39, 11, -27, 38, -37, 43, 14, 28, 51,
              -29, -16, 41, -11, -26, 15, 22, -51, -35, 36, 52, -14, -33,
              -26, -46, 52, 26, 16, 43, 33, -15, 17, -53, 23, -42, -35, -28,
@@ -1080,8 +1088,7 @@ def Balaban11Cage(embedding=1):
              42, -26, -36, 16]
 
         from sage.graphs.generators.families import LCFGraph
-        g = LCFGraph(112, L, 1)
-        g.name("Balaban 11-cage")
+        g = LCFGraph(112, L, 1, immutable=immutable, name="Balaban 11-cage")
 
         if embedding == 3:
             return g
@@ -1118,8 +1125,7 @@ def Balaban11Cage(embedding=1):
 
         return g
 
-    else:
-        raise ValueError("the value of embedding must be 1, 2, or 3")
+    raise ValueError("the value of embedding must be 1, 2, or 3")
 
 
 def BidiakisCube(immutable=False):
@@ -1190,7 +1196,7 @@ def BidiakisCube(immutable=False):
     return g
 
 
-def BiggsSmithGraph(embedding=1):
+def BiggsSmithGraph(embedding=1, immutable=False):
     r"""
     Return the Biggs-Smith graph.
 
@@ -1201,11 +1207,13 @@ def BiggsSmithGraph(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to be 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     Basic properties::
 
-        sage: # needs networkx
         sage: g = graphs.BiggsSmithGraph()
         sage: g.order()
         102
@@ -1221,11 +1229,11 @@ def BiggsSmithGraph(embedding=1):
 
     The other embedding::
 
-        sage: graphs.BiggsSmithGraph(embedding=2).show()        # long time             # needs networkx
+        sage: graphs.BiggsSmithGraph(embedding=2).show()        # long time
 
     TESTS::
 
-        sage: graphs.BiggsSmithGraph(embedding='xyzzy')                                 # needs networkx
+        sage: graphs.BiggsSmithGraph(embedding='xyzzy')
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -1240,8 +1248,7 @@ def BiggsSmithGraph(embedding=1):
          -24, -14, -21, -8, 44, -31, -38, -28, 37]
 
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(102, L, 1)
-    g.name("Biggs-Smith graph")
+    g = LCFGraph(102, L, 1, immutable=immutable, name="Biggs-Smith graph")
 
     if embedding == 1:
 
@@ -2333,8 +2340,8 @@ def DesarguesGraph():
     EXAMPLES::
 
         sage: D = graphs.DesarguesGraph()
-        sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)                                     # needs networkx
-        sage: D.is_isomorphic(L)                                                        # needs networkx
+        sage: L = graphs.LCFGraph(20,[5,-5,9,-9],5)
+        sage: D.is_isomorphic(L)
         True
         sage: D.show()                          # long time                             # needs sage.plot
     """
@@ -2493,7 +2500,6 @@ def HortonGraph():
 
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.HortonGraph()
         sage: g.order()
         96
@@ -2790,16 +2796,20 @@ def ErreraGraph(immutable=False):
                  name="Errera graph", immutable=immutable)
 
 
-def F26AGraph():
+def F26AGraph(immutable=False):
     r"""
     Return the F26A graph.
 
     The F26A graph is a symmetric bipartite cubic graph with 26 vertices and 39
     edges. For more information, see the :wikipedia:`F26A_graph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.F26AGraph(); g
         F26A Graph: Graph on 26 vertices
         sage: g.order(), g.size()
@@ -2814,9 +2824,7 @@ def F26AGraph():
         (x - 3) * (x + 3) * (x^4 - 5*x^2 + 3)^6
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(26, [7, -7], 13)
-    g.name("F26A Graph")
-    return g
+    return LCFGraph(26, [7, -7], 13, immutable=immutable, name="F26A Graph")
 
 
 def FlowerSnark(immutable=False):
@@ -2859,15 +2867,19 @@ def FlowerSnark(immutable=False):
     return g
 
 
-def FolkmanGraph():
+def FolkmanGraph(immutable=False):
     """
     Return the Folkman graph.
 
     See the :wikipedia:`Folkman_graph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.FolkmanGraph()
         sage: g.order()
         20
@@ -2891,20 +2903,23 @@ def FolkmanGraph():
         True
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(20, [5, -7, -7, 5], 5)
-    g.name("Folkman Graph")
-    return g
+    return LCFGraph(20, [5, -7, -7, 5], 5, immutable=immutable,
+                    name="Folkman Graph")
 
 
-def FosterGraph():
+def FosterGraph(immutable=False):
     """
     Return the Foster graph.
 
     See the :wikipedia:`Foster_graph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.FosterGraph()
         sage: g.order()
         90
@@ -2920,9 +2935,8 @@ def FosterGraph():
         True
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(90, [17, -9, 37, -37, 9, -17], 15)
-    g.name("Foster Graph")
-    return g
+    return LCFGraph(90, [17, -9, 37, -37, 9, -17], 15,
+                    immutable=immutable, name="Foster Graph")
 
 
 def FranklinGraph(immutable=False):
@@ -3015,7 +3029,7 @@ def FruchtGraph(immutable=False):
         Frucht graph: Graph on 12 vertices
         sage: FRUCHT.graph6_string()
         'KhCKM?_EGK?L'
-        sage: (graphs.FruchtGraph()).show()     # long time                             # needs networkx
+        sage: (graphs.FruchtGraph()).show()     # long time
 
     TESTS::
 
@@ -3158,7 +3172,7 @@ def GolombGraph(immutable=False):
                  name="Golomb graph", immutable=immutable)
 
 
-def GrayGraph(embedding=1):
+def GrayGraph(embedding=1, immutable=False):
     r"""
     Return the Gray graph.
 
@@ -3169,9 +3183,11 @@ def GrayGraph(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.GrayGraph()
         sage: g.order()
         54
@@ -3186,14 +3202,14 @@ def GrayGraph(embedding=1):
 
     TESTS::
 
-        sage: graphs.GrayGraph(embedding=3)                                             # needs networkx
+        sage: graphs.GrayGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1, 2, or 3
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(54, [-25, 7, -7, 13, -13, 25], 9)
-    g.name("Gray graph")
+    g = LCFGraph(54, [-25, 7, -7, 13, -13, 25], 9,
+                 immutable=immutable, name="Gray graph")
 
     if embedding == 1:
         o = g.automorphism_group(orbits=True)[-1]
@@ -3932,7 +3948,7 @@ def LocalMcLaughlinGraph(immutable=False):
     return g
 
 
-def LjubljanaGraph(embedding=1):
+def LjubljanaGraph(embedding=1, immutable=False):
     r"""
     Return the Ljubljana Graph.
 
@@ -3947,9 +3963,11 @@ def LjubljanaGraph(embedding=1):
     - ``embedding`` -- integer (default: `1`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.LjubljanaGraph()
         sage: g.order()
         112
@@ -3964,7 +3982,7 @@ def LjubljanaGraph(embedding=1):
 
     TESTS::
 
-        sage: graphs.LjubljanaGraph(embedding=3)                                        # needs networkx
+        sage: graphs.LjubljanaGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
@@ -3975,8 +3993,7 @@ def LjubljanaGraph(embedding=1):
          -39, 33, -9, -51, 51, -47, -33, 19, 51, -21, 29, 21, -31, -39]
 
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(112, L, 2)
-    g.name("Ljubljana graph")
+    g = LCFGraph(112, L, 2, immutable=immutable, name="Ljubljana graph")
 
     if embedding == 1:
         dh = HeawoodGraph().get_pos()
@@ -4146,7 +4163,7 @@ def MarkstroemGraph(immutable=False):
     return g.copy(immutable=True) if immutable else g
 
 
-def McGeeGraph(embedding=2):
+def McGeeGraph(embedding=2, immutable=False):
     r"""
     Return the McGee Graph.
 
@@ -4157,9 +4174,11 @@ def McGeeGraph(embedding=2):
     - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.McGeeGraph()
         sage: g.order()
         24
@@ -4174,19 +4193,18 @@ def McGeeGraph(embedding=2):
 
     TESTS::
 
-        sage: graphs.McGeeGraph(embedding=3)                                            # needs networkx
+        sage: graphs.McGeeGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(24, [12, 7, -7], 8)
-    g.name('McGee graph')
+    g = LCFGraph(24, [12, 7, -7], 8, immutable=immutable, name='McGee graph')
 
     if embedding == 1:
         return g
 
-    elif embedding == 2:
+    if embedding == 2:
 
         o = [[7, 2, 13, 8, 19, 14, 1, 20],
              [5, 4, 11, 10, 17, 16, 23, 22],
@@ -4198,8 +4216,7 @@ def McGeeGraph(embedding=2):
 
         return g
 
-    else:
-        raise ValueError("the value of embedding must be 1 or 2")
+    raise ValueError("the value of embedding must be 1 or 2")
 
 
 def McLaughlinGraph(immutable=False):
@@ -4486,7 +4503,7 @@ def NauruGraph(embedding=2):
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
-        sage: graphs.NauruGraph(embedding=1).is_isomorphic(g)                           # needs networkx
+        sage: graphs.NauruGraph(embedding=1).is_isomorphic(g)
         True
     """
 
@@ -4519,9 +4536,9 @@ def PappusGraph(immutable=False):
 
         sage: G = graphs.PappusGraph()
         sage: G.show()                          # long time                             # needs sage.plot
-        sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)                              # needs networkx
-        sage: L.show()                          # long time                             # needs networkx sage.plot
-        sage: G.is_isomorphic(L)                                                        # needs networkx
+        sage: L = graphs.LCFGraph(18, [5,7,-7,7,-7,-5], 3)
+        sage: L.show()                          # long time                             # needs sage.plot
+        sage: G.is_isomorphic(L)
         True
     """
     edges = {0: [1, 5, 6], 1: [2, 7], 2: [3, 8], 3: [4, 9], 4: [5, 10], 5: [11],
@@ -4638,15 +4655,19 @@ def PerkelGraph(immutable=False):
     return g
 
 
-def RobertsonGraph():
+def RobertsonGraph(immutable=False):
     """
     Return the Robertson graph.
 
     See the :wikipedia:`Robertson_graph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.RobertsonGraph()
         sage: g.order()
         19
@@ -4668,9 +4689,7 @@ def RobertsonGraph():
     """
     from sage.graphs.generators.families import LCFGraph
     lcf = [8, 4, 7, 4, 8, 5, 7, 4, 7, 8, 4, 5, 7, 8, 4, 8, 4, 8, 4]
-    g = LCFGraph(19, lcf, 1)
-    g.name("Robertson Graph")
-    return g
+    return LCFGraph(19, lcf, 1, immutable=immutable, name="Robertson Graph")
 
 
 def SchlaefliGraph(immutable=False):
@@ -5232,15 +5251,19 @@ def TruncatedTetrahedralGraph(immutable=False):
     return g
 
 
-def Tutte12Cage():
+def Tutte12Cage(immutable=False):
     r"""
     Return the Tutte 12-Cage.
 
     See the :wikipedia:`Tutte_12-cage`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.Tutte12Cage()
         sage: g.order()
         126
@@ -5256,12 +5279,10 @@ def Tutte12Cage():
          -21, -57, 59, -17]
 
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(126, L, 7)
-    g.name("Tutte 12-Cage")
-    return g
+    return LCFGraph(126, L, 7, immutable=immutable, name="Tutte 12-Cage")
 
 
-def TutteCoxeterGraph(embedding=2):
+def TutteCoxeterGraph(embedding=2, immutable=False):
     r"""
     Return the Tutte-Coxeter graph.
 
@@ -5272,9 +5293,11 @@ def TutteCoxeterGraph(embedding=2):
     - ``embedding`` -- integer (default: `2`); two embeddings are available,
       and can be selected by setting ``embedding`` to 1 or 2
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.TutteCoxeterGraph()
         sage: g.order()
         30
@@ -5289,14 +5312,14 @@ def TutteCoxeterGraph(embedding=2):
 
     TESTS::
 
-        sage: graphs.TutteCoxeterGraph(embedding=3)                                     # needs networkx
+        sage: graphs.TutteCoxeterGraph(embedding=3)
         Traceback (most recent call last):
         ...
         ValueError: the value of embedding must be 1 or 2
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(30, [-13, -9, 7, -7, 9, 13], 5)
-    g.name("Tutte-Coxeter graph")
+    g = LCFGraph(30, [-13, -9, 7, -7, 9, 13], 5,
+                 immutable=immutable, name="Tutte-Coxeter graph")
 
     if embedding == 1:
         d = {
@@ -5571,15 +5594,19 @@ def TwinplexGraph(embedding='LM', immutable=False):
     return G
 
 
-def WagnerGraph():
+def WagnerGraph(immutable=False):
     """
     Return the Wagner Graph.
 
     See the :wikipedia:`Wagner_graph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
-        sage: # needs networkx
         sage: g = graphs.WagnerGraph()
         sage: g.order()
         8
@@ -5592,9 +5619,7 @@ def WagnerGraph():
         sage: g.show()                                                                  # needs sage.plot
     """
     from sage.graphs.generators.families import LCFGraph
-    g = LCFGraph(8, [4], 8)
-    g.name("Wagner Graph")
-    return g
+    return LCFGraph(8, [4], 8, immutable=immutable, name="Wagner Graph")
 
 
 def WatkinsSnarkGraph(immutable=False):

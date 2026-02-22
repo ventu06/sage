@@ -2285,7 +2285,7 @@ def HyperStarGraph(n, k, immutable=False):
                  immutable=immutable)
 
 
-def LCFGraph(n, shift_list, repeats):
+def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
     r"""
     Return the cubic graph specified in LCF notation.
 
@@ -2310,27 +2310,32 @@ def LCFGraph(n, shift_list, repeats):
 
     - ``repeats`` -- the number of times to repeat the process
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
+
     EXAMPLES::
 
-        sage: G = graphs.LCFGraph(4, [2,-2], 2)                                         # needs networkx
-        sage: G.is_isomorphic(graphs.TetrahedralGraph())                                # needs networkx
+        sage: G = graphs.LCFGraph(4, [2,-2], 2)
+        sage: G.is_isomorphic(graphs.TetrahedralGraph())
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(20, [10,7,4,-4,-7,10,-4,7,-7,4], 2)                   # needs networkx
-        sage: G.is_isomorphic(graphs.DodecahedralGraph())                               # needs networkx
+        sage: G = graphs.LCFGraph(20, [10,7,4,-4,-7,10,-4,7,-7,4], 2)
+        sage: G.is_isomorphic(graphs.DodecahedralGraph())
         True
 
     ::
 
-        sage: G = graphs.LCFGraph(14, [5,-5], 7)                                        # needs networkx
-        sage: G.is_isomorphic(graphs.HeawoodGraph())                                    # needs networkx
+        sage: G = graphs.LCFGraph(14, [5,-5], 7)
+        sage: G.is_isomorphic(graphs.HeawoodGraph())
         True
 
     The largest cubic nonplanar graph of diameter three::
 
-        sage: # needs networkx
         sage: G = graphs.LCFGraph(20, [-10,-7,-5,4,7,-10,-7,-4,5,7,
         ....:                          -10,-7,6,-5,7,-10,-7,5,-6,7], 1)
         sage: G.degree()
@@ -2339,11 +2344,46 @@ def LCFGraph(n, shift_list, repeats):
         3
         sage: G.show()                          # long time                             # needs sage.plot
 
+    TESTS:
+
+    Check isomorphism with the constructor of networkx::
+
+        sage: # needs networkx
+        sage: n = randint(10, 20)
+        sage: shift_list = [randint(1, n // 2) * (1 - 2 * randint(0, 1))
+        ....:               for i in range(randint(0, 6))]
+        sage: repeats = randint(0, 10)
+        sage: G = graphs.LCFGraph(n, shift_list, repeats)
+        sage: from networkx import LCF_graph
+        sage: H = Graph(LCF_graph(n, shift_list, repeats))
+        sage: G.is_isomorphic(H)
+        True
+
+    Check the behavior of parameter immutable::
+
+        sage: graphs.LCFGraph(4, [2,-2], 2, immutable=False).is_immutable()
+        False
+        sage: graphs.LCFGraph(4, [2,-2], 2, immutable=True).is_immutable()
+        True
+
     PLOTTING: LCF Graphs are plotted as an `n`-cycle with edges in the
     middle, as described above.
     """
-    import networkx
-    G = Graph(networkx.LCF_graph(n, shift_list, repeats), name="LCF Graph")
+    if name is None:
+        name = "LCF Graph"
+    if not n:
+        return Graph(name=name, immutable=immutable)
+
+    from itertools import chain, repeat
+    # Edges of a cycle
+    E1 = ((i, i + 1) for i in range(n - 1))
+    E2 = ((0, n - 1),)
+    # Edges obtained from repeated iterations over the shift list
+    E3 = ((i % n, (i + shift) % n)
+          for i, shift in enumerate(chain(*repeat(shift_list, repeats))))
+
+    G = Graph([range(n), chain(E1, E2, E3)], format="vertices_and_edges",
+              name=name, immutable=immutable)
     G._circle_embedding(list(range(n)), radius=1, angle=pi/2)
     return G
 
