@@ -336,6 +336,29 @@ def fast_callable(x, domain=None, vars=None,
     generators of ``parent(x)`` as the variables; otherwise, ``vars`` must be
     specified (unless ``x`` is a symbolic expression with only one variable,
     and ``expect_one_var`` is ``True``, in which case we will use that variable).
+    
+    INPUT:
+
+    - ``x`` -- an expression, element of ``SR``, or polynomial to compile
+
+    - ``domain`` -- (default: ``None``) a Sage parent or Python type; arithmetic
+      will be done in this domain. Supports fast interpreters for ``RDF``,
+      :class:`float`, etc.
+
+    - ``vars`` -- (default: ``None``) a list of variables to use; required unless
+      ``x`` is a polynomial (in which case the generators of ``parent(x)`` are
+      used) or a symbolic expression with a single variable and
+      ``expect_one_var=True``
+
+    - ``expect_one_var`` -- boolean (default: ``False``); if ``True``, allows
+      skipping ``vars`` when ``x`` is a symbolic expression with exactly one
+      variable
+
+    OUTPUT:
+
+    An :class:`~sage.ext.fast_callable.CallableExpression` (or a
+    domain-specific variant) that can be evaluated rapidly by calling it
+    with the appropriate variable values.
 
     EXAMPLES::
 
