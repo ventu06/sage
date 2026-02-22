@@ -1757,11 +1757,13 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return QuaternionOrder(self, basis, check=check)
 
-    def ideal(self, gens, left_order=None, right_order=None, check=True, **kwds):
+    def fractional_ideal(self, gens, left_order=None, right_order=None, check=True, **kwds):
         r"""
-        Return the quaternion ideal with given gens over `\ZZ`.
+        Return the quaternion fractional ideal with the given ``gens``,
+        which must be elements of this algebra that span a `\ZZ`-module
+        of rank `4`.
 
-        Neither a left or right order structure need be specified.
+        Neither a left or right order need be specified.
 
         INPUT:
 
@@ -1784,6 +1786,8 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
             return QuaternionFractionalIdeal_rational(self, gens, left_order=left_order, right_order=right_order, check=check)
         else:
             raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
+
+    ideal = fractional_ideal  # legacy alias
 
     @cached_method
     def modp_splitting_data(self, p):
