@@ -352,7 +352,7 @@ def HarriesWongGraph(embedding=1, immutable=False):
         raise ValueError("the value of embedding must be 1 or 2")
 
 
-def WellsGraph():
+def WellsGraph(immutable=False):
     r"""
     Return the Wells graph.
 
@@ -366,6 +366,11 @@ def WellsGraph():
     is quite unlikely that this could become the most time-consuming operation
     in any sensible algorithm, and .... "preserves knowledge", which is what
     open-source software is meant to do.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -456,7 +461,7 @@ def WellsGraph():
     g._circle_embedding(p[2], radius=.8)
     g._circle_embedding(p[3], radius=.7)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def Cell600(embedding=1, immutable=False):
@@ -2491,12 +2496,17 @@ def DyckGraph(immutable=False):
                  name="Dyck graph", immutable=immutable)
 
 
-def HortonGraph():
+def HortonGraph(immutable=False):
     r"""
     Return the Horton Graph.
 
     The Horton graph is a cubic 3-connected non-hamiltonian graph. For more
     information, see the :wikipedia:`Horton_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -2556,7 +2566,7 @@ def HortonGraph():
 
     g.relabel()
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
 def EllinghamHorton54Graph(immutable=False):
@@ -5200,7 +5210,7 @@ def TricornGraph(immutable=False):
                  name="Tricorn Graph", immutable=immutable)
 
 
-def TruncatedIcosidodecahedralGraph():
+def TruncatedIcosidodecahedralGraph(immutable=False):
     r"""
     Return the truncated icosidodecahedron.
 
@@ -5208,6 +5218,11 @@ def TruncatedIcosidodecahedralGraph():
     faces, 20 regular hexagonal faces, 12 regular decagonal faces, 120 vertices
     and 180 edges. For more information, see the
     :wikipedia:`Truncated_icosidodecahedron`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -5222,8 +5237,9 @@ def TruncatedIcosidodecahedralGraph():
     """
     from sage.geometry.polyhedron.library import polytopes
     # note that dropping exact=False here makes the construction take forever
-    G = polytopes.icosidodecahedron(exact=False).truncation().graph()
-    G.name("Truncated Icosidodecahedron")
+    T = polytopes.icosidodecahedron(exact=False).truncation()
+    G = T.graph(immutable=immutable)
+    G._name = "Truncated Icosidodecahedron"
     return G
 
 
