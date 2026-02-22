@@ -4824,7 +4824,7 @@ def ShrikhandeGraph(immutable=False):
                  name="Shrikhande graph", immutable=immutable)
 
 
-def SylvesterGraph():
+def SylvesterGraph(immutable=False):
     """
     Return the Sylvester Graph.
 
@@ -4838,6 +4838,11 @@ def SylvesterGraph():
     .. SEEALSO::
 
         * :meth:`~sage.graphs.graph_generators.GraphGenerators.HoffmanSingletonGraph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4853,16 +4858,19 @@ def SylvesterGraph():
     g = HoffmanSingletonGraph()
     e = next(g.edge_iterator(labels=False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
-    g.relabel()
+    g.name("Sylvester Graph")
+    if immutable:
+        g = g.relabel(inplace=False, immutable=True)
+    else:
+        g.relabel()
     ordering = [0, 1, 2, 4, 5, 9, 16, 35, 15, 18, 20, 30, 22, 6, 33, 32, 14,
                 10, 28, 29, 7, 24, 23, 26, 19, 12, 13, 21, 11, 31, 3, 27, 25,
                 17, 8, 34]
     g._circle_embedding(ordering, shift=.5)
-    g.name("Sylvester Graph")
     return g
 
 
-def SimsGewirtzGraph():
+def SimsGewirtzGraph(immutable=False):
     r"""
     Return the Sims-Gewirtz Graph.
 
@@ -4879,6 +4887,11 @@ def SimsGewirtzGraph():
 
         * :meth:`~sage.graphs.graph_generators.GraphGenerators.HigmanSimsGraph`.
 
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: g = graphs.SimsGewirtzGraph(); g
@@ -4893,17 +4906,20 @@ def SimsGewirtzGraph():
     g = HigmanSimsGraph()
     e = next(g.edge_iterator(labels=False))
     g.delete_vertices(g.neighbors(e[0]) + g.neighbors(e[1]))
-    g.relabel()
+    g.name("Sims-Gewirtz Graph")
+    if immutable:
+        g = g.relabel(inplace=False, immutable=True)
+    else:
+        g.relabel()
     ordering = [0, 2, 3, 4, 6, 7, 8, 17, 1, 41, 49, 5, 22, 26, 11, 27, 15, 47,
                 53, 52, 38, 43, 44, 18, 20, 32, 19, 42, 54, 36, 51, 30, 33, 35,
                 37, 28, 34, 12, 29, 23, 55, 25, 40, 24, 9, 14, 48, 39, 45, 16,
                 13, 21, 31, 50, 10, 46]
     g._circle_embedding(ordering)
-    g.name("Sims-Gewirtz Graph")
     return g
 
 
-def SousselierGraph():
+def SousselierGraph(immutable=False):
     r"""
     Return the Sousselier Graph.
 
@@ -4911,6 +4927,11 @@ def SousselierGraph():
     edges. For more information, see :wikipedia:`Sousselier_graph` or
     the corresponding French
     `Wikipedia page <https://fr.wikipedia.org/wiki/Graphe_de_Sousselier>`_.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4942,15 +4963,20 @@ def SousselierGraph():
     g._circle_embedding(list(range(15)), shift=-.25)
     g._pos[15] = (0, 0)
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
-def SzekeresSnarkGraph():
+def SzekeresSnarkGraph(immutable=False):
     r"""
     Return the Szekeres Snark Graph.
 
     The Szekeres graph is a snark with 50 vertices and 75 edges. For more
     information on this graph, see the :wikipedia:`Szekeres_snark`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -4983,12 +5009,13 @@ def SzekeresSnarkGraph():
                             shift=5.45 + 1.8 * i)
 
     g._circle_embedding(c, radius=1, shift=.25)
-
+    if immutable:
+        return g.relabel(inplace=False, immutable=True)
     g.relabel()
     return g
 
 
-def ThomsenGraph():
+def ThomsenGraph(immutable=False):
     """
     Return the Thomsen Graph.
 
@@ -4996,6 +5023,11 @@ def ThomsenGraph():
     (3, 3)`. It is also called the Utility graph.
 
     PLOTTING: See CompleteBipartiteGraph.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5007,17 +5039,21 @@ def ThomsenGraph():
         sage: (graphs.ThomsenGraph()).show()    # long time                             # needs sage.plot
     """
     from sage.graphs.generators.basic import CompleteBipartiteGraph
-    G = CompleteBipartiteGraph(3, 3)
-    G.name("Thomsen graph")
-    return G
+    return CompleteBipartiteGraph(3, 3, immutable=immutable,
+                                  name="Thomsen graph")
 
 
-def TietzeGraph():
+def TietzeGraph(immutable=False):
     r"""
     Return the Tietze Graph.
 
     For more information on the Tietze Graph, see the
     :wikipedia:`Tietze%27s_graph`.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -5035,10 +5071,11 @@ def TietzeGraph():
         sage: g.automorphism_group().is_isomorphic(groups.permutation.Dihedral(6))      # needs sage.groups
         True
     """
-    g = Graph([(0, 9), (3, 10), (6, 11), (1, 5), (2, 7), (4, 8)],
-              name="Tietze Graph")
-    g.add_cycle(list(range(9)))
-    g.add_cycle([9, 10, 11])
+    edges = ((0, 1), (0, 8), (0, 9), (1, 2), (1, 5), (2, 3),
+             (2, 7), (3, 4), (3, 10), (4, 5), (4, 8), (5, 6),
+             (6, 7), (6, 11), (7, 8), (9, 10), (9, 11), (10, 11))
+    g = Graph([range(12), edges], format="vertices_and_edges",
+              name="Tietze Graph", immutable=immutable)
     g._circle_embedding(list(range(9)))
     g._circle_embedding([9, 10, 11], radius=.5)
     return g
