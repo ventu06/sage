@@ -175,7 +175,7 @@ class AlgebraicScheme(scheme.Scheme):
         self.__divisor_group = {}
         scheme.Scheme.__init__(self, A.base_scheme(), category=category)
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LaTeX representation of this algebraic scheme.
 
@@ -190,7 +190,7 @@ class AlgebraicScheme(scheme.Scheme):
         """
         return r"\text{{Subscheme of ${}$}}".format(latex(self.__A))
 
-    def is_projective(self):
+    def is_projective(self) -> bool:
         """
         Return ``True`` if ``self`` is presented as a subscheme of an ambient
         projective space.
@@ -1185,7 +1185,7 @@ class AlgebraicScheme_subscheme(AlgebraicScheme):
         self.__irreducible_components = C
         return C
 
-    def is_irreducible(self):
+    def is_irreducible(self) -> bool:
         r"""
         Return whether this subscheme is or is not irreducible.
 
