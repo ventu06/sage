@@ -949,11 +949,6 @@ if [ "$1" = '-startuptime' -o "$1" = '--startuptime' ]; then
     exec sage-startuptime.py "$@"
 fi
 
-if [ "$1" = '-fixdistributions' -o "$1" = '--fixdistributions' ]; then
-    shift
-    exec python3 -m sage.misc.package_dir "$@"
-fi
-
 if [ "$1" = '-tox' -o "$1" = '--tox' ]; then
     shift
     if [ -n "$SAGE_SRC" -a -f "$SAGE_SRC/tox.ini" ]; then
