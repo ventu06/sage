@@ -356,9 +356,9 @@ def fast_callable(x, domain=None, vars=None,
 
     OUTPUT:
 
-    An :class:`~sage.ext.fast_callable.CallableExpression` (or a
-    domain-specific variant) that can be evaluated rapidly by calling it
+    A callable object that can be evaluated rapidly by calling it
     with the appropriate variable values.
+
 
     EXAMPLES::
 
