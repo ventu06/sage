@@ -2388,7 +2388,7 @@ def LCFGraph(n, shift_list, repeats, immutable=False, name=None):
     return G
 
 
-def MycielskiGraph(k=1, relabel=True):
+def MycielskiGraph(k=1, relabel=True, immutable=False):
     r"""
     Return the `k`-th Mycielski Graph.
 
@@ -2419,6 +2419,9 @@ def MycielskiGraph(k=1, relabel=True):
     - ``relabel`` -- relabel the vertices so their names are the integers
       ``range(n)`` where ``n`` is the number of vertices in the graph
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     The Mycielski graph `M_k` is triangle-free and has chromatic
@@ -2436,33 +2439,32 @@ def MycielskiGraph(k=1, relabel=True):
         sage: g.is_isomorphic(graphs.GrotzschGraph())
         True
     """
-    g = Graph()
-    g.name("Mycielski Graph " + str(k))
-
     if k < 0:
         raise ValueError("parameter k must be a nonnegative integer")
 
-    if k == 0:
-        return g
-
-    if k == 1:
-        g.add_vertex(0)
-        return g
-
-    if k == 2:
-        g.add_edge(0, 1)
-        return g
-
-    g0 = MycielskiGraph(k - 1)
-    g = MycielskiStep(g0)
+    name = f"Mycielski Graph {k}"
+    g = Graph()
     g.name("Mycielski Graph " + str(k))
+
+    if not k:
+        return Graph(name=name, immutable=immutable)
+    if k == 1:
+        return Graph(1, name=name, immutable=immutable)
+    if k == 2:
+        return Graph([(0, 1)], format="list_of_edges", name=name,
+                     immutable=immutable)
+
+    g = Graph([(0, 1)], format="list_of_edges")
+    for _ in range(k - 2):
+        g = MycielskiStep(g, immutable=False)
+    g.name(name)
     if relabel:
         g.relabel()
 
-    return g
+    return g.copy(immutable=True) if immutable else g
 
 
-def MycielskiStep(g):
+def MycielskiStep(g, immutable=None):
     r"""
     Perform one iteration of the Mycielski construction.
 
@@ -2470,16 +2472,41 @@ def MycielskiStep(g):
     method. We expose it to all users in case they may find it
     useful.
 
-    EXAMPLE. One iteration of the Mycielski step applied to the
-    5-cycle yields a graph isomorphic to the Grotzsch graph ::
+    INPUT:
+
+    - ``g`` -- a graph
+
+    - ``immutable`` -- boolean (default: ``None``); whether to return a mutable
+      or an immutable graph. ``immutable=None`` (default) means that the input
+      and returned graphs behave the same way.
+
+    EXAMPLES:
+
+    One iteration of the Mycielski step applied to the 5-cycle yields a graph
+    isomorphic to the Grotzsch graph ::
 
         sage: g = graphs.CycleGraph(5)
         sage: h = graphs.MycielskiStep(g)
         sage: h.is_isomorphic(graphs.GrotzschGraph())
         True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: g = Graph([(0, 1)], immutable=False)
+        sage: graphs.MycielskiStep(g).is_immutable()
+        False
+        sage: graphs.MycielskiStep(g, immutable=True).is_immutable()
+        True
+        sage: g = Graph([(0, 1)], immutable=True)
+        sage: graphs.MycielskiStep(g).is_immutable()
+        True
+        sage: graphs.MycielskiStep(g, immutable=False).is_immutable()
+        False
     """
     # Make a copy of the input graph g
-    gg = copy(g)
+    gg = g.copy(immutable=False)
 
     # rename a vertex v of gg as (1,v)
     renamer = {v: (1, v) for v in g}
@@ -2499,7 +2526,9 @@ def MycielskiStep(g):
     for v in g:
         gg.add_edges([((1, v), (2, vv)) for vv in g.neighbors(v)])
 
-    return gg
+    if immutable is None:
+        immutable = g.is_immutable()
+    return gg.copy(immutable=True) if immutable else gg
 
 
 def NKStarGraph(n, k, immutable=False):
@@ -3348,7 +3377,7 @@ def p2_forbidden_minors(immutable=False):
             for graph_str in p2_forbidden_minors_graph6]
 
 
-def SierpinskiGasketGraph(n):
+def SierpinskiGasketGraph(n, immutable=False):
     """
     Return the Sierpinski Gasket graph of generation `n`.
 
@@ -3357,6 +3386,9 @@ def SierpinskiGasketGraph(n):
     INPUT:
 
     - ``n`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -3430,10 +3462,10 @@ def SierpinskiGasketGraph(n):
     dg.set_pos({(x, y): (x + y / 2, y * 3 / 4)
                 for x, y in dg})
     dg.relabel()
-    return dg
+    return dg.copy(immutable=True) if immutable else dg
 
 
-def GeneralizedSierpinskiGraph(G, k, stretch=None):
+def GeneralizedSierpinskiGraph(G, k, stretch=None, immutable=False):
     r"""
     Return the generalized Sierpinski graph of `G` of dimension `k`.
 
@@ -3460,6 +3492,9 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
       (``None``), this value is set to twice the maximum Euclidean distance
       between the vertices of `G`. This parameter is used only when the vertices
       of `G` have positions.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -3583,7 +3618,7 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None):
         H.set_pos({u: (sum(pos[x][0]*stretch**(k-i) for i, x in enumerate(u)),
                        sum(pos[y][1]*stretch**(k-i) for i, y in enumerate(u)))
                    for u in H})
-    return H
+    return H.copy(immutable=True) if immutable else H
 
 
 def WheelGraph(n):
