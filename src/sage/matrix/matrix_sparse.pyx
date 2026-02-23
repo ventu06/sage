@@ -669,7 +669,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
             sage: m = matrix(ZZ, 10000, {(1,2): 17}, sparse=True)
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: f = lambda x: k(x)
             sage: n = m.apply_map(f)
@@ -1186,7 +1185,6 @@ cdef class Matrix_sparse(matrix.Matrix):
 
         Check that the bug in :issue:`13854` has been fixed::
 
-            sage: # needs sage.combinat sage.libs.singular
             sage: A.<x,y> = FreeAlgebra(QQ, 2)
             sage: P.<x,y> = A.g_algebra(relations={y*x: -x*y}, order='lex')
             sage: M = Matrix([[x]], sparse=True)
