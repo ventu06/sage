@@ -3340,7 +3340,7 @@ def random_bistochastic_matrix(parent):
         the resulting matrix will usually fail the ``is_bistochastic()``
         check due to floating point precision.
 
-    EXAMPLES::
+    EXAMPLES:
 
     Matrices with rational entries::
 
