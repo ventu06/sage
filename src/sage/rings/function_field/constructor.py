@@ -158,7 +158,6 @@ class FunctionFieldExtensionFactory(UniqueFactory):
 
         Verify that :issue:`16530` has been resolved::
 
-            sage: # needs sage.rings.function_field
             sage: K.<x> = FunctionField(QQ)
             sage: R.<y> = K[]
             sage: L.<y> = K.extension(y^2 - x)

@@ -952,7 +952,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
       The base ring can be `\ZZ`, `\QQ`, `\ZZ_p`, `\QQ_p`, `\GF{p}`. ::
 
-        sage: # needs sage.libs.ntl
         sage: P.<x> = ZZ[]
         sage: R.<a> = Qq(27, modulus = x^3 + 2*x + 1); R.modulus()
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
@@ -975,7 +974,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       the modulus is only given to precision 1, so the resulting field
       has a precision cap of 1. ::
 
-        sage: # needs sage.libs.ntl
         sage: V.precision_cap()
         1
         sage: U.precision_cap()
@@ -1059,7 +1057,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       *print_max_unram_terms* limits the number of terms that appear in a
       coefficient of a power of `p`. ::
 
-        sage: # needs sage.libs.ntl
         sage: V.<f> = Qq(128, prec = 8, print_mode='series'); repr((1+f)^9)
         '(f^3 + 1) + (f^5 + f^4 + f^3 + f^2)*2 + (f^6 + f^5 + f^4 + f + 1)*2^2 + (f^5 + f^4 + f^2 + f + 1)*2^3 + (f^6 + f^5 + f^4 + f^3 + f^2 + f + 1)*2^4 + (f^5 + f^4)*2^5 + (f^6 + f^5 + f^4 + f^3 + f + 1)*2^6 + (f + 1)*2^7 + O(2^8)'
         sage: V.<f> = Qq(128, prec = 8, print_mode='series', print_max_unram_terms = 3); repr((1+f)^9)
@@ -1105,7 +1102,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
       *ram_name* affects how the prime is printed. ::
 
-        sage: # needs sage.libs.ntl
         sage: A.<x> = Qp(next_prime(10^6), print_mode='val-unit')[]
         sage: T.<a> = Qq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p',
         ....:            modulus=x^3+385831*x^2+106556*x+321036)
@@ -1228,7 +1224,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       Note that it's not possible to read off the precision from the
       representation in this mode. ::
 
-        sage: # needs sage.libs.ntl
         sage: b = a + 3; repr(b)
         '...[3, 1]'
         sage: c = a + R(3, 4); repr(c)
@@ -1262,7 +1257,6 @@ def Qq(q, prec=None, type='capped-rel', modulus=None, names=None,
       *print_max_unram_terms* controls how many terms are shown in each
       "digit"::
 
-        sage: # needs sage.libs.ntl
         sage: with local_print_mode(U, {'max_unram_terms': 3}): repr(b)
         '...[0, 1][4,..., 0, 2][3,..., 2, 3][4,..., 2, 4][0, 3][1,..., 1, 3][3,..., 4, 1]'
         sage: with local_print_mode(U, {'max_unram_terms': 2}): repr(b)
@@ -2175,7 +2169,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     except that the cap is on the absolute precision rather than the
     relative precision. ::
 
-        sage: # needs sage.libs.flint
         sage: R.<a> = Zq(9, 5, 'capped-abs', print_mode='series'); b = 3*(1+2*a)^4; b
         2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3 + O(3^5)
         sage: c = R(3249); c                                                            # needs sage.libs.ntl
@@ -2188,7 +2181,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     The fixed modulus case is like the capped absolute, except that
     individual elements don't track their precision. ::
 
-        sage: # needs sage.libs.flint
         sage: R.<a> = Zq(9, 5, 'fixed-mod', print_mode='series'); b = 3*(1+2*a)^4; b
         2*3 + (2*a + 2)*3^2 + (2*a + 1)*3^3
         sage: c = R(3249); c                                                            # needs sage.libs.ntl
@@ -2214,7 +2206,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       The base ring can be `\ZZ`, `\QQ`, `\ZZ_p`, `\GF{p}`, or anything that can
       be converted to `\ZZ_p`. ::
 
-        sage: # needs sage.libs.ntl
         sage: P.<x> = ZZ[]
         sage: R.<a> = Zq(27, modulus = x^3 + 2*x + 1); R.modulus()
         (1 + O(3^20))*x^3 + O(3^20)*x^2 + (2 + O(3^20))*x + 1 + O(3^20)
@@ -2237,7 +2228,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       differs.  In the case of ``V``, the modulus is only given to precision
       ``1``, so the resulting field has a precision cap of ``1``. ::
 
-        sage: # needs sage.libs.ntl
         sage: V.precision_cap()
         1
         sage: U.precision_cap()
@@ -2287,7 +2277,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     1. **series**: elements are displayed as series in `p`. ::
 
-        sage: # needs sage.libs.ntl
         sage: R.<a> = Zq(9, 20, 'capped-rel', print_mode='series'); (1+2*a)^4
         2 + (2*a + 2)*3 + (2*a + 1)*3^2 + O(3^20)
         sage: -3*(1+2*a)^4
@@ -2324,7 +2313,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       *print_max_unram_terms* limits the number of terms that appear in a
       coefficient of a power of `p`. ::
 
-        sage: # needs sage.libs.ntl
         sage: V.<f> = Zq(128, prec = 8, print_mode='series'); repr((1+f)^9)
         '(f^3 + 1) + (f^5 + f^4 + f^3 + f^2)*2 + (f^6 + f^5 + f^4 + f + 1)*2^2 + (f^5 + f^4 + f^2 + f + 1)*2^3 + (f^6 + f^5 + f^4 + f^3 + f^2 + f + 1)*2^4 + (f^5 + f^4)*2^5 + (f^6 + f^5 + f^4 + f^3 + f + 1)*2^6 + (f + 1)*2^7 + O(2^8)'
         sage: V.<f> = Zq(128, prec = 8, print_mode='series', print_max_unram_terms = 3); repr((1+f)^9)
@@ -2369,7 +2357,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
       *ram_name* affects how the prime is printed. ::
 
-        sage: # needs sage.libs.ntl
         sage: A.<x> = Zp(next_prime(10^6), print_mode='val-unit')[]
         sage: T.<a> = Zq(next_prime(10^6)^3, 4, print_mode='val-unit', ram_name='p',
         ....:            modulus=x^3+385831*x^2+106556*x+321036)
@@ -2382,7 +2369,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       *print_max_terse_terms* controls how many terms of the polynomial
       appear in the unit part. ::
 
-        sage: # needs sage.libs.ntl
         sage: U.<a> = Zq(17^4, 6, print_mode='val-unit', print_max_terse_terms=3)
         sage: b = 17*(a^3-a+14)^6; b
         17 * (12131797 + 12076378*a + 10809706*a^2 + ...) + O(17^7)
@@ -2406,7 +2392,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     3. **terse**: elements are displayed as a polynomial of degree less
        than the degree of the extension. ::
 
-        sage: # needs sage.libs.ntl
         sage: R.<a> = Zq(125, print_mode='terse')
         sage: (a+5)^177
         68210977979428 + 90313850704069*a + 73948093055069*a^2 + O(5^20)
@@ -2421,14 +2406,12 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       non-integral, they are always printed with an explicit power of `p`
       in the denominator. ::
 
-        sage: # needs sage.libs.ntl
         sage: 5*a + a^2/25
         5*a + 1/5^2*a^2 + O(5^18)
 
       *print_pos* controls whether to use a balanced representation or
       not. ::
 
-        sage: # needs sage.libs.ntl
         sage: (a-5)^6
         22864 + 95367431627998*a + 8349*a^2 + O(5^20)
         sage: S.<a> = Zq(125, print_mode='terse', print_pos=False); b = (a-5)^6; b
@@ -2471,7 +2454,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     5. **bars**: elements are displayed in a similar fashion to series,
        but more compactly. ::
 
-        sage: # needs sage.libs.ntl
         sage: R.<a> = Zq(125); (a+5)^6
         (4*a^2 + 3*a + 4) + (3*a^2 + 2*a)*5 + (a^2 + a + 1)*5^2 + (3*a + 2)*5^3
          + (3*a^2 + a + 3)*5^4 + (2*a^2 + 3*a + 2)*5^5 + O(5^20)
@@ -2483,7 +2465,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       Note that it's not possible to read off the precision from the
       representation in this mode. ::
 
-        sage: # needs sage.libs.ntl
         sage: b = a + 3; repr(b)
         '...[3, 1]'
         sage: c = a + R(3, 4); repr(c)
@@ -2495,7 +2476,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
       *print_pos* controls whether the digits can be negative. ::
 
-        sage: # needs sage.libs.ntl
         sage: S.<a> = Zq(125, print_mode='bars', print_pos=False); repr((a-5)^6)
         '...[1, -1, 1]|[2, 1, -2]|[2, 0, -2]|[-2, -1, 2]|[0, 0, -1]|[-2]|[-1, -2, -1]'
         sage: repr((a-1/5)^6)
@@ -2505,7 +2485,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       Note that this puts a cap on the relative precision, not the
       absolute precision. ::
 
-        sage: # needs sage.libs.ntl
         sage: T.<a> = Zq(125, print_max_ram_terms=3, print_pos=False); (a-5)^6
         (-a^2 - 2*a - 1) - 2*5 - a^2*5^2 + ... + O(5^20)
         sage: 5*(a-5)^6 + 50
@@ -2521,7 +2500,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
       *print_max_unram_terms* controls how many terms are shown in each
       ``'digit'``::
 
-        sage: # needs sage.libs.ntl
         sage: with local_print_mode(U, {'max_unram_terms': 3}): repr(b)
         '...[0, 1][4,..., 0, 2][3,..., 2, 3][4,..., 2, 4][0, 3][1,..., 1, 3][3,..., 4, 1]'
         sage: with local_print_mode(U, {'max_unram_terms': 2}): repr(b)
@@ -2555,7 +2533,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
     have to factor.  If you do so, you need to use names explicitly
     rather than the ``R.<a>`` syntax. ::
 
-        sage: # needs sage.libs.ntl
         sage: p = next_prime(2^123)
         sage: k = Zp(p)
         sage: R.<x> = k[]
@@ -2575,7 +2552,6 @@ def Zq(q, prec=None, type='capped-rel', modulus=None, names=None,
 
     TESTS::
 
-        sage: # needs sage.libs.ntl
         sage: R = Zq([(5,3)], names='alpha'); R
         5-adic Unramified Extension Ring in alpha defined by x^3 + 3*x + 3
         sage: Zq((5, 3), names='alpha') is R
@@ -3137,7 +3113,6 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 
     Of course, standard operations are supported::
 
-        sage: # needs sage.libs.flint
         sage: b = R(42/17)
         sage: a + b
         ...03232011214322140002
@@ -3180,7 +3155,6 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
     Hence comparing two elements at different times can produce
     different results::
 
-        sage: # needs sage.libs.flint
         sage: aa = sqrt(a)^2 + 5^50
         sage: a == aa
         True
@@ -3197,7 +3171,6 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
     Indeed, in this case, if the equality cannot be decided, an error
     is raised::
 
-        sage: # needs sage.libs.flint
         sage: S = ZpER(5, secure=True)
         sage: u = S.random_element()
         sage: uu = u + 5^50
@@ -3236,7 +3209,6 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 
     As a comparison, the following does not work::
 
-        sage: # needs sage.libs.flint
         sage: y = R.unknown()
         sage: y.set(1 + 3*y^2)
         True
@@ -3249,7 +3221,6 @@ def ZpER(p, prec=None, halt=None, secure=False, *args, **kwds):
 
     Self-referent definitions also work with systems of equations::
 
-        sage: # needs sage.libs.flint
         sage: u = R.unknown()
         sage: v = R.unknown()
         sage: w = R.unknown()
@@ -3320,7 +3291,6 @@ class pAdicExtension_class(UniqueFactory):
               'NTL'),
              {'approx_modulus': (1 + O(5^3))*x^4 + O(5^4)*x^3 + O(5^4)*x^2 + O(5^4)*x + 2*5 + 4*5^2 + 4*5^3 + O(5^4)})
 
-            sage: # needs sage.libs.ntl
             sage: A = Qp(3,5)
             sage: Po.<X> = A[]
             sage: f = Po([3,0,-1])
@@ -3330,7 +3300,6 @@ class pAdicExtension_class(UniqueFactory):
             sage: K.defining_polynomial() == f/f.leading_coefficient()
             True
 
-            sage: # needs sage.libs.ntl
             sage: g = Po([6,3,2])
             sage: H.<b> = A.ext(g)
             sage: 2*b^2+3*b+6
@@ -3574,7 +3543,6 @@ def is_eisenstein(poly) -> bool:
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: R = Zp(5)
         sage: S.<x> = R[]
         sage: from sage.rings.padics.factory import is_eisenstein
@@ -3602,7 +3570,6 @@ def is_unramified(poly) -> bool:
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: R = Zp(5)
         sage: S.<x> = R[]
         sage: from sage.rings.padics.factory import is_unramified

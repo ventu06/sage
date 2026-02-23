@@ -24,7 +24,6 @@ bases.
 
 Note that ``I`` is not a symmetric Groebner basis::
 
-    sage: # needs sage.combinat
     sage: G = R * I.groebner_basis()
     sage: G
     Symmetric Ideal (x_2 - x_1, x_1^2 + x_1) of Infinite polynomial ring in x
@@ -136,7 +135,6 @@ class SymmetricIdeal(Ideal_generic):
 
     The Groebner basis is not point-wise invariant under permutation::
 
-        sage: # needs sage.combinat
         sage: P = Permutation([2, 1])
         sage: J[2]
         x_2*y_2*y_1 + 2*x_2*y_1

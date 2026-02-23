@@ -118,7 +118,6 @@ cdef class LaurentSeries(AlgebraElement):
 
         ::
 
-            sage: # needs sage.rings.finite_rings sage.rings.padics
             sage: S.<s> = LaurentSeriesRing(GF(5))
             sage: T.<t> = PowerSeriesRing(pAdicRing(5))
             sage: S(t)
@@ -288,7 +287,6 @@ cdef class LaurentSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: Zx.<x> = ZZ[]
             sage: K.<i> = NumberField(x^2 + 1)
             sage: R.<t> = LaurentSeriesRing(K)
@@ -672,7 +670,6 @@ cdef class LaurentSeries(AlgebraElement):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: A.<t> = LaurentSeriesRing(GF(5))
             sage: x = t^(-1) + t^2 + O(t^5)
             sage: x.lift_to_precision(10)
@@ -1785,7 +1782,6 @@ cdef class LaurentSeries(AlgebraElement):
             sage: (x^-2 + 1 + x).nth_root(2)**2
             x^-2 + 1 + x + O(x^18)
 
-            sage: # needs sage.modular
             sage: j = j_invariant_qexp()
             sage: q = j.parent().gen()
             sage: j(q^3).nth_root(3)
@@ -1837,7 +1833,6 @@ cdef class LaurentSeries(AlgebraElement):
         Check whether a polynomial over a Laurent series ring is contained in the
         polynomial ring over the power series ring (see :issue:`19459`):
 
-            sage: # needs sage.rings.finite_rings
             sage: L.<t> = LaurentSeriesRing(GF(2))
             sage: R.<x,y> = PolynomialRing(L)
             sage: S.<x,y> = PolynomialRing(L._power_series_ring)
@@ -1970,7 +1965,6 @@ cdef class LaurentSeries(AlgebraElement):
 
         Check that :issue:`32437` is fixed::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<u> = GF(257^2)
             sage: R.<t> = LaurentSeriesRing(F)
             sage: g = t + O(t^99)

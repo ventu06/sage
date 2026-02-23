@@ -22,7 +22,6 @@ Discrete valuations can be created on a variety of rings::
 
 ::
 
-    sage: # needs sage.rings.function_field
     sage: K.<x> = FunctionField(QQ)
     sage: K.valuation(x)
     (x)-adic valuation
@@ -449,7 +448,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Some difficult cases provided by Mark van Hoeij::
 
-            sage: # needs sage.rings.finite_rings sage.rings.function_field
             sage: k = GF(2)
             sage: K.<x> = FunctionField(k)
             sage: R.<y> = K[]
@@ -490,7 +488,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Over a complete base field::
 
-            sage: # needs sage.libs.ntl
             sage: k = Qp(2,10)
             sage: v = k.valuation()
             sage: R.<x> = k[]
@@ -537,7 +534,6 @@ class DiscreteValuation(DiscretePseudoValuation):
         `\QQ[x]/(x^2+1)`, 5 factors `-(x - 2)(x + 2)`, this behaviour can be
         read off the Mac Lane approximants::
 
-            sage: # needs sage.rings.padics
             sage: k = Qp(5,4)
             sage: v = k.valuation()
             sage: R.<x> = k[]                                                           # needs sage.libs.ntl
@@ -555,7 +551,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Note how the latter give a better approximation to the factors of `x^2 + 1`::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: v1.phi() * v2.phi() - G
             O(5^4)*x^2 + (5 + O(5^4))*x + 5 + O(5^4)
             sage: w1.phi() * w2.phi() - G
@@ -563,7 +558,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         In this example, the process stops with a factorization of `x^2 + 1`::
 
-            sage: # needs sage.geometry.polyhedron sage.rings.padics
             sage: v.mac_lane_approximants(G, required_precision=infinity)
             [[ Gauss valuation induced by 5-adic valuation,
                v((1 + O(5^4))*x + 2 + 5 + 2*5^2 + 5^3 + O(5^4)) = +Infinity ],
@@ -586,7 +580,6 @@ class DiscreteValuation(DiscretePseudoValuation):
         Initial versions ran into problems with the trivial residue field
         extensions in this case::
 
-            sage: # needs sage.libs.ntl
             sage: K = Qp(3, 20, print_mode='digits')
             sage: R.<T> = K[]
             sage: alpha = T^3/4
@@ -608,7 +601,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         Another problematic case::
 
-            sage: # needs sage.rings.number_field sage.rings.padics
             sage: R.<x> = QQ[]
             sage: Delta = (x^12 + 20*x^11 + 154*x^10 + 664*x^9 + 1873*x^8 + 3808*x^7 + 5980*x^6
             ....:           + 7560*x^5 + 7799*x^4 + 6508*x^3 + 4290*x^2 + 2224*x + 887)
@@ -953,7 +945,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: k = Qp(5,4)
             sage: v = k.valuation()
             sage: R.<x> = k[]
@@ -982,7 +973,6 @@ class DiscreteValuation(DiscretePseudoValuation):
         In this example, ``f`` factors as three factors of degree 50 over an
         unramified extension::
 
-            sage: # needs sage.libs.flint
             sage: R.<u> = ZqFM(125)
             sage: S.<x> = R[]
             sage: f = (x^6+2)^25 + 5
@@ -992,7 +982,6 @@ class DiscreteValuation(DiscretePseudoValuation):
 
         In this case, ``f`` factors into degrees 1, 2, and 5 over a totally ramified extension::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(5)
             sage: S.<w> = R[]
             sage: R.<w> = R.extension(w^3 + 5)

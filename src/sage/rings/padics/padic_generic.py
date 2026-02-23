@@ -504,7 +504,6 @@ class pAdicGeneric(LocalGeneric):
             sage: R.teichmuller(2)
             2 + 5 + 2*5^2 + 5^3 + 3*5^4 + 4*5^5 + 2*5^6 + 3*5^7 + 3*5^9
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(5,5)
             sage: S.<x> = R[]
             sage: f = x^5 + 75*x^3 - 15*x^2 +125*x - 5
@@ -525,7 +524,6 @@ class pAdicGeneric(LocalGeneric):
 
         We check that :issue:`23736` is resolved::
 
-            sage: # needs sage.libs.ntl
             sage: R.teichmuller(GF(5)(2))
             2 + 5 + 2*5^2 + 5^3 + 3*5^4 + O(5^5)
 
@@ -605,7 +603,6 @@ class pAdicGeneric(LocalGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: k = Qp(5)
             sage: R.<x> = k[]
             sage: l.<w> = k.extension(x^2 - 5); l
@@ -658,7 +655,6 @@ class pAdicGeneric(LocalGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<x> = ZZ[]
             sage: K.<a> = Qq(25, modulus=x^2-2)
             sage: L.<b> = Qq(625, modulus=x^4-2)
@@ -1166,7 +1162,6 @@ class pAdicGeneric(LocalGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K = Qp(3)
             sage: R.<a> = K[]
             sage: L.<a> = K.extension(a^3 - 3)
@@ -1213,7 +1208,6 @@ class pAdicGeneric(LocalGeneric):
 
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^3, 5)
             sage: S.<x> = K[]
             sage: L.<pi> = K.extension(x^2 + 2*x + 2)
@@ -1297,7 +1291,6 @@ class pAdicGeneric(LocalGeneric):
 
         Now we consider an example with non trivial ``p``-th roots of unity::
 
-            sage: # needs sage.libs.ntl
             sage: W = Zp(3, 2)
             sage: S.<x> = W[]
             sage: R.<pi> = W.extension((x+1)^6 + (x+1)^3 + 1)
@@ -1381,7 +1374,6 @@ class pAdicGeneric(LocalGeneric):
         In general, there might be more roots of unity (it happens when the ring has non
         trivial ``p``-th roots of unity)::
 
-            sage: # needs sage.libs.ntl
             sage: W.<a> = Zq(3^2, 2)
             sage: S.<x> = W[]
             sage: R.<pi> = W.extension((x+1)^2 + (x+1) + 1)
@@ -1400,7 +1392,6 @@ class pAdicGeneric(LocalGeneric):
 
         We check that the logarithm of each root of unity vanishes::
 
-            sage: # needs sage.libs.ntl
             sage: for root in roots:
             ....:     if root.log() != 0:
             ....:         raise ValueError
@@ -1458,7 +1449,6 @@ class pAdicGeneric(LocalGeneric):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: A = Zp(3, prec=10, print_mode='terse')
             sage: S.<x> = A[]
             sage: P = x^2 - 7
@@ -1542,7 +1532,6 @@ class pAdicGeneric(LocalGeneric):
 
         Root finding works over ramified extensions also::
 
-            sage: # needs sage.libs.ntl
             sage: E = x^3 - 3*x + 3*b
             sage: C.<pi> = B.extension(E)
             sage: E.roots(C)                                                            # needs sage.geometry.polyhedron
@@ -1675,7 +1664,6 @@ class ResidueReductionMap(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<a> = Zq(125); k = R.residue_field()
             sage: f = k.convert_map_from(R)
             sage: f(15)
@@ -1855,7 +1843,6 @@ class ResidueLiftingMap(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: from sage.rings.padics.padic_generic import ResidueLiftingMap
             sage: f = ResidueLiftingMap._create_(GF(3), Zp(3))
             sage: g = ResidueLiftingMap._create_(GF(3), Zp(3))

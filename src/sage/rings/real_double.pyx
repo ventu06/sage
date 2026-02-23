@@ -108,7 +108,6 @@ cdef class RealDoubleField_class(sage.rings.abc.RealDoubleField):
     numbers and higher-precision ones, though of course there may be
     loss of precision::
 
-        sage: # needs sage.rings.real_mpfr
         sage: a = RealField(200)(2).sqrt(); a
         1.4142135623730950488016887242096980785696718753769480731767
         sage: b = RDF(a); b
@@ -779,7 +778,6 @@ cdef class RealDoubleElement(FieldElement):
 
         Adding or subtracting an ulp always gives a different number::
 
-            sage: # needs sage.symbolic
             sage: a + a.ulp() == a
             False
             sage: a - a.ulp() == a
@@ -795,7 +793,6 @@ cdef class RealDoubleElement(FieldElement):
         can only happen if the input number is (up to sign) exactly a
         power of 2::
 
-            sage: # needs sage.symbolic
             sage: a - a.ulp()/3 == a
             True
             sage: a + a.ulp()/3 == a
@@ -1249,7 +1246,6 @@ cdef class RealDoubleElement(FieldElement):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: a = RDF(exp(1.0)); a
             2.718281828459045
             sage: sign, mantissa, exponent = RDF(exp(1.0)).sign_mantissa_exponent()
