@@ -805,8 +805,8 @@ class FunctionField(Field):
             [Rational function field in x over Rational Field]
 
             sage: R.<y> = K[]
-            sage: L.<y> = K.extension(y^2 - x)                                          # needs sage.rings.function_field
-            sage: L._intermediate_fields(K)                                             # needs sage.rings.function_field
+            sage: L.<y> = K.extension(y^2 - x)
+            sage: L._intermediate_fields(K)
             [Function field in y defined by y^2 - x,
              Rational function field in x over Rational Field]
 
@@ -822,7 +822,7 @@ class FunctionField(Field):
 
         TESTS::
 
-            sage: K._intermediate_fields(M)                                             # needs sage.rings.function_field
+            sage: K._intermediate_fields(M)
             Traceback (most recent call last):
             ...
             ValueError: field has not been constructed as a finite extension of base

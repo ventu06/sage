@@ -34,7 +34,7 @@ three elements::
     sage: I = S.cartesian_product(S)
     sage: add_units = u + [q, q + 1] + [ui - uj for ui, uj in I if ui != uj]
     sage: add_units += [q*ui - uj for ui, uj in I if ui != uj]
-    sage: L = R.localization(tuple(add_units)); L                                       # needs sage.libs.pari
+    sage: L = R.localization(tuple(add_units)); L
     Multivariate Polynomial Ring in u0, u1, u2, q over Integer Ring localized at
     (q, q + 1, u2, u1 - u2, u1, u0 - u1, u0 - u2, u0, u2*q - u0, u2*q - u1, u1*q - u0,
      u1*q - u2, u0*q - u1, u0*q - u2)
@@ -142,16 +142,16 @@ Obtain specializations in characteristic 0::
             u1 |--> ybar
             u2 |--> zbar
             q |--> tbar
-    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1                   # needs sage.modules
+    sage: mF1 = matrix({k: fF(v) for k, v in m1.dict().items()}); mF1
     [        ybar            0            0]
     [           0 -ybar - zbar            0]
     [           0            0 -ybar - zbar]
-    sage: mF1.base_ring() == F                                                          # needs sage.modules
+    sage: mF1.base_ring() == F
     True
 
 TESTS::
 
-    sage: TestSuite(L).run()                                                            # needs sage.libs.pari sage.libs.singular sage.modules
+    sage: TestSuite(L).run()
 
 AUTHORS:
 

@@ -868,8 +868,8 @@ cdef class FractionFieldElement(FieldElement):
             3/2
 
             sage: x = polygen(QQ)
-            sage: A.<u> = NumberField(x^3 - 2)                                          # needs sage.rings.number_field
-            sage: A((x+3) / (2*x - 1))                                                  # needs sage.rings.number_field
+            sage: A.<u> = NumberField(x^3 - 2)
+            sage: A((x+3) / (2*x - 1))
             14/15*u^2 + 7/15*u + 11/15
 
             sage: B = A['y'].fraction_field()
