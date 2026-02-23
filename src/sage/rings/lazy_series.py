@@ -8464,3 +8464,57 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
         cs = Stream_function(coefficient, False, v)
         return P.element_class(P, cs)
 
+    def star(self):
+        r"""
+        Return the image of the `*`-(anti)involution on ``self``.
+
+        Let `P = \sum_{k=-v}^{\infty} p_k \partial^k`. The
+        `*`-(anti)involution is defined by
+
+        .. MATH::
+
+            P^* = \sum_{k=-v}^{\infty} (-\partial)^k p_k.
+
+        EXAMPLES::
+
+            sage: R.<a,b> = PolynomialRing(QQ)
+            sage: S.<x> = LazyPowerSeriesRing(R)
+            sage: S.options.display_length = 3
+            sage: P = PseudoDifferentialOperatorRing(x)
+            sage: u = exp(a*x)
+            sage: D = P.gen()
+            sage: L = D^2 + D + u
+            sage: Ls = L.star(); Ls
+            Dx^2 - Dx + (1 + a*x + 1/2*a^2*x^2 + O(x^3))
+            sage: Ls.star() == L
+            True
+
+            sage: S.options.halting_precision = 10  # check up to degree 10
+            sage: v = exp(b*x)
+            sage: L = u * D^-1 + v * D^-2
+            sage: Ls = L.star(); Ls
+            (-1 + (-a*x) + (-1/2*a^2*x^2) + O(x^3))*Dx^-1
+             + ((a+1) + ((a^2+b)*x) + ((1/2*a^3+1/2*b^2)*x^2) + O(x^3))*Dx^-2
+             + (-(a^2+2*b) + ((-a^3-2*b^2)*x) + ((-1/2*a^4-b^3)*x^2) + O(x^3))*Dx^-3
+             + O(Dx^-4)
+            sage: Lss = Ls.star(); Lss
+            (1 + a*x + 1/2*a^2*x^2 + O(x^3))*Dx^-1 + (1 + b*x + 1/2*b^2*x^2 + O(x^3))*Dx^-2 + O(Dx^-4)
+            sage: Lss == L
+            True
+            sage: L == Lss
+            True
+
+            sage: S.options._reset()
+        """
+        P = self.parent()
+        D = P.gen()
+        if isinstance(self._coeff_stream, Stream_exact) and not self._coeff_stream._constant:
+            m = self._coeff_stream._degree
+        else:
+            m = infinity
+        mone = -ZZ.one()
+        R = P._laurent_poly_ring
+        return P.sum(lambda k: (P.element_class(P, Stream_exact([R.one()], constant=R.zero(), order=k))
+                                * P(mone**k * self[k])),
+                     self.valuation(), m)
+

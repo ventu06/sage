@@ -5099,6 +5099,7 @@ class Stream_infinite_operator(Stream):
         self._op_iter = iterator
         self._cur = None
         self._cur_order = -infinity
+        self._is_sparse = False
         super().__init__(False)
 
     @lazy_attribute
@@ -5245,7 +5246,7 @@ class Stream_infinite_operator(Stream):
 
     def __ne__(self, other):
         r"""
-        Return whether ``self`` and ``other`` are known to be equal.
+        Return whether ``self`` and ``other`` are known to be not equal.
 
         INPUT:
 
@@ -5267,12 +5268,44 @@ class Stream_infinite_operator(Stream):
             5
             sage: f != g
             True
+
+            sage: from sage.data_structures.stream import Stream_exact
+            sage: g = Stream_exact([i for i in range(1, 11)], 0, order=1)
+            sage: f != g
+            False
+            sage: f[11]
+            11
+            sage: f != g
+            True
+
+            sage: from sage.data_structures.stream import Stream_function
+            sage: g = Stream_function(lambda n: n if n < 15 else 1, True, 1)
+            sage: (g[1], g[4], g[10], g[15])
+            (1, 4, 10, 1)
+            sage: f != g
+            False
+            sage: f[15]
+            15
+            sage: f != g
+            True
         """
-        if not isinstance(other, type(self)):
-            return True
+        if isinstance(other, Stream_exact):
+            deg = infinity
+        elif isinstance(other, Stream_inexact):
+            if other._is_sparse:
+                return any(self[i] != other[i] for i in other._cache
+                           if self._approximate_order <= i < self._cur_order)
+            else:
+                deg = other._approximate_order + len(other._cache)
+        elif isinstance(other, Stream_infinite_operator):
+            deg = other._cur_order
+        else:
+            return False
         ao = min(self._approximate_order, other._approximate_order)
-        return any(self[i] != other[i]
-                   for i in range(ao, min(self._cur_order, other._cur_order)))
+        cur_order = min(self._cur_order, deg)
+        if cur_order == -infinity: # no coefficients computed for one of the series
+            return False
+        return any(self[i] != other[i] for i in range(ao, cur_order))
 
     def is_nonzero(self):
         r"""
