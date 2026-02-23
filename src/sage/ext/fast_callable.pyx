@@ -336,7 +336,7 @@ def fast_callable(x, domain=None, vars=None,
     generators of ``parent(x)`` as the variables; otherwise, ``vars`` must be
     specified (unless ``x`` is a symbolic expression with only one variable,
     and ``expect_one_var`` is ``True``, in which case we will use that variable).
-    
+
     INPUT:
 
     - ``x`` -- an expression, element of ``SR``, or polynomial to compile
@@ -358,8 +358,7 @@ def fast_callable(x, domain=None, vars=None,
 
     A callable object that can be evaluated rapidly by calling it
     with the appropriate variable values.
-
-
+    
     EXAMPLES::
 
         sage: # needs sage.symbolic
