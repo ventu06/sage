@@ -295,7 +295,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         Rational Field
 
     Check that construction via ramification yields the correct algebra,
-    i.e. that the differences between Sage and PARI are accounted for::
+    i.e., that the differences between Sage and PARI are accounted for::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<v> = NumberField(-3*x^5 - 11*x^4 - 4*x^3 + 1)
@@ -306,7 +306,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
         True
 
     Also check that the required Sage-PARI permutation is the correct way
-    around, i.e. that it does not need to be replaced by its inverse::
+    around, i.e., that it does not need to be replaced by its inverse::
 
         sage: x = polygen(ZZ, 'x')
         sage: K.<j> = NumberField(5*x^4 - 50*x^2 + 5)
@@ -511,7 +511,7 @@ class QuaternionAlgebra_abstract(Parent):
     def inner_product_matrix(self):
         r"""
         Return the inner product matrix associated to this quaternion algebra,
-        i.e. the Gram matrix of the reduced norm as a quadratic form on ``self``.
+        i.e., the Gram matrix of the reduced norm as a quadratic form on ``self``.
 
         The standard basis `1`, `i`, `j`, `k` is orthogonal, so this matrix
         is just the diagonal matrix with diagonal entries `2`, `-2a`, `-2b`, `2ab`.
@@ -628,9 +628,8 @@ class QuaternionAlgebra_abstract(Parent):
     def is_exact(self) -> bool:
         r"""
         Return ``True`` if elements of this quaternion algebra are represented
-        exactly, i.e. there is no precision loss when doing arithmetic. A
-        quaternion algebra is exact if and only if its base field is
-        exact.
+        exactly, i.e., there is no precision loss when doing arithmetic
+        A quaternion algebra is exact if and only if its base field is exact.
 
         EXAMPLES::
 
@@ -4320,7 +4319,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         Let `I` = ``self``. If `I` is an integral left `\mathcal{O}`-ideal return its decomposition
         as an equivalent primitive ideal and an integer such that their product is the initial ideal.
 
-        OUTPUTS: A primitive ideal equivalent to `I`, i.e. an equivalent ideal not contained
+        OUTPUTS: A primitive ideal equivalent to `I`, i.e., an equivalent ideal not contained
         in `n\mathcal{O}` for any `n>0`, and the smallest integer `g` such that `I \subset g\mathcal{O}`.
 
         EXAMPLES::
