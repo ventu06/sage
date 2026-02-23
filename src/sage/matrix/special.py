@@ -3340,7 +3340,7 @@ def random_bistochastic_matrix(parent):
         the resulting matrix will usually fail the ``is_bistochastic()``
         check due to floating point precision.
 
-    EXAMPLES:
+    EXAMPLES::
 
     Matrices with rational entries::
 
@@ -3374,7 +3374,7 @@ def random_bistochastic_matrix(parent):
         ...
         ValueError: parent must be square
 
-    TESTS:
+    TESTS::
 
         sage: from sage.matrix.constructor import random_bistochastic_matrix
         sage: MS = MatrixSpace(QQ, 4)
@@ -3403,8 +3403,9 @@ def random_bistochastic_matrix(parent):
         ...
         ValueError: base ring of parent must be a subfield of the real numbers
     """
-    from sage.rings.real_mpfr import RR
-    if not parent.base_ring().is_subring(RR):
+    from sage.rings.real_lazy import RLF
+    F = parent.base_ring()
+    if not (RLF.has_coerce_map_from(F) or F.has_coerce_map_from(RLF)):
         raise ValueError("base ring of parent must be a subfield of the real "
                          "numbers")
 
