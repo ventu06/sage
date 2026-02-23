@@ -264,7 +264,6 @@ cdef class Function(SageObject):
         functions was broken. We check here that this is fixed
         (:issue:`11919`)::
 
-            sage: # needs sage.symbolic
             sage: f = function('f')(x)
             sage: s = dumps(f)
             sage: loads(s)
@@ -393,7 +392,6 @@ cdef class Function(SageObject):
         """
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo == foo
             True
@@ -418,7 +416,6 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: x,y,z = var("x y z")
             sage: foo(x, y)
@@ -499,7 +496,6 @@ cdef class Function(SageObject):
 
         Check that :issue:`10133` is fixed::
 
-            sage: # needs sage.symbolic
             sage: out = sin(0)
             sage: out, parent(out)
             (0, Integer Ring)
@@ -576,7 +572,6 @@ cdef class Function(SageObject):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.number_of_arguments()
             2
@@ -634,7 +629,6 @@ cdef class Function(SageObject):
         The following calls used to yield incorrect results because intervals
         were considered numerical by this method::
 
-            sage: # needs sage.libs.flint
             sage: b = RBF(3/2, 1e-10)
             sage: airy_ai(b)
             airy_ai([1.500000000 +/- 1.01e-10])
@@ -1303,7 +1297,6 @@ cdef class SymbolicFunction(Function):
 
         EXAMPLES::
 
-            sage: # needs sage.symbolic
             sage: foo = function("foo", nargs=2)
             sage: foo.__getstate__()
             (2, 'foo', 2, None, {}, True,
@@ -1322,7 +1315,6 @@ cdef class SymbolicFunction(Function):
             (2, 'foo', 2, None, {}, True,
              [..., None, None, None, None, None, None, None, None, None, None])
 
-            sage: # needs sage.symbolic
             sage: u = loads(dumps(foo))
             sage: u == foo
             True
@@ -1337,7 +1329,6 @@ cdef class SymbolicFunction(Function):
             (2, 'foo', 1, None, {}, True,
              [None, ..., None, None, None, None, None, None, None, None, None])
 
-            sage: # needs sage.symbolic
             sage: v = loads(dumps(foo))
             sage: v == foo
             True
@@ -1359,7 +1350,6 @@ cdef class SymbolicFunction(Function):
 
         Check that :issue:`40292` is fixed::
 
-            sage: # needs sage.symbolic
             sage: var('x,y')
             (x, y)
             sage: u = function('u')(x, y)
@@ -1380,7 +1370,6 @@ cdef class SymbolicFunction(Function):
 
         TESTS::
 
-            sage: # needs sage.symbolic
             sage: var('x,y')
             (x, y)
             sage: foo = function("foo", nargs=2)
@@ -1389,7 +1378,6 @@ cdef class SymbolicFunction(Function):
 
         ::
 
-            sage: # needs sage.symbolic
             sage: g = function('g', nargs=1, conjugate_func=lambda y, x: 2*x)
             sage: st = g.__getstate__()
             sage: f = function('f')
