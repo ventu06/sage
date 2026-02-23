@@ -21048,8 +21048,8 @@ class GenericGraph(GenericGraph_pyx):
         We consider the Cayley graph of the symmetric group, whose edges are
         labelled by the numbers 1,2, and 3::
 
-            sage: G = SymmetricGroup(4).cayley_graph()                                  # needs sage.groups
-            sage: set(G.edge_labels())                                                  # needs sage.groups
+            sage: G = SymmetricGroup(4).cayley_graph()
+            sage: set(G.edge_labels())
             {1, 2, 3}
 
         We first request the coloring as a function::
@@ -21071,12 +21071,12 @@ class GenericGraph(GenericGraph_pyx):
 
         The default output is a dictionary assigning edges to colors::
 
-            sage: G._color_by_label()                                                   # needs sage.groups
+            sage: G._color_by_label()
             {'#0000ff': [((), (1,2), 1), ...],
              '#00ff00': [((), (3,4), 3), ...],
              '#ff0000': [((), (2,3), 2), ...]}
 
-            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})                  # needs sage.groups
+            sage: G._color_by_label({1: "blue", 2: "red", 3: "green"})
             {'blue': [((), (1,2), 1), ...],
              'green': [((), (3,4), 3), ...],
              'red': [((), (2,3), 2), ...]}
@@ -22208,9 +22208,9 @@ class GenericGraph(GenericGraph_pyx):
             sage: g = Graph({}, loops=True, multiedges=True, sparse=True)
             sage: g.add_edges([(0,0,'a'),(0,0,'b'),(0,1,'c'),(0,1,'d'),
             ....:     (0,1,'e'),(0,1,'f'),(0,1,'f'),(2,1,'g'),(2,2,'h')])
-            sage: GP = g.graphplot(edge_labels=True, color_by_label=True,               # needs sage.plot
+            sage: GP = g.graphplot(edge_labels=True, color_by_label=True,
             ....:                  edge_style='dashed')
-            sage: GP.plot()                                                             # needs sage.plot
+            sage: GP.plot()
             Graphics object consisting of 22 graphics primitives
 
         We can modify the :class:`~sage.graphs.graph_plot.GraphPlot` object.

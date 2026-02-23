@@ -1042,11 +1042,11 @@ class DiGraphGenerators:
 
         de Bruijn digraph of degree 2 and diameter 2::
 
-            sage: db = digraphs.DeBruijn(2, 2); db                                      # needs sage.combinat
+            sage: db = digraphs.DeBruijn(2, 2); db
             De Bruijn digraph (k=2, n=2): Looped digraph on 4 vertices
-            sage: db.order(), db.size()                                                 # needs sage.combinat
+            sage: db.order(), db.size()
             (4, 8)
-            sage: db.diameter()                                                         # needs sage.combinat
+            sage: db.diameter()
             2
 
         Building a de Bruijn digraph on a different alphabet::
@@ -1066,20 +1066,20 @@ class DiGraphGenerators:
 
         Alphabet of null size or words of length zero::
 
-            sage: digraphs.DeBruijn(5, 0)                                               # needs sage.combinat
+            sage: digraphs.DeBruijn(5, 0)
             De Bruijn digraph (k=5, n=0): Looped multi-digraph on 1 vertex
-            sage: digraphs.DeBruijn(0, 0)                                               # needs sage.combinat
+            sage: digraphs.DeBruijn(0, 0)
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
 
         :issue:`22355`::
 
-            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')                      # needs sage.combinat
-            sage: db.vertices(sort=True)                                                # needs sage.combinat
+            sage: db = digraphs.DeBruijn(2, 2, vertices='strings')
+            sage: db.vertices(sort=True)
             ['00', '01', '10', '11']
             sage: h = digraphs.DeBruijn(2, 2, vertices='integers')
             sage: h.vertices(sort=True)
             [0, 1, 2, 3]
-            sage: db.is_isomorphic(h)                                                   # needs sage.combinat
+            sage: db.is_isomorphic(h)
             True
             sage: digraphs.DeBruijn(0, 0, vertices='integers')
             De Bruijn digraph (k=0, n=0): Looped multi-digraph on 0 vertices
