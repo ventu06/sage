@@ -2302,7 +2302,6 @@ def RandomBicubicPlanar(n, seed=None):
 
     EXAMPLES::
 
-        sage: # needs sage.combinat
         sage: n = randint(200, 300)
         sage: G = graphs.RandomBicubicPlanar(n)
         sage: G.order() == 2*n

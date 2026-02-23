@@ -395,7 +395,6 @@ class DiGraphGenerators:
         A Strongly Regular digraph satisfies the condition `AJ = JA = kJ` where
         `A` is the adjacency matrix::
 
-            sage: # needs sage.combinat sage.modules
             sage: g = digraphs.StronglyRegular(7); g
             Strongly regular digraph: Digraph on 7 vertices
             sage: A = g.adjacency_matrix()*ones_matrix(7)
@@ -1052,7 +1051,6 @@ class DiGraphGenerators:
 
         Building a de Bruijn digraph on a different alphabet::
 
-            sage: # needs sage.combinat
             sage: g = digraphs.DeBruijn(['a', 'b'], 2)
             sage: g.vertices(sort=True)
             ['aa', 'ab', 'ba', 'bb']
@@ -1311,7 +1309,6 @@ class DiGraphGenerators:
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: K = digraphs.Kautz(2, 3)
             sage: b, D = K.is_isomorphic(digraphs.ImaseItoh(12, 2), certificate=True)
             sage: b

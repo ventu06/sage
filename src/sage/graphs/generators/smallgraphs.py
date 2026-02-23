@@ -1588,7 +1588,6 @@ def BuckyBall(immutable=False):
     The Bucky Ball can also be created by extracting the 1-skeleton of the Bucky
     Ball polyhedron, but this is much slower::
 
-        sage: # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
         sage: g = polytopes.buckyball().vertex_graph()
         sage: g.remove_loops()
         sage: h = graphs.BuckyBall()
@@ -1960,7 +1959,6 @@ def CameronGraph(immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: g = graphs.CameronGraph()
         sage: g.order()
         231
@@ -3478,7 +3476,6 @@ def HigmanSimsGraph(relabel=True, immutable=False):
     The automorphism group contains only one nontrivial proper normal subgroup,
     which is of index 2 and is simple.  It is known as the Higman-Sims group::
 
-        sage: # needs sage.groups
         sage: H = graphs.HigmanSimsGraph()
         sage: G = H.automorphism_group()
         sage: g = G.order(); g
@@ -4066,7 +4063,6 @@ def M22Graph(immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.groups
         sage: g = graphs.M22Graph()
         sage: g.order()
         77
@@ -4314,7 +4310,6 @@ def MoserSpindle(immutable=False):
 
     The Moser spindle is a planar graph having 7 vertices and 11 edges::
 
-        sage: # needs sage.symbolic
         sage: G = graphs.MoserSpindle(); G
         Moser spindle: Graph on 7 vertices
         sage: G.is_planar()
@@ -4326,7 +4321,6 @@ def MoserSpindle(immutable=False):
 
     It is a Hamiltonian graph with radius 2, diameter 2, and girth 3::
 
-        sage: # needs sage.symbolic
         sage: G.is_hamiltonian()                                                        # needs sage.numerical.mip
         True
         sage: G.radius()
@@ -4340,7 +4334,6 @@ def MoserSpindle(immutable=False):
     has chromatic number 4, and its automorphism group is isomorphic to
     the dihedral group `D_4`::
 
-        sage: # needs sage.symbolic
         sage: pos = G.get_pos()
         sage: all(sum((ui-vi)**2 for ui, vi in zip(pos[u], pos[v])) == 1
         ....:         for u, v in G.edge_iterator(labels=None))

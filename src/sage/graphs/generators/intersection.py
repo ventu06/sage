@@ -416,7 +416,6 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: G = graphs.OrthogonalArrayBlockGraph(5,5); G                              # needs sage.schemes
         OA(5,5): Graph on 25 vertices
         sage: G.is_strongly_regular(parameters=True)                                    # needs sage.schemes
@@ -428,7 +427,6 @@ def OrthogonalArrayBlockGraph(k, n, OA=None):
 
     Two graphs built from different orthogonal arrays are also different::
 
-        sage: # needs sage.modules
         sage: k = 4; n = 10
         sage: OAa = designs.orthogonal_arrays.build(k,n)
         sage: OAb = [[(x+1)%n for x in R] for R in OAa]
