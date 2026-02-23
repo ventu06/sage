@@ -179,7 +179,7 @@ class QuaternionAlgebraFactory(UniqueFactory):
     ``QuaternionAlgebra(K, a, b)`` -- return the quaternion algebra
     defined by `(a, b)` over the ring `K`::
 
-        sage: QuaternionAlgebra(-7, -21)
+        sage: QuaternionAlgebra(QQ, -7, -21)
         Quaternion Algebra (-7, -21) with base ring Rational Field
         sage: QuaternionAlgebra(QQ[sqrt(2)], -2, -3)                                    # needs sage.symbolic
         Quaternion Algebra (-2, -3) with base ring Number Field in sqrt2
@@ -1740,7 +1740,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         which must be elements of this algebra that span a `\ZZ`-module
         of rank `4`.
 
-        Neither a left or right order need be specified.
+        Neither a left nor right order need be specified.
 
         INPUT:
 
