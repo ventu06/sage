@@ -2290,8 +2290,13 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
 
             sage: pow(5,7,13).parent()
             Integer Ring
+        
+        Test for :issue:`41692`::
+
+            sage: pow(-1, 1/2, 0)
+            I
         """
-        if modulus is not None:
+        if modulus is not None and modulus != 0:
             from sage.rings.finite_rings.integer_mod import Mod
             return (Mod(left, modulus) ** right).lift()
 
