@@ -1881,7 +1881,7 @@ class Stream_uninitialized(Stream):
 
         # define_implicitly
         if self._eqs is None:
-            raise ValueError("Stream is not yet defined")
+            raise ValueError("stream is not yet defined")
         if self._good_cache[0] > n - self._approximate_order:
             return self._cache[n - self._approximate_order]
 
@@ -3008,6 +3008,7 @@ class Stream_pseudo_diff_mul(Stream_binary):
         """
         self._variable = variable
         self._ring = self._variable.parent()
+        self._right_der_cache = {}
         super().__init__(left, right, is_sparse)
 
     @lazy_attribute
@@ -3029,6 +3030,65 @@ class Stream_pseudo_diff_mul(Stream_binary):
         """
         # this is not the true order, unless we have an integral domain
         return self._left._approximate_order + self._right._approximate_order
+
+    def right_der(self, j, k):
+        """
+        Return the ``j``-th coefficient of the right series with ``k``
+        derivatives.
+
+        This computes the derivatives inductively and caches the result.
+
+        EXAMPLES::
+
+            sage: R.<a,b> = PolynomialRing(QQ)
+            sage: P = PseudoDifferentialOperatorRing(a)
+            sage: D = P.gen()
+            sage: X = P.undefined(valuation=2)
+            sage: P.define_implicitly([X], [(D^2 + a^10)*X - 1])
+            sage: X  # indirect doctest
+            Da^-2 - a^10*Da^-4 + 20*a^9*Da^-5 + (a^20 - 270*a^8)*Da^-6
+             + (-60*a^19 + 2880*a^7)*Da^-7 + (-a^30 + 2170*a^18 - 25200*a^6)*Da^-8
+             + O(Da^-9)
+        """
+        if (j, k) in self._right_der_cache:
+            return self._right_der_cache[j, k]
+
+        if k == 0:
+            elt = self._right[j]
+            if (not isinstance(elt.parent(), CoefficientRing)
+                or (elt.numerator().is_constant() and elt.denominator().is_constant())):
+                self._right_der_cache[j, k] = elt
+            return elt
+
+        base = self.right_der(j, k-1)
+        x = self._variable
+        R = self._ring
+        if not isinstance(base.parent(), CoefficientRing):
+            if not base:
+                elt = base
+            else:
+                elt = R(base).derivative(x)
+            self._right_der_cache[j, k] = elt
+        else:
+            PF = base.parent()
+            # Special case for the equation solver
+            if not base:
+                elt = base
+            else:
+                num = base.numerator()
+                den = base.denominator()
+                if (len(set(num.variables()).update(den.variables())) > 1
+                    or num.degree() > 1 or den.degree() > 1):
+                    raise NotImplementedError("taking derivatives of unknowns not yet implemented")
+                numder = num.map_coefficients(lambda c: R(c).derivative(x))
+                dender = den.map_coefficients(lambda c: R(c).derivative(x))
+                elt = PF(numder * den - num * dender, den**2)
+            assert elt.parent() is PF
+            # Check to see if there are any undefined coefficients; if not, cache it
+            if ((j, k-1) in self._right_der_cache and elt.numerator().is_constant()
+                and elt.denominator().is_constant()):
+                self._right_der_cache[j, k] = elt
+        return elt
 
     def get_coefficient(self, n):
         """
@@ -3063,7 +3123,7 @@ class Stream_pseudo_diff_mul(Stream_binary):
         # The upper bound on k is suboptimal when i > 0 and mj + n > 0
         #   as the binomial will be zero for all k in range(i+1, i+mj+n+1).
         mj = -self._right._approximate_order  # max j value
-        return R.sum(binomial(i, k) * l * R(self._right[i-k+n]).derivative(x, k)
+        return R.sum(binomial(i, k) * l * self.right_der(i-k+n, k)
                      for i in range(-n-mj, -self._left._approximate_order+1)
                      for k in range(max(i, i+mj+n) + 1)
                      if (l := self._left[-i]))
@@ -5288,6 +5348,28 @@ class Stream_infinite_operator(Stream):
             15
             sage: f != g
             True
+
+        TESTS:
+
+        Indirect check that this method does not give false positives::
+
+            sage: R.<a,b> = PolynomialRing(QQ)
+            sage: S.<x> = LazyPowerSeriesRing(R)
+            sage: S.options.halting_precision = 10  # check up to degree 10
+            sage: u = exp(a*x)
+            sage: v = exp(b*x)
+            sage: P = PseudoDifferentialOperatorRing(x)
+            sage: D = P.gen()
+            sage: elt = u * D^-1 + v * D^-2
+            sage: elt2 = -D^-1 * u + D^-2 * v
+            sage: eltp = P.sum(lambda k: (-D)^-k * elt2[k], 1, oo)
+            sage: elt == eltp
+            True
+            sage: eltp == elt  # indirect test
+            True
+            sage: elt - eltp == 0
+            True
+            sage: S.options._reset()
         """
         if isinstance(other, Stream_exact):
             deg = infinity

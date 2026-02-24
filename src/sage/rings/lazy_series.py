@@ -10,6 +10,7 @@ AUTHORS:
 - Kwankyu Lee (2019-02-24): initial version
 - Tejasvi Chebrolu, Martin Rubey, Travis Scrimshaw (2021-08):
   refactored and expanded functionality
+- Travis Scrimshaw (2025-02): added pseudo-differential operators
 
 EXAMPLES:
 
@@ -2139,6 +2140,17 @@ class LazyModuleElement(Element):
             sage: m * f[1] - f[1] * m
             [-1  0]
             [ 0  1]
+
+        Check that twisted multiplication is taken into account::
+
+            sage: t = SR.var('t')
+            sage: u = function('u', nargs=1)(t)
+            sage: P = PseudoDifferentialOperatorRing(t)
+            sage: D = P.gen()
+            sage: u * D
+            u(t)*Dt
+            sage: D * u
+            u(t)*Dt + diff(u(t), t)
         """
         # With the current design, the coercion model does not have
         # enough information to detect a priori that this method only
@@ -2163,6 +2175,12 @@ class LazyModuleElement(Element):
             return self
         if scalar == -R.one():
             return -self
+
+        if P._twisted_base_ring_multiplication and self_on_left:
+            # This is only a left R-module, but there is an algebra
+            #   morphism, so we apply the natural inclusion R -> P
+            #   and then use multiplication in P.
+            return self * P(scalar)
 
         if isinstance(coeff_stream, Stream_exact):
             v = coeff_stream.order()
@@ -3072,10 +3090,10 @@ class LazyModuleElement(Element):
             sage: L.<x,y> = LazyPowerSeriesRing(QQ)
             sage: sqrt(1+x/(1-y))
             1 + 1/2*x - (1/8*x^2-1/2*x*y) + (1/16*x^3-1/4*x^2*y+1/2*x*y^2)
-            - (5/128*x^4-3/16*x^3*y+3/8*x^2*y^2-1/2*x*y^3)
-            + (7/256*x^5-5/32*x^4*y+3/8*x^3*y^2-1/2*x^2*y^3+1/2*x*y^4)
-            - (21/1024*x^6-35/256*x^5*y+25/64*x^4*y^2-5/8*x^3*y^3+5/8*x^2*y^4-1/2*x*y^5)
-            + O(x,y)^7
+             - (5/128*x^4-3/16*x^3*y+3/8*x^2*y^2-1/2*x*y^3)
+             + (7/256*x^5-5/32*x^4*y+3/8*x^3*y^2-1/2*x^2*y^3+1/2*x*y^4)
+             - (21/1024*x^6-35/256*x^5*y+25/64*x^4*y^2-5/8*x^3*y^3+5/8*x^2*y^4-1/2*x*y^5)
+             + O(x,y)^7
 
         This also works for Dirichlet series::
 
@@ -3088,6 +3106,36 @@ class LazyModuleElement(Element):
             O(1/(8^s))
         """
         return self ** QQ((1, 2))  # == 1/2
+
+    def nth_root(self, n):
+        r"""
+        Return an ``n``-th root of ``self``.
+
+        EXAMPLES::
+
+            sage: L.<z> = LazyLaurentSeriesRing(QQ)
+            sage: (1+z).nth_root(5)
+            1 + 1/5*z - 2/25*z^2 + 6/125*z^3 - 21/625*z^4 + 399/15625*z^5
+             - 1596/78125*z^6 + O(z^7)
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: F = x^3*y^6 + x^4*y^7 / (1-y); F
+            x^3*y^6 + x^4*y^7 + x^4*y^8 + x^4*y^9 + x^4*y^10 + x^4*y^11 + O(x,y)^16
+            sage: CR = F.nth_root(3); CR
+            x*y^2 + 1/3*x^2*y^3 + 1/3*x^2*y^4 - (1/9*x^3*y^4-1/3*x^2*y^5)
+             - (2/9*x^3*y^5-1/3*x^2*y^6) + (5/81*x^4*y^5-1/3*x^3*y^6+1/3*x^2*y^7)
+             + O(x,y)^10
+            sage: CR^3 - F
+            O(x,y)^16
+
+            sage: D = LazyDirichletSeriesRing(SR, "s")
+            sage: Z = D(constant=1)
+            sage: f = Z.nth_root(3);  f
+            1 + 1/3/2^s + 1/3/3^s + 2/9/4^s + 1/3/5^s + 1/9/6^s + 1/3/7^s + O(1/(8^s))
+            sage: f*f*f - Z
+            O(1/(8^s))
+        """
+        return self ** QQ((1, n))  # == 1/n
 
 
 class LazyCauchyProductSeries(LazyModuleElement):
@@ -3370,6 +3418,29 @@ class LazyCauchyProductSeries(LazyModuleElement):
             sage: (1 + z)^(1 + z)                                                       # needs sage.symbolic
             1 + z + z^2 + 1/2*z^3 + 1/3*z^4 + 1/12*z^5 + 3/40*z^6 + O(z^7)
 
+        This also works for higher arity and when the lowest degree
+        coefficient is not the power of a monomial::
+
+            sage: L.<x,y> = LazyPowerSeriesRing(QQ)
+            sage: C = x^2 + x*y + y^2
+            sage: F = C^2 + x*C^2 / (1-y); F
+            (x^4+2*x^3*y+3*x^2*y^2+2*x*y^3+y^4)
+             + (x^5+2*x^4*y+3*x^3*y^2+2*x^2*y^3+x*y^4)
+             + (x^5*y+2*x^4*y^2+3*x^3*y^3+2*x^2*y^4+x*y^5)
+             + ... + O(x,y)^11
+            sage: X = F^(1/2); X
+            (x^2+x*y+y^2) + (1/2*x^3+1/2*x^2*y+1/2*x*y^2)
+             - (1/8*x^4-3/8*x^3*y-3/8*x^2*y^2-1/2*x*y^3)
+             + ... + O(x,y)^9
+            sage: X^2 - F
+            O(x,y)^11
+
+        For exact polynomials, this gives exact answers when possible::
+
+            sage: p = (C + x + y)^3
+            sage: p^(1/3)
+            (x+y) + (x^2+x*y+y^2)
+
         TESTS:
 
         Check that :issue:`36154` is fixed::
@@ -3382,49 +3453,79 @@ class LazyCauchyProductSeries(LazyModuleElement):
         if n == 0:
             return self.parent().one()
 
-        if self == self.parent().one():
+        P = self.parent()
+        if self == P.one():
             return self
 
         cs = self._coeff_stream
-        if (isinstance(cs, Stream_exact)
-            and not cs._constant and n in ZZ
+        if (isinstance(cs, Stream_exact) and not cs._constant and n in QQ
             and (n > 0 or len(cs._initial_coefficients) == 1)):
-            # # alternatively:
-            # return P(self.finite_part() ** ZZ(n))
-            P = self.parent()
-            ret = cs._polynomial_part(P._internal_poly_ring) ** ZZ(n)
-            if not ret:
-                return P.zero()
-            val = ret.valuation()
-            deg = ret.degree() + 1
-            initial_coefficients = [ret[i] for i in range(val, deg)]
-            return P.element_class(P, Stream_exact(initial_coefficients,
-                                                   constant=cs._constant,
-                                                   degree=deg,
+            n = QQ(n)
+            ret = None
+            poly_part = cs._polynomial_part(P._internal_poly_ring)
+            try:
+                ret = poly_part ** n
+                ret = P._internal_poly_ring(ret)
+            except (ValueError, TypeError):
+                pass
+            if ret is None:
+                try:
+                    ret = poly_part.nth_root(n.denominator()) ** n.numerator()
+                    ret = P._internal_poly_ring(ret)
+                except (AttributeError, ValueError, TypeError):
+                    pass
+            if ret is not None:
+                if not ret:
+                    return P.zero()
+                val = ret.valuation()
+                deg = ret.degree() + 1
+                initial_coefficients = [ret[i] for i in range(val, deg)]
+                return P.element_class(P, Stream_exact(initial_coefficients,
+                                                       constant=cs._constant,
+                                                       degree=deg,
                                                    order=val))
 
-        if n in QQ and n not in ZZ:
+        if (n in QQ and n not in ZZ
+            and not cs.is_uninitialized()
+            and (cs._approximate_order > 0
+                 or self.valuation() < 0
+                 or self[self.valuation()] != 1)):
+            n = QQ(n)
             BR = self.base_ring()
-            P = self.parent()
             val = self.valuation()
-            if val * n not in ZZ:
+            new_val = n * cs.order()
+            if (new_val not in ZZ
+                or (P._minimal_valuation is not None and P._minimal_valuation > new_val)):
                 raise ValueError("unable to take the {} power".format(n))
-
-            if (isinstance(cs, Stream_exact) and (not cs._constant)
-                and len(cs._initial_coefficients) == 1):
-                lc, = cs._initial_coefficients
-                # This is known to be a monomial (which is not 1)
-                return P.element_class(P, Stream_exact([BR(lc**n)], order=ZZ(val*n),
-                                                       constant=cs._constant))
 
             if P._arity == 1:
                 temp = self.shift(-val)
                 lc = temp[0]
                 assert lc and temp.valuation() == 0  # should be the leading coefficient
-                if lc == BR.one():
-                    return LazyModuleElement.__pow__(temp, n).shift(val * n)
-                temp = ~lc * temp
-                return P(BR(lc**n) * LazyModuleElement.__pow__(temp, n).shift(val * n))
+                assert lc != 1 or val != 0
+                temp /= lc
+                return P(BR(lc**n) * LazyModuleElement.__pow__(temp, n).shift(new_val))
+            else:
+                lc = self[val]
+                lcp = P._laurent_poly_ring(lc ** n)
+                offset = ZZ(val*n)
+
+                # Since arity > 1, the exact case will be handled above.
+                sparse = P._sparse
+                if isinstance(cs, Stream_exact):
+                    cs = Stream_exact(cs._initial_coefficients[1:], order=0, constant=0)
+                else:
+                    cs = Stream_truncated(cs, -val, 1)
+                lci = ~lc
+                # We unroll the construction from LazyModuleElement.__pow__().
+                # This is done because we want elements in the fraction field of _Laurent_poly_ring
+                f = Stream_function(lambda k: prod(n - i for i in range(k)) * lci**k / ZZ(k).factorial(),
+                                    is_sparse=P._sparse, approximate_order=0)
+                cs = Stream_cauchy_compose(f, cs, is_sparse=sparse)
+                if lcp != 1:
+                    cs = Stream_rmul(cs, lcp, is_sparse=sparse)
+                cs = Stream_shift(cs, offset)  # to get the correct valuation
+                return P.element_class(P, cs)
 
         return super().__pow__(n)
 
@@ -8255,8 +8356,10 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
                 temp = R.zero()
                 for deg, a in lpd.items():
                     for i in range(len(ir)):
-                        temp += (a * R.sum(binomial(-deg,j) * ir[i].derivative(P._variable, j) * dx**(-deg-j)
-                                           for j in range(-deg+1))).shift(-(rv+i))
+                        temp += R([a * binomial(-deg,j) * ir[i].derivative(P._variable, j)
+                                   for j in range(-deg,-1,-1)]).shift(-(rv+i))
+                        #temp += (a * R.sum(binomial(-deg,j) * ir[i].derivative(P._variable, j) * dx**(-deg-j)
+                        #                   for j in range(-deg+1))).shift(-(rv+i))
                 if not temp:
                     return P.zero()
                 initial_coefficients = list(temp)
@@ -8271,10 +8374,7 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
 
     def __invert__(self):
         r"""
-        Return the multiplicative inverse of the element.
-
-        This is only (currently) defined for `c \partial^k` with `c` being
-        an invertible constant such that `[c, \partial] = 0` or a scalar.
+        Return the multiplicative inverse of ``self``.
 
         EXAMPLES::
 
@@ -8287,6 +8387,26 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
              + O(Da^-9)
             sage: ~finv == f
             True
+
+            sage: t = SR.var('t')
+            sage: P = PseudoDifferentialOperatorRing(t)
+            sage: D = P.gen()
+            sage: u = function('u', nargs=1)(t)
+            sage: L = D^2 + u
+            sage: X = ~L
+            sage: X  # long time
+            Dt^-2 - u(t)*Dt^-4 + 2*diff(u(t), t)*Dt^-5
+             + (u(t)^2 - 3*diff(u(t), t, t))*Dt^-6
+             + (-6*u(t)*diff(u(t), t) + 4*diff(u(t), t, t, t))*Dt^-7
+             + (-(u(t)^2 - 3*diff(u(t), t, t))*u(t) + 10*diff(u(t), t)^2
+                + 10*u(t)*diff(u(t), t, t) - 5*diff(u(t), t, t, t, t))*Dt^-8
+             + O(Dt^-9)
+            sage: X * L  # long time
+            1 + O(Dt^-7)
+            sage: L * X  # long time
+            1 + O(Dt^-7)
+            sage: ~X  # long time
+            Dt^2 + u(t) + O(Dt^-5)
         """
         cs = self._coeff_stream
         if isinstance(cs, Stream_zero):
@@ -8294,59 +8414,44 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
         P = self.parent()
         if isinstance(cs, Stream_cauchy_invert):  # (f^-1)^-1 = f
             return P.element_class(P, cs._series)
-        if not isinstance(cs, Stream_exact):
-            raise ValueError("can only invert elements known exactly")
-        X = P._variable
-        BR = P._laurent_poly_ring
-        if len(cs._initial_coefficients) == 1 and cs.order() == 0:  # in the base ring
-            coeff, = BR(cs._initial_coefficients)
-            return P.element_class(P, Stream_exact([coeff.inverse_of_unit()], 0))
 
-        # generic case
-        if (any(BR(coeff).derivative(X) for coeff in cs._initial_coefficients)
-            or BR(cs._constant).derivative(X)):
-            raise ValueError("can only invert elements with constant coefficients")
-        return LazyCauchyProductSeries.__invert__(self)
+        if isinstance(cs, Stream_exact):
+            X = P._variable
+            BR = P._laurent_poly_ring
+            if len(cs._initial_coefficients) == 1 and cs.order() == 0:  # in the base ring
+                coeff, = BR(cs._initial_coefficients)
+                return P.element_class(P, Stream_exact([coeff.inverse_of_unit()], 0))
 
-    def is_unit(self) -> bool:
+            # generic case
+            if (all(not BR(coeff).derivative(X) for coeff in cs._initial_coefficients)
+                and not BR(cs._constant).derivative(X)):
+                return LazyCauchyProductSeries.__invert__(self)
+
+        X = P.undefined(valuation=-self.valuation())
+        P.define_implicitly([X], [X*self - 1])
+        return X
+
+    def is_unit(self):
         r"""
         Return whether ``self`` is a unit in the ring.
 
         EXAMPLES::
 
-            sage: a, b = PolynomialRing(QQ, 'a,b').gens()
-            sage: P = PseudoDifferentialOperatorRing(a)
-            sage: f = P([2,0,3*b,3*b^2], constant=b, valuation=-2)
+            sage: x = PolynomialRing(Zmod(6), 'x').gen()
+            sage: P = PseudoDifferentialOperatorRing(x)
+            sage: f = P(lambda n: n, valuation=1)
             sage: f.is_unit()
             True
-            sage: (1/f).is_unit()
+            sage: f = P(lambda n: n, valuation=2)
+            sage: f.is_unit()
+            False
+            sage: f = P(lambda n: n, valuation=-1)
+            sage: f.is_unit()
             True
-            sage: P([b, 2, 3], constant=b, valuation=-2).is_unit()
-            False
-            sage: P([], constant=b, valuation=-2).is_unit()
-            False
-            sage: P([a], valuation=5).is_unit()
-            False
         """
-        coeff_stream = self._coeff_stream
-        if isinstance(coeff_stream, Stream_cauchy_invert):
-            return True
-        if not isinstance(coeff_stream, Stream_exact):
-            False
-        X = self.parent()._variable
-        BR = self.parent()._laurent_poly_ring
-        # first check for elements in the base ring
-        if len(coeff_stream._initial_coefficients) == 1 and coeff_stream.order() == 0:
-            return True
-        # if only an exact constant stream
-        if not coeff_stream._initial_coefficients:
-            return (not BR(coeff_stream._constant).derivative(X)
-                    and BR(coeff_stream._constant).is_unit())
-        # "generic" case
-        return (coeff_stream._initial_coefficients[0].is_unit()
-                and all(not BR(coeff).derivative(X)
-                        for coeff in coeff_stream._initial_coefficients)
-                and not BR(coeff_stream._constant).derivative(X))
+        if self.is_zero(): # now 0 != 1
+            return False
+        return self[self.valuation()].is_unit()
 
     def __pow__(self, n):
         r"""
@@ -8429,7 +8534,18 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
         lc = self[val]
         P = self.parent()
         BR = P._laurent_poly_ring
-        lcr = BR(lc ** -n)
+        try:
+            lcr = lc.nth_root(n)
+        except AttributeError:
+            lcr = BR(lc ** ~n)
+
+        # We are effectively implementing this:
+        # X = P.undefined(valuation=self.valuation()/n)
+        # P.define_implicitly([(X, [lcr])], [X**n - self])
+        # return X
+        # However, for certain base rings (mainly SR), this is significantly
+        # slower than using the coefficient solver.
+
         divcoeff = BR(~(lcr * n))
 
         # TODO: Compute an explicit formula for each coefficient so we do not
@@ -8455,7 +8571,7 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             if F[v+i] in computed:
                 return computed[F[v+i]]
             computed[F[v+i]] = 0
-            computed.update({F[v+i-j].diff(DUMMY, j): computed[F[v+i-j].diff(DUMMY, j-1)].diff(P._variable)
+            computed.update({F[v+i-j].derivative(DUMMY, j): computed[F[v+i-j].derivative(DUMMY, j-1)].derivative(P._variable)
                              for j in range(1,i+1)})
             computed[F[v+i]] = (self[val+i] - SR(temp[val+i]).substitute(computed)) * divcoeff
             return BR(computed[F[v+i]])
@@ -8481,8 +8597,8 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             sage: S.<x> = LazyPowerSeriesRing(R)
             sage: S.options.display_length = 3
             sage: P = PseudoDifferentialOperatorRing(x)
-            sage: u = exp(a*x)
             sage: D = P.gen()
+            sage: u = exp(a*x)
             sage: L = D^2 + D + u
             sage: Ls = L.star(); Ls
             Dx^2 - Dx + (1 + a*x + 1/2*a^2*x^2 + O(x^3))
@@ -8501,8 +8617,6 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
             (1 + a*x + 1/2*a^2*x^2 + O(x^3))*Dx^-1 + (1 + b*x + 1/2*b^2*x^2 + O(x^3))*Dx^-2 + O(Dx^-4)
             sage: Lss == L
             True
-            sage: L == Lss
-            True
 
             sage: S.options._reset()
         """
@@ -8517,4 +8631,3 @@ class LazyPseudoDifferentialOperator(LazyModuleElement):
         return P.sum(lambda k: (P.element_class(P, Stream_exact([R.one()], constant=R.zero(), order=k))
                                 * P(mone**k * self[k])),
                      self.valuation(), m)
-

@@ -13,6 +13,7 @@ We provide lazy implementations for various `\NN`-graded rings.
     :class:`LazyCompletionGradedAlgebra` | The completion of a graded algebra consisting of formal series.
     :class:`LazySymmetricFunctions` | The ring of (possibly multivariate) lazy symmetric functions.
     :class:`LazyDirichletSeriesRing` | The ring of lazy Dirichlet series.
+    :class:`LazyPseudoDifferentialOperatorRing` | The ring of lazy (formal) pseudo-differential operators.
 
 .. SEEALSO::
 
@@ -39,6 +40,7 @@ AUTHORS:
 - Kwankyu Lee (2019-02-24): initial version
 - Tejasvi Chebrolu, Martin Rubey, Travis Scrimshaw (2021-08):
   refactored and expanded functionality
+- Travis Scrimshaw (2025-02): added pseudo-differential operators
 """
 
 # ****************************************************************************
@@ -99,6 +101,8 @@ class LazySeriesRing(UniqueRepresentation, Parent):
     """
     Abstract base class for lazy series.
     """
+    _twisted_base_ring_multiplication = False
+
     # This will never be called directly (as it is an ABC), but we copy it
     #   for use in other subclasses.
     @staticmethod
@@ -3100,7 +3104,7 @@ class LazyPowerSeriesRing(LazySeriesRing):
             # TODO: the following is nonsense, think of an iterator
 #            if self._arity > 1 and valuation != 0:
 #                raise ValueError(f"valuation must not be specified for multivariate Taylor series (for {x}), but was set to {valuation}")
-        if self._arity > 1:
+        elif self._arity > 1:
             valuation = 0
 
         R = self._laurent_poly_ring
@@ -4301,15 +4305,14 @@ class LazyDirichletSeriesRing(LazySeriesRing):
 
 class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
     r"""
-    Lazy series of pseudo-differential operators.
+    Ring of lazy (formal) pseudo-differential operators.
 
     INPUT:
 
     - ``variable`` -- the variable the differential operators act on
     - ``sparse`` -- boolean (default: ``True``); whether the implementation
       of the series is sparse or not
-    - ``coefficient_ring`` -- (default: parent of ``variable``) the ring
-      of coefficients
+    - ``base_ring`` -- (default: parent of ``variable``) the base ring
 
     .. WARNING::
 
@@ -4333,6 +4336,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
         \binom{i}{k} = \frac{i (i-1) \cdots (i-k+1)}{k!},
 
     which is (generically) nonzero for all values `i` and all `k \geq 0`.
+    This is also a division ring (i.e., skew field).
 
     .. TODO::
 
@@ -4375,10 +4379,11 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
         (-diff(u(x), x, x) + 2*diff(v(x), x))*Dx
          + (-2/3*u(x)*diff(u(x), x) - 2/3*diff(u(x), x, x, x) + diff(v(x), x, x))
     """
+    _twisted_base_ring_multiplication = True
     Element = LazyPseudoDifferentialOperator
 
     @staticmethod
-    def __classcall_private__(cls, variable, sparse=True, coefficient_ring=None):
+    def __classcall_private__(cls, variable, sparse=True, base_ring=None):
         """
         Normalize input to ensure a unique representation.
 
@@ -4391,46 +4396,52 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
             True
 
             sage: R = PolynomialRing(QQ, 'x,t')
-            sage: L3 = PseudoDifferentialOperatorRing(t, coefficient_ring=R)
+            sage: L3 = PseudoDifferentialOperatorRing(t, base_ring=R)
             sage: L1 is L3
             False
-            sage: L3.coefficient_ring() is R
+            sage: L3.base_ring() is R
             True
         """
-        if coefficient_ring is None:
-            coefficient_ring = variable.parent()
+        if base_ring is None:
+            base_ring = variable.parent()
         else:
-            variable = coefficient_ring(variable)
-        return cls.__classcall__(cls, variable, sparse, coefficient_ring)
+            variable = base_ring(variable)
+        return cls.__classcall__(cls, variable, sparse, base_ring)
 
-    def __init__(self, variable, sparse, coefficient_ring):
+    def __init__(self, variable, sparse, base_ring):
         """
         Initialize ``self``.
 
         EXAMPLES::
 
+            sage: t = SR.var('t')
+            sage: P = PseudoDifferentialOperatorRing(t)
+            sage: TestSuite(P).run()
+
             sage: a = QQ['a'].gen()
             sage: R = PseudoDifferentialOperatorRing(a)
             sage: TestSuite(R).run()
 
-            sage: t = SR.var('t')
-            sage: P = PseudoDifferentialOperatorRing(t)
-            sage: TestSuite(P).run()
+            sage: x = QQ['x'].fraction_field().gen()
+            sage: S = PseudoDifferentialOperatorRing(x)
+            sage: TestSuite(S).run()
         """
         self._sparse = sparse
         self._arity = 1
         self._minimal_valuation = None
 
-        base_ring = coefficient_ring.base_ring()
-        if base_ring is coefficient_ring:
-            # We do not want the base ring to be the same as the coefficient ring.
-            # In that case, we have the base ring being ZZ, the initial object in Rings.
-            base_ring = ZZ
-        self._laurent_poly_ring = coefficient_ring
-        self._internal_poly_ring = LaurentPolynomialRing(self._laurent_poly_ring, "PARTIAL", sparse=sparse)
+        self._laurent_poly_ring = base_ring
+        self._internal_poly_ring = LaurentPolynomialRing(base_ring, "PARTIAL", sparse=sparse)
         self._variable = variable
 
         category = Algebras(base_ring.category())
+
+        if base_ring in Fields():
+            category = category.Division()
+
+        if base_ring.is_zero():
+            category = category.Finite()
+
         if base_ring.is_zero():
             category = category.Finite()
         else:
@@ -4457,7 +4468,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
              Univariate Polynomial Ring in t over Integer Ring
         """
         v = self._variable
-        CR = self._laurent_poly_ring
+        CR = self.base_ring()
         return "Pseudo-Differential Operator Ring in {} over {}".format(v, CR)
 
     def _latex_(self):
@@ -4473,7 +4484,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
         """
         from sage.misc.latex import latex
         v = latex(self._variable)
-        CR = latex(self._laurent_poly_ring)
+        CR = latex(self.base_ring())
         return CR + r"(\!(\partial_{{{}}}^{{-1}})\!)".format(v)
 
     def variable(self):
@@ -4491,19 +4502,6 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
             True
         """
         return self._variable
-
-    def coefficient_ring(self):
-        r"""
-        Return the coefficient ring of ``self``.
-
-        EXAMPLES::
-
-            sage: R = PolynomialRing(QQ, 'a,x,t')
-            sage: L = PseudoDifferentialOperatorRing(R.gen(0))
-            sage: L.coefficient_ring() is R
-            True
-        """
-        return self._laurent_poly_ring
 
     def _monomial(self, c, n):
         r"""
@@ -4553,7 +4551,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
         """
         if n != 0:
             raise IndexError("there is only one generator")
-        R = self._laurent_poly_ring
+        R = self.base_ring()
         coeff_stream = Stream_exact([R.one()], constant=R.zero(), order=-1)
         return self.element_class(self, coeff_stream)
 
