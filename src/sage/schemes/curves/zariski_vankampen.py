@@ -1650,25 +1650,35 @@ def fundamental_group_from_braid_mon(bm, degree=None,
     B = BraidGroup(d)
     cox = prod(F.gens()).Tietze()
     coxm = tuple(-j for j in reversed(cox))
+    cnjdelta = []
+    for j in range(d):
+        a = tuple(j for j in range(1, d - j))
+        a1 = tuple(-j for j in reversed(a))
+        cnjdelta.append(a + (d - j,) + a1)
+    homcnjdelta = F.hom(codomain=F, im_gens=cnjdelta)
     for j, k in enumerate(vertical0):
         l1 = d + j + 1
         br = bm[k]
         rnf = rightnormalform(br)
         xp = rnf[-1][0]
-        if xp == 0:
+        parity = xp % 2
+        yp = xp // 2
+        if yp == 0:
             cnja = ()
             cnjb = ()
-        elif xp > 0:
-            cnja = xp * cox
-            cnjb = xp * coxm
-        elif xp < 0:
-            cnja = -xp * coxm
-            cnjb = -xp * cox
+        elif yp > 0:
+            cnja = yp * cox
+            cnjb = yp * coxm
+        elif yp < 0:
+            cnja = -yp * coxm
+            cnjb = -yp * cox
         for gen in F.gens():
+            j0 = gen.Tietze()[0]
             gen0 = gen
             for m in rnf[: -1]:
                 gen0 = gen0 * B(m)
-            j0 = gen.Tietze()[0]
+            if parity:
+                gen0 = homcnjdelta(gen0)
             rl = (l1,) + cnja + gen0.Tietze() + cnjb + (-l1, -j0)
             rel_v.append(rl)
     rel = rel_h + rel_v
