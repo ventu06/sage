@@ -3340,7 +3340,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         r"""
         Check if ``self`` is pointed.
 
-        A convex cone is said to be pointed if (and only if) it
+        A convex cone is said to be *pointed* if (and only if) it
         contains no lines. For a closed convex cone, this is
         equivalent to saying that the origin is the only point
         contained in both the cone and its negation.
