@@ -1666,12 +1666,9 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         if yp == 0:
             cnja = ()
             cnjb = ()
-        elif yp > 0:
-            cnja = yp * cox
-            cnjb = yp * coxm
-        elif yp < 0:
-            cnja = -yp * coxm
-            cnjb = -yp * cox
+        else:
+            cnja = abs(yp) * cox
+            cnjb = abs(yp) * coxm
         for gen in F.gens():
             j0 = gen.Tietze()[0]
             gen0 = gen
