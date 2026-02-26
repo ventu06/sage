@@ -438,7 +438,7 @@ def RandomLobster(n, p, q, seed=None, immutable=False):
                  immutable=immutable)
 
 
-def RandomTree(n, seed=None):
+def RandomTree(n, seed=None, immutable=False):
     r"""
     Return a random tree on `n` nodes numbered `0` through `n-1`.
 
@@ -459,6 +459,9 @@ def RandomTree(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -482,9 +485,8 @@ def RandomTree(n, seed=None):
         sage: graphs.RandomTree(1)
         Graph on 1 vertex
     """
-    g = Graph(n)
     if n <= 1:
-        return g
+        return Graph(n, immutable=immutable)
 
     if seed is not None:
         set_random_seed(seed)
@@ -507,18 +509,20 @@ def RandomTree(n, seed=None):
     zeros = [x for x in range(n) if not count[x]]
     heapify(zeros)
 
-    for s in code:
-        x = heappop(zeros)
-        g.add_edge(x, s)
-        count[x] = -1
-        count[s] -= 1
-        if not count[s]:
-            heappush(zeros, s)
+    def edges():
+        for s in code:
+            x = heappop(zeros)
+            yield (x, s)
+            count[x] = -1
+            count[s] -= 1
+            if not count[s]:
+                heappush(zeros, s)
 
-    # Adding as an edge the last two available vertices
-    g.add_edge(zeros)
+        # Adding as an edge the last two available vertices
+        yield zeros
 
-    return g
+    return Graph([range(n), edges()], format="vertices_and_edges",
+                 immutable=immutable)
 
 
 def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
