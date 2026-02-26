@@ -127,7 +127,7 @@ the input is preserved::
     [0 0 1 0 0]
     [0 1 0 0 0]
     sage: p
-    [1, 4, 5, 3, 2] 
+    [1, 4, 5, 3, 2]
 """
 # *****************************************************************************
 #       Copyright (C) 2012,2019 Travis Scrimshaw <tcscrims at gmail.com>
