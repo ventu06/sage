@@ -1648,7 +1648,7 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
     B = BraidGroup(d)
-    cox = tuple(range(1,d+1))
+    cox = tuple(range(1, d + 1))
     coxm = tuple([-j for j in reversed(cox)])
     cnjdelta = []
     for j in range(d):
