@@ -1648,12 +1648,12 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         rel_h = flatten(rel_h, max_level=1)
     rel_v = []
     B = BraidGroup(d)
-    cox = prod(F.gens()).Tietze()
-    coxm = tuple(-j for j in reversed(cox))
+    cox = tuple(range(1,d+1))
+    coxm = tuple([-j for j in reversed(cox)])
     cnjdelta = []
     for j in range(d):
-        a = tuple(j for j in range(1, d - j))
-        a1 = tuple(-j for j in reversed(a))
+        a = tuple(range(1, d - j))
+        a1 = tuple([-j for j in reversed(a)])
         cnjdelta.append(a + (d - j,) + a1)
     homcnjdelta = F.hom(codomain=F, im_gens=cnjdelta)
     for j, k in enumerate(vertical0):
