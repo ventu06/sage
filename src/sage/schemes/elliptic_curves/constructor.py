@@ -437,7 +437,8 @@ class EllipticCurveFactory(UniqueFactory):
         if isinstance(x, str):
             # Interpret x as a Cremona or LMFDB label.
             from sage.databases.cremona import CremonaDatabase
-            x, data = CremonaDatabase().coefficients_and_data(x)
+            with CremonaDatabase() as D:
+                x, data = D.coefficients_and_data(x)
             # data is only valid for elliptic curves over QQ.
             if R not in (None, QQ):
                 data = {}
@@ -568,6 +569,68 @@ def EllipticCurve_from_Weierstrass_polynomial(f):
     return EllipticCurve(coefficients_from_Weierstrass_polynomial(f))
 
 
+def _parse_multivariate_defining_equation(g):
+    """
+    Parse a defining equation for a hyperelliptic curve.
+    The input `g` should have the form `g(x, y) = y^2 + h(x) y - f(x)`,
+    or a constant multiple of that.
+
+    OUTPUT: tuple (f, h), each of them given as a list of coefficients.
+
+    TESTS::
+
+        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+        sage: R.<x,y> = QQ[]
+        sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1, 1, 0, 0, 0, 1], [0, 0, 3])
+        sage: _parse_multivariate_defining_equation(2*y^2 + 3*x^2*y - (x^5 + x + 1))
+        ([1/2, 1/2, 0, 0, 0, 1/2], [0, 0, 3/2])
+
+    The variable names are arbitrary::
+
+        sage: S.<z,t> = GF(13)[]
+        sage: _parse_multivariate_defining_equation(2*t^2 + 3*z^2*t - (z^5 + z + 1))
+        ([7, 7, 0, 0, 0, 7], [0, 0, 8])
+    """
+    from sage.rings.polynomial.multi_polynomial import MPolynomial
+    if not isinstance(g, MPolynomial):
+        raise ValueError("must be a multivariate polynomial")
+
+    variables = g.variables()
+    if len(variables) != 2:
+        raise ValueError("must be a polynomial in two variables")
+
+    y, x = sorted(variables, key=g.degree)
+    if g.degree(y) != 2:
+        raise ValueError("must be a polynomial of degree 2 in a variable")
+
+    f = []
+    h = []
+    for k, v in g:
+        dx = v.degree(x)
+        dy = v.degree(y)
+        if dy == 2:
+            if dx != 0:
+                raise ValueError(f"cannot have a term y*x^{dx}")
+            y2 = k
+        elif dy == 1:
+            while len(h) <= dx:
+                h.append(0)
+            h[dx] = k
+        else:
+            assert dy == 0
+            while len(f) <= dx:
+                f.append(0)
+            f[dx] = -k
+
+    if not y2.is_one():
+        y2_inv = y2.inverse_of_unit()
+        f = [c * y2_inv for c in f]
+        h = [c * y2_inv for c in h]
+
+    return f, h
+
+
 def coefficients_from_Weierstrass_polynomial(f):
     r"""
     Return the coefficients `[a_1, a_2, a_3, a_4, a_6]` of a cubic in
@@ -583,7 +646,6 @@ def coefficients_from_Weierstrass_polynomial(f):
         sage: EllipticCurve(u^2 + 2*v*u + 3*u - (v^3 + 4*v^2 + 5*v + 6))  # indirect doctest
         Elliptic Curve defined by y^2 + 2*x*y + 3*y = x^3 + 4*x^2 + 5*x + 6 over Finite Field of size 13
     """
-    from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
     f, h = _parse_multivariate_defining_equation(f)
     # OUTPUT: tuple (f, h), each of them given as a list of coefficients.
     if len(f) != 4 or len(h) > 2:
@@ -753,10 +815,11 @@ def coefficients_from_j(j, minimal_twist=True):
         Elist = [E for E in Elist if E.conductor() == min_cond]
         if len(Elist) > 1:
             from sage.databases.cremona import CremonaDatabase, parse_cremona_label
-            if min_cond <= CremonaDatabase().largest_conductor():
-                sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
-            else:
-                sorter = lambda E: E.ainvs()
+            with CremonaDatabase() as D:
+                if min_cond <= D.largest_conductor():
+                    sorter = lambda E: parse_cremona_label(E.label(), numerical_class_code=True)
+                else:
+                    sorter = lambda E: E.ainvs()
             Elist.sort(key=sorter)
         return Sequence(Elist[0].ainvs())
 

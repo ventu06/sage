@@ -21,14 +21,14 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.categories.fields import Fields
-from sage.rings.fraction_field import FractionField
 from sage.misc.misc_c import prod
+from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
+from sage.categories.fields import Fields
+from sage.misc.latex import latex
+from sage.rings.fraction_field import FractionField
 from sage.schemes.generic.morphism import SchemeMorphism, SchemeMorphism_point
 from sage.structure.sequence import Sequence
-from sage.structure.richcmp import richcmp, op_EQ, op_NE
-
 
 # --------------------
 # Projective varieties
@@ -141,8 +141,6 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
         return "({})".format(" : ".join(map(repr, self._coords)))
 
     def _latex_(self) -> str:
-        from sage.misc.latex import latex
-
         return r"\left({}\right)".format(" : ".join(map(latex, self._coords)))
 
     def _richcmp_(self, other: SchemeMorphism_point, op) -> bool:

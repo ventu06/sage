@@ -144,7 +144,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.order`.
         """
         return self.point_homset().order()
-    
+
     cardinality = order
 
     def count_points(self, *args, **kwds):

@@ -28,7 +28,7 @@ from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
 class HyperellipticCurve_rational_field(
     hyperelliptic_generic.HyperellipticCurve_generic
 ):
-    def __init__(self, projective_model, f, h, genus):
+    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
         r"""
         Create a hyperelliptic curve over the rationals.
 
@@ -39,7 +39,7 @@ class HyperellipticCurve_rational_field(
             sage: H
             Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 1)*y = -x^2
         """
-        super().__init__(projective_model, f, h, genus)
+        super().__init__(projective_model, f, h, genus, names)
 
     def matrix_of_frobenius(self, p, prec=20):
         r"""

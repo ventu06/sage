@@ -75,7 +75,7 @@ class HyperellipticCurve_padic_field(
         3*7 + 4*7^2 + 5*7^4 + 2*7^5 + 2*7^6 + 6*7^7 + 4*7^8 + O(7^9)
     """
 
-    def __init__(self, projective_model, f, h, genus):
+    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
         r"""
         Create a hyperelliptic curve over a p-adic field.
 
@@ -84,9 +84,9 @@ class HyperellipticCurve_padic_field(
             sage: R.<x> = Qp(5,10)[]
             sage: H = HyperellipticCurve(-x^2, x^3 + 1)
             sage: H # indirect doctest
-            Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 + (x^3 + 1 + O(5^10))*y = (4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + O(5^10))*x^2
+            Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by (1 + O(5^10))*y^2 + ((1 + O(5^10))*x^3 + 1 + O(5^10))*y = (4 + 4*5 + 4*5^2 + 4*5^3 + 4*5^4 + 4*5^5 + 4*5^6 + 4*5^7 + 4*5^8 + 4*5^9 + O(5^10))*x^2
         """
-        super().__init__(projective_model, f, h, genus)
+        super().__init__(projective_model, f, h, genus, names)
 
     def local_analytic_interpolation(self, P, Q):
         r"""
@@ -1151,7 +1151,7 @@ class HyperellipticCurve_padic_field(
             sage: HK = H.change_ring(K)
             sage: HL = HK.curve_over_ram_extn(2)
             sage: HL
-            Hyperelliptic Curve over 11-adic Eisenstein Extension Field in a defined by x^2 - 11 defined by y^2 = x^5 + (10 + 8*a^2 + 10*a^4 + 10*a^6 + 10*a^8 + O(a^10))*x^3 + (7 + a^2 + O(a^10))*x^2 + (7 + 3*a^2 + O(a^10))*x
+            Hyperelliptic Curve over 11-adic Eisenstein Extension Field in a defined by x^2 - 11 defined by (1 + O(a^10))*y^2 = (1 + O(a^10))*x^5 + (10 + 8*a^2 + 10*a^4 + 10*a^6 + 10*a^8 + O(a^10))*x^3 + (7 + a^2 + O(a^10))*x^2 + (7 + 3*a^2 + O(a^10))*x
 
         AUTHOR:
 

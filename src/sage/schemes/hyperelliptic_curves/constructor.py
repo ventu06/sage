@@ -55,69 +55,8 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_rational_field import (
     HyperellipticCurve_rational_field,
 )
 
-def _parse_multivariate_defining_equation(g):
-    """
-    Parse a defining equation for a hyperelliptic curve.
-    The input `g` should have the form `g(x, y) = y^2 + h(x) y - f(x)`,
-    or a constant multiple of that.
-
-    OUTPUT: tuple (f, h), each of them given as a list of coefficients.
-
-    TESTS::
-
-        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
-        sage: R.<x,y> = QQ[]
-        sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
-        ([1, 1, 0, 0, 0, 1], [0, 0, 3])
-        sage: _parse_multivariate_defining_equation(2*y^2 + 3*x^2*y - (x^5 + x + 1))
-        ([1/2, 1/2, 0, 0, 0, 1/2], [0, 0, 3/2])
-
-    The variable names are arbitrary::
-
-        sage: S.<z,t> = GF(13)[]
-        sage: _parse_multivariate_defining_equation(2*t^2 + 3*z^2*t - (z^5 + z + 1))
-        ([7, 7, 0, 0, 0, 7], [0, 0, 8])
-    """
-    from sage.rings.polynomial.multi_polynomial import MPolynomial
-    if not isinstance(g, MPolynomial):
-        raise ValueError("must be a multivariate polynomial")
-
-    variables = g.variables()
-    if len(variables) != 2:
-        raise ValueError("must be a polynomial in two variables")
-
-    y, x = sorted(variables, key=g.degree)
-    if g.degree(y) != 2:
-        raise ValueError("must be a polynomial of degree 2 in a variable")
-
-    f = []
-    h = []
-    for k, v in g:
-        dx = v.degree(x)
-        dy = v.degree(y)
-        if dy == 2:
-            if dx != 0:
-                raise ValueError(f"cannot have a term y*x^{dx}")
-            y2 = k
-        elif dy == 1:
-            while len(h) <= dx:
-                h.append(0)
-            h[dx] = k
-        else:
-            assert dy == 0
-            while len(f) <= dx:
-                f.append(0)
-            f[dx] = -k
-
-    if not y2.is_one():
-        y2_inv = y2.inverse_of_unit()
-        f = [c * y2_inv for c in f]
-        h = [c * y2_inv for c in h]
-
-    return f, h
-
 def HyperellipticCurve(
-    f, h=0, check_squarefree: bool = True, distinguished_point=None
+    f, h=0, names = ['x', 'y'], check_squarefree: bool = True, distinguished_point=None
 ):
     r"""
     Constructor function for creating a hyperelliptic curve with
@@ -143,6 +82,8 @@ def HyperellipticCurve(
     -  ``f`` -- polynomial
 
     -  ``h`` (default: ``0``) -- polynomial
+
+    - ``names`` -- (default: ``['x', 'y']``) names for the coordinate functions
 
     -  ``check_squarefree`` (default: ``True``) -- test if
        the input defines a hyperelliptic curve
@@ -186,7 +127,7 @@ def HyperellipticCurve(
         sage: Q5 = Qp(5,10)
         sage: T.<x> = Q5[]
         sage: H5 = HyperellipticCurve(x^7 + 1); H5
-        Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 = x^7 + 1 + O(5^10)
+        Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by (1 + O(5^10))*y^2 = (1 + O(5^10))*x^7 + 1 + O(5^10)
         sage: type(H5)
         <class 'sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field.HyperellipticCurve_padic_field_with_category'>
 
@@ -223,6 +164,13 @@ def HyperellipticCurve(
         sage: C = HyperellipticCurve(x^5 + x + 2, distinguished_point=(1, -2))
         sage: C.distinguished_point()
         (1 : -2 : 1)
+
+    We can change the names of the variables in the output::
+
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^3 + x - 1, x + a, names=['u','v'])                   # needs sage.rings.finite_rings
+        Hyperelliptic Curve over Finite Field in a of size 3^2
+         defined by v^2 + (u + a)*v = u^3 + u + 2
 
     """
 
@@ -338,7 +286,7 @@ def HyperellipticCurve(
     else:
         cls = HyperellipticCurve_generic
 
-    H = cls(defining_polynomial, f, h, curve_genus)
+    H = cls(defining_polynomial, f, h, curve_genus, names=names)
     if distinguished_point:
         H.set_distinguished_point(H(distinguished_point))
     return H
