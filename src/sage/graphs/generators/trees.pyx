@@ -112,7 +112,7 @@ from sage.misc.randstate import set_random_seed
 from sage.misc.prandom import randint
 
 
-def BalancedTree(r, h):
+def BalancedTree(r, h, immutable=False):
     r"""
     Return the perfectly balanced tree of height `h \geq 1`,
     whose root has degree `r \geq 2`.
@@ -126,6 +126,9 @@ def BalancedTree(r, h):
     - ``r`` -- positive integer `\geq 2`; the degree of the root node
 
     - ``h`` -- positive integer `\geq 1`; the height of the balanced tree
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -201,15 +204,17 @@ def BalancedTree(r, h):
     begin = [0]
     begin.extend(begin[-1] + val for val in order)
     # The number of vertices of the tree is the first index of level h + 1
-    T = Graph(begin[-1], name="Balanced tree")
+    n = begin[-1]
 
     # Add edges of the r-ary tree
-    for level in range(h):
-        start = begin[level + 1]
-        for u in range(begin[level], begin[level + 1]):
-            T.add_edges((u, v) for v in range(start, start + r))
-            start += r
-    return T
+    def edges():
+        for level in range(h):
+            start = begin[level + 1]
+            for u in range(begin[level], begin[level + 1]):
+                yield from ((u, v) for v in range(start, start + r))
+                start += r
+    return Graph([range(n), edges()], format="vertices_and_edges",
+                 immutable=immutable, name="Balanced tree")
 
 
 def FibonacciTree(n):
