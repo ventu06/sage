@@ -292,10 +292,7 @@ lazy_import('sage.combinat.path_tableaux', 'catalog', as_='path_tableaux')
 # Bijectionist
 lazy_import('sage.combinat.bijectionist', 'Bijectionist')
 
-<<<<<<< blossoming
 # TamariBlossomingTree
 lazy_import('sage.combinat.tamari_blossoming_tree',
             ['TamariBlossomingTree', 'TamariBlossomingTrees'])
-=======
 del lazy_import
->>>>>>> develop
