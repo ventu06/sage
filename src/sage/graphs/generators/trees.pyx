@@ -280,7 +280,7 @@ def FibonacciTree(n, immutable=False):
     return T
 
 
-def Caterpillar(spine):
+def Caterpillar(spine, immutable=False):
     r"""
     Return the caterpillar tree with given spine sequence.
 
@@ -292,6 +292,9 @@ def Caterpillar(spine):
        `[a_1, a_2, \dots, a_n]`, where `a_i` is the number of leaves adjacent
        to the `i`-th vertex on the spine (except for the first and last vertex,
        which have `a_1 + 1` and `a_n + 1` leaf-neighbors, respectively)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -342,23 +345,29 @@ def Caterpillar(spine):
     spine = list(spine)
     cdef int spine_len = len(spine)
     cdef int n_vertices = spine_len + 2 + sum(spine)
-    T = Graph(n_vertices, name=f"Caterpillar({','.join(map(str, spine))})")
+    name = f"Caterpillar({','.join(map(str, spine))})"
 
     # add spine
-    for i in range(spine_len - 1):
-        T._backend.add_edge(i, i + 1, None, False)
+    E1 = ((i, i + 1) for i in range(spine_len - 1))
 
     # add a leaf at both ends of the spine
-    T._backend.add_edge(spine_len + 1, 0, None, False)
     if spine:
-        T._backend.add_edge(spine_len - 1, spine_len, None, False)
+        E2 = ((spine_len + 1, 0), (spine_len - 1, spine_len))
+    else:
+        E2 = ((spine_len + 1, 0),)
 
     # add leaves
-    cdef int v = spine_len + 2
-    for i, d in enumerate(spine):
-        for j in range(d):
-            T._backend.add_edge(i, v + j, None, False)
-        v += d
+    def E3():
+        v = spine_len + 2
+        for i, d in enumerate(spine):
+            for j in range(v, v + d):
+                yield (i, j)
+            v += d
+
+    from itertools import chain
+    T = Graph([range(n_vertices), chain(E1, E2, E3())],
+              format="vertices_and_edges", name=name,
+              immutable=immutable)
 
     # add embedding
     cdef int max_leaves = max(spine, default=0)
