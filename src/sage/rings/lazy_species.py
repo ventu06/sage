@@ -168,7 +168,7 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
 
 def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
     r"""
-    Return all compositions of the vector `n` of weight `d`.
+    Return all compositions of the vector `n_vec` of weight `d`.
 
     INPUT:
 
@@ -853,7 +853,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         F.define(P(coefficient))
         return F
 
-    def functorial_composition(self, *args, algorithm="orbits"):
+    def functorial_composition(self, *args, algorithm="subgroups"):
         r"""
         Return the functorial composition of `F` and `G`.
 
@@ -920,11 +920,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: C = L.Cycles()
             sage: C.functorial_composition(X^4, algorithm="subgroups")
-            (20437340160*E_2(X^2)
-             +40874803200*X^2*E_2
-             +11022480*X*C_3
-             +122880*C_4
-             +1077167364089547583440*X^4) + O^7
+            (20437340160*E_2(X^2)+40874803200*X^2*E_2+11022480*X*C_3+122880*C_4 +1077167364089547583440*X^4) + O^7
 
         TESTS::
 
@@ -934,6 +930,11 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: E3 = E.restrict(3, 3)
             sage: (E3^2).functorial_composition(E2^2)
             (E_2(X^2)+2*X*E_3) + O^7
+
+            sage: E = L.Sets()
+            sage: C = L.Cycles()
+            sage: E.restrict(2, 2).functorial_composition(C.restrict(3, 3))
+            E_3 + O^7
 
             sage: H = (E^2).functorial_composition(E^2)
             sage: H.generating_series()
@@ -979,7 +980,6 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: H2 = (E^2).functorial_composition(G)
             sage: H[:5] == H1.hadamard_product(H2)[:5]
             True
-
         """
         return FunctorialCompositionSpeciesElement(self, *args, algorithm=algorithm)
 
@@ -1506,6 +1506,65 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         self._left = left
         self._args = args
 
+    def get_fixed_points(self, n):
+        G = self._args[0]
+        R = G.parent()._laurent_poly_ring
+        g_count = factorial(n) * G.generating_series()[n]
+        left = self._left
+        if not left[g_count]:
+            return
+
+        S_n = _SymmetricGroup(n)
+        G_n = G[n].monomial_coefficients(copy=False)
+        if not G_n or (len(G_n) == 1
+                       and next(iter(G_n)).permutation_group()[0] == S_n):
+            return
+
+        S = _SymmetricGroup(g_count)
+        l = [H.gap()
+             for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+             for _ in range(c)]
+        g_act = libgap.FactorCosetAction(S_n, l)
+
+        B = libgap.Image(g_act, S_n)
+
+        return [(H,
+                 fixed_points_factorized(g_count,
+                                         [(A._dis, e)
+                                          for A, e in h._monomial.items()],
+                                         B))
+                for h, _ in left[g_count]
+                if (H := h.permutation_group()[0]).gap()]
+
+    def points_with_stabilizer(self, i, H, i_G, l_G, S):
+        try:
+            return next(b for a, b in self._cache if a == (i, H))
+        except StopIteration:
+            pass
+
+        def index(F):
+            return next(i for i, C in enumerate(l_G) if F in C[1])
+
+        G = l_G[i_G][1].Representative()
+        if i in self._groups_cache:
+            groups = self._groups_cache[i]
+        else:
+            F = l_G[i][1].Representative()
+            groups = [index(F1) for F1 in libgap.IntermediateSubgroups(G, F)["subgroups"]]
+            self._groups_cache[i] = groups
+
+        fix = next(b for a, b in self._fixed if a == H)
+        f = next(b for a, b in fix if a == l_G[i][1]) * H.Size().sage()
+
+        if i == i_G:
+            r = f
+        else:
+            r = (f - self.points_with_stabilizer(i_G, H, i_G, l_G, S)
+                 - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, S)
+                       for i_F in groups))
+        self._cache.append(((i, H), r))
+        return r
+
     def _coefficient_subgroups(self, n):
         r"""
         Return the `n`-th coefficient using Dave Witte Morris'
@@ -1520,74 +1579,47 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        left = self._left
         G = self._args[0]
-        G_n = G[n].monomial_coefficients(copy=False)
         g_count = factorial(n) * G.generating_series()[n]
-        S = _SymmetricGroup(g_count)
+        R = G.parent()._laurent_poly_ring
+        left = self._left
+        if not left[g_count]:
+            return R.zero()
 
         S_n = _SymmetricGroup(n)
-        R = G.parent()._laurent_poly_ring
-
-        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:
+        G_n = G[n].monomial_coefficients(copy=False)
+        if not G_n or (len(G_n) == 1
+                       and next(iter(G_n)).permutation_group()[0] == S_n):
             # we act trivially on G[n]
             f_g_count = left.generating_series()[g_count] * factorial(g_count)
             return f_g_count * R(S_n)
 
-        G_action = None  # lazily create the action corresponding to G
+        S = _SymmetricGroup(g_count)
+        l = [H.gap()
+             for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+             for _ in range(c)]
+        g_act = libgap.FactorCosetAction(S_n, l)
+        gens, images = libgap.MappingGeneratorsImages(g_act)
+        G = libgap.Group(images)
+        l_G = [(libgap.PreImage(g_act, C.Representative()), C)
+               for C in libgap.ConjugacyClassesSubgroups(G)]
+        i_G = next(i for i, C in enumerate(l_G) if G in C[1])
 
-        def get_G_action():
-            # the test "!= S_n" can be removed once we have GAP 4.15.1
-            l_G = [H
-                   for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
-                   for _ in range(c)]
-            g_act = libgap.FactorCosetAction(S_n, l_G)
-            gens, images = libgap.MappingGeneratorsImages(g_act)
-            group = libgap.Group(images)
-            subgroups = libgap.ConjugacyClassesSubgroups(group)
-            return gens, images, group, subgroups, g_act
-
-        def index(F):
-            return next(i for i, C in enumerate(G_action[3]) if F in C)
-
-        from sage.misc.cachefunc import cached_function
-
-        @cached_function
-        def fixed(i, l_H):
-            F = G_action[3][i].Representative()
-            o = F.Size()
-            k = sum(C.Size().sage() for C in l_H
-                    if (K := C.Representative()).Size() == o
-                    and libgap.IsConjugate(S, K, F))
-            N = libgap.Normalizer(S, F)
-            return k * N.Size().sage()
-
-        @cached_function
-        def points_with_stabilizer(i, l_H):
-            f = fixed(i, l_H)
-            F = G_action[3][i].Representative()
-            G = G_action[2]
-            if F == G:
-                return f
-            return (f - points_with_stabilizer(index(G), l_H)
-                    - sum(points_with_stabilizer(index(F1), l_H)
-                          for F1 in libgap.IntermediateSubgroups(G, F)["subgroups"]))
-
+        self._fixed = self.get_fixed_points(n)
+        self._cache = []
+        self._groups_cache = dict()
         result = R.zero()
         for h, c in left[g_count]:
-            H = h.permutation_group()[0]
-            l_H = libgap.ConjugacyClassesSubgroups(H)
-            if G_action is None:
-                G_action = get_G_action()
-            G = G_action[2]
-            for i, F_C in enumerate(G_action[3]):
-                m = points_with_stabilizer(i, l_H)
-                F = F_C.Representative()
+            H = h.permutation_group()[0].gap()
+            for i, (C_n, C_N) in enumerate(l_G):
+                m = self.points_with_stabilizer(i, H, i_G, l_G, S)
+                F = C_N.Representative()
                 N = libgap.Normalizer(G, F)
-                r = m * F.Size().sage() / N.Size().sage() / H.cardinality()
+                r = m * F.Size().sage() / N.Size().sage() / H.Size().sage()
                 if r:
-                    F1 = libgap.PreImage(G_action[4], F.GeneratorsOfGroup()).sage()
-                    result += c * r * R(PermutationGroup(F1, domain=range(1, n+1)))
+                    F1 = PermutationGroup(gap_group=C_n,
+                                          domain=range(1, n+1))
+                    result += c * r * R(F1)
 
         return result
 
@@ -2612,3 +2644,172 @@ class RestrictedSpeciesElement(LazyCombinatorialSpeciesElement):
             h[1] + h[2] + h[3] + h[4] + h[5] + h[6] + h[7] + O^8
         """
         return self._F.cycle_index_series().restrict(self._min, self._max)
+
+######################################################################
+# helpers for functorial composition
+######################################################################
+
+def weighted_partitions_by_capacity(weights, capacities):
+    r"""
+    Enumerate orbit representatives of weighted partitions.
+
+    INPUT:
+
+    - ``weights`` -- list of positive integers `[w_0, \dots, w_{N-1}]`
+    - ``capacities`` -- list `[(c_1, m_1), \dots, (c_r, m_r)]`
+
+    OUTPUT:
+
+    Yield tuples `(S_1, \dots, S_M)`, each `S_j` a set of indices,
+    such that the union of the `S_j` is `\{0, \dots, N-1\}` and the
+    sum of the weights of the indices in each of `S_1, \dots,
+    S_{m_1}` is always `c_1`, etc.  Moreover, permutations of the
+    first `m_1` tuples `S_1, \dots, S_{m_1}` are considered
+    indistinguishable, etc.
+
+    EXAMPLES::
+
+        sage: list(weighted_partitions_by_capacity([1,2,2,1,4], [[5,2]]))
+        [((4, 0), (1, 2, 3)), ((4, 3), (1, 2, 0))]
+
+        sage: list(weighted_partitions_by_capacity([2,2], [[2,1], [2,1]]))
+        [((0,), (1,)), ((1,), (0,))]
+
+        sage: list(weighted_partitions_by_capacity([2,2], [[2,2]]))
+        [((0,), (1,))]
+
+        sage: list(weighted_partitions_by_capacity([1,2,2,2,3], [[3,2], [4,1]]))
+        [((4,), (1, 0), (2, 3)),
+         ((4,), (2, 0), (1, 3)),
+         ((4,), (3, 0), (1, 2))]
+
+        sage: list(weighted_partitions_by_capacity([1,1,1,2,2], [[2,2], [3,1]]))
+        [((3,), (4,), (0, 1, 2)),
+         ((3,), (0, 1), (4, 2)),
+         ((3,), (0, 2), (4, 1)),
+         ((3,), (1, 2), (4, 0)),
+         ((4,), (0, 1), (3, 2)),
+         ((4,), (0, 2), (3, 1)),
+         ((4,), (1, 2), (3, 0))]
+    """
+    N = len(weights)
+    items = sorted(range(N), key=lambda i: -weights[i])
+
+    caps = []
+    block_id = []
+
+    for bid, (c, m) in enumerate(capacities):
+        caps.extend([c] * m)
+        block_id.extend([bid] * m)
+
+    M = len(caps)
+    bins = [[] for _ in range(M)]
+    sums = [0] * M
+
+    earlier_same_block = [[i for i in range(j)
+                           if block_id[i] == block_id[j]]
+                          for j in range(M)]
+
+    def backtrack(pos):
+        if pos == N:
+            if sums == caps:
+                yield tuple(tuple(b) for b in bins)
+            return
+
+        item = items[pos]
+        w = weights[item]
+
+        for j in range(M):
+            if sums[j] + w > caps[j]:
+                continue
+            if not (bins[j]
+                    or all(bins[i] for i in earlier_same_block[j])):
+                continue
+
+            bins[j].append(item)
+            sums[j] += w
+
+            yield from backtrack(pos + 1)
+
+            bins[j].pop()
+            sums[j] -= w
+
+    yield from backtrack(0)
+
+
+def fixed_points(k, A, H):
+    if libgap.Size(H) > libgap.Size(A):
+        print("the size of H is larger than the size of A")
+        return ZZ.zero()
+
+    index = ZZ(k).factorial() / libgap.Size(A).sage()
+    if index == 1:
+        return 1
+
+    S = libgap.SymmetricGroup(k)
+    if index < 1000:
+        act = libgap.FactorCosetAction(S, A)
+        return index - libgap.Length(libgap.MovedPoints(libgap.Image(act, H))).sage()
+
+    N_H = None
+    count = ZZ.zero()
+    for hom in libgap.IsomorphicSubgroups(A, H):
+        R = libgap.Image(hom)
+        if libgap.IsConjugate(S, H, R):
+            if N_H is None:
+                N_H = libgap.Size(libgap.Normalizer(S, H)).sage()
+            count += N_H / libgap.Size(libgap.Normalizer(A, R)).sage()
+
+    return count
+
+def fixed_points_factorized(n, lA, B):
+    r"""
+    Compute the number of fixed points of the action of `B` on
+    `S_n / A`, where `A` is the direct product of the given groups.
+
+    INPUT:
+
+    - ``n`` -- the degree of the ambient symmetric group
+
+    - ``lA`` -- a list of pairs `(A_i, e_i)`, where `A_i` is a
+      directly indecomposable subgroup of `S_n` and `e_i` its
+      multiplicity in `A`
+
+    - ``B`` -- a subgroup of `S_n`
+
+    """
+    flat_factors = []
+    capacities = [(max(1, libgap.NrMovedPoints(A_i).sage()),
+                   e_i) for A_i, e_i in lA]
+    mult_factor = ZZ.one()
+
+    for A_i, e_i in lA:
+        mult_factor *= ZZ(e_i).factorial()
+        for j in range(e_i):
+            flat_factors.append(A_i)
+
+    result = []
+    for clB in libgap.ConjugacyClassesSubgroups(B):
+        repB = libgap.Representative(clB)
+        orbs = libgap.Orbits(repB, list(range(1, n+1)))
+
+        assignments = weighted_partitions_by_capacity([o.Size() for o in orbs],
+                                                      capacities)
+        total_count = ZZ.zero()
+        for f in assignments:
+            pts = [[p for i in b for p in orbs[i]] for b in f]
+            local_product = 1
+            for i in range(len(capacities)):
+                B_prime_i = libgap.Action(repB, pts[i])
+                local_product *= fixed_points(capacities[i][0],
+                                              lA[i][0], B_prime_i)
+
+                if not local_product:
+                    break
+
+            # Multiply by the permutation scale factor for identical blocks
+            total_count += local_product * mult_factor
+
+        result.append((clB, total_count))
+
+    return result
