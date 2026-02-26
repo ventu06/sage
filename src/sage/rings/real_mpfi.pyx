@@ -5318,50 +5318,6 @@ def RealInterval(s, upper=None, int base=10, int pad=0, min_prec=53):
 RIF = RealIntervalField()
 
 
-def is_RealIntervalField(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalField_class`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RIF)
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalField is deprecated;
-        use 'isinstance(..., RealIntervalField_class)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalField(RealIntervalField(200))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalField is deprecated; "
-                       "use 'isinstance(..., RealIntervalField_class)' instead.")
-    return isinstance(x, RealIntervalField_class)
-
-
-def is_RealIntervalFieldElement(x):
-    """
-    Check if ``x`` is a :class:`RealIntervalFieldElement`.
-
-    EXAMPLES::
-
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RIF(2.2))
-        doctest:warning...
-        DeprecationWarning: The function is_RealIntervalFieldElement is deprecated;
-        use 'isinstance(..., RealIntervalFieldElement)' instead.
-        See https://github.com/sagemath/sage/issues/38128 for details.
-        True
-        sage: sage.rings.real_mpfi.is_RealIntervalFieldElement(RealIntervalField(200)(2.2))
-        True
-    """
-    from sage.misc.superseded import deprecation_cython
-    deprecation_cython(38128,
-                       "The function is_RealIntervalFieldElement is deprecated; "
-                       "use 'isinstance(..., RealIntervalFieldElement)' instead.")
-    return isinstance(x, RealIntervalFieldElement)
-
-
 # pickle functions
 def __create__RealIntervalField_version0(prec, sci_not):
     """
