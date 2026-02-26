@@ -197,6 +197,16 @@ def BalancedTree(r, h, immutable=False):
         sage: N = Graph(networkx.balanced_tree(r, h), name="Balanced tree")
         sage: T.is_isomorphic(N)
         True
+
+    Check the behavior of parameter immutable::
+
+        sage: r = randint(2, 3); h = randint(1, 4)
+        sage: A = graphs.BalancedTree(r, h, immutable=False)
+        sage: B = graphs.BalancedTree(r, h, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     # Compute the number of vertices per level of the tree
     order = [r**l for l in range(h + 1)]
@@ -243,6 +253,18 @@ def FibonacciTree(n, immutable=False):
         sage: l1 = [graphs.FibonacciTree(_).order() + 1 for _ in range(6)]              # needs sage.libs.pari
         sage: l2 = list(fibonacci_sequence(2,8))                                        # needs sage.libs.pari
         sage: l1 == l2                                                                  # needs sage.libs.pari
+        True
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: d = randint(2, 5)
+        sage: A = graphs.FibonacciTree(d, immutable=False)
+        sage: B = graphs.FibonacciTree(d, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
         True
 
     AUTHORS:
@@ -341,6 +363,16 @@ def Caterpillar(spine, immutable=False):
         5
         sage: graphs.Caterpillar([0,1,1,0]).diameter()
         5
+
+    Check the behavior of parameter immutable::
+
+        sage: spine = [randint(0, 3) for _ in range(randint(0, 4))]
+        sage: A = graphs.Caterpillar(spine, immutable=False)
+        sage: B = graphs.Caterpillar(spine, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     spine = list(spine)
     cdef int spine_len = len(spine)
@@ -430,6 +462,18 @@ def RandomLobster(n, p, q, seed=None, immutable=False):
 
         sage: G = graphs.RandomLobster(9, .6, .3)                                       # needs networkx
         sage: G.show()                          # long time                             # needs networkx sage.plot
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomLobster(12, .7, .3, seed=seed, immutable=False)
+        sage: B = graphs.RandomLobster(12, .7, .3, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -484,6 +528,16 @@ def RandomTree(n, seed=None, immutable=False):
         Graph on 0 vertices
         sage: graphs.RandomTree(1)
         Graph on 1 vertex
+
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomTree(12, seed=seed, immutable=False)
+        sage: B = graphs.RandomTree(12, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     if n <= 1:
         return Graph(n, immutable=immutable)
@@ -562,6 +616,19 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None, immutable=False):
         sage: G = graphs.RandomTreePowerlaw(15, 2)                                      # needs networkx
         sage: if G:                             # random output         # long time, needs networkx sage.plot
         ....:     G.show()
+
+    TESTS:
+
+    Check the behavior of parameter immutable::
+
+        sage: # needs networkx
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: A = graphs.RandomTreePowerlaw(10, 3, seed=seed, immutable=False)
+        sage: B = graphs.RandomTreePowerlaw(10, 3, seed=seed, immutable=True)
+        sage: not A.is_immutable() and B.is_immutable()
+        True
+        sage: A.is_isomorphic(B)
+        True
     """
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
@@ -1014,6 +1081,15 @@ def nauty_gentreeg(options='', debug=False, immutable=False):
         ['>E Usage: ...gentreeg [-D#] [-Z#:#] [-ulps] [-q] n... [res/mod] ...
         sage: list(graphs.nauty_gentreeg("3", debug=True))
         ['>A ...gentreeg ...\n', Graph on 3 vertices]
+
+    Check the behavior of parameter immutable::
+
+        sage: gen = graphs.nauty_gentreeg("4", immutable=False)
+        sage: all(not g.is_immutable() for g in gen)
+        True
+        sage: gen = graphs.nauty_gentreeg("4", immutable=True)
+        sage: all(g.is_immutable() for g in gen)
+        True
     """
     import shlex
     import subprocess
