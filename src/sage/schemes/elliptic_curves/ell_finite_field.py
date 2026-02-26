@@ -2935,12 +2935,6 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
       it is required that `2 \mid r`, and the function then additionally
       returns `\vartheta`
 
-    .. WARNING::
-
-        Due to :issue:`38481`, calling this function with a value of `q`
-        larger than approximately `p/4` may currently fail. This failure
-        will not occur for automatically chosen values of `q`.
-
     EXAMPLES::
 
         sage: special_supersingular_curve(GF(1013^2), endomorphism=True)
@@ -3046,28 +3040,28 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         sage: p = random_prime(300, lbound=10)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
-        ....:     q = randrange(1, p//4)  # upper bound p//4 is a workaround for #38481
+        ....:     q = randrange(1, p)
         ....:     if QuaternionAlgebra(-q, -p).discriminant() == p:
         ....:         break
         sage: E = special_supersingular_curve(GF((p, k)), q)
         sage: E.is_supersingular()
         True
         sage: F.<t> = GF((p, 2*k))
-        sage: E, endo = special_supersingular_curve(F, q, endomorphism=True)
-        sage: E.is_supersingular()
+        sage: E, endo = special_supersingular_curve(F, q, endomorphism=True)  # long time
+        sage: E.is_supersingular()                                            # long time (depends on something slow)
         True
-        sage: E.j_invariant() in GF(p)
+        sage: E.j_invariant() in GF(p)                                        # long time (depends on something slow)
         True
-        sage: endo.domain() is endo.codomain() is E
+        sage: endo.domain() is endo.codomain() is E                           # long time (depends on something slow)
         True
-        sage: endo.degree() == q
+        sage: endo.degree() == q                                              # long time (depends on something slow)
         True
-        sage: endo.trace()
+        sage: endo.trace()                                                    # long time (depends on something slow)
         0
-        sage: pi = E.frobenius_isogeny()
-        sage: pi.codomain() is pi.domain() is E
+        sage: pi = E.frobenius_isogeny()                                      # long time (depends on something slow)
+        sage: pi.codomain() is pi.domain() is E                               # long time (depends on something slow)
         True
-        sage: pi * endo == -endo * pi
+        sage: pi * endo == -endo * pi                                         # long time (depends on something slow)
         True
 
     .. NOTE::
@@ -3145,7 +3139,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         iso = E.isomorphism(F(-q).sqrt(), is_codomain=True)
         try:
             endo = iso * E.isogeny(None, iso.domain(), degree=q)
-        except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
+        except NotImplementedError:
             endos = (iso*phi for phi in E.isogenies_degree(q)
                              for iso in phi.codomain().isomorphisms(E))
             endo = next(endo for endo in endos if endo.trace().is_zero())
