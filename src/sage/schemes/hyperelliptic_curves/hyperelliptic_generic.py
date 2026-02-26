@@ -125,7 +125,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         if len(self._names) != 2:
             raise ValueError(f"coordinate function names: {names} must have length two")
 
-        # Create the printing ring with custom names for _repr_        
+        # Create the printing ring with custom names for _repr_
         P1 = PolynomialRing(self._base_ring, name = self._names[0])
         self._printing_ring = PolynomialRing(P1, name = self._names[1])
 
