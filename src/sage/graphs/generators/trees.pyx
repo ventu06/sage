@@ -525,7 +525,7 @@ def RandomTree(n, seed=None, immutable=False):
                  immutable=immutable)
 
 
-def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
+def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None, immutable=False):
     """
     Return a tree with a power law degree distribution, or ``False`` on failure.
 
@@ -543,6 +543,9 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -564,7 +567,8 @@ def RandomTreePowerlaw(n, gamma=3, tries=1000, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     try:
-        return Graph(networkx.random_powerlaw_tree(n, gamma, seed=seed, tries=tries))
+        return Graph(networkx.random_powerlaw_tree(n, gamma, seed=seed, tries=tries),
+                     immutable=immutable)
     except networkx.NetworkXError:
         return False
 
