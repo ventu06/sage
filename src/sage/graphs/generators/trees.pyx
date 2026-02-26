@@ -217,7 +217,7 @@ def BalancedTree(r, h, immutable=False):
                  immutable=immutable, name="Balanced tree")
 
 
-def FibonacciTree(n):
+def FibonacciTree(n, immutable=False):
     r"""
     Return the graph of the Fibonacci Tree `F_{n}`.
 
@@ -228,6 +228,9 @@ def FibonacciTree(n):
     INPUT:
 
     - ``n`` -- the recursion depth of the Fibonacci Tree
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -246,11 +249,9 @@ def FibonacciTree(n):
 
     - Harald Schilly and Yann Laigle-Chapuy (2010-03-25)
     """
-    T = Graph(name="Fibonacci-Tree-%d" % n)
-    if n == 1:
-        T.add_vertex(0)
+    name = f"Fibonacci-Tree-{n}"
     if n < 2:
-        return T
+        return Graph(n, immutable=immutable, name=name)
 
     from sage.combinat.combinat import fibonacci_sequence
     F = list(fibonacci_sequence(n + 2))
@@ -264,18 +265,18 @@ def FibonacciTree(n):
         level -= 1
         y -= s
         diff = F[level]
-        T.add_edge(node, node - diff)
+        yield (node, node - diff)
         if level == 1:  # only one child
             pos[node - diff] = (node, y)
             return
-        T.add_edge(node, node + diff)
-        fib(level, node - diff, y)
-        fib(level - 1, node + diff, y)
+        yield (node, node + diff)
+        yield from fib(level, node - diff, y)
+        yield from fib(level - 1, node + diff, y)
 
-    T.add_vertices(range(sum(F[:-1])))
-    fib(n, F[n + 1] - 1, 0)
+    T = Graph([range(sum(F[:-1])), fib(n, F[n + 1] - 1, 0)],
+              format="vertices_and_edges", name=name,
+              immutable=immutable)
     T.set_pos(pos)
-
     return T
 
 
