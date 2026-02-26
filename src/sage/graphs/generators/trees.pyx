@@ -911,7 +911,7 @@ cdef class TreeIterator:
         return 0
 
 
-def nauty_gentreeg(options='', debug=False):
+def nauty_gentreeg(options='', debug=False, immutable=False):
     r"""
     Return a generator which creates non-isomorphic trees from nauty's gentreeg
     program.
@@ -930,6 +930,9 @@ def nauty_gentreeg(options='', debug=False):
       line leading with ">A" indicates a successful initiation of the program
       with some information on the arguments, while a line beginning with ">E"
       indicates an error with the input.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     The possible options, obtained as output of ``gentreeg -help``::
 
@@ -1032,5 +1035,5 @@ def nauty_gentreeg(options='', debug=False):
             except StopIteration:
                 # Exhausted list of graphs from nauty geng
                 return
-            G = Graph(s[:-1], format='sparse6', loops=False, multiedges=False)
-            yield G
+            yield Graph(s[:-1], format='sparse6', loops=False, multiedges=False,
+                        immutable=immutable)
