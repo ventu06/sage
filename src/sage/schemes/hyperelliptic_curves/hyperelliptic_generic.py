@@ -337,7 +337,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         When the curve is ramified, we expect one root. When
         the curve is split we expect two roots. When the curve
-        is inert we expect zero roots. 
+        is inert we expect zero roots.
 
         EXAMPLES::
 

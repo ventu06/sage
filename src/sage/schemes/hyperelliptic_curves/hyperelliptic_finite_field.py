@@ -16,7 +16,7 @@ AUTHORS:
 # ****************************************************************************
 #       Copyright (C) 2006 David Kohel <kohel@maths.usyd.edu>
 #       Copyright (C) 2007 Robert Bradshaw <robertwb@math.washington.edu>
-#       Copyright (C) 2010 Alyson Deines <aly.deines@gmail.com>, 
+#       Copyright (C) 2010 Alyson Deines <aly.deines@gmail.com>,
 #                          Marina Gresham <marina.gresham@coloradocollege.edu>
 #                          Gagan Sekhon <gagan.d.sekhon@gmail.com>
 #       Copyright (C) 2011 Daniel Krenn
