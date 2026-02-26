@@ -385,7 +385,7 @@ def Caterpillar(spine, immutable=False):
     return T
 
 
-def RandomLobster(n, p, q, seed=None):
+def RandomLobster(n, p, q, seed=None, immutable=False):
     r"""
     Return a random lobster.
 
@@ -403,6 +403,9 @@ def RandomLobster(n, p, q, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -431,7 +434,8 @@ def RandomLobster(n, p, q, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_lobster(n, p, q, seed=seed))
+    return Graph(networkx.random_lobster(n, p, q, seed=seed),
+                 immutable=immutable)
 
 
 def RandomTree(n, seed=None):
