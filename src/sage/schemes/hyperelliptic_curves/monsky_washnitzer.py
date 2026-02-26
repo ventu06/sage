@@ -74,9 +74,7 @@ from sage.rings.rational_field import QQ
 from sage.rings.rational_field import RationalField as Rationals
 from sage.schemes.elliptic_curves.constructor import EllipticCurve
 from sage.schemes.elliptic_curves.ell_generic import EllipticCurve_generic
-from sage.schemes.hyperelliptic_curves.constructor import (
-    HyperellipticCurve,
-)
+from sage.schemes.hyperelliptic_curves.constructor import HyperellipticCurve
 from sage.schemes.hyperelliptic_curves.hyperelliptic_generic import (
     HyperellipticCurve_generic,
 )
@@ -2152,7 +2150,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5 - 3*x + 1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: x._rmul_(y)                                                           # needs sage.rings.real_interval_field
+            sage: x._rmul_(y)
             y*1*x
         """
         P = self.parent()
@@ -2172,7 +2170,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
             sage: R.<x> = QQ['x']
             sage: E = HyperellipticCurve(x^5-3*x+1)
             sage: x,y = E.monsky_washnitzer_gens()
-            sage: x._lmul_(y)                                                           # needs sage.rings.real_interval_field
+            sage: x._lmul_(y)
             y*1*x
         """
         P = self.parent()
@@ -2454,7 +2452,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
             sage: E = HyperellipticCurve(x^5 - 3*x + 1)
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing
             sage: HQR = SpecialHyperellipticQuotientRing(E)
-            sage: TestSuite(HQR).run()                                                  # needs sage.rings.real_interval_field
+            sage: TestSuite(HQR).run()
 
         Check that caching works::
 
@@ -2467,7 +2465,7 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         x = PolynomialRing(R, "xx").gen()
         if isinstance(Q, EllipticCurve_generic):
             E = Q
-            if E.a1() != 0 or E.a2() != 0:
+            if not E.a1().is_zero() or not E.a3().is_zero():
                 raise NotImplementedError("curve must be in Weierstrass normal form")
             Q = -E.change_ring(R).defining_polynomial()(x, 0, 1)
             self._curve = E
@@ -3615,7 +3613,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             sage: from sage.schemes.hyperelliptic_curves.monsky_washnitzer import SpecialHyperellipticQuotientRing, MonskyWashnitzerDifferentialRing
             sage: S = SpecialHyperellipticQuotientRing(E)
             sage: DR = MonskyWashnitzerDifferentialRing(S)
-            sage: TestSuite(DR).run()                                                   # needs sage.rings.real_interval_field
+            sage: TestSuite(DR).run()
 
         Check that caching works::
 
@@ -3773,7 +3771,7 @@ class MonskyWashnitzerDifferentialRing(UniqueRepresentation, Module):
             sage: MW = C.invariant_differential().parent()
             sage: MW.frob_Q(3)
             -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
-            sage: MW.Q()(MW.x_to_p(3))                                                  # needs sage.rings.real_interval_field
+            sage: MW.Q()(MW.x_to_p(3))
             -(60-48*y^2+12*y^4-y^6)*1 + (192-96*y^2+12*y^4)*x - (192-48*y^2)*x^2 + 60*x^3
             sage: MW.frob_Q(11) is MW.frob_Q(11)
             True
