@@ -56,6 +56,7 @@ from sage.schemes.curves.weighted_projective_curve import WeightedProjectiveCurv
 from sage.schemes.weighted_projective.weighted_projective_space import (
     WeightedProjectiveSpace,
 )
+from sage.structure.category_object import normalize_names
 
 lazy_import("sage.functions.all", "log")
 
@@ -99,7 +100,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         sage: hash(C1) == hash(C2)
         False
     """
-    def __init__(self, defining_polynomial, f, h, genus):
+    def __init__(self, defining_polynomial, f, h, genus, names=['x', 'y']):
         r"""
         Create a hyperelliptic curve as a weighted projective curve.
 
@@ -120,11 +121,19 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         self._polynomial_ring = f.parent()
         self._base_ring = f.base_ring()
 
+        self._names = normalize_names(2, names)
+        if len(self._names) != 2:
+            raise ValueError(f"coordinate function names: {names} must have length two")
+
+        # Create the printing ring with custom names for _repr_        
+        P1 = PolynomialRing(self._base_ring, name = self._names[0])
+        self._printing_ring = PolynomialRing(P1, name = self._names[1])
+
         self._d = max(h.degree(), (f.degree() + 1) // 2)
         if self._d != self._genus + 1:
             raise ValueError('genus does not match expected value')
 
-        # Initalise the underlying curve
+        # Initialise the underlying curve
         A = WeightedProjectiveSpace((1, self._genus + 1, 1), self._base_ring)
         WeightedProjectiveCurve.__init__(self, A, defining_polynomial)
 
@@ -147,36 +156,55 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return (ZZ.one(), self._genus + 1, ZZ.one())
 
-    def _repr_(self) -> str:
-        r"""
-        Return a representation of the hyperelliptic curve.
+    def _repr_(self):
+        """
+        String representation of hyperelliptic curves.
 
         EXAMPLES::
 
-            sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurve(x^5 + x, 3*x^2)
-            sage: H
-            Hyperelliptic Curve over Rational Field defined by y^2 + (3*x^2)*y = x^5 + x
+            sage: P.<x> = QQ[]
+            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f); C
+            Hyperelliptic Curve over Rational Field defined by y^2 = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f,names='u,v'); C
+            Hyperelliptic Curve over Rational Field defined by v^2 = 4*u^5 - 30*u^3 + 45*u - 22
+            sage: C = HyperellipticCurve(x^5 + 1, x^3 + 2); C
+            Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + 2)*y = x^5 + 1
         """
-        old_gen = str(self._polynomial_ring.gen())
         f, h = self._hyperelliptic_polynomials
+        R = self.base_ring()
+        y = self._printing_ring.gen()
+        x = self._printing_ring.base_ring().gen()
+        if h.is_zero():
+            return f"Hyperelliptic Curve over {R} defined by {y**2} = {f(x)}"
+        return f"Hyperelliptic Curve over {R} defined by {y**2} + {h(x)*y} = {f(x)}"
 
-        # TODO:
-        # The old class has these weird internal gens and then
-        # printing polynomial rings to change output.
-        #
-        # Will do something hacky here and we can talk about it.
-        f_str, h_str = repr(f).replace(old_gen, "x"), repr(h).replace(old_gen, "x")
+    def _latex_(self):
+        r"""
+        LaTeX representation of hyperelliptic curves.
 
-        if h:
-            if h.is_one():
-                curve = f"y^2 + y = {f_str}"
-            else:
-                curve = f"y^2 + ({h_str})*y = {f_str}"
-        else:
-            curve = f"y^2 = {f_str}"
+        EXAMPLES::
 
-        return f"Hyperelliptic Curve over {self.base_ring()} defined by {curve}"
+            sage: P.<x> = QQ[]
+            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^{2} = 4 x^{5} - 30 x^{3} + 45 x - 22$}
+            sage: C = HyperellipticCurve(f,names='u,v'); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $v^{2} = 4 u^{5} - 30 u^{3} + 45 u - 22$}
+            sage: C = HyperellipticCurve(x^5 + 1, x^2 + 3); latex(C)
+            \text{Hyperelliptic Curve over $\Bold{Q}$ defined by $y^{2} + \left(x^{2} + 3\right) y = x^{5} + 1$}
+        """
+
+        f, h = self._hyperelliptic_polynomials
+        R = self.base_ring()
+        y = self._printing_ring.gen()
+        x = self._printing_ring.base_ring().gen()
+        if h.is_zero():
+            return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
+                    f'defined by ${(y**2)._latex_()} = {(f(x))._latex_()}$}}')
+        return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
+                f'defined by ${(y**2)._latex_()} + {(h(x)*y)._latex_()} = '
+                f'{(f(x))._latex_()}$}}')
 
     def genus(self) -> Integer:
         r"""
@@ -224,7 +252,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             sage: L.<a> = K.extension(x^30 - 3)                                         # optional - sage.rings.padics
             sage: HK = H.change_ring(K)                                                 # optional - sage.rings.padics
             sage: HL = HK.change_ring(L); HL                                            # optional - sage.rings.padics
-            Hyperelliptic Curve over 3-adic Eisenstein Extension Field in a defined by x^30 - 3 defined by y^2 = x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
+            Hyperelliptic Curve over 3-adic Eisenstein Extension Field in a defined by x^30 - 3 defined by (1 + O(a^150))*y^2 = (1 + O(a^150))*x^5 + (2 + 2*a^30 + a^60 + 2*a^90 + 2*a^120 + O(a^150))*x + a^60 + O(a^210)
 
             sage: R.<x> = FiniteField(7)[]                                              # optional - sage.rings.finite_rings
             sage: H = HyperellipticCurve(x^8 + x + 5)                                   # optional - sage.rings.finite_rings

@@ -56,7 +56,7 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_rational_field import (
 )
 
 def HyperellipticCurve(
-    f, h=0, check_squarefree: bool = True, distinguished_point=None
+    f, h=0, names = ['x', 'y'], check_squarefree: bool = True, distinguished_point=None
 ):
     r"""
     Constructor function for creating a hyperelliptic curve with
@@ -82,6 +82,8 @@ def HyperellipticCurve(
     -  ``f`` -- polynomial
 
     -  ``h`` (default: ``0``) -- polynomial
+
+    - ``names`` -- (default: ``['x', 'y']``) names for the coordinate functions
 
     -  ``check_squarefree`` (default: ``True``) -- test if
        the input defines a hyperelliptic curve
@@ -125,7 +127,7 @@ def HyperellipticCurve(
         sage: Q5 = Qp(5,10)
         sage: T.<x> = Q5[]
         sage: H5 = HyperellipticCurve(x^7 + 1); H5
-        Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by y^2 = x^7 + 1 + O(5^10)
+        Hyperelliptic Curve over 5-adic Field with capped relative precision 10 defined by (1 + O(5^10))*y^2 = (1 + O(5^10))*x^7 + 1 + O(5^10)
         sage: type(H5)
         <class 'sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field.HyperellipticCurve_padic_field_with_category'>
 
@@ -162,6 +164,13 @@ def HyperellipticCurve(
         sage: C = HyperellipticCurve(x^5 + x + 2, distinguished_point=(1, -2))
         sage: C.distinguished_point()
         (1 : -2 : 1)
+
+    We can change the names of the variables in the output::
+
+        sage: k.<a> = GF(9); R.<x> = k[]                                                # needs sage.rings.finite_rings
+        sage: HyperellipticCurve(x^3 + x - 1, x + a, names=['u','v'])                   # needs sage.rings.finite_rings
+        Hyperelliptic Curve over Finite Field in a of size 3^2
+         defined by v^2 + (u + a)*v = u^3 + u + 2
 
     """
 
@@ -277,7 +286,7 @@ def HyperellipticCurve(
     else:
         cls = HyperellipticCurve_generic
 
-    H = cls(defining_polynomial, f, h, curve_genus)
+    H = cls(defining_polynomial, f, h, curve_genus, names=names)
     if distinguished_point:
         H.set_distinguished_point(H(distinguished_point))
     return H

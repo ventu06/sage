@@ -95,7 +95,7 @@ class HyperellipticCurve_finite_field(
         [4, 24, 64, 288]
     """
 
-    def __init__(self, projective_model, f, h, genus):
+    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
         r"""
         Create a hyperelliptic curve over a finite field.
 
@@ -106,7 +106,7 @@ class HyperellipticCurve_finite_field(
             sage: type(H)
             <class 'sage.schemes.hyperelliptic_curves.hyperelliptic_finite_field.HyperellipticCurve_finite_field_with_category'>
         """
-        super().__init__(projective_model, f, h, genus)
+        super().__init__(projective_model, f, h, genus, names)
 
     def random_point(self):
         r"""

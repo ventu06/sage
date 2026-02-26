@@ -130,7 +130,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: Q = H([0,0])
             sage: J = H.jacobian()
             sage: D = J(P,Q); D # indirect doctest
-            (x^2, y + x + 1)
+            (x^2, -x - 1 : 0)
         """
         return f"({self._u}, {self._v})"
 
