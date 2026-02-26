@@ -3331,10 +3331,8 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone2.is_strictly_convex()
             False
         """
-        for gs in self._PPL_cone().minimized_generators():
-            if gs.is_line():
-                return False
-        return True
+        return all(not gs.is_line()
+                   for gs in self._PPL_cone().minimized_generators())
 
     def is_pointed(self) -> bool:
         r"""
