@@ -2686,6 +2686,9 @@ REFERENCES:
 .. [EZ1950] \S. Eilenberg and J. Zilber, *Semi-Simplicial Complexes
             and Singular Homology*, Ann. Math. (2) 51 (1950), 499-513.
 
+.. [EilLan53] On the groups `H(\pi, n)`, I, Samuel Eilenberg and Saunders Mac Lane,
+              1953.
+
 .. [EPW14] Ben Elias, Nicholas Proudfoot, and Max Wakefield.
            *The Kazhdan-Lusztig polynomial of a matroid*. 2014.
            :arxiv:`1412.7408`.
@@ -4204,6 +4207,8 @@ REFERENCES:
 .. [Knu2011] Donald E. Knuth, *The Art of Computer Programming. Volume 4A.
              Combinatorial Algorithms, Part 1*.
 
+.. [Knuth1] Knuth, Donald (2000). "Dancing links". :arxiv:`cs/0011047`.
+
 .. [Knu2005] Lars R. Knudsen, *SMASH - A Cryptographic Hash Function*; in
              FSE'05, (2005), pp. 228-242.
 
@@ -5419,6 +5424,9 @@ REFERENCES:
             Communications Laboratory, Helsinki University of Technology,
             Espoo, Finland, Tech. Rep. T48, 2003.
 
+.. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
+        to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
+
 .. [Normaliz] Winfried Bruns, Bogdan Ichim, and Christof Soeger,
               Normaliz,
               http://www.mathematik.uni-osnabrueck.de/normaliz/
@@ -5968,6 +5976,9 @@ REFERENCES:
              cubic graphs*, Journal of Combinatorial Theory, Series B, vol. 138,
              (2019), pages: 219 -- 285, ISSN: 0095 -- 8956,
              :doi:`10.1016/j.jctb.2019.02.002`.
+
+.. [RSW2004] Reiner, Stanton, White - *The cyclic sieving phenomenon*,
+             Journal of Combinatorial Theory A 108 (2004).
 
 .. [RSW2011] Victor Reiner, Franco Saliola, Volkmar Welker.
              *Spectra of Symmetrized Shuffling Operators*.
@@ -6905,6 +6916,11 @@ REFERENCES:
 
 .. [VW1994] Leonard Van Wyk. *Graph groups are biautomatic*. J. Pure
             Appl. Alg. **94** (1994). no. 3, 341-352.
+
+.. [vanLeeuwen91] Marc. A. A. van Leeuwen, *Edge sequences,
+       ribbon tableaux, and an action of affine permutations*.
+       Europe J. Combinatorics. **20** (1999).
+       http://wwwmathlabo.univ-poitiers.fr/~maavl/pdf/edgeseqs.pdf
 
 .. _ref-W:
 

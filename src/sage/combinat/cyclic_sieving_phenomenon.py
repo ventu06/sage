@@ -13,10 +13,6 @@ AUTHORS:
 
 - Christian Stump
 
-REFERENCES:
-
-.. [RSW2004] Reiner, Stanton, White - *The cyclic sieving phenomenon*,
-             Journal of Combinatorial Theory A 108 (2004)
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Christian Stump christian.stump@univie.ac.at
