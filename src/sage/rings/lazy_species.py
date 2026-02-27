@@ -1550,7 +1550,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             groups = self._groups_cache[i]
         else:
             F = l_G[i][1].Representative()
-            groups = [index(F1) for F1 in libgap.IntermediateSubgroups(G, F)["subgroups"]]
+            groups = libgap.IntermediateSubgroups(G, F)["subgroups"]
+            groups = [index(F1) for F1 in groups]
             self._groups_cache[i] = groups
 
         fix = next(b for a, b in self._fixed if a == H)
@@ -2697,7 +2698,6 @@ def weighted_partitions_by_capacity(weights, capacities):
 
     caps = []
     block_id = []
-
     for bid, (c, m) in enumerate(capacities):
         caps.extend([c] * m)
         block_id.extend([bid] * m)
@@ -2710,16 +2710,34 @@ def weighted_partitions_by_capacity(weights, capacities):
                            if block_id[i] == block_id[j]]
                           for j in range(M)]
 
-    def backtrack(pos):
+    stack = []
+    pos = 0
+    next_bin = 0
+
+    while True:
         if pos == N:
             if sums == caps:
                 yield tuple(tuple(b) for b in bins)
-            return
+
+            if not stack:
+                return
+
+            pos, next_bin, chosen_bin = stack.pop()
+
+            item = items[pos]
+            w = weights[item]
+            bins[chosen_bin].pop()
+            sums[chosen_bin] -= w
+
+            next_bin += 1
+            continue
 
         item = items[pos]
         w = weights[item]
 
-        for j in range(M):
+        placed = False
+
+        for j in range(next_bin, M):
             if sums[j] + w > caps[j]:
                 continue
             if not (bins[j]
@@ -2729,22 +2747,36 @@ def weighted_partitions_by_capacity(weights, capacities):
             bins[j].append(item)
             sums[j] += w
 
-            yield from backtrack(pos + 1)
+            stack.append((pos, j, j))
 
-            bins[j].pop()
-            sums[j] -= w
+            pos += 1
+            next_bin = 0
+            placed = True
+            break
 
-    yield from backtrack(0)
+        if placed:
+            continue
+
+        if not stack:
+            return
+
+        pos, _, chosen_bin = stack.pop()
+
+        item = items[pos]
+        w = weights[item]
+        bins[chosen_bin].pop()
+        sums[chosen_bin] -= w
+
+        next_bin = chosen_bin + 1
 
 
 def fixed_points(k, A, H):
     if libgap.Size(H) > libgap.Size(A):
-        print("the size of H is larger than the size of A")
         return ZZ.zero()
 
     index = ZZ(k).factorial() / libgap.Size(A).sage()
     if index == 1:
-        return 1
+        return ZZ.one()
 
     S = libgap.SymmetricGroup(k)
     if index < 1000:
@@ -2762,6 +2794,14 @@ def fixed_points(k, A, H):
 
     return count
 
+
+def restricted_group(gens, X):
+    new_gens = [libgap.PermList([X.index(x ** g) + 1 for x in X])
+                for g in gens]
+    if not new_gens: return
+    return libgap.Group(new_gens)
+
+
 def fixed_points_factorized(n, lA, B):
     r"""
     Compute the number of fixed points of the action of `B` on
@@ -2776,40 +2816,33 @@ def fixed_points_factorized(n, lA, B):
       multiplicity in `A`
 
     - ``B`` -- a subgroup of `S_n`
-
     """
-    flat_factors = []
-    capacities = [(max(1, libgap.NrMovedPoints(A_i).sage()),
+    # if A_i is the trivial group, there are no moved points
+    capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
-    mult_factor = ZZ.one()
-
-    for A_i, e_i in lA:
-        mult_factor *= ZZ(e_i).factorial()
-        for j in range(e_i):
-            flat_factors.append(A_i)
-
+    mult_factor = prod(ZZ(e_i).factorial() for _, e_i in lA)
     result = []
     for clB in libgap.ConjugacyClassesSubgroups(B):
         repB = libgap.Representative(clB)
-        orbs = libgap.Orbits(repB, list(range(1, n+1)))
-
-        assignments = weighted_partitions_by_capacity([o.Size() for o in orbs],
+        gensB = libgap.GeneratorsOfGroup(repB)
+        orbs = libgap.Orbits(repB, list(range(1, n+1))).sage()
+        assignments = weighted_partitions_by_capacity([len(o) for o in orbs],
                                                       capacities)
         total_count = ZZ.zero()
         for f in assignments:
-            pts = [[p for i in b for p in orbs[i]] for b in f]
-            local_product = 1
+            pts = [tuple(sorted(p for i in b for p in orbs[i])) for b in f]
+            local_product = ZZ.one()
             for i in range(len(capacities)):
-                B_prime_i = libgap.Action(repB, pts[i])
-                local_product *= fixed_points(capacities[i][0],
-                                              lA[i][0], B_prime_i)
-
+                B_prime_i = restricted_group(gensB, pts[i])
+                if B_prime_i is None:
+                    f = capacities[i][0].factorial() / libgap.Size(lA[i][0]).sage()
+                else:
+                    f = fixed_points(capacities[i][0], lA[i][0], B_prime_i)
+                local_product *= f
                 if not local_product:
                     break
+            total_count += local_product
 
-            # Multiply by the permutation scale factor for identical blocks
-            total_count += local_product * mult_factor
-
-        result.append((clB, total_count))
+        result.append((clB, total_count * mult_factor))
 
     return result
