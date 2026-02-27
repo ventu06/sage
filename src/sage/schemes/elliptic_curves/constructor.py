@@ -579,7 +579,7 @@ def _parse_multivariate_defining_equation(g):
 
     TESTS::
 
-        sage: from sage.schemes.hyperelliptic_curves.constructor import _parse_multivariate_defining_equation
+        sage: from sage.schemes.elliptic_curves.constructor import _parse_multivariate_defining_equation
         sage: R.<x,y> = QQ[]
         sage: _parse_multivariate_defining_equation(y^2 + 3*x^2*y - (x^5 + x + 1))
         ([1, 1, 0, 0, 0, 1], [0, 0, 3])
