@@ -1355,7 +1355,7 @@ def is_from_GQ_spread(list arr):
     return (s, t)
 
 
-def graph_from_GQ_spread(const int s, const int t):
+def graph_from_GQ_spread(const int s, const int t, immutable=False):
     r"""
     Return the point graph of the generalised quadrangle with
     order `(s, t)` after removing one of its spreads.
@@ -1366,6 +1366,9 @@ def graph_from_GQ_spread(const int s, const int t):
     INPUT:
 
     - ``s``, ``t`` -- integers; order of the generalised quadrangle
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1402,7 +1405,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format='list_of_edges')
+    return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
