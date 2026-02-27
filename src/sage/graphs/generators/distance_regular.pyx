@@ -913,7 +913,7 @@ def AlternatingFormsGraph(const int n, const int q):
     return G
 
 
-def HermitianFormsGraph(const int n, const int r):
+def HermitianFormsGraph(const int n, const int r, immutable=False):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
@@ -927,7 +927,11 @@ def HermitianFormsGraph(const int n, const int r):
     INPUT:
 
     - ``n`` -- integer
+
     - ``r`` -- a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1013,9 +1017,8 @@ def HermitianFormsGraph(const int n, const int r):
             N = tuple([M[i] + R[i] for i in range((n * (n+1)) // 2)])
             edges.append((M, N))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name(f"Hermitian forms graph on (F_{q})^{n}")
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Hermitian forms graph on (F_{q})^{n}")
 
 
 def DoubleOddGraph(const int n):
