@@ -2555,7 +2555,8 @@ class PolynomialSpecies(CombinatorialFreeModule):
         return f"Polynomial species in {', '.join(names)} over {self.base_ring()}"
 
     def _element_constructor_(self, G, pi=None, check=True):
-        r"""Construct the polynomial species with the given data.
+        r"""
+        Construct the polynomial species with the given data.
 
         INPUT:
 
@@ -2614,19 +2615,13 @@ class PolynomialSpecies(CombinatorialFreeModule):
 
             sage: P = PolynomialSpecies(QQ, "X,Y")
             sage: G = PermutationGroup([(2,3)])
-            sage: pi = {0: [2, 3], 1: [1]}
-            sage: X = [(s, a) for s in libgap.RightCosets(G, G) for a in G if libgap.OnRight(s, a) == s]
-            sage: def act(s, a, g):
-            ....:     g_dict = g.dict()
-            ....:     g_gap = libgap.PermList([g_dict[i] for i in range(1, max(g_dict)+1)])
-            ....:     t = libgap.OnRight(s, g_gap)
-            ....:     b = a ** g_gap
-            ....:     for r, c in X:
-            ....:         if r == t and c == b:
-            ....:             return r, c
-            ....:     raise ValueError
-            sage: P((X, lambda g, x: act(x[0], x[1], g), 'left'), pi)
-            2*Y*E_2(X)
+            sage: pi = {0: [1, 2, 3], 1: [4, 5]}
+            sage: X = [(1, 2, 3, 4, 5), (1, 2, 3, 5, 4)]
+            sage: def act(x, g):
+            ....:     y = tuple(g(i) for i in x)
+            ....:     return tuple(sorted(y[:3])) + y[3:]
+            sage: P((X, act, 'right'), pi)
+            Y^2*E_3(X)
 
         TESTS::
 
