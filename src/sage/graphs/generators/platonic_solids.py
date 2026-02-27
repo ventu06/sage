@@ -132,7 +132,7 @@ def HexahedralGraph(immutable=False):
                  immutable=immutable)
 
 
-def OctahedralGraph():
+def OctahedralGraph(immutable=False):
     """
     Return an Octahedral graph (with 6 nodes).
 
@@ -146,6 +146,11 @@ def OctahedralGraph():
     to use a planar embedding of the graph. We hope to add rotatable,
     3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -172,7 +177,8 @@ def OctahedralGraph():
         sage: G.show()                          # long time
     """
     adj = {0: [1, 2, 3, 4], 1: [2, 3, 5], 2: [4, 5], 3: [4, 5], 4: [5]}
-    G = Graph(adj, format='dict_of_lists', name='Octahedron')
+    G = Graph(adj, format='dict_of_lists', name='Octahedron',
+              immutable=immutable)
     G._circle_embedding([0, 1, 2], radius=5, angle=pi/2)
     G._circle_embedding([4, 3, 5], radius=1, angle=pi/6)
     return G
