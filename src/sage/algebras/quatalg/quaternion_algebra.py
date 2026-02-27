@@ -1339,7 +1339,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         a, b = self._a, self._b
         return diagonal_matrix(self.base_ring(), [2, -2*a, -2*b, 2*a*b])
 
-    def is_definite(self):
+    def is_definite(self) -> bool:
         r"""
         Check whether this quaternion algebra is definite.
 
@@ -1366,7 +1366,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         a, b = self.invariants()
         return a < 0 and b < 0
 
-    def is_totally_definite(self):
+    def is_totally_definite(self) -> bool:
         """
         Check whether this quaternion algebra is totally definite.
 
@@ -4105,10 +4105,11 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # the correct alpha if a certificate is requested
         return (1/J.norm()*IJbar).is_principal(certificate)
 
-    def is_principal(self, certificate=False):
+    def is_principal(self, certificate=False) -> bool | tuple:
         r"""
         Check whether ``self`` is principal as a full rank quaternion ideal.
-        Requires the underlying quaternion algebra to be definite.
+
+        This requires the underlying quaternion algebra to be definite.
         Independent of whether ``self`` is a left or a right ideal.
 
         INPUT:

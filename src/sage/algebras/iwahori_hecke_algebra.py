@@ -769,7 +769,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                     return self.one()
                 return self(W.from_reduced_word(i))
 
-            def is_field(self, proof=True):
+            def is_field(self, proof=True) -> bool:
                 """
                 Return whether this Iwahori-Hecke algebra is a field.
 
