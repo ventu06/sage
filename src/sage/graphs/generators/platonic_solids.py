@@ -18,7 +18,7 @@ from sage.graphs.graph import Graph
 from math import sin, cos, pi
 
 
-def TetrahedralGraph():
+def TetrahedralGraph(immutable=False):
     """
     Return a tetrahedral graph (with 4 nodes).
 
@@ -31,6 +31,11 @@ def TetrahedralGraph():
     to use a planar embedding of the graph. We hope to add rotatable,
     3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -61,12 +66,13 @@ def TetrahedralGraph():
         sage: G = graphics_array(j)
         sage: G.show()                          # long time
     """
-    edges = [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3)]
+    edges = ((0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3))
     pos = {0: (0, 0),
            1: (0, 1),
            2: (cos(3.5*pi/3), sin(3.5*pi/3)),
            3: (cos(5.5*pi/3), sin(5.5*pi/3))}
-    return Graph(edges, name='Tetrahedron', pos=pos)
+    return Graph([range(4), edges], format="vertices_and_edges",
+                 name='Tetrahedron', pos=pos, immutable=immutable)
 
 
 def HexahedralGraph():
