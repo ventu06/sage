@@ -5332,6 +5332,9 @@ REFERENCES:
             Number Theory" (ed. Y. Motohashi), London Math. Soc. Lecture Notes
             247 (1997), 313-320, Cambridge Univ. Press.
 
+.. [Mue2010] Jan Steffen Mueller, *Explicit Kummer surface formulas for arbitrary characteristic*.
+             LMS Journal of Computation and Mathematics, Volume 13, 47--64, 2010.
+
 .. [Mul2004] Siguna Muller, *On the Computation of Square Roots in
              Finite Fields*, in Designs, Codes and Cryptography,
              Volume 31, Issue 3 (March 2004)

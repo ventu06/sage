@@ -28,6 +28,8 @@ from sage.schemes.hyperelliptic_curves.jacobian_generic import (
     HyperellipticJacobian_generic,
 )
 
+from sage.schemes.hyperelliptic_curves.kummer_surface import KummerSurface
+
 
 class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
     r"""
@@ -61,3 +63,20 @@ class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
         return jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2(
             *args, **kwds
         )
+
+    def kummer_surface(self):
+        r"""
+        Construct the Kummer surface from the Jacobian of a genus-2 curve.
+
+        INPUT: ``jacobian`` -- the Jacobian of a genus-2 curve
+
+        EXAMPLES::
+
+            sage: R.<x> = GF(13)[]
+            sage: H = HyperellipticCurve(x**5 + x)
+            sage: J = Jacobian(H)
+            sage: K = KummerSurface(J); K
+            Kummer Surface of Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + x.
+            The defining equation is X0^4 - 4*X0*X1^2*X2 + 2*X0^2*X2^2 + X2^4 - 2*X0^2*X1*X3 - 2*X1*X2^2*X3 + X1^2*X3^2 - 4*X0*X2*X3^2
+        """
+        return KummerSurface(self)
