@@ -434,7 +434,7 @@ class KummerSurface(AlgebraicScheme_subscheme_projective):
             x0, x1, x2, x3 = R.zero(), R.zero(), R.zero(), R.one()
         return (x0, x1, x2, x3)
 
-    def _call_(self, P):
+    def __call__(self, P):
         r"""
         Create a point on the Kummer surface.
 

@@ -57,7 +57,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: H = HyperellipticCurve(2*x^4 - x^3 + 4*x^2 - x, x^3 + x)
             sage: J = H.jacobian()
             sage: JQ = HyperellipticJacobianHomset(Spec(QQ), J); JQ
-            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x)*y = 2*x^4 - x^3 + 4*x^2 - x
+            Abelian group of points over Rational Field on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 + (x^3 + x)*y = 2*x^4 - x^3 + 4*x^2 - x
         """
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
@@ -72,7 +72,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: H = HyperellipticCurve(x^5 + 2*x + 1)
             sage: J = H.jacobian()
             sage: J(GF(13)) # indirect doctest
-            Abelian group of points on Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + 2*x + 1
+            Abelian group of points over Finite Field of size 13 on Jacobian of Hyperelliptic Curve over Finite Field of size 13 defined by y^2 = x^5 + 2*x + 1
         """
         return f"Abelian group of points over {self.domain().coordinate_ring()} on {self.codomain()}"
 
@@ -96,7 +96,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: K.<omega> = QQ.extension(x^2+x+1)
             sage: H = HyperellipticCurve(x^6-1)
             sage: JK = Jacobian(H)(K); JK
-            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+            Abelian group of points over Number Field in omega with defining polynomial x^2 + x + 1 on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
             sage: JK.curve()
             Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
         """
@@ -113,7 +113,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: K.<omega> = QQ.extension(x^2+x+1)
             sage: H = HyperellipticCurve(x^6-1)
             sage: JK = Jacobian(H)(K); JK
-            Abelian group of points on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
+            Abelian group of points over Number Field in omega with defining polynomial x^2 + x + 1 on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^6 - 1
             sage: JK.extended_curve()
             Hyperelliptic Curve over Number Field in omega with defining polynomial x^2 + x + 1 defined by y^2 = x^6 - 1
         """
