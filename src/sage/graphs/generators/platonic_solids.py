@@ -75,7 +75,7 @@ def TetrahedralGraph(immutable=False):
                  name='Tetrahedron', pos=pos, immutable=immutable)
 
 
-def HexahedralGraph():
+def HexahedralGraph(immutable=False):
     """
     Return a hexahedral graph (with 8 nodes).
 
@@ -87,6 +87,11 @@ def HexahedralGraph():
     to use a planar embedding of the graph. We hope to add rotatable,
     3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -123,7 +128,8 @@ def HexahedralGraph():
         7: (.5, 1.5),
         6: (1.5, 1.5)
         }
-    return Graph(adj, name='Hexahedron', pos=pos)
+    return Graph(adj, format="dict_of_lists", name='Hexahedron', pos=pos,
+                 immutable=immutable)
 
 
 def OctahedralGraph():
