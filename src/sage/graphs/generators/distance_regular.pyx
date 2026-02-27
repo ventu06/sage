@@ -1091,7 +1091,7 @@ def DoubleOddGraph(const int n, immutable=False):
                  name=f"Bipartite double of Odd graph on a set of {k} elements")
 
 
-def HalfCube(const int n):
+def HalfCube(const int n, immutable=False):
     r"""
     Return the halved cube in `n` dimensions.
 
@@ -1101,6 +1101,9 @@ def HalfCube(const int n):
     INPUT:
 
     - ``n`` -- integer; must be greater than 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1154,9 +1157,9 @@ def HalfCube(const int n):
                 if u < v:
                     E.append((u, v))
 
-    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges')
+    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges',
+              name=f"Half {n} Cube", immutable=immutable)
     G.set_pos(pos)
-    G.name("Half %d Cube" % n)
     return G
 
 
