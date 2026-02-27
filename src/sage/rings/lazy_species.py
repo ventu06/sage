@@ -915,11 +915,11 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             [O^7, O^7, O^7, O^7]
 
         If the stabilizer subgroups corresponding to the arguments
-        have few subgroups, using the ``"subgroup`` algorithm is
-        feasible, whereas the standard counting algorithm is not::
+        have few subgroups, using the ``subgroup`` algorithm is
+        feasible, whereas the ``orbit`` counting algorithm is not::
 
             sage: C = L.Cycles()
-            sage: C.functorial_composition(X^4, algorithm="subgroups")
+            sage: C.functorial_composition(X^4)
             (20437340160*E_2(X^2)+40874803200*X^2*E_2+11022480*X*C_3+122880*C_4 +1077167364089547583440*X^4) + O^7
 
         TESTS::
@@ -949,15 +949,16 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: oeis(H.isotype_generating_series()[:5])  # long time, optional -- internet
             0: A003180: Number of equivalence classes of Boolean functions of n variables under action of symmetric group.
 
-        Check that the species of sets is absorbing::
+        Check that the species of sets is absorbing.  In this case,
+        we have to use the orbit counting algorithm::
 
-            sage: E.functorial_composition(E^4)
+            sage: E.functorial_composition(E^4, algorithm="orbits")
             1 + X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
 
-            sage: (E^4).functorial_composition(E)
+            sage: (E^4).functorial_composition(E, algorithm="orbits")
             4 + 4*X + 4*E_2 + 4*E_3 + 4*E_4 + 4*E_5 + 4*E_6 + O^7
 
-            sage: E.functorial_composition(L.Graphs())
+            sage: E.functorial_composition(L.Graphs(), algorithm="orbits")
             1 + X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
 
         Check that the species of elements is a neutral element::
@@ -1506,37 +1507,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         self._left = left
         self._args = args
 
-    def get_fixed_points(self, n):
-        G = self._args[0]
-        R = G.parent()._laurent_poly_ring
-        g_count = factorial(n) * G.generating_series()[n]
-        left = self._left
-        if not left[g_count]:
-            return
-
-        S_n = _SymmetricGroup(n)
-        G_n = G[n].monomial_coefficients(copy=False)
-        if not G_n or (len(G_n) == 1
-                       and next(iter(G_n)).permutation_group()[0] == S_n):
-            return
-
-        S = _SymmetricGroup(g_count)
-        l = [H.gap()
-             for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
-             for _ in range(c)]
-        g_act = libgap.FactorCosetAction(S_n, l)
-
-        B = libgap.Image(g_act, S_n)
-
-        return [(H,
-                 fixed_points_factorized(g_count,
-                                         [(A._dis, e)
-                                          for A, e in h._monomial.items()],
-                                         B))
-                for h, _ in left[g_count]
-                if (H := h.permutation_group()[0]).gap()]
-
-    def points_with_stabilizer(self, i, H, i_G, l_G, S):
+    def points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
         try:
             return next(b for a, b in self._cache if a == (i, H))
         except StopIteration:
@@ -1554,14 +1525,13 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             groups = [index(F1) for F1 in groups]
             self._groups_cache[i] = groups
 
-        fix = next(b for a, b in self._fixed if a == H)
         f = next(b for a, b in fix if a == l_G[i][1]) * H.Size().sage()
 
         if i == i_G:
             r = f
         else:
-            r = (f - self.points_with_stabilizer(i_G, H, i_G, l_G, S)
-                 - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, S)
+            r = (f - self.points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
+                 - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
                        for i_F in groups))
         self._cache.append(((i, H), r))
         return r
@@ -1600,20 +1570,21 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
              for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
              for _ in range(c)]
         g_act = libgap.FactorCosetAction(S_n, l)
-        gens, images = libgap.MappingGeneratorsImages(g_act)
-        G = libgap.Group(images)
+        G = libgap.Image(g_act, S_n)
         l_G = [(libgap.PreImage(g_act, C.Representative()), C)
                for C in libgap.ConjugacyClassesSubgroups(G)]
         i_G = next(i for i, C in enumerate(l_G) if G in C[1])
 
-        self._fixed = self.get_fixed_points(n)
         self._cache = []
         self._groups_cache = dict()
         result = R.zero()
         for h, c in left[g_count]:
             H = h.permutation_group()[0].gap()
+            f = fixed_points_factorized(g_count,
+                                        [(A._dis, e) for A, e in h._monomial.items()],
+                                        G)
             for i, (C_n, C_N) in enumerate(l_G):
-                m = self.points_with_stabilizer(i, H, i_G, l_G, S)
+                m = self.points_with_stabilizer(i, H, i_G, l_G, f, S)
                 F = C_N.Representative()
                 N = libgap.Normalizer(G, F)
                 r = m * F.Size().sage() / N.Size().sage() / H.Size().sage()
