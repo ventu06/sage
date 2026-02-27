@@ -526,7 +526,7 @@ cdef class SBox(SageObject):
         """
         return self.n
 
-    def is_permutation(self):
+    def is_permutation(self) -> bool:
         r"""
         Return ``True`` if this S-Box is a permutation.
 
@@ -544,8 +544,7 @@ cdef class SBox(SageObject):
         if self.m != self.n:
             return False
         cdef Py_ssize_t m = self.m
-        cdef Py_ssize_t i
-        return len(set([self._S_list[i] for i in range(1 << m)])) == 1 << m
+        return len(set(self._S_list)) == 1 << m
 
     def __iter__(self):
         """

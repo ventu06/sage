@@ -1575,14 +1575,14 @@ cdef class CombinatorialPolyhedron(SageObject):
         """
         face_iter = self.face_iter(self.dimension() - 1, algorithm='primal')
         if names:
-            V = list(facet.ambient_Hrepresentation() for facet in face_iter)
+            V = [facet.ambient_Hrepresentation() for facet in face_iter]
         else:
-            V = list(facet.ambient_V_indices() for facet in face_iter)
+            V = [facet.ambient_V_indices() for facet in face_iter]
         E = self.ridges(names=names, add_equations=True, algorithm=algorithm)
         if not names:
             # If names is false, the ridges are given as tuple of indices,
             # i.e. (1,2) instead of (('f1',), ('f2',)).
-            V = list(v[0] for v in V)
+            V = [v[0] for v in V]
         return Graph([V, E], format='vertices_and_edges')
 
     @cached_method
@@ -2532,8 +2532,8 @@ cdef class CombinatorialPolyhedron(SageObject):
             if len(vert1and2) == n_facets:
                 # We have found two candidates for apexes.
                 # Remove from each facet ``index1`` resp. ``index2``.
-                test_facets = set(frozenset(facet_inc.difference({index1, index2}))
-                                  for facet_inc in facets_incidences)
+                test_facets = {frozenset(facet_inc.difference({index1, index2}))
+                               for facet_inc in facets_incidences}
                 if len(test_facets) == n_facets/2:
                     # For each `F` containing `index1` there is
                     # `G` containing `index2` such that
