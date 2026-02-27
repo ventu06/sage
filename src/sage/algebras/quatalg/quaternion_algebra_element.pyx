@@ -703,7 +703,8 @@ cdef class QuaternionAlgebraElement_abstract(AlgebraElement):
             True
         """
         if base_map is None:
-            base_map = lambda v: v
+            def base_map(v):
+                return v
         return sum(base_map(c) * g for c, g in zip(self, [1] + list(im_gens)))
 
 

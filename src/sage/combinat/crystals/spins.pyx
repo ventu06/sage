@@ -14,14 +14,14 @@ representing the elements of the spin crystal by sequences of signs
 # TODO: Do we want the following two representations?
 #
 # Two other representations are available as attributes
-#:meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
+# :meth:`Spin.internal_repn` and :meth:`Spin.signature` of the crystal element.
 #
-#- A numerical internal representation, an integer `n` such that if `n-1`
-#  is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
+# - A numerical internal representation, an integer `n` such that if `n-1`
+#   is written in binary and the `1`'s are replaced by ``-``, the `0`'s by
 #  ``+``
 #
-#- The signature, which is a list in which ``+`` is replaced by `+1` and
-#  ``-`` by `-1`.
+# - The signature, which is a list in which ``+`` is replaced by `+1` and
+#   ``-`` by `-1`.
 
 
 # ****************************************************************************
