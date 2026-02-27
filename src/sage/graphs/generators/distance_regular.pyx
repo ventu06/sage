@@ -1223,7 +1223,7 @@ def GrassmannGraph(const int q, const int n, const int input_e,
     return G
 
 
-def DoubleGrassmannGraph(const int q, const int e):
+def DoubleGrassmannGraph(const int q, const int e, immutable=False):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
@@ -1237,7 +1237,11 @@ def DoubleGrassmannGraph(const int q, const int e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``e`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1277,9 +1281,8 @@ def DoubleGrassmannGraph(const int q, const int e):
             Ubasis = frozenset(U.basis())
             edges.append((Wbasis, Ubasis))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Double Grassmann graph (%d, %d, %d)" % (n, e, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Double Grassmann graph ({n}, {e}, {q})")
 
 
 def is_from_GQ_spread(list arr):
