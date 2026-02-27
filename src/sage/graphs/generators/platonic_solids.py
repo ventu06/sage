@@ -184,7 +184,7 @@ def OctahedralGraph(immutable=False):
     return G
 
 
-def IcosahedralGraph():
+def IcosahedralGraph(immutable=False):
     """
     Return an Icosahedral graph (with 12 nodes).
 
@@ -197,6 +197,11 @@ def IcosahedralGraph():
     to use a planar embedding of the graph. We hope to add rotatable,
     3-dimensional viewing in the future. In such a case, an argument will be
     added to select the desired layout.
+
+    INPUT:
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -225,7 +230,8 @@ def IcosahedralGraph():
     adj = {0: [1, 5, 7, 8, 11], 1: [2, 5, 6, 8], 2: [3, 6, 8, 9],
            3: [4, 6, 9, 10], 4: [5, 6, 10, 11], 5: [6, 11],
            7: [8, 9, 10, 11], 8: [9], 9: [10], 10: [11]}
-    G = Graph(adj, format='dict_of_lists', name='Icosahedron')
+    G = Graph(adj, format='dict_of_lists', name='Icosahedron',
+              immutable=immutable)
     G._circle_embedding([2, 8, 7, 11, 4, 6], radius=5, angle=pi/6)
     G._circle_embedding([1, 9, 0, 10, 5, 3], radius=2, angle=pi/6)
     return G
