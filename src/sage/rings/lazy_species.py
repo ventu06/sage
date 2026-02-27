@@ -2798,7 +2798,8 @@ def fixed_points(k, A, H):
 def restricted_group(gens, X):
     new_gens = [libgap.PermList([X.index(x ** g) + 1 for x in X])
                 for g in gens]
-    if not new_gens: return
+    if not new_gens:
+        return
     return libgap.Group(new_gens)
 
 
