@@ -618,8 +618,7 @@ be declared in the ``requires`` block of ``pyproject.toml``.
 Sage uses these version constraints for two purposes:
 
 - As a source for generating the metadata of the Python
-  distribution packages in ``SAGE_ROOT/pkgs/``, see
-  :ref:`section_dependencies_distributions`.
+  distribution packages in ``SAGE_ROOT/pkgs/``.
 
 - When the experimental option ``configure --enable-system-site-packages`` is used,
   then the ``configure`` script checks these constraints to determine whether
@@ -668,8 +667,7 @@ Sage uses this version for two purposes:
 - This is the version that the Sage distribution ships.
 
 - As a source for generating the ``requirements.txt`` files of
-  the Python distribution packages in ``SAGE_ROOT/pkgs/``, see
-  :ref:`section_dependencies_distributions`.
+  the Python distribution packages in ``SAGE_ROOT/pkgs/``.
 
   For the use of the generated ``requirements.txt`` files, see
   the `pip User Guide <https://pip.pypa.io/en/stable/user_guide/#requirements-files>`_.
