@@ -4284,7 +4284,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         Check that :issue:`28187` is fixed::
 
-            sage: R.<x> = GF(65537)[]                                                   # needs sage.rings.finite_rings
+            sage: R.<x> = GF(65537)[]
             sage: x._derivative(2*x)
             Traceback (most recent call last):
             ...
@@ -4549,7 +4549,7 @@ cdef class Polynomial(CommutativePolynomial):
         Notice that the unit factor is included when we multiply `F`
         back out::
 
-            sage: expand(F)                                                             # needs sage.rings.finite_rings sage.symbolic
+            sage: expand(F)
             2*x^10 + 2*x + 2*a
 
         A new ring.  In the example below, we set the special method
@@ -7095,7 +7095,7 @@ cdef class Polynomial(CommutativePolynomial):
 
         A more complicated nested example::
 
-            sage: # optional - magma, needs sage.rings.finite_rings
+            sage: # optional - magma
             sage: k.<a> = GF(9); R.<s,t> = k[]; S.<W> = R[]
             sage: magma(a*W^20 + s*t/a)
             a*W^20 + a^7*s*t

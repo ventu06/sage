@@ -2826,7 +2826,7 @@ class PolynomialRing_dense_finite_field(PolynomialRing_field):
 
         Example of benchmark to check that `dc_threshold = None` is better::
 
-            sage: # not tested, needs sage.rings.finite_rings
+            sage: # not tested
             sage: p = prod(y - R.random_element(20)
             ....:          for _ in range(10)) * S.random_element(10,10)
             sage: %timeit _alekhnovich(R, p, 20, dc_threshold = None)

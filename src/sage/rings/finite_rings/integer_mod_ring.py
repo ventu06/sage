@@ -609,7 +609,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         EXAMPLES::
 
-            sage: # optional - gap_package_polycyclic, needs sage.groups
+            sage: # optional - gap_package_polycyclic
             sage: Integers(5).multiplicative_subgroups()
             ((2,), (4,), ())
             sage: Integers(15).multiplicative_subgroups()
@@ -621,11 +621,11 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
         TESTS::
 
-            sage: IntegerModRing(1).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(1).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(2).multiplicative_subgroups()                          # needs sage.groups
+            sage: IntegerModRing(2).multiplicative_subgroups()
             ((),)
-            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic, needs sage.groups
+            sage: IntegerModRing(3).multiplicative_subgroups()  # optional - gap_package_polycyclic
             ((2,), ())
         """
         return tuple(tuple(g.value() for g in H.gens())
@@ -639,7 +639,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_integral_domain()
             True
-            sage: Integers(389^2).is_integral_domain()                                  # needs sage.libs.pari
+            sage: Integers(389^2).is_integral_domain()
             False
 
         TESTS:
@@ -660,7 +660,7 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
 
             sage: Integers(389).is_unique_factorization_domain()
             True
-            sage: Integers(389^2).is_unique_factorization_domain()                      # needs sage.libs.pari
+            sage: Integers(389^2).is_unique_factorization_domain()
             False
         """
         return self.is_field(proof)

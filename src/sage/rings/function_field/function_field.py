@@ -1354,7 +1354,6 @@ class FunctionField(Field):
             sage: F.places_finite()                                                     # needs sage.libs.pari
             [Place (x), Place (x + 1), Place (x + 2), Place (x + 3), Place (x + 4)]
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2)
             sage: K.<x> = FunctionField(F)
             sage: R.<t> = PolynomialRing(K)
@@ -1399,7 +1398,6 @@ class FunctionField(Field):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2)
             sage: K.<x> = FunctionField(F)
             sage: R.<Y> = PolynomialRing(K)
