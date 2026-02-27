@@ -427,7 +427,7 @@ class LatticePosets(Category):
                 kd = [self.kappa_dual(e) for e in self.canonical_meetands(a)]
                 return self.join(kd)
 
-              def spine(self):
+            def spine(self):
                 """
                 Return the spine of ``self``.
 
