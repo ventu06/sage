@@ -1163,7 +1163,8 @@ def HalfCube(const int n, immutable=False):
     return G
 
 
-def GrassmannGraph(const int q, const int n, const int input_e):
+def GrassmannGraph(const int q, const int n, const int input_e,
+                   immutable=False):
     r"""
     Return the Grassmann graph with parameters `(q, n, e)`.
 
@@ -1178,7 +1179,11 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``n``, ``e`` -- integers with `n > e+1`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1213,8 +1218,8 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     # we want the intersection graph
     # the size of the intersection must be (q^{e-1} - 1) / (q-1)
     size = (q**(e - 1) - 1) // (q - 1)
-    G = PG.intersection_graph([size])
-    G.name("Grassmann graph J_%d(%d, %d)" % (q, n, e))
+    G = PG.intersection_graph([size], immutable=immutable)
+    G._name = f"Grassmann graph J_{q}({n}, {e})"
     return G
 
 
