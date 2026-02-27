@@ -156,7 +156,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         """
         return (ZZ.one(), self._genus + 1, ZZ.one())
 
-    def _repr_(self):
+    def _repr_(self) -> str:
         """
         String representation of hyperelliptic curves.
 
@@ -977,6 +977,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             if self.is_ramified():
                 return P
             else:
+                # If Z = 0 then P is a point at infinity,
+                # so we cannot be in the inert case and
+                # must be in the split case here.
                 # If Z = 0 then P is a point at infinity,
                 # so we cannot be in the inert case and
                 # must be in the split case here.
