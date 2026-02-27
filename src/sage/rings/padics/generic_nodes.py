@@ -1036,16 +1036,16 @@ class pAdicRelaxedGeneric(pAdicGeneric):
 
         EXAMPLES:
 
-            sage: R = ZpER(5, prec=10)                                                  # needs sage.libs.flint
+            sage: R = ZpER(5, prec=10)
 
         We declare a self-referent number::
 
-            sage: a = R.unknown()                                                       # needs sage.libs.flint
+            sage: a = R.unknown()
 
         So far, we do not know anything on `a` (except that it has nonnegative
         valuation)::
 
-            sage: a                                                                     # needs sage.libs.flint
+            sage: a
             O(5^0)
 
         We can now use the method :meth:`sage.rings.padics.relaxed_template.RelaxedElement_unknown.set`
@@ -1053,13 +1053,13 @@ class pAdicRelaxedGeneric(pAdicGeneric):
         agree with the digits of `1 + 5 a`. Note that the factor `5` shifts the
         digits; the `n`-th digit of `a` is then defined by the previous ones::
 
-            sage: a.set(1 + 5*a)                                                        # needs sage.libs.flint
+            sage: a.set(1 + 5*a)
             True
 
         After this, `a` contains the solution of the equation `a = 1 + 5 a`, that
         is `a = -1/4`::
 
-            sage: a                                                                     # needs sage.libs.flint
+            sage: a
             1 + 5 + 5^2 + 5^3 + 5^4 + 5^5 + 5^6 + 5^7 + 5^8 + 5^9 + ...
 
         Here is another example with an equation of degree `2`::

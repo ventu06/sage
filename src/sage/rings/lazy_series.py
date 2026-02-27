@@ -7291,13 +7291,13 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         consistent for all the lists in the structure. ::
 
             sage: R.<q> = QQ[]
-            sage: p = SymmetricFunctions(R).p()                                         # needs sage.modules
-            sage: m = SymmetricFunctions(R).m()                                         # needs sage.modules
-            sage: L = LazySymmetricFunctions(m)                                         # needs sage.modules
+            sage: p = SymmetricFunctions(R).p()
+            sage: m = SymmetricFunctions(R).m()
+            sage: L = LazySymmetricFunctions(m)
 
             sage: c = LazyCombinatorialSpecies(QQ, "X").Cycles().cycle_index_series()
             sage: Lplus = L(lambda n: p([1]*n), valuation=1)
-            sage: r = c.arithmetic_product(Lplus); r                                    # needs sage.libs.pari
+            sage: r = c.arithmetic_product(Lplus); r
             m[1] + (3*m[1,1]+2*m[2])
              + (8*m[1,1,1]+4*m[2,1]+2*m[3])
              + (42*m[1,1,1,1]+21*m[2,1,1]+12*m[2,2]+7*m[3,1]+3*m[4])
@@ -7307,7 +7307,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
 
         In particular, the number of regular octopuses is::
 
-            sage: [r[n].coefficient([1]*n) for n in range(8)]                           # needs sage.libs.pari sage.modules
+            sage: [r[n].coefficient([1]*n) for n in range(8)]
             [0, 1, 3, 8, 42, 144, 1440, 5760]
 
         It is shown in [MM2008]_ that the exponential generating
@@ -7315,7 +7315,7 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         (x) = \sum_{n \geq 1} \sigma (n) (n - 1)! \frac{x^{n}}{n!}`
         (where `\sigma (n)` is the sum of the divisors of `n`). ::
 
-            sage: [sum(divisors(i))*factorial(i-1) for i in range(1,8)]                 # needs sage.modules
+            sage: [sum(divisors(i))*factorial(i-1) for i in range(1,8)]
             [1, 3, 8, 42, 144, 1440, 5760]
 
         AUTHORS:
@@ -7340,27 +7340,27 @@ class LazySymmetricFunction(LazyCompletionGradedAlgebraElement):
         Check that the arithmetic product of symmetric functions of
         finite support works::
 
-            sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
+            sage: L(s([2])).arithmetic_product(s([1,1,1]))
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3] + 2*s[4, 1, 1]
 
-            sage: f = 1/(1-L(s[1]))                                                     # needs sage.modules
-            sage: f.arithmetic_product(s[1]) - f                                        # needs lrcalc_python sage.modules
+            sage: f = 1/(1-L(s[1]))
+            sage: f.arithmetic_product(s[1]) - f                                        # needs lrcalc_python
             O^7
 
         Check that the arithmetic product of symmetric functions with
         constant a term works as advertised::
 
-            sage: p = SymmetricFunctions(QQ).p()                                        # needs sage.modules
-            sage: L = LazySymmetricFunctions(p)                                         # needs sage.modules
-            sage: L(5).arithmetic_product(3*p[2,1])                                     # needs sage.modules
+            sage: p = SymmetricFunctions(QQ).p()
+            sage: L = LazySymmetricFunctions(p)
+            sage: L(5).arithmetic_product(3*p[2,1])
             15*p[]
 
         Check the arithmetic product of symmetric functions over a
         finite field works::
 
-            sage: s = SymmetricFunctions(FiniteField(2)).s()                            # needs sage.modules
-            sage: L = LazySymmetricFunctions(s)                                         # needs sage.modules
-            sage: L(s([2])).arithmetic_product(s([1,1,1]))                              # needs sage.modules
+            sage: s = SymmetricFunctions(FiniteField(2)).s()
+            sage: L = LazySymmetricFunctions(s)
+            sage: L(s([2])).arithmetic_product(s([1,1,1]))
             s[2, 2, 1, 1] + s[3, 1, 1, 1] + s[3, 2, 1] + s[3, 3]
         """
         if len(args) != self.parent()._arity:

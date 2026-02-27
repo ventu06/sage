@@ -739,13 +739,13 @@ class Localization(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x> = ZZ[]
-            sage: L = Localization(R, x**2 + 1)                                         # needs sage.libs.pari
-            sage: L.hom([5])   # indirect doctest                                       # needs sage.libs.pari
+            sage: L = Localization(R, x**2 + 1)
+            sage: L.hom([5])   # indirect doctest
             Traceback (most recent call last):
             ...
             ValueError: images of some localized elements fail to be units
 
-            sage: L.hom([5], codomain=Localization(ZZ, 26))   # indirect doctest        # needs sage.libs.pari
+            sage: L.hom([5], codomain=Localization(ZZ, 26))   # indirect doctest
             Ring morphism:
               From: Univariate Polynomial Ring in x over Integer Ring
                     localized at (x^2 + 1,)
@@ -800,7 +800,7 @@ class Localization(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: Localization(R, (x**2 + 1, y - 1)).ngens()                            # needs sage.libs.pari
+            sage: Localization(R, (x**2 + 1, y - 1)).ngens()
             2
 
             sage: Localization(ZZ, 2).ngens()
@@ -816,7 +816,7 @@ class Localization(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: R.localization((x**2 + 1, y - 1)).gen(0)                              # needs sage.libs.pari
+            sage: R.localization((x**2 + 1, y - 1)).gen(0)
             x
 
             sage: ZZ.localization(2).gen(0)
@@ -832,7 +832,7 @@ class Localization(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: R.<x, y> = ZZ[]
-            sage: Localization(R, (x**2 + 1, y - 1)).gens()                             # needs sage.libs.pari
+            sage: Localization(R, (x**2 + 1, y - 1)).gens()
             (x, y)
 
             sage: Localization(ZZ, 2).gens()
@@ -856,10 +856,10 @@ class Localization(Parent, UniqueRepresentation):
         EXAMPLES::
 
             sage: P.<x,y,z> = QQ[]
-            sage: L = Localization(P, (x, y*z))                                         # needs sage.libs.pari
-            sage: L._cut_off_extra_units_from_base_ring_element(x*y*z)                  # needs sage.libs.pari
+            sage: L = Localization(P, (x, y*z))
+            sage: L._cut_off_extra_units_from_base_ring_element(x*y*z)
             1
-            sage: L._cut_off_extra_units_from_base_ring_element(x*z)                    # needs sage.libs.pari
+            sage: L._cut_off_extra_units_from_base_ring_element(x*z)
             1
 
         TESTS:
