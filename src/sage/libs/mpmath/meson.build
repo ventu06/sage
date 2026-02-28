@@ -7,7 +7,7 @@ py.install_sources(
 )
 
 extension_data = {
-  'utils' : files('utils.pyx'),
+  'utils': files('utils.pyx'),
 }
 
 foreach name, pyx : extension_data
