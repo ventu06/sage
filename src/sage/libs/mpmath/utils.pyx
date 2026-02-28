@@ -167,7 +167,7 @@ def sage_to_mpmath(x, prec):
         sage: print(a.sage_to_mpmath(1+pi, 53))
         4.14159265358979
         sage: a.sage_to_mpmath(infinity, 53)
-        mpf('inf')
+        mpf('...inf')
         sage: a.sage_to_mpmath(-infinity, 53)
         mpf('-inf')
         sage: a.sage_to_mpmath(NaN, 53)
