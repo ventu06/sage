@@ -283,12 +283,12 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = OrePolynomialRing(R, sigma)
-            sage: S.fraction_field()                                                    # needs sage.rings.function_field
+            sage: S.fraction_field()
             Ore Function Field in x over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by t |--> t + 1
 
             sage: der = R.derivation()
             sage: T.<d> = OrePolynomialRing(R, der)
-            sage: T.fraction_field()                                                    # needs sage.rings.function_field
+            sage: T.fraction_field()
             Ore Function Field in d over Fraction Field of Univariate Polynomial Ring in t over Rational Field twisted by d/dt
 
         TESTS::
@@ -370,13 +370,13 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S = R['x',sigma]
-            sage: S.fraction_field().characteristic()                                   # needs sage.rings.function_field
+            sage: S.fraction_field().characteristic()
             0
 
             sage: k.<u> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: S = k['y',Frob]
-            sage: S.fraction_field().characteristic()                                   # needs sage.rings.function_field
+            sage: S.fraction_field().characteristic()
             5
         """
         return self.base_ring().characteristic()
@@ -395,8 +395,8 @@ class OreFunctionField(Parent, UniqueRepresentation):
             sage: R.<t> = QQ[]
             sage: sigma = R.hom([t+1])
             sage: S.<x> = R['x', sigma]
-            sage: K = S.fraction_field()                                                # needs sage.rings.function_field
-            sage: K.twisting_morphism()                                                 # needs sage.rings.function_field
+            sage: K = S.fraction_field()
+            sage: K.twisting_morphism()
             Ring endomorphism of
              Fraction Field of Univariate Polynomial Ring in t over Rational Field
               Defn: t |--> t + 1
@@ -406,8 +406,8 @@ class OreFunctionField(Parent, UniqueRepresentation):
 
             sage: der = R.derivation()
             sage: A.<d> = R['x', der]
-            sage: F = A.fraction_field()                                                # needs sage.rings.function_field
-            sage: F.twisting_morphism()                                                 # needs sage.rings.function_field
+            sage: F = A.fraction_field()
+            sage: F.twisting_morphism()
 
         .. SEEALSO::
 
@@ -905,17 +905,17 @@ class OreFunctionField_with_large_center(OreFunctionField):
 
         We can pass in another variable name::
 
-            sage: K.center(name='y')                                                    # needs sage.rings.finite_rings
+            sage: K.center(name='y')
             Fraction Field of Univariate Polynomial Ring in y over Finite Field of size 5
 
         or use the bracket notation::
 
-            sage: Zy.<y> = K.center(); Zy                                               # needs sage.rings.finite_rings
+            sage: Zy.<y> = K.center(); Zy
             Fraction Field of Univariate Polynomial Ring in y over Finite Field of size 5
 
         A coercion map from the center to the Ore function field is set::
 
-            sage: K.has_coerce_map_from(Zy)                                             # needs sage.rings.finite_rings
+            sage: K.has_coerce_map_from(Zy)
             True
 
         and pushout works::
