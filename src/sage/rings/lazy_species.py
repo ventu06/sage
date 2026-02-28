@@ -874,7 +874,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: F = L.Cycles()
             sage: G = X^3
-            sage: F.functorial_composition(G)
+            sage: F.functorial_composition(G)  # random
             (3*C_3+8*X*E_2+15*X^3) + O^7
 
         Graphs::
@@ -939,8 +939,12 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         Let us first check the example computing cycles of the set of
         four-tuples::
 
-            sage: F = 20437340160*E_2(x^2)+40874803200*x^2*E_2+11022480*x*C_3+122880*C_4 +1077167364089547583440*x^4
-            sage: C.functorial_composition(X^4)[4] == F
+            sage: H = 20437340160*E_2(x^2)+40874803200*x^2*E_2+11022480*x*C_3+122880*C_4 +1077167364089547583440*x^4
+            sage: C.functorial_composition(X^4)[4] == H
+            True
+
+            sage: H = C.functorial_composition(X^3)
+            sage: H[3] == 3*C_3 + 8*x*E_2 + 15*x^3
             True
 
             sage: (E.restrict(3, 3)^2).functorial_composition(E.restrict(2, 2)^2)
