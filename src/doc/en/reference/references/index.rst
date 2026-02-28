@@ -517,6 +517,10 @@ REFERENCES:
             *Maps of toric varieties in Cox coordinates*,
             :arxiv:`1004.4924`
 
+.. [BBF] \B. Brubaker, D. Bump, and S. Friedberg.
+          Weyl Group Multiple Dirichlet Series: Type A Combinatorial Theory.
+          Ann. of Math. Stud., vol. 175, Princeton Univ. Press, New Jersey, 2011.
+
 .. [BBBCDGLLLMPPSW2019] \D. Bellizia, F. Berti, O. Bronchain, G. Cassiers,
                         S. Duval, C. Guo, G. Leander, G. Leurent, I. Levi,
                         C. Momin, O. Pereira, T. Peters, F. Standeart, F. Wiemer.
@@ -2956,6 +2960,10 @@ REFERENCES:
 .. [GDR2003] \R. González-Díaz and P. Réal, *Computation of cohomology
              operations on finite simplicial complexes* in Homology,
              Homotopy and Applications 5 (2003), 83-93.
+
+.. [GC50] \I. M. Gelfand and M. L. Cetlin.
+           Finite-Dimensional Representations of the Group of Unimodular Matrices.
+           Dokl. Akad. Nauk SSSR **71**, pp. 825--828, 1950.
 
 .. [GCL1992] Geddes, Czapor, Labahn, *Algorithms for computer algebra*.
              Springer (1992).  ISBN 0-7923-9259-0.
@@ -6742,6 +6750,11 @@ REFERENCES:
 
 .. [Ter2021b] Paul Terwilliger. *The alternating central extension of the
               Onsager Lie algebra*. Preprint, :arxiv:`2104.08106` (2021).
+
+.. [Tok88] \T. Tokuyama.
+           A Generating Function of Strict Gelfand Patterns and Some Formulas on
+           Characters of General Linear Groups.
+           J. Math. Soc. Japan **40** (4), pp. 671--685, 1988.
 
 .. [TP1994] \J. Thas, S. Payne, *Spreads and ovoids in finite generalized
             quadrangles*. Geometriae Dedicata, Vol. 52, pp. 227-253, 1994.
