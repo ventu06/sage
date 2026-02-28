@@ -144,7 +144,6 @@ cpdef py_scalar_parent(py_type):
         sage: py_scalar_parent(gmpy2.mpc)                                               # needs sage.rings.complex_double
         Complex Double Field
 
-        sage: # needs mpmath
         sage: import mpmath
         sage: py_scalar_parent(mpmath.mpf)
         Real Double Field
@@ -489,7 +488,6 @@ cpdef bint is_mpmath_type(t) noexcept:
 
     EXAMPLES::
 
-        sage: # needs mpmath
         sage: from sage.structure.coerce import is_mpmath_type
         sage: is_mpmath_type(int)
         False
