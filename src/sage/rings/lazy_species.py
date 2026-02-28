@@ -919,20 +919,33 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         feasible, whereas the ``orbit`` counting algorithm is not::
 
             sage: C = L.Cycles()
-            sage: C.functorial_composition(X^4)
+            sage: C.functorial_composition(X^4)  # random
             (20437340160*E_2(X^2)+40874803200*X^2*E_2+11022480*X*C_3+122880*C_4 +1077167364089547583440*X^4) + O^7
 
-        TESTS::
+        TESTS:
+
+        For checking, let us define some small species::
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E = L.Sets()
-            sage: E2 = E.restrict(2, 2)
-            sage: E3 = E.restrict(3, 3)
-            sage: (E3^2).functorial_composition(E2^2)
+            sage: C = L.Cycles()
+            sage: E_2 = E[2]
+            sage: E_3 = E[3]
+            sage: E_4 = E[4]
+            sage: C_3 = C[3]
+            sage: C_4 = C[4]
+            sage: x = X[1]
+
+        Let us first check the example computing cycles of the set of
+        four-tuples::
+
+            sage: F = 20437340160*E_2(x^2)+40874803200*x^2*E_2+11022480*x*C_3+122880*C_4 +1077167364089547583440*x^4
+            sage: C.functorial_composition(X^4)[4] == F
+            True
+
+            sage: (E.restrict(3, 3)^2).functorial_composition(E.restrict(2, 2)^2)
             (E_2(X^2)+2*X*E_3) + O^7
 
-            sage: E = L.Sets()
-            sage: C = L.Cycles()
             sage: E.restrict(2, 2).functorial_composition(C.restrict(3, 3))
             E_3 + O^7
 
@@ -941,8 +954,10 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             2 + 4*X + 8*X^2 + 128/3*X^3 + 8192/3*X^4 + 536870912/15*X^5 + 1152921504606846976/45*X^6 + O(X^7)
             sage: H.truncate(4)
             2 + 4*X + (8*E_2+4*X^2) + (16*E_3+48*X*E_2+16*X^3)
-            sage: H[4]  # long time
+            sage: H[4]  # random, long time
             32*E_4 + 224*X*E_3 + 32*E_2(E_2) + 224*E_2^2 + 1568*X^2*E_2 + 112*E_2(X^2) + 1792*X^4
+            sage: H[4] == 32*E_4 + 224*x*E_3 + 32*E_2(E_2) + 224*E_2^2 + 1568*x^2*E_2 + 112*E_2(x^2) + 1792*x^4  # long time
+            True
 
         Computing the next term is most likely out of reach::
 
@@ -2641,6 +2656,7 @@ def weighted_partitions_by_capacity(weights, capacities):
 
     EXAMPLES::
 
+        sage: from sage.rings.lazy_species import weighted_partitions_by_capacity
         sage: list(weighted_partitions_by_capacity([1,2,2,1,4], [[5,2]]))
         [((4, 0), (1, 2, 3)), ((4, 3), (1, 2, 0))]
 
