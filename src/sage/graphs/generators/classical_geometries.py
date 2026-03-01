@@ -394,7 +394,8 @@ def OrthogonalPolarGraph(m, q, sign='+', immutable=False):
     return G
 
 
-def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
+def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None,
+                                     immutable=False):
     r"""
     Return the Graph `NO^{\epsilon,\perp}_{m}(q)`.
 
@@ -425,6 +426,9 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     - ``q`` -- a power of a prime number, the size of the underlying field
 
     - ``sign`` -- string (default: ``'+'``); must be either ``'+'`` or ``'-'``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -515,13 +519,15 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     dec = ''
     if not m % 2:
         if q in [2, 3]:
-            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1])
+            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1],
+                                        immutable=immutable)
         else:
             raise ValueError("for m even q must be 2 or 3")
     elif perp is not None:
         if q == 5:
             pt = [-1, 1] if sign == '+' else [2, 3] if sign == '-' else []
-            G = _orthogonal_polar_graph(m, q, point_type=pt)
+            G = _orthogonal_polar_graph(m, q, point_type=pt,
+                                        immutable=immutable)
             dec = ",perp"
         else:
             raise ValueError("for perp not None q must be 5")
@@ -550,9 +556,8 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
                  if len(x) == deg)
         Vh = Vh[0]
         L = libgap.Orbit(gp, [1, Vh], libgap.OnSets)
-        G = Graph()
-        G.add_edges(L)
-    G.name("NO^" + sign + dec + str((m, q)))
+        G = Graph(L, format="list_of_edges", immutable=immutable)
+    G._name = "NO^" + sign + dec + str((m, q))
     return G
 
 
