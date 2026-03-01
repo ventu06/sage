@@ -1488,7 +1488,7 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None,
                  name=f"Nowhere0WordsTwoWeightCodeGraph({q})")
 
 
-def OrthogonalDualPolarGraph(e, d, q):
+def OrthogonalDualPolarGraph(e, d, q, immutable=False):
     r"""
     Return the dual polar graph on `GO^e(n,q)` of diameter `d`.
 
@@ -1505,6 +1505,9 @@ def OrthogonalDualPolarGraph(e, d, q):
 
     - ``q`` -- integer; prime power; order of the finite field over which to
       build the polar space
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1620,6 +1623,5 @@ def OrthogonalDualPolarGraph(e, d, q):
                                                 allIsoSubspaces[j]))
              == intersection_size]
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name = f"Dual Polar Graph on Orthogonal group {(e, m, q)}")
