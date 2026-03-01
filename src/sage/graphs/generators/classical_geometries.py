@@ -1258,7 +1258,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None,
     return G.copy(immutable=True) if immutable else G
 
 
-def CossidentePenttilaGraph(q):
+def CossidentePenttilaGraph(q, immutable=False):
     r"""
     Return the Cossidente-Penttila
     `((q^3+1)(q+1)/2,(q^2+1)(q-1)/2,(q-3)/2,(q-1)^2/2)`-strongly regular graph
@@ -1292,6 +1292,9 @@ def CossidentePenttilaGraph(q):
     INPUT:
 
     - ``q`` -- an odd prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1351,11 +1354,10 @@ def CossidentePenttilaGraph(q):
         end;""")
 
     adj = adj_list(q)  # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i, int(j - 1))
-               for i, ni in enumerate(adj) for j in ni),
-              format='list_of_edges', multiedges=False)
-    G.name('CossidentePenttila(' + str(q) + ')')
-    return G
+    return Graph(((i, int(j - 1))
+                  for i, ni in enumerate(adj) for j in ni),
+                 format='list_of_edges', multiedges=False, immutable=immutable,
+                 name=f"CossidentePenttila({q})")
 
 
 def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
