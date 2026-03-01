@@ -1003,7 +1003,6 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
         Another check for the subgroups algorithm::
 
-            sage: C = L.Cycles()
             sage: Eo = L.OrientedSets()
             sage: E = L.Sets()
             sage: pairs = E * E.restrict(2, 2)
@@ -1540,6 +1539,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         self._args = args
 
     def points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
+        if i == i_G:
+            return fix[i]
         try:
             return next(b for a, b in self._cache if a == (i, H))
         except StopIteration:
@@ -1548,23 +1549,19 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         def index(F):
             return next(i for i, C in enumerate(l_G) if F in C[1])
 
-        G = l_G[i_G][1].Representative()
         if i in self._groups_cache:
             groups = self._groups_cache[i]
         else:
             F = l_G[i][1].Representative()
+            G = l_G[i_G][1].Representative()
             groups = libgap.IntermediateSubgroups(G, F)["subgroups"]
             groups = [index(F1) for F1 in groups]
             self._groups_cache[i] = groups
 
-        f = next(b for a, b in fix if a == l_G[i][1]) * H.Size().sage()
-
-        if i == i_G:
-            r = f
-        else:
-            r = (f - self.points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
-                 - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
-                       for i_F in groups))
+        r = (fix[i]
+             - self.points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
+             - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
+                   for i_F in groups))
         self._cache.append(((i, H), r))
         return r
 
@@ -1612,14 +1609,15 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         result = R.zero()
         for h, c in left[g_count]:
             H = h.permutation_group()[0].gap()
-            f = fixed_points_factorized(g_count,
-                                        [(A._dis, e) for A, e in h._monomial.items()],
-                                        G)
+            f = [fixed_points_factorized(g_count,
+                                         [(A._dis, e) for A, e in h._monomial.items()],
+                                         C_N.Representative())
+                 for _, C_N in l_G]
             for i, (C_n, C_N) in enumerate(l_G):
                 m = self.points_with_stabilizer(i, H, i_G, l_G, f, S)
                 F = C_N.Representative()
                 N = libgap.Normalizer(G, F)
-                r = m * F.Size().sage() / N.Size().sage() / H.Size().sage()
+                r = m * F.Size().sage() / N.Size().sage()
                 if r:
                     F1 = PermutationGroup(gap_group=C_n,
                                           domain=range(1, n+1))
@@ -2781,8 +2779,12 @@ def weighted_partitions_by_capacity(weights, capacities):
         next_bin = chosen_bin + 1
 
 
-def fixed_points(k, A, H):
-    if libgap.Size(H) > libgap.Size(A):
+def fixed_points(k, A, B):
+    r"""
+    Compute the number of fixed points of the action of `B` on
+    `S_n / A`.
+    """
+    if libgap.Size(B) > libgap.Size(A):
         return ZZ.zero()
 
     index = ZZ(k).factorial() / libgap.Size(A).sage()
@@ -2792,21 +2794,37 @@ def fixed_points(k, A, H):
     S = libgap.SymmetricGroup(k)
     if index < 1000:
         act = libgap.FactorCosetAction(S, A)
-        return index - libgap.Length(libgap.MovedPoints(libgap.Image(act, H))).sage()
+        return index - libgap.Length(libgap.MovedPoints(libgap.Image(act, B))).sage()
 
-    N_H = None
+    N_B = None
     count = ZZ.zero()
-    for hom in libgap.IsomorphicSubgroups(A, H):
+    for hom in libgap.IsomorphicSubgroups(A, B):
         R = libgap.Image(hom)
-        if libgap.IsConjugate(S, H, R):
-            if N_H is None:
-                N_H = libgap.Size(libgap.Normalizer(S, H)).sage()
-            count += N_H / libgap.Size(libgap.Normalizer(A, R)).sage()
+        if libgap.IsConjugate(S, B, R):
+            if N_B is None:
+                N_B = libgap.Size(libgap.Normalizer(S, B)).sage()
+            count += N_B / libgap.Size(libgap.Normalizer(A, R)).sage()
 
     return count
 
 
 def restricted_group(gens, X):
+    r"""
+    Return a group restricted to a collection of its orbits.
+
+    INPUT:
+
+    - ``gens`` -- the generators of a permutation group
+    - ``X`` -- a subset of its domain
+
+    OUTPUT:
+
+    ``None``, if the result is the trivial group, and the restricted
+    group otherwise.
+
+    It is assumed that ``X`` is indeed the union of orbits of the
+    group.
+    """
     new_gens = [libgap.PermList([X.index(x ** g) + 1 for x in X])
                 for g in gens]
     if not new_gens:
@@ -2833,29 +2851,25 @@ def fixed_points_factorized(n, lA, B):
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
     lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
-    mult_factor = prod(ZZ(e_i).factorial() for _, e_i in lA)
-    result = []
-    for clB in libgap.ConjugacyClassesSubgroups(B):
-        repB = libgap.Representative(clB)
-        gensB = libgap.GeneratorsOfGroup(repB)
-        orbits = libgap.Orbits(repB, list(range(1, n+1))).sage()
-        orbit_sizes = [len(o) for o in orbits]
-        assignments = weighted_partitions_by_capacity(orbit_sizes,
-                                                      capacities)
-        total_count = ZZ.zero()
-        for f in assignments:
-            pts = [tuple(sorted(p for i in b for p in orbits[i])) for b in f]
-            local_product = ZZ.one()
-            for i in range(len(f)):
-                B_prime_i = restricted_group(gensB, pts[i])
-                if B_prime_i is None:
-                    fix = ZZ(len(pts[i])).factorial() / libgap.Size(lA_flat[i]).sage()
-                else:
-                    fix = fixed_points(ZZ(len(pts[i])), lA_flat[i], B_prime_i)
-                local_product *= fix
-                if not local_product:
-                    break
-            total_count += local_product
-        result.append((clB, total_count * mult_factor))
+    gensB = libgap.GeneratorsOfGroup(B)
+    orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
+    orbit_sizes = [len(o) for o in orbits]
+    assignments = weighted_partitions_by_capacity(orbit_sizes,
+                                                  capacities)
+    total_count = ZZ.zero()
+    for f in assignments:
+        pts = [tuple(sorted(p for i in b for p in orbits[i])) for b in f]
+        local_product = ZZ.one()
+        for A_i, pts_i in zip(lA_flat, pts):
+            B_prime_i = restricted_group(gensB, pts_i)
+            if B_prime_i is None:
+                fix = ZZ(len(pts_i)).factorial() / libgap.Size(A_i).sage()
+            else:
+                fix = fixed_points(ZZ(len(pts_i)), A_i, B_prime_i)
+            local_product *= fix
+            if not local_product:
+                break
+        total_count += local_product
 
-    return result
+    mult_factor = prod(ZZ(e_i).factorial() for _, e_i in lA)
+    return total_count * mult_factor
