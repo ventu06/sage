@@ -547,7 +547,7 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     return G
 
 
-def _polar_graph(m, q, g, intersection_size=None):
+def _polar_graph(m, q, g, intersection_size=None, immutable=False):
     r"""
     The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`.
 
@@ -573,6 +573,9 @@ def _polar_graph(m, q, g, intersection_size=None):
       Otherwise, build the graph on the maximal totally isotropic subspaces,
       with adjacency specified by ``intersection_size`` being as given.
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     TESTS::
 
         sage: from sage.graphs.generators.classical_geometries import _polar_graph
@@ -592,13 +595,12 @@ def _polar_graph(m, q, g, intersection_size=None):
     h = libgap.Set([libgap.Position(V, x) for x in sp])  # indices of the points in s
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on these subspaces
     if intersection_size is None:
-        G = Graph()
-        for x in L:  # every pair of points in the subspace is adjacent to each other in G
-            G.add_edges(combinations(x, 2))
-        return G
-    else:
-        return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
-                     loops=False)
+        from itertools import chain
+        # every pair of points in the subspace is adjacent to each other in G
+        return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                     format="list_of_edges", immutable=immutable)
+    return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
+                 format="rule", loops=False, immutable=immutable)
 
 
 def UnitaryPolarGraph(m, q, algorithm='gap'):
