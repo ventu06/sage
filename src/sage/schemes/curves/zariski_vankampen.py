@@ -1660,18 +1660,25 @@ def fundamental_group_from_braid_mon(bm, degree=None,
         l1 = d + j + 1
         br = bm[k]
         rnf = rightnormalform(br)
+        rnf1 = rnf[: -1]
         xp = rnf[-1][0]
+        if rnf1:
+            elt = prod(B(m) for m in rnf1)
+        else:
+            elt = B.one()
         parity = xp % 2
         yp = xp // 2
         if yp == 0:
             cnja = ()
             cnjb = ()
+        elif yp > 0:
+            cnja = yp * cox
+            cnjb = yp * coxm
         else:
-            cnja = abs(yp) * cox
-            cnjb = abs(yp) * coxm
+            cnja = abs(yp) * coxm
+            cnjb = abs(yp) * cox
         for gen in F.gens():
             j0 = gen.Tietze()[0]
-            elt = prod(B(m) for m in rnf[:-1])
             gen0 = gen * elt
             if parity:
                 gen0 = homcnjdelta(gen0)
