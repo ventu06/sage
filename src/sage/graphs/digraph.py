@@ -98,8 +98,10 @@ graphs. Here is what they can do
     :meth:`~DiGraph.is_tournament` | Check whether the digraph is a tournament.
     :meth:`~DiGraph.period` | Return the period of the digraph.
     :meth:`~DiGraph.level_sets` | Return the level set decomposition of the digraph.
-    :meth:`~DiGraph.topological_sort_generator` | Return a list of all topological sorts of the digraph if it is acyclic
-    :meth:`~DiGraph.topological_sort` | Return a topological sort of the digraph if it is acyclic
+    :meth:`~DiGraph.topological_sort_generator` | Return a list of all topological sorts of the digraph if it is acyclic.
+    :meth:`~DiGraph.topological_sort` | Return a topological sort of the digraph if it is acyclic.
+    :meth:`~DiGraph.longest_dag_path` | Return a longest path in this directed acyclic graph.
+
 
 **Hard stuff:**
 
@@ -2930,6 +2932,190 @@ class DiGraph(GenericGraph):
         """
         from sage.combinat.posets.posets import Poset
         return Poset(self).linear_extensions()
+    
+    def longest_path(self, source=None, target=None, weight=None):
+        r"""
+        Return the longest path (by edge count or total weight) in this DAG.
+
+        This method uses dynamic programming over a topological ordering of the
+        vertices, running in linear time `O(V + E)`.
+
+        This method raises a ``ValueError`` if the graph contains a directed
+        cycle.
+
+        INPUT:
+
+         - ``source`` -- (default: ``None``) a vertex.  If given, only paths
+         *starting* at ``source`` are considered.
+
+         - ``target`` -- (default: ``None``) a vertex.  If given, only paths
+         *ending* at ``target`` are considered.
+
+         - ``weight`` -- (default: ``None``) the name of an edge attribute to
+          use as the edge weight.  If ``None``, every edge has weight ``1``
+         (i.e. the method maximises the number of edges).
+
+        OUTPUT:
+
+         A pair ``(length, path)`` where
+
+         - ``length`` is the total weight (or edge count when ``weight=None``)
+         of the longest path;
+         - ``path`` is a list of vertices forming the longest path, ordered from
+          start to end.
+
+         If no path exists (e.g. ``source`` and ``target`` are disconnected)
+         ``(0, [])`` is returned.
+
+        Time complexity: `O(V + E)`.
+        Space complexity: `O(V)`.
+
+        EXAMPLES:
+
+        A simple unweighted path graph::
+
+         sage: D = DiGraph([(0, 1), (1, 2), (2, 3)])
+         sage: D.longest_path()
+         (3, [0, 1, 2, 3])
+
+        A diamond DAG (multiple paths of the same length)::
+
+         sage: D = DiGraph([(0,1),(0,2),(1,3),(2,3)])
+         sage: length, path = D.longest_path()
+         sage: length
+         2
+         sage: path[0] == 0 and path[-1] == 3
+         True
+
+        Restricting to a source and a target::
+
+         sage: D = DiGraph([(0,1),(1,2),(0,2),(2,3)])
+         sage: D.longest_path(source=0, target=2)
+         (2, [0, 1, 2])
+
+        Using edge weights::
+
+         sage: D = DiGraph()
+         sage: D.add_edges([(0, 1, {'w': 3}), (1, 2, {'w': 1}), (0, 2, {'w': 5})])
+         sage: D.longest_path(weight='w')
+         (5, [0, 2])
+ 
+        Weighted DAG where the longer-hop path wins::
+
+         sage: D = DiGraph()
+         sage: D.add_edges([(0,1,{'w':4}),(1,2,{'w':4}),(0,2,{'w':6})])
+         sage: D.longest_path(weight='w')
+         (8, [0, 1, 2])
+
+        Single vertex (no edges)::
+
+         sage: D = DiGraph([0])
+         sage: D.longest_path()
+         (0, [0])
+
+        Disconnected DAG::
+
+         sage: D = DiGraph([(0,1),(2,3)])
+         sage: D.longest_path()
+         (1, [0, 1])
+
+        TESTS:
+
+        Cycle detection::
+
+         sage: D = DiGraph([(0,1),(1,2),(2,0)])
+         sage: D.longest_path()
+         Traceback (most recent call last):
+         ...
+         ValueError: The graph contains a directed cycle; longest_path() is only  defined for DAGs.
+
+        ``source`` not in graph::
+
+         sage: D = DiGraph([(0,1)])
+         sage: D.longest_path(source=99)
+         Traceback (most recent call last):
+         ...
+         ValueError: Vertex 99 is not in the graph.
+
+        ``target`` not in graph::
+
+         sage: D = DiGraph([(0,1)])
+         sage: D.longest_path(target=99)
+         Traceback (most recent call last):
+         ...
+         ValueError: Vertex 99 is not in the graph.
+
+        Empty graph::
+
+         sage: D = DiGraph()
+         sage: D.longest_path()
+         (0, [])
+        """
+        if self.order() == 0:
+            return (0, [])
+
+        if source is not None and source not in self:
+            raise ValueError(f"Vertex {source!r} is not in the graph.")
+        if target is not None and target not in self:
+            raise ValueError(f"Vertex {target!r} is not in the graph.")
+
+        try:
+            topo_order = self.topological_sort()
+        except Exception:
+            raise ValueError(
+            "The graph contains a directed cycle; longest_path() is only "
+            "defined for DAGs."
+        )
+
+        NEG_INF = float('-inf')
+
+        dist = {v: NEG_INF for v in self}
+        pred = {v: None    for v in self}
+
+        for v in self:
+            if source is None or v == source:
+                dist[v] = 0
+
+        for u in topo_order:
+            if dist[u] == NEG_INF:
+                continue 
+
+            for _, v, data in self.edges_incident(u, labels=True):
+                if self.has_edge(u, v):
+                    if weight is None:
+                        w = 1
+                    else:
+                        if isinstance(data, dict):
+                            w = data.get(weight, 1)
+                        else:
+                            w = data if data is not None else 1
+
+                    new_dist = dist[u] + w
+                    if new_dist > dist[v]:
+                        dist[v] = new_dist
+                        pred[v] = u
+        candidates = {
+            v for v in self
+            if dist[v] != NEG_INF and (target is None or v == target)
+       }
+
+        if not candidates:
+            return (0, [])
+
+        best_end = max(candidates, key=lambda v: dist[v])
+        best_len = dist[best_end]
+
+        if best_len <= 0 and best_end == source:
+            return (0, [source])
+
+        path = []
+        v = best_end
+        while v is not None:
+            path.append(v)
+            v = pred[v]
+        path.reverse()
+
+        return (best_len, path)
 
     # Visualization
 
