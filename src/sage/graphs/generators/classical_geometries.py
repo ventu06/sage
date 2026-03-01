@@ -784,7 +784,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     return G
 
 
-def UnitaryDualPolarGraph(m, q):
+def UnitaryDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Dual Unitary Polar Graph `U(m,q)`.
 
@@ -794,6 +794,9 @@ def UnitaryDualPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -827,15 +830,14 @@ def UnitaryDualPolarGraph(m, q):
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-                     intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)))
-    G.relabel()
-    G.name("Unitary Dual Polar Graph DU" + str((m, q)))
+    name = "Unitary Dual Polar Graph DU" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q**2)))
+        name += '; GQ' + str((q, q**2))
     if m == 5:
-        G.name(G.name() + '; GQ' + str((q**3, q**2)))
-    return G
+        name += '; GQ' + str((q**3, q**2))
+    return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                        intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
 def SymplecticDualPolarGraph(m, q):
