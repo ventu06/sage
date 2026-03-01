@@ -1004,7 +1004,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
         Another check for the subgroups algorithm::
 
             sage: C = L.Cycles()
-            sage: Eo = 1 + C.restrict(1, 3) + L.OrientedSets()
+            sage: Eo = L.OrientedSets()
             sage: E = L.Sets()
             sage: pairs = E * E.restrict(2, 2)
             sage: H1 = (Eo^2).functorial_composition(pairs, algorithm="subgroups")
@@ -1942,6 +1942,8 @@ class LazyCombinatorialSpeciesUnivariate(LazyCombinatorialSpecies):
             {(Eo_5,)}
             sage: set(G.structures(["a", 1, "b", 2]))
             {(Eo_4, ((1, 2, 'a', 'b'),)), (Eo_4, ((1, 2, 'b', 'a'),))}
+            sage: G.generating_series()
+            1 + X + X^2 + 1/3*X^3 + 1/12*X^4 + 1/60*X^5 + 1/360*X^6 + O(X^7)
         """
         return OrientedSetSpecies(self)
 
@@ -2241,8 +2243,13 @@ class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             True
         """
         P = parent._laurent_poly_ring
+        M = P._indices
         A = P._indices._indices
-        S = parent(lambda n: A(AlternatingGroup(n), check=False), valuation=4)
+        def Eo(n):
+            if n > 2:
+                return A(AlternatingGroup(n), check=False)
+            return M(AlternatingGroup(n), check=False)
+        S = parent(Eo)
         super().__init__(parent, S._coeff_stream)
 
     def _repr_(self):
