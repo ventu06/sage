@@ -206,7 +206,7 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     return G
 
 
-def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
+def _orthogonal_polar_graph(m, q, sign='+', point_type=[0], immutable=False):
     r"""
     A helper function to build ``OrthogonalPolarGraph`` and ``NO2,3,5`` graphs.
 
@@ -221,6 +221,9 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
       is even, ``'+'`` (default) otherwise
 
     - ``point_type`` -- list of elements from `F_q`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -323,10 +326,8 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
 
     V = [x for x in PG if F(x) in point_type]
 
-    G = Graph([V, lambda x, y: P(x, y) == 0], loops=False)
-
-    G.relabel()
-    return G
+    return Graph([range(len(V)), lambda i, j: P(V[i], V[j]) == 0],
+                 format="rule", loops=False, immutable=immutable)
 
 
 def OrthogonalPolarGraph(m, q, sign='+'):
