@@ -881,7 +881,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
             sage: E = L.Sets()
             sage: subsets = E^2
-            sage: pairs = E*E.restrict(2, 2)
+            sage: pairs = E * E.restrict(2, 2)
             sage: G = subsets.functorial_composition(pairs)
             sage: G[5] - L.Graphs()[5]
             0
@@ -999,6 +999,19 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
             sage: H1 = C.functorial_composition(G)
             sage: H2 = (E^2).functorial_composition(G)
             sage: H[:5] == H1.hadamard_product(H2)[:5]
+            True
+
+        Another check for the subgroups algorithm::
+
+            sage: C = L.Cycles()
+            sage: Eo = 1 + C.restrict(1, 3) + L.OrientedSets()
+            sage: E = L.Sets()
+            sage: pairs = E * E.restrict(2, 2)
+            sage: H1 = (Eo^2).functorial_composition(pairs, algorithm="subgroups")
+            sage: H2 = (Eo^2).functorial_composition(pairs, algorithm="orbits")
+            sage: H1[4] == H2[4]
+            True
+            sage: H1[5] == H2[5]  # long
             True
         """
         return FunctorialCompositionSpeciesElement(self, *args, algorithm=algorithm)
@@ -2216,7 +2229,7 @@ class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
                          metaclass=InheritComparisonClasscallMetaclass):
     def __init__(self, parent):
         r"""
-        Initialize the species of polygons.
+        Initialize the species of oriented sets.
 
         TESTS::
 
@@ -2812,29 +2825,30 @@ def fixed_points_factorized(n, lA, B):
     # if A_i is the trivial group, there are no moved points
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
+    lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
     mult_factor = prod(ZZ(e_i).factorial() for _, e_i in lA)
     result = []
     for clB in libgap.ConjugacyClassesSubgroups(B):
         repB = libgap.Representative(clB)
         gensB = libgap.GeneratorsOfGroup(repB)
-        orbs = libgap.Orbits(repB, list(range(1, n+1))).sage()
-        assignments = weighted_partitions_by_capacity([len(o) for o in orbs],
+        orbits = libgap.Orbits(repB, list(range(1, n+1))).sage()
+        orbit_sizes = [len(o) for o in orbits]
+        assignments = weighted_partitions_by_capacity(orbit_sizes,
                                                       capacities)
         total_count = ZZ.zero()
         for f in assignments:
-            pts = [tuple(sorted(p for i in b for p in orbs[i])) for b in f]
+            pts = [tuple(sorted(p for i in b for p in orbits[i])) for b in f]
             local_product = ZZ.one()
-            for i in range(len(capacities)):
+            for i in range(len(f)):
                 B_prime_i = restricted_group(gensB, pts[i])
                 if B_prime_i is None:
-                    f = capacities[i][0].factorial() / libgap.Size(lA[i][0]).sage()
+                    fix = ZZ(len(pts[i])).factorial() / libgap.Size(lA_flat[i]).sage()
                 else:
-                    f = fixed_points(capacities[i][0], lA[i][0], B_prime_i)
-                local_product *= f
+                    fix = fixed_points(ZZ(len(pts[i])), lA_flat[i], B_prime_i)
+                local_product *= fix
                 if not local_product:
                     break
             total_count += local_product
-
         result.append((clB, total_count * mult_factor))
 
     return result
