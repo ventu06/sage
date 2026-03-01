@@ -672,7 +672,7 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
     return G
 
 
-def NonisotropicUnitaryPolarGraph(m, q):
+def NonisotropicUnitaryPolarGraph(m, q, immutable=False):
     r"""
     Return the Graph `NU(m,q)`.
 
@@ -685,6 +685,9 @@ def NonisotropicUnitaryPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -729,12 +732,14 @@ def NonisotropicUnitaryPolarGraph(m, q):
     h = libgap.Set([libgap.Position(V, x)
                     for x in libgap.Intersection(V, sp)])  # indices
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on the tangent lines
-    G = Graph()
-    for x in L:  # every pair of points in the subspace is adjacent to each other in G
-        G.add_edges(combinations(x, 2))
-    G.relabel()
-    G.name("NU" + str((m, q)))
-    return G
+
+    from itertools import chain
+    vertices = set(chain.from_iterable(L))
+    v_to_i = {u: i for i, u in enumerate(vertices)}
+    L = [[v_to_i[u] for u in x] for x in L]
+    return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                 format="list_of_edges", immutable=immutable,
+                 name=f"NU{(m, q)}")
 
 
 def UnitaryDualPolarGraph(m, q):
