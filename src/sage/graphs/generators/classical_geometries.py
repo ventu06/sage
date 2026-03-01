@@ -923,7 +923,7 @@ def TaylorTwographDescendantSRG(q, clique_partition=False, immutable=False):
     return G
 
 
-def TaylorTwographSRG(q):
+def TaylorTwographSRG(q, immutable=False):
     r"""
     Return a strongly regular graph from the Taylor's two-graph for `U_3(q)`,
     `q` odd
@@ -937,6 +937,9 @@ def TaylorTwographSRG(q):
     INPUT:
 
     - ``q`` -- a power of an odd prime number
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -953,7 +956,7 @@ def TaylorTwographSRG(q):
     G.add_vertex(v0)
     G.seidel_switching(sum(l[:(q**2 + 1)/2], []))
     G.name("Taylor two-graph SRG")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
