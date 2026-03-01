@@ -1360,7 +1360,8 @@ def CossidentePenttilaGraph(q, immutable=False):
                  name=f"CossidentePenttila({q})")
 
 
-def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
+def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None,
+                                    check_hyperoval=True, immutable=False):
     r"""
     Return the subgraph of nowhere 0 words from two-weight code of projective
     plane hyperoval.
@@ -1398,6 +1399,9 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -1479,10 +1483,9 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     for x in C:
         x.set_immutable()
-    G = Graph([C, lambda x, y: F.zero() not in x + y])
-    G.name('Nowhere0WordsTwoWeightCodeGraph(' + str(q) + ')')
-    G.relabel()
-    return G
+    return Graph([range(len(C)), lambda x, y: F_0 not in C[x] + C[y]],
+                 format="rule", immutable=immutable,
+                 name=f"Nowhere0WordsTwoWeightCodeGraph({q})")
 
 
 def OrthogonalDualPolarGraph(e, d, q):
