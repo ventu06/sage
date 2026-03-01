@@ -113,7 +113,7 @@ def SymplecticPolarGraph(d, q, algorithm=None):
     return G
 
 
-def AffineOrthogonalPolarGraph(d, q, sign='+'):
+def AffineOrthogonalPolarGraph(d, q, sign='+', immutable=False):
     r"""
     Return the affine polar graph `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`.
 
@@ -137,6 +137,9 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     - ``sign`` -- string (default: ``'+'``); must be equal to ``'+'``, ``'-'``,
       or ``None`` to compute (respectively) `VO^+(d,q),VO^-(d,q)` or
       `VO(d,q)`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. NOTE::
 
@@ -195,15 +198,13 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     F = libgap.GF(q).sage()
     V = list(VectorSpace(F, d))
 
-    G = Graph()
-    G.add_vertices([tuple(_) for _ in V])
-    for x, y in combinations(V, 2):
-        if not (x - y)*M*(x - y):
-            G.add_edge(tuple(x), tuple(y))
-
-    G.name("Affine Polar Graph VO^" + str('+' if s == 1 else '-') + "(" + str(d) + "," + str(q) + ")")
-    G.relabel()
-    return G
+    Vi = {tuple(x): i for i, x in enumerate(V)}
+    edges = ((Vi[tuple(x)], Vi[tuple(y)])
+             for x, y in combinations(V, 2)
+             if not (x - y)*M*(x - y))
+    name = f"Affine Polar Graph VO^{'+' if s == 1 else '-'}({d},{q})"
+    return Graph([range(len(V)), edges], format="vertices_and_edges",
+                 name=name, immutable=immutable)
 
 
 def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
