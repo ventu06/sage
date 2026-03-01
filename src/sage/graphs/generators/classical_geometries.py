@@ -646,7 +646,7 @@ def _polar_graph(m, q, g, intersection_size=None, immutable=False, name=None,
                  format="rule", loops=False, immutable=immutable, name=name)
 
 
-def UnitaryPolarGraph(m, q, algorithm='gap'):
+def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
     r"""
     Return the Unitary Polar Graph `U(m,q)`.
 
@@ -661,6 +661,9 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for large examples (especially with
       `q>2`). Otherwise it is done directly.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -685,11 +688,18 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
         ...
         ValueError: unknown algorithm!
     """
+    name = "Unitary Polar Graph U" + str((m, q))
+    if m == 4:
+        name += '; GQ' + str((q**2, q))
+    if m == 5:
+        name += '; GQ' + str((q**2, q**3))
+
     if algorithm == "gap":
         from sage.libs.gap.libgap import libgap
-        G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q))
+        return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                            name=name, immutable=immutable, relabel=True)
 
-    elif algorithm is None:  # slow on large examples
+    if algorithm is None:  # slow on large examples
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.modules.free_module_element import free_module_element as vector
         Fq = FiniteField(q**2, 'a')
@@ -703,17 +713,10 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
 
         V = [x for x in PG if P(x, x)]
         # bottleneck is here, of course
-        G = Graph([V, lambda x, y: P(x, y)], loops=False)
-    else:
-        raise ValueError("unknown algorithm!")
+        return Graph([range(len(V)), lambda x, y: P(V[x], V[y])], format="rule",
+                     loops=False, name=name, immutable=immutable)
 
-    G.relabel()
-    G.name("Unitary Polar Graph U" + str((m, q)))
-    if m == 4:
-        G.name(G.name() + '; GQ' + str((q**2, q)))
-    if m == 5:
-        G.name(G.name() + '; GQ' + str((q**2, q**3)))
-    return G
+    raise ValueError("unknown algorithm!")
 
 
 def NonisotropicUnitaryPolarGraph(m, q):
