@@ -335,7 +335,7 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0], immutable=False,
                  format="rule", loops=False, immutable=immutable, name=name)
 
 
-def OrthogonalPolarGraph(m, q, sign='+'):
+def OrthogonalPolarGraph(m, q, sign='+', immutable=False):
     r"""
     Return the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
 
@@ -348,6 +348,9 @@ def OrthogonalPolarGraph(m, q, sign='+'):
 
     - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
       is even, ``'+'`` (default) otherwise
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -384,10 +387,10 @@ def OrthogonalPolarGraph(m, q, sign='+'):
         ...
         ValueError: sign must be equal to either '' or '+' when m is odd
     """
-    G = _orthogonal_polar_graph(m, q, sign=sign)
+    G = _orthogonal_polar_graph(m, q, sign=sign, immutable=immutable)
     if m % 2:
         sign = ""
-    G.name("Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q)))
+    G._name = "Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q))
     return G
 
 
