@@ -1132,7 +1132,8 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     return G
 
 
-def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
+def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None,
+                 check_hyperoval=True, immutable=False):
     r"""
     Return the Haemers graph obtained from `T_2^*(q)^*`.
 
@@ -1172,6 +1173,9 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1251,7 +1255,7 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         G.delete_edges(G.edge_boundary(I_ks[i], I_ks[j]))  # edges on (I_i,I_j)
     G.add_edges(e for c in cliques for e in combinations(c, 2))
     G.name('Haemers(' + str(q) + ')')
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def CossidentePenttilaGraph(q):
