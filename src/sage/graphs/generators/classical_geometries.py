@@ -840,7 +840,7 @@ def UnitaryDualPolarGraph(m, q, immutable=False):
                         name=name, immutable=immutable, relabel=True)
 
 
-def SymplecticDualPolarGraph(m, q):
+def SymplecticDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Symplectic Dual Polar Graph `DSp(m,q)`.
 
@@ -850,6 +850,9 @@ def SymplecticDualPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power, and `m` must be even
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -870,14 +873,12 @@ def SymplecticDualPolarGraph(m, q):
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-                     intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)))
-
-    G.relabel()
-    G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
+    name = "Symplectic Dual Polar Graph DSp" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q)))
-    return G
+        name += '; GQ' + str((q, q))
+    return _polar_graph(m, q, libgap.SymplecticGroup(m, q),
+                        intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
 def TaylorTwographDescendantSRG(q, clique_partition=False):
