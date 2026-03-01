@@ -836,7 +836,7 @@ def SymplecticDualPolarGraph(m, q):
     return G
 
 
-def TaylorTwographDescendantSRG(q, clique_partition=False):
+def TaylorTwographDescendantSRG(q, clique_partition=False, immutable=False):
     r"""
     Return the descendant graph of the Taylor's two-graph for `U_3(q)`, `q` odd.
 
@@ -861,6 +861,9 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
       ``True``, return `q^2-1` cliques of size `q` with empty pairwise
       intersection. (Removing all of them leaves a clique, too), and the point
       removed from the unital.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -906,17 +909,18 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
     V = [x for x in PG if S(x, x) == 0]  # the points of the unital
     v0 = V[0]
     V.remove(v0)
+    name = "Taylor two-graph descendant SRG"
     if mod(q, 4) == 1:
-        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
+        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     else:
-        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
-    G.name("Taylor two-graph descendant SRG")
+        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     if clique_partition:
         lines = [[t for t in V if t[0] + z * t[1] == 0]
                  for z in Fq if z]
         return (G, lines, v0)
-    else:
-        return G
+    return G
 
 
 def TaylorTwographSRG(q):
