@@ -2443,7 +2443,7 @@ def RandomBicubicPlanar(n, seed=None, immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
+def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None, immutable=False):
     r"""
     Return a random unit disk graph of order `n`.
 
@@ -2463,6 +2463,9 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
       the points are drawn
 
     - ``seed`` -- seed of the random number generator
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -2497,4 +2500,4 @@ def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
            for i in range(n)}
     return Graph(adj, format='dict_of_lists',
                  pos={i: points[i] for i in range(n)},
-                 name="Random unit disk graph")
+                 name="Random unit disk graph", immutable=immutable)
