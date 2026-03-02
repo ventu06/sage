@@ -996,6 +996,17 @@ cdef class BuiltinFunction(Function):
             sage: bar = BuiltinFunction(name='bar', alt_name='foo')
             sage: bar(A())
             'foo'
+        
+        Check that the output is symbolic if ``hold=True`` (:issue:`41740`)::
+
+            sage: class Test(BuiltinFunction):
+            ....:     def __init__(self):
+            ....:         BuiltinFunction.__init__(self, 'test', nargs=1)
+            ....:     def _evalf_(self, x, **kwargs):
+            ....:         return "Should not be called when hold=True!"
+            sage: test = Test()
+            sage: test(RR(1.5), hold=True)
+            test(1.50000000000000)
         """
         res = None
         if args and not hold and not all(isinstance(arg, Element) for arg in args):
@@ -1055,11 +1066,11 @@ cdef class BuiltinFunction(Function):
                     except (TypeError, ValueError, ArithmeticError):
                         pass
 
-        if res is None:
+        if res is None and not hold:
             res = self._evalf_try_(*args)
-            if res is None:
-                res = super().__call__(
-                        *args, coerce=coerce, hold=hold)
+        if res is None:
+            res = super().__call__(
+                    *args, coerce=coerce, hold=hold)
 
         cdef Parent arg_parent
         if any(isinstance(x, Element) for x in args):
