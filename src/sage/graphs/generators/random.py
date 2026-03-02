@@ -905,7 +905,7 @@ def RandomIntervalGraph(n, seed=None, immutable=False):
     return IntervalGraph(intervals, points_ordered=True, immutable=immutable)
 
 
-def RandomProperIntervalGraph(n, seed=None):
+def RandomProperIntervalGraph(n, seed=None, immutable=False):
     r"""
     Return a random proper interval graph.
 
@@ -939,6 +939,9 @@ def RandomProperIntervalGraph(n, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomProperIntervalGraph
@@ -963,12 +966,12 @@ def RandomProperIntervalGraph(n, seed=None):
     if n < 0:
         raise ValueError('parameter n must be >= 0')
     if not n:
-        return Graph()
+        return Graph(immutable=immutable)
 
     from sage.graphs.generators.intersection import IntervalGraph
 
     if n == 1:
-        return IntervalGraph([[0, 1]])
+        return IntervalGraph([[0, 1]], immutable=immutable)
 
     from sage.combinat.combinat import catalan_number
     from sage.functions.other import binomial
@@ -1011,7 +1014,7 @@ def RandomProperIntervalGraph(n, seed=None):
         intervals[R][1] = k + 2
 
         # Finally return the interval graph
-        return IntervalGraph(intervals)
+        return IntervalGraph(intervals, immutable=immutable)
 
     # Otherwise, generate a balanced nonnegative reversible string of length
     # 2n'. This case happens with small probability and is way more complex.
@@ -1092,7 +1095,7 @@ def RandomProperIntervalGraph(n, seed=None):
             R += 1
 
     # We finally return the resulting interval graph
-    return IntervalGraph(intervals)
+    return IntervalGraph(intervals, immutable=immutable)
 
 
 # Random Chordal Graphs
