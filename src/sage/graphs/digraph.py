@@ -3072,8 +3072,6 @@ class DiGraph(GenericGraph):
             weight_function=weight_function,
             check_weight=check_weight,
         )
-        if not by_weight:
-            weight_function = None
 
         NEG_INF = float('-inf')
         pred = {v: None for v in self}
@@ -3088,8 +3086,7 @@ class DiGraph(GenericGraph):
             for v, _, label in self.incoming_edge_iterator(u, labels=True):
                 if dist[v] == NEG_INF:
                     continue
-                w = weight_function((v, u, label)) if weight_function else 1
-                new_dist = dist[v] + w
+                new_dist = dist[v] + weight_function((v, u, label))
                 if new_dist > dist[u]:
                     dist[u] = new_dist
                     pred[u] = v
