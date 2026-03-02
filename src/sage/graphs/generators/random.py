@@ -2318,7 +2318,7 @@ def blossoming_contour(t, shift=0, seed=None):
     return label + tt1 + label + tt2 + label
 
 
-def RandomBicubicPlanar(n, seed=None):
+def RandomBicubicPlanar(n, seed=None, immutable=False):
     """
     Return the graph of a random bipartite cubic map with `3 n` edges.
 
@@ -2328,6 +2328,9 @@ def RandomBicubicPlanar(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2437,7 +2440,7 @@ def RandomBicubicPlanar(n, seed=None):
         colour = [u for u in Z3 if u not in taken_colours][0]
         G.add_edge((('n', -1), w[i - 1], colour))
 
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def RandomUnitDiskGraph(n, radius=.1, side=1, seed=None):
