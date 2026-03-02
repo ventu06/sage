@@ -1700,7 +1700,7 @@ def RandomPartialKTree(n, k, x, seed=None):
     return g
 
 
-def RandomRegular(d, n, seed=None):
+def RandomRegular(d, n, seed=None, immutable=False):
     r"""
     Return a random `d`-regular graph on `n` vertices, or ``False`` on failure.
 
@@ -1714,6 +1714,9 @@ def RandomRegular(d, n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1744,7 +1747,7 @@ def RandomRegular(d, n, seed=None):
         N = networkx.random_regular_graph(d, n, seed=seed)
         if N is False:
             return False
-        return Graph(N, sparse=True)
+        return Graph(N, format="NX", sparse=True, immutable=immutable)
     except Exception:
         return False
 
