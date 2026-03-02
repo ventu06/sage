@@ -441,7 +441,8 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
     return G
 
 
-def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
+def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None,
+                     immutable=False):
     r"""
     Return a Random Block Graph.
 
@@ -474,6 +475,9 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -596,12 +600,12 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None):
 
     # We finally build the block graph
     if k == kmax:
-        BG = Graph(name="Random Block Graph with {} blocks of order {}".format(m, k))
+        name = f"Random Block Graph with {m} blocks of order {k}"
     else:
-        BG = Graph(name="Random Block Graph with {} blocks of order {} to {}".format(m, k, kmax))
-    for block in IS:
-        BG.add_clique(block)
-    return BG
+        name = f"Random Block Graph with {m} blocks of order {k} to {kmax}"
+    from itertools import chain, combinations
+    edges = chain.from_iterable(combinations(block, 2) for block in IS)
+    return Graph(edges, format="list_of_edges", name=name, immutable=immutable)
 
 
 def RandomBoundedToleranceGraph(n, seed=None):
