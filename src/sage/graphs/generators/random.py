@@ -608,7 +608,7 @@ def RandomBlockGraph(m, k, kmax=None, incidence_structure=False, seed=None,
     return Graph(edges, format="list_of_edges", name=name, immutable=immutable)
 
 
-def RandomBoundedToleranceGraph(n, seed=None):
+def RandomBoundedToleranceGraph(n, seed=None, immutable=False):
     r"""
     Return a random bounded tolerance graph.
 
@@ -630,6 +630,9 @@ def RandomBoundedToleranceGraph(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -669,7 +672,7 @@ def RandomBoundedToleranceGraph(n, seed=None):
             left, right = right, left + 1
         tolrep.append((left, right, randint(1, right - left)))
 
-    return ToleranceGraph(tolrep)
+    return ToleranceGraph(tolrep, immutable=immutable)
 
 
 def RandomGNM(n, m, dense=False, seed=None):
