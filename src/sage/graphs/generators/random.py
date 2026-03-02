@@ -1787,7 +1787,7 @@ def RandomShell(constructor, seed=None, immutable=False):
                  format="NX", immutable=immutable)
 
 
-def RandomToleranceGraph(n, seed=None):
+def RandomToleranceGraph(n, seed=None, immutable=False):
     r"""
     Return a random tolerance graph.
 
@@ -1812,6 +1812,9 @@ def RandomToleranceGraph(n, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1847,8 +1850,8 @@ def RandomToleranceGraph(n, seed=None):
         # The tolerance value must be > 0
         tolrep.append((left, right, randint(1, W)))
 
-    g = ToleranceGraph(tolrep)
-    g.name("Random tolerance graph")
+    g = ToleranceGraph(tolrep, immutable=immutable)
+    g._name = "Random tolerance graph"
     return g
 
 
