@@ -110,7 +110,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
 
     if p == 1:
         from sage.graphs.generators.basic import CompleteGraph
-        return CompleteGraph(n)
+        return CompleteGraph(n, immutable=immutable)
 
     if algorithm == 'networkx':
         if seed is None:
