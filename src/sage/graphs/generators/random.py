@@ -1335,7 +1335,8 @@ def pruned_tree(T, f, s):
     return S
 
 
-def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, seed=None):
+def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None,
+                       seed=None, immutable=False):
     r"""
     Return a random chordal graph of order ``n``.
 
@@ -1403,6 +1404,9 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: from sage.graphs.generators.random import RandomChordalGraph
@@ -1452,7 +1456,7 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
         - :meth:`~sage.graphs.graph_generators.GraphGenerators.IntersectionGraph`
     """
     if n < 2:
-        return Graph(n, name="Random Chordal Graph")
+        return Graph(n, name="Random Chordal Graph", immutable=immutable)
 
     if seed is not None:
         set_random_seed(seed)
@@ -1501,11 +1505,10 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None, s
     for i, s in enumerate(S):
         for x in s:
             vertex_to_subtrees[x].append(i)
-    G = Graph(n, name="Random Chordal Graph")
-    for X in vertex_to_subtrees:
-        G.add_clique(X)
-
-    return G
+    from itertools import chain, combinations
+    edges = chain.from_iterable(combinations(X, 2) for X in vertex_to_subtrees)
+    return Graph([range(n), edges], format="vertices_and_edges",
+                 name="Random Chordal Graph", immutable=immutable)
 
 
 def RandomKTree(n, k, seed=None):
