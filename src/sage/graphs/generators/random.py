@@ -1603,7 +1603,7 @@ def RandomKTree(n, k, seed=None, immutable=False):
                  name=f"Random {k}-tree", immutable=immutable)
 
 
-def RandomPartialKTree(n, k, x, seed=None):
+def RandomPartialKTree(n, k, x, seed=None, immutable=False):
     r"""
     Return a random partial `k`-tree on `n` nodes.
 
@@ -1621,6 +1621,9 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     TESTS::
 
@@ -1656,6 +1659,14 @@ def RandomPartialKTree(n, k, x, seed=None):
         sage: G.size()
         0
 
+    Check the behavior of parameter immutable::
+
+        sage: seed = int(current_randstate().long_seed() % sys.maxsize)
+        sage: mu = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=False)
+        sage: im = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=True)
+        sage: sorted(mu.edges()) == sorted(im.edges())
+        True
+
     EXAMPLES::
 
         sage: G = graphs.RandomPartialKTree(50,5,2)
@@ -1671,8 +1682,7 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name="Random partial 0-tree")
-        return g
+        return Graph(n, name="Random partial 0-tree", immutable=immutable)
 
     if n < k + 1:
         raise ValueError("n must be greater than k")
@@ -1689,20 +1699,24 @@ def RandomPartialKTree(n, k, x, seed=None):
 
     # The graph will have no edges
     if x == edgesInKTree:
-        g = Graph(n, name=f"Random partial {k}-tree")
-        return g
+        return Graph(n, name=f"Random partial {k}-tree", immutable=immutable)
 
     g = RandomKTree(n, k, seed)
 
     from sage.misc.prandom import shuffle
 
-    edges = list(g.edges())
+    edges = list(g.edges(labels=False))
     # Deletes x random edges from the graph
     shuffle(edges)
-    g.delete_edges(edges[:x])
+    if not immutable:
+        g.delete_edges(edges[:x])
+        g.name(f"Random partial {k}-tree")
+        return g
 
-    g.name(f"Random partial {k}-tree")
-    return g
+    # Build an immutable graph without the x first edges
+    return Graph(edges[x:], format="list_of_edges",
+                 name=f"Random partial {k}-tree", immutable=True)
+
 
 
 def RandomRegular(d, n, seed=None, immutable=False):
