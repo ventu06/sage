@@ -1511,7 +1511,7 @@ def RandomChordalGraph(n, algorithm='growing', k=None, l=None, f=None, s=None,
                  name="Random Chordal Graph", immutable=immutable)
 
 
-def RandomKTree(n, k, seed=None):
+def RandomKTree(n, k, seed=None, immutable=False):
     r"""
     Return a random `k`-tree on `n` nodes numbered `0` through `n-1`.
 
@@ -1531,6 +1531,9 @@ def RandomKTree(n, k, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     TESTS::
 
@@ -1572,8 +1575,7 @@ def RandomKTree(n, k, seed=None):
 
     # A graph with treewidth 0 has no edges
     if k == 0:
-        g = Graph(n, name="Random 0-tree")
-        return g
+        return Graph(n, name="Random 0-tree", immutable=immutable)
 
     if n < k + 1:
         raise ValueError("n must be greater than k")
@@ -1581,21 +1583,24 @@ def RandomKTree(n, k, seed=None):
     if seed is not None:
         set_random_seed(seed)
 
-    g = Graph(name=f"Random {k}-tree")
-    g.add_clique(list(range(k + 1)))
+    from itertools import chain, combinations
+    first_clique = combinations(range(k + 1), 2)
 
-    cliques = [list(range(k+1))]
+    def extra_edges():
+        cliques = [list(range(k+1))]
 
-    # Randomly choose a row, and copy 1 of the cliques
-    # One of those vertices is then replaced with a new vertex
-    for newVertex in range(k + 1, n):
-        copiedClique = cliques[randint(0, len(cliques)-1)].copy()
-        copiedClique[randint(0, k)] = newVertex
-        cliques.append(copiedClique)
-        for u in copiedClique:
-            if u != newVertex:
-                g.add_edge(u, newVertex)
-    return g
+        # Randomly choose a row, and copy 1 of the cliques
+        # One of those vertices is then replaced with a new vertex
+        for newVertex in range(k + 1, n):
+            copiedClique = cliques[randint(0, len(cliques)-1)].copy()
+            copiedClique[randint(0, k)] = newVertex
+            cliques.append(copiedClique)
+            for u in copiedClique:
+                if u != newVertex:
+                    yield (u, newVertex)
+
+    return Graph(chain(first_clique, extra_edges()), format="list_of_edges",
+                 name=f"Random {k}-tree", immutable=immutable)
 
 
 def RandomPartialKTree(n, k, x, seed=None):
