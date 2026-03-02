@@ -192,7 +192,7 @@ def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
                  format="NX", immutable=immutable)
 
 
-def RandomBipartite(n1, n2, p, set_position=False, seed=None):
+def RandomBipartite(n1, n2, p, set_position=False, seed=None, immutable=False):
     r"""
     Return a bipartite graph with `n1+n2` vertices such that any edge
     from `[n1]` to `[n2]` exists with probability `p`.
@@ -209,6 +209,9 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -250,19 +253,15 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None):
     if seed is not None:
         set_random_seed(seed)
 
+    from itertools import chain
     from numpy.random import uniform
 
-    g = Graph(name=f"Random bipartite graph of order {n1}+{n2} with edge probability {p}")
-
+    name = f"Random bipartite graph of order {n1}+{n2} with edge probability {p}"
     S1 = [(0, i) for i in range(n1)]
     S2 = [(1, i) for i in range(n2)]
-    g.add_vertices(S1)
-    g.add_vertices(S2)
-
-    for w in range(n2):
-        for v in range(n1):
-            if uniform() <= p:
-                g.add_edge((0, v), (1, w))
+    edges = ((v, w) for w in S2 for v in S1 if uniform() <= p)
+    g = Graph([chain(S1, S2), edges], format="vertices_and_edges",
+              name=name, immutable=immutable)
 
     # We now assign positions to vertices:
     # - vertices in S1 are placed on the line from (0, 1) to (max(n1, n2), 1)
