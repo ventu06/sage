@@ -2086,7 +2086,7 @@ def _contour_and_graph_from_words(pendant_word, forest_word):
     return word, G
 
 
-def RandomTriangulation(n, set_position=False, k=3, seed=None):
+def RandomTriangulation(n, set_position=False, k=3, seed=None, immutable=False):
     r"""
     Return a random inner triangulation of an outer face of degree ``k`` with
     ``n`` vertices in total.
@@ -2105,6 +2105,9 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     OUTPUT:
 
@@ -2221,7 +2224,7 @@ def RandomTriangulation(n, set_position=False, k=3, seed=None):
     assert graph.n_vertices() == n
     if set_position:
         graph.layout(layout='planar', save_pos=True)
-    return graph
+    return graph.copy(immutable=True) if immutable else graph
 
 
 def blossoming_contour(t, shift=0, seed=None):
