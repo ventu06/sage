@@ -1752,7 +1752,7 @@ def RandomRegular(d, n, seed=None, immutable=False):
         return False
 
 
-def RandomShell(constructor, seed=None):
+def RandomShell(constructor, seed=None, immutable=False):
     """
     Return a random shell graph for the constructor given.
 
@@ -1770,6 +1770,9 @@ def RandomShell(constructor, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES::
 
         sage: G = graphs.RandomShell([(10,20,0.8),(20,40,0.8)])                         # needs networkx
@@ -1780,7 +1783,8 @@ def RandomShell(constructor, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.random_shell_graph(constructor, seed=seed))
+    return Graph(networkx.random_shell_graph(constructor, seed=seed),
+                 format="NX", immutable=immutable)
 
 
 def RandomToleranceGraph(n, seed=None):
