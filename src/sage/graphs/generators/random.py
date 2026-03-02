@@ -128,7 +128,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
     raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
 
 
-def RandomBarabasiAlbert(n, m, seed=None):
+def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
     r"""
     Return a random graph created using the Barabasi-Albert preferential
     attachment model.
@@ -145,6 +145,9 @@ def RandomBarabasiAlbert(n, m, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -185,7 +188,8 @@ def RandomBarabasiAlbert(n, m, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed))
+    return Graph(networkx.barabasi_albert_graph(int(n), int(m), seed=seed),
+                 format="NX", immutable=immutable)
 
 
 def RandomBipartite(n1, n2, p, set_position=False, seed=None):
