@@ -47,12 +47,11 @@ from sage.rings.real_mpfr import RR
 from sage.misc.lazy_import import lazy_import
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
 
-lazy_import('sage.libs.pari', 'pari')
-lazy_import('sage.schemes.hyperelliptic_curves.hypellfrob', 'hypellfrob')
+lazy_import("sage.libs.pari", "pari")
+lazy_import("sage.schemes.hyperelliptic_curves.hypellfrob", "hypellfrob")
 
-class HyperellipticCurve_finite_field(
-    hyperelliptic_generic.HyperellipticCurve_generic
-):
+
+class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_generic):
     r"""
     Class of hyperelliptic curves (smooth model) over a finite field.
 
@@ -95,7 +94,7 @@ class HyperellipticCurve_finite_field(
         [4, 24, 64, 288]
     """
 
-    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
+    def __init__(self, projective_model, f, h, genus, names=["x", "y"]):
         r"""
         Create a hyperelliptic curve over a finite field.
 

@@ -169,3 +169,39 @@ class WeightedProjectiveCurve(Curve_generic):
             with 53 bits of precision
         """
         return self.affine_patch(2).riemann_surface(**kwargs)
+
+    def plot(self, *args, **kwds):
+        """
+        Plot the real points of an affine patch of the associated projective
+        plane curve.
+
+        INPUT:
+
+        - ``self`` -- an affine plane curve
+
+        - ``patch`` -- (optional) the affine patch to be plotted; if not
+          specified, the patch corresponding to the last projective
+          coordinate being nonzero
+
+        - ``*args`` -- (optional) tuples (variable, minimum, maximum) for
+          plotting dimensions
+
+        - ``**kwds`` -- optional keyword arguments passed on to ``implicit_plot``
+
+        EXAMPLES:
+
+        A hyperelliptic curve::
+
+            sage: # needs sage.plot
+            sage: P.<x> = QQ[]
+            sage: f = 4*x^5 - 30*x^3 + 45*x - 22
+            sage: C = HyperellipticCurve(f)
+            sage: C.plot()
+            Graphics object consisting of 1 graphics primitive
+            sage: C.plot(patch=0)
+            Graphics object consisting of 1 graphics primitive
+            sage: C.plot(patch=1)
+            Graphics object consisting of 1 graphics primitive
+        """
+        projective_curve = self.projective_curve()
+        return projective_curve.plot(*args, **kwds)
