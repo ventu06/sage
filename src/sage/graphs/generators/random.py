@@ -675,7 +675,7 @@ def RandomBoundedToleranceGraph(n, seed=None, immutable=False):
     return ToleranceGraph(tolrep, immutable=immutable)
 
 
-def RandomGNM(n, m, dense=False, seed=None):
+def RandomGNM(n, m, dense=False, seed=None, immutable=False):
     r"""
     Return a graph randomly picked out of all graphs on `n` vertices with `m`
     edges.
@@ -691,6 +691,9 @@ def RandomGNM(n, m, dense=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -724,9 +727,10 @@ def RandomGNM(n, m, dense=False, seed=None):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     if dense:
-        return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed))
-    else:
-        return Graph(networkx.gnm_random_graph(n, m, seed=seed))
+        return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed),
+                     format="NX", immutable=immutable)
+    return Graph(networkx.gnm_random_graph(n, m, seed=seed),
+                 format="NX", immutable=immutable)
 
 
 def RandomNewmanWattsStrogatz(n, k, p, seed=None):
