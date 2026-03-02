@@ -851,7 +851,7 @@ def RandomHolmeKim(n, m, p, seed=None, immutable=False):
                  format="NX", immutable=immutable)
 
 
-def RandomIntervalGraph(n, seed=None):
+def RandomIntervalGraph(n, seed=None, immutable=False):
     r"""
     Return a random interval graph.
 
@@ -885,6 +885,9 @@ def RandomIntervalGraph(n, seed=None):
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
     EXAMPLES:
 
     As for any interval graph, the chromatic number is equal to
@@ -899,7 +902,7 @@ def RandomIntervalGraph(n, seed=None):
     from sage.graphs.generators.intersection import IntervalGraph
 
     intervals = [tuple(sorted((random(), random()))) for i in range(n)]
-    return IntervalGraph(intervals, True)
+    return IntervalGraph(intervals, points_ordered=True, immutable=immutable)
 
 
 def RandomProperIntervalGraph(n, seed=None):
