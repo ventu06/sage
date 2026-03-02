@@ -275,7 +275,8 @@ def RandomBipartite(n1, n2, p, set_position=False, seed=None, immutable=False):
     return g
 
 
-def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
+def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None,
+                           immutable=False):
     r"""
     Return a random regular bipartite graph on `n1 + n2` vertices.
 
@@ -302,6 +303,9 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -423,7 +427,7 @@ def RandomRegularBipartite(n1, n2, d1, set_position=False, seed=None):
         d1, d2 = n2 - d1, n1 - d2
 
     name = "Random regular bipartite graph of order {}+{} and degrees {} and {}".format(n1, n2, d1, d2)
-    G = Graph(list(E), name=name)
+    G = Graph(E, format="list_of_edges", name=name, immutable=immutable)
 
     # We now assign positions to vertices:
     # - vertices 0,..,n1-1 are placed on the line (0, 1) to (max(n1, n2), 1)
