@@ -733,7 +733,7 @@ def RandomGNM(n, m, dense=False, seed=None, immutable=False):
                  format="NX", immutable=immutable)
 
 
-def RandomNewmanWattsStrogatz(n, k, p, seed=None):
+def RandomNewmanWattsStrogatz(n, k, p, seed=None, immutable=False):
     r"""
     Return a Newman-Watts-Strogatz small world random graph on `n` vertices.
 
@@ -754,6 +754,9 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
 
     - ``seed`` -- a ``random.Random`` seed or a Python ``int`` for the random
       number generator (default: ``None``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -796,7 +799,8 @@ def RandomNewmanWattsStrogatz(n, k, p, seed=None):
     if seed is None:
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
-    return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed))
+    return Graph(networkx.newman_watts_strogatz_graph(n, k, p, seed=seed),
+                 format="NX", immutable=immutable)
 
 
 def RandomHolmeKim(n, m, p, seed=None):
