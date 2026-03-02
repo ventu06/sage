@@ -22,7 +22,7 @@ from sage.misc.prandom import random
 from sage.misc.prandom import randint
 
 
-def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
+def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
     r"""
     Return a random graph on `n` nodes. Each edge is inserted independently
     with probability `p`.
@@ -48,6 +48,9 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
       ``gnp_random_graph``. Try them to know which algorithm is the best for
       you. The ``fast`` parameter is not taken into account by the 'Sage'
       algorithm so far.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     REFERENCES:
 
@@ -117,13 +120,12 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage'):
             G = networkx.fast_gnp_random_graph(n, p, seed=seed)
         else:
             G = networkx.gnp_random_graph(n, p, seed=seed)
-        return Graph(G)
-    elif algorithm in ['Sage', 'sage']:
+        return Graph(G, format="NX", immutable=immutable)
+    if algorithm in ['Sage', 'sage']:
         # We use the Sage generator
         from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
-        return sageGNP(n, p, seed=seed)
-    else:
-        raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
+        return sageGNP(n, p, seed=seed, immutable=immutable)
+    raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
 
 
 def RandomBarabasiAlbert(n, m, seed=None):
