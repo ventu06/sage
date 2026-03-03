@@ -95,7 +95,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
         sage: graphs.RandomGNP(50,.2,algorithm=50)
         Traceback (most recent call last):
         ...
-        ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'.
+        ValueError: 'algorithm' must be equal to 'networkx' or to 'Sage'
         sage: set_random_seed(0)
         sage: graphs.RandomGNP(50,.2, algorithm='Sage').size()
         243
@@ -125,7 +125,7 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
         # We use the Sage generator
         from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
         return sageGNP(n, p, seed=seed, immutable=immutable)
-    raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
+    raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'")
 
 
 def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
@@ -1869,9 +1869,8 @@ def RandomToleranceGraph(n, seed=None, immutable=False):
         # The tolerance value must be > 0
         tolrep.append((left, right, randint(1, W)))
 
-    g = ToleranceGraph(tolrep, immutable=immutable)
-    g._name = "Random tolerance graph"
-    return g
+    return ToleranceGraph(tolrep, immutable=immutable,
+                          name="Random tolerance graph")
 
 
 # uniform random triangulation using Schaeffer-Poulalhon algorithm
