@@ -194,7 +194,6 @@ class RibbonTableaux(UniqueRepresentation, Parent):
           .  1  0  1
           2  0  0
         <BLANKLINE>
-
     """
     @staticmethod
     def __classcall_private__(cls, shape=None, weight=None, length=None):
