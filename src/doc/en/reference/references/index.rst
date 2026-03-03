@@ -5424,8 +5424,9 @@ REFERENCES:
             Communications Laboratory, Helsinki University of Technology,
             Espoo, Finland, Tech. Rep. T48, 2003.
 
-.. [NS] \T. Nakanishi, S. Stella, Wonder of sine-Gordon Y-systems,
-        to appear in Trans. Amer. Math. Soc., :arxiv:`1212.6853`
+.. [NS] \T. Nakanishi, S. Stella, *Wonder of sine-Gordon Y-systems*,
+        Transactions of the AMS, **368** (2016), 6835-6886.
+        :arxiv:`1212.6853`
 
 .. [Normaliz] Winfried Bruns, Bogdan Ichim, and Christof Soeger,
               Normaliz,
