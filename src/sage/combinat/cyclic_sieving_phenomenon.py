@@ -12,7 +12,6 @@ unique polynomial ``P(q)`` of order < `n` such that the triple (`S`,
 AUTHORS:
 
 - Christian Stump
-
 """
 # ****************************************************************************
 #       Copyright (C) 2010 Christian Stump christian.stump@univie.ac.at
