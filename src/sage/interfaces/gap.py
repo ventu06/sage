@@ -23,7 +23,7 @@ The interface offers two pieces of functionality:
     This interface is based on pexpect and communicates with GAP via a
     subprocess. For most purposes, the library-based interface
     :mod:`~sage.libs.gap.libgap` is preferred, as it is faster and
-    more robust. See :mod:`sage.libs.gap.libgap` for details.  
+    more robust. See :mod:`sage.libs.gap.libgap` for details.
 
 First Examples
 --------------
