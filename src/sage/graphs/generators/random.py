@@ -1664,6 +1664,8 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
         sage: seed = int(current_randstate().long_seed() % sys.maxsize)
         sage: mu = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=False)
         sage: im = graphs.RandomPartialKTree(30, 5, 2, seed=seed, immutable=True)
+        sage: mu.vertices(sort=True) == im.vertices(sort=True)
+        True
         sage: sorted(mu.edges()) == sorted(im.edges())
         True
 
@@ -1714,7 +1716,7 @@ def RandomPartialKTree(n, k, x, seed=None, immutable=False):
         return g
 
     # Build an immutable graph without the x first edges
-    return Graph(edges[x:], format="list_of_edges",
+    return Graph([g, edges[x:]], format="vertices_and_edges",
                  name=f"Random partial {k}-tree", immutable=True)
 
 
