@@ -305,7 +305,9 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         If the Jacobian model was not initialized to use caching, this method does nothing.
 
-        TESTS::
+        TESTS:
+
+        Verify that caching is temporarily disabled when initializing objects provided by the user:: 
 
             sage: K = GF(2)
             sage: Kx.<x> = FunctionField(K)
@@ -332,6 +334,8 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             True
             sage: len(G._cached_inverse_infinite_matrix.cache) > 0
             True
+
+        Verify that we do not perform caching when it is turned off (:issue:`41749`)::
 
             sage: K = GF(2)
             sage: Kx.<x> = FunctionField(K)
