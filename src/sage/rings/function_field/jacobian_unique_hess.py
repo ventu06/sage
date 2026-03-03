@@ -307,7 +307,7 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
 
         TESTS:
 
-        Verify that caching is temporarily disabled when initializing objects provided by the user:: 
+        Verify that caching is temporarily disabled when initializing objects provided by the user::
 
             sage: K = GF(2)
             sage: Kx.<x> = FunctionField(K)
