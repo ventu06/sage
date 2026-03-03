@@ -83,7 +83,7 @@ def SymplecticPolarGraph(d, q, algorithm=None, immutable=False):
         sage: graphs.SymplecticPolarGraph(4,4,algorithm='blah')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: blah
     """
     if d < 1 or d % 2:
         raise ValueError("d must be even and greater than 2")
@@ -111,7 +111,7 @@ def SymplecticPolarGraph(d, q, algorithm=None, immutable=False):
         return Graph([range(len(PV)), lambda i, j: V(PV[i])*(M*V(PV[j])) == 0],
                      format="rule", loops=False, name=name, immutable=immutable)
 
-    raise ValueError("unknown algorithm!")
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
 def AffineOrthogonalPolarGraph(d, q, sign='+'):
@@ -686,7 +686,7 @@ def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
         sage: graphs.UnitaryPolarGraph(4,3, algorithm='foo')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: foo
     """
     name = "Unitary Polar Graph U" + str((m, q))
     if m == 4:
@@ -716,7 +716,7 @@ def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
         return Graph([range(len(V)), lambda x, y: P(V[x], V[y])], format="rule",
                      loops=False, name=name, immutable=immutable)
 
-    raise ValueError("unknown algorithm!")
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
 def NonisotropicUnitaryPolarGraph(m, q):
