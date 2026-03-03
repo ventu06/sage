@@ -2932,7 +2932,7 @@ class DiGraph(GenericGraph):
         """
         from sage.combinat.posets.posets import Poset
         return Poset(self).linear_extensions()
-    
+
     def longest_dag_path(self, source=None, target=None,
                          by_weight=False, weight_function=None,
                          check_weight=True):
