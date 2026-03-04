@@ -584,7 +584,6 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
 
             EXAMPLES::
 
-
                 sage: scoeffs = {('a','e'): {'a':1}, ('b','e'): {'a':1, 'b':1},
                 ....:            ('c','d'): {'a':1}, ('c','e'): {'c':1}}
                 sage: L.<a,b,c,d,e> = LieAlgebra(QQ, scoeffs)
@@ -598,6 +597,28 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: I2.dimension()
                 25
                 sage: I.is_equal_subspace(I2)
+                True
+
+            We demonstrate the ideal property by using the ``reduce()`` method
+            to check for containment::
+
+                sage: E.<w,x,y,z> = ExteriorAlgebra(QQ)
+                sage: gens = E.algebra_generators()
+                sage: elts = [x*y + z]
+                sage: LI = E.ideal_submodule(elts, side="left")
+                sage: all(LI.reduce(g * b.lift()) == 0 for b in LI.basis() for g in gens)
+                True
+                sage: all(LI.reduce(b.lift() * g) == 0 for b in LI.basis() for g in gens)
+                False
+                sage: RI = E.ideal_submodule(elts, side="right")
+                sage: all(RI.reduce(g * b.lift()) == 0 for b in RI.basis() for g in gens)
+                False
+                sage: all(RI.reduce(b.lift() * g) == 0 for b in RI.basis() for g in gens)
+                True
+                sage: TI = E.ideal_submodule(elts, side="twosided")
+                sage: all(TI.reduce(g * b.lift()) == 0 for b in TI.basis() for g in gens)
+                True
+                sage: all(TI.reduce(b.lift() * g) == 0 for b in TI.basis() for g in gens)
                 True
 
             TESTS::
