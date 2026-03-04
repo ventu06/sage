@@ -1424,7 +1424,6 @@ class GrowthDiagram(SageObject):
             sage: G = GrowthDiagram(RuleRSK, {})
             sage: (G.filling(), G.shape())
             ({}, [] / [])
-
         """
         if isinstance(filling, dict):
             try:
