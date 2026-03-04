@@ -594,8 +594,20 @@ class FiniteDimensionalAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: I.dimension()
                 25
 
-                sage: MS.ideal_submodule(gens, algorithm="basis").dimension()
+                sage: I2 = MS.ideal_submodule(gens, algorithm="basis")
+                sage: I2.dimension()
                 25
+                sage: I.is_equal_subspace(I2)
+                True
+
+            TESTS::
+
+                sage: MS = MatrixSpace(QQ, 5)
+                sage: gens = [MS.random_element() for _ in range(ZZ.random_element(5))]
+                sage: I = MS.ideal_submodule(gens, algorithm="generators")
+                sage: J = MS.ideal_submodule(gens, algorithm="basis")
+                sage: I.is_equal_subspace(J)
+                True
             """
             alggens = self.algebra_generators()
             if gens in self:
