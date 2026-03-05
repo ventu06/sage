@@ -2937,7 +2937,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
     __add__ = connected_sum
 
-    def link(self, simplex, is_mutable=True):
+    def link(self, simplex, is_mutable=None):
         r"""
         The link of a simplex in this simplicial complex.
 
@@ -2948,8 +2948,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``is_mutable`` -- boolean (default: inherited by parent); determine
+          whether the output is mutable
 
         EXAMPLES::
 
@@ -2961,15 +2961,22 @@ class SimplicialComplex(Parent, GenericCellComplex):
             sage: Y = SimplicialComplex([[0,1,2,3]])
             sage: Y.link([1])
             Simplicial complex with vertex set (0, 2, 3) and facets {(0, 2, 3)}
+
+        TESTS::
+
+            sage: C = SimplicialComplex([[0, 1], [1, 2]], is_mutable=False)
+            sage: assert C.link([1]).is_immutable()
         """
         faces = []
         s = Simplex(simplex)
         for f in self._facets:
             if s.is_face(f):
                 faces.append(Simplex(f.set().difference(s.set())))
+        if is_mutable is None:
+            is_mutable = not self._is_immutable
         return SimplicialComplex(faces, is_mutable=is_mutable)
 
-    def star(self, simplex, is_mutable=True):
+    def star(self, simplex, is_mutable=None):
         """
         Return the star of a simplex in this simplicial complex.
 
@@ -2979,8 +2986,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``simplex`` -- a simplex in this simplicial complex
-        - ``is_mutable`` -- boolean (default: ``True``); determines if the output
-          is mutable
+        - ``is_mutable`` -- boolean (default: inherited by parent); determine
+          whether the output is mutable
 
         EXAMPLES::
 
@@ -2999,6 +3006,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         for f in self._facets:
             if s.is_face(f):
                 faces.append(f)
+        if is_mutable is None:
+            is_mutable = not self._is_immutable
         return SimplicialComplex(faces, is_mutable=is_mutable)
 
     def is_cohen_macaulay(self, base_ring=QQ, ncpus=0) -> bool:
@@ -3073,7 +3082,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
 
         return all(answer[1] for answer in all_homologies_in_list_vanish(facs_divided))
 
-    def generated_subcomplex(self, sub_vertex_set, is_mutable=True):
+    def generated_subcomplex(self, sub_vertex_set, is_mutable=None):
         """
         Return the largest sub-simplicial complex of ``self`` containing
         exactly ``sub_vertex_set`` as vertices.
@@ -3081,8 +3090,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
         INPUT:
 
         - ``sub_vertex_set`` -- the sub-vertex set
-        - ``is_mutable`` -- boolean (default: ``True``); determine whether
-          the output is mutable
+        - ``is_mutable`` -- boolean (default: inherited by parent); determine
+          whether the output is mutable
 
         EXAMPLES::
 
@@ -3099,6 +3108,8 @@ class SimplicialComplex(Parent, GenericCellComplex):
             for j in self.faces()[i]:
                 if j.set().issubset(sub_vertex_set):
                     faces.append(j)
+        if is_mutable is None:
+            is_mutable = not self._is_immutable
         return SimplicialComplex(faces, maximality_check=True,
                                  is_mutable=is_mutable)
 
