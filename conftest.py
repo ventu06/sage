@@ -201,10 +201,6 @@ def pytest_collect_file(
                     file_path.name == "postprocess.py"
                     and file_path.parent.name == "nbconvert"
                 )
-                or (
-                    file_path.name == "flint_autogen.py"
-                    and file_path.parent.name == "autogen"
-                )
             ):
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
