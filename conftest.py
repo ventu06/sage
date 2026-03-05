@@ -202,10 +202,6 @@ def pytest_collect_file(
                     and file_path.parent.name == "nbconvert"
                 )
                 or (
-                    file_path.name == "giacpy-mkkeywords.py"
-                    and file_path.parent.name == "autogen"
-                )
-                or (
                     file_path.name == "flint_autogen.py"
                     and file_path.parent.name == "autogen"
                 )
