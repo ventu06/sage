@@ -197,10 +197,8 @@ def pytest_collect_file(
                 # We don't allow tests to be defined in __main__.py/setup.py files (because their import will fail).
                 return IgnoreCollector.from_parent(parent)
             if (
-                (
-                    file_path.name == "postprocess.py"
-                    and file_path.parent.name == "nbconvert"
-                )
+                file_path.name == "postprocess.py"
+                and file_path.parent.name == "nbconvert"
             ):
                 # This is an executable file.
                 return IgnoreCollector.from_parent(parent)
