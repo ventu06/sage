@@ -98,7 +98,7 @@ def unpickle_v0(parent, entries, degree):
     return unpickle_v1(parent, entries, degree)
 
 
-def unpickle_v1(parent, entries, degree, is_mutable=None):
+def unpickle_v1(parent, entries, degree, immutable=None):
     """
     Create a complex double vector with the given parent, entries,
     degree, and mutability.
@@ -111,6 +111,6 @@ def unpickle_v1(parent, entries, degree, is_mutable=None):
         True
     """
     cdef Vector_complex_double_dense v = Vector_complex_double_dense(parent, entries)
-    if is_mutable is not None:
-        v._is_immutable = not is_mutable
+    if immutable is not None:
+        v._is_immutable = immutable
     return v

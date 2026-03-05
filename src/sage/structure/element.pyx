@@ -2456,7 +2456,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
     Generic element of a module with mutability.
     """
 
-    def __init__(self, parent, is_immutable=False):
+    def __init__(self, parent, immutable=False):
         """
         EXAMPLES::
 
@@ -2465,7 +2465,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
             <class 'sage.modules.free_module_element.FreeModuleElement'>
         """
         self._parent = parent
-        self._is_immutable = is_immutable
+        self._is_immutable = immutable
 
     def set_immutable(self):
         """

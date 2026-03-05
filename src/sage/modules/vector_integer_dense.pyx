@@ -347,7 +347,7 @@ def unpickle_v0(parent, entries, degree):
     return v
 
 
-def unpickle_v1(parent, entries, degree, is_mutable):
+def unpickle_v1(parent, entries, degree, immutable):
     cdef Vector_integer_dense v
     v = Vector_integer_dense.__new__(Vector_integer_dense)
     v._init(degree, parent)
@@ -356,5 +356,5 @@ def unpickle_v1(parent, entries, degree, is_mutable):
     for i in range(degree):
         z = Integer(entries[i])
         mpz_set(v._entries[i], z.value)
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v

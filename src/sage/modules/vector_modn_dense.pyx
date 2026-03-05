@@ -382,11 +382,11 @@ def unpickle_v0(parent, entries, degree, p):
     return v
 
 
-def unpickle_v1(parent, entries, degree, p, is_mutable):
+def unpickle_v1(parent, entries, degree, p, immutable):
     cdef Vector_modn_dense v
     v = Vector_modn_dense.__new__(Vector_modn_dense)
     v._init(degree, parent, p)
     for i in range(degree):
         v._entries[i] = entries[i]
-    v._is_immutable = not is_mutable
+    v._is_immutable = immutable
     return v
