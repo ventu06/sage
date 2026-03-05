@@ -121,7 +121,6 @@ class SageDoctestModule(DoctestModule):
                         # TODO: Remove this once all optional things are using Features
                         if exception.name in (
                             "valgrind",
-                            "rpy2",
                             "sage.libs.coxeter3.coxeter",
                             "sagemath_giac",
                         ):
