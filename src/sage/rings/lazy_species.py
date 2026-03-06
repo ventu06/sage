@@ -1536,9 +1536,10 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             raise ValueError(f"{algorithm} is not a known algorithm, use 'orbits' or 'subgroups'")
         super().__init__(P, coeff_stream)
         self._left = left
-        self._args = args
+        self._right = args[0]
+        self._right_gf = args[0].generating_series()
 
-    def points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
+    def _points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
         if i == i_G:
             return fix[i]
         try:
@@ -1546,21 +1547,19 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         except StopIteration:
             pass
 
-        def index(F):
-            return next(i for i, C in enumerate(l_G) if F in C[1])
-
         if i in self._groups_cache:
             groups = self._groups_cache[i]
         else:
             F = l_G[i][1].Representative()
             G = l_G[i_G][1].Representative()
             groups = libgap.IntermediateSubgroups(G, F)["subgroups"]
-            groups = [index(F1) for F1 in groups]
+            groups = [next(i for i, C in enumerate(l_G) if F1 in C[1])
+                      for F1 in groups]
             self._groups_cache[i] = groups
 
         r = (fix[i]
-             - self.points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
-             - sum(self.points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
+             - self._points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
+             - sum(self._points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
                    for i_F in groups))
         self._cache.append(((i, H), r))
         return r
@@ -1579,8 +1578,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        G = self._args[0]
-        g_count = factorial(n) * G.generating_series()[n]
+        G = self._right
+        g_count = factorial(n) * self._right_gf[n]
         R = G.parent()._laurent_poly_ring
         left = self._left
         if not left[g_count]:
@@ -1614,7 +1613,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                                          C_N.Representative())
                  for _, C_N in l_G]
             for i, (C_n, C_N) in enumerate(l_G):
-                m = self.points_with_stabilizer(i, H, i_G, l_G, f, S)
+                m = self._points_with_stabilizer(i, H, i_G, l_G, f, S)
                 F = C_N.Representative()
                 N = libgap.Normalizer(G, F)
                 r = m * F.Size().sage() / N.Size().sage()
@@ -1627,7 +1626,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
     def _coefficient(self, n):
         left = self._left
-        G = self._args[0]
+        G = self._right
         R = G.parent()._laurent_poly_ring
 
         S_n = _SymmetricGroup(n)
@@ -1691,7 +1690,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             536870912/2835
         """
         f = self._left.generating_series()
-        g = self._args[0].generating_series()
+        g = self._right_gf
 
         def coefficient(n):
             fact = factorial(n)
@@ -2243,6 +2242,7 @@ class OrientedSetSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
         P = parent._laurent_poly_ring
         M = P._indices
         A = P._indices._indices
+
         def Eo(n):
             if n > 2:
                 return A(AlternatingGroup(n), check=False)
@@ -2657,6 +2657,7 @@ class RestrictedSpeciesElement(LazyCombinatorialSpeciesElement):
 ######################################################################
 # helpers for functorial composition
 ######################################################################
+
 
 def weighted_partitions_by_capacity(weights, capacities):
     r"""
