@@ -404,12 +404,12 @@ class LatticePosets(Category):
                     sage: L = posets.TamariLattice(3)
                     sage: row = L.rowmotion_semidistributive
                     sage: DS = DiscreteDynamicalSystem(L, row)
-                    sage: [[DyckWord(x[:-1]) for x in c] for c in DS.cycles()]
-                    [[[1, 1, 1, 0, 0, 0], [1, 0, 1, 0, 1, 0]],
-                     [[1, 1, 0, 1, 0, 0], [1, 0, 1, 1, 0, 0], [1, 1, 0, 0, 1, 0]]]
+                    sage: sorted([sorted([DyckWord(x[:-1]) for x in c]) for c in DS.cycles()])
+                    [[[1, 0, 1, 0, 1, 0], [1, 1, 1, 0, 0, 0]],
+                     [[1, 0, 1, 1, 0, 0], [1, 1, 0, 0, 1, 0], [1, 1, 0, 1, 0, 0]]]
                     sage: L = posets.TamariLattice(4)
                     sage: L.rowmotion_semidistributive((1,1,0,1,1,0,0,0,0))
-                     (1, 0, 1, 1, 0, 0, 1, 0, 0)
+                    (1, 0, 1, 1, 0, 0, 1, 0, 0)
 
                 Check that classical rowmotion is a special case of
                 semidistributive rowmotion::
