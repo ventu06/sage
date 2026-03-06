@@ -84,6 +84,9 @@ obtained by modding out the commutator subgroup of the free group::
     sage: G = FreeGroup(2)
     sage: G_ab = G / [G([1, 2, -1, -2])];  G_ab
     Finitely presented group < x0, x1 | x0*x1*x0^-1*x1^-1 >
+    sage: k = G_ab.rewriting_system()
+    sage: k.make_confluent()
+    sage: G_ab.set_confluent_rewriting_system(k)
     sage: a,b = G_ab.gens()
     sage: g =  a * b
     sage: M1 = matrix([[1,0],[0,2]])
@@ -313,6 +316,111 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         tl = self.gap().UnderlyingElement().TietzeWordAbstractWord()
         return tuple(tl.sage())
 
+    def __hash__(self):
+        r"""
+        Return a hash for this group element.
+
+        For free groups (no relations), hashing is based on the Tietze word.
+        For finite groups, the element is converted to a permutation group
+        element which has a well-defined hash.
+        For infinite non-free groups with a confluent rewriting system,
+        hashing is based on the canonical reduced form.
+        For general infinite finitely presented groups without a confluent
+        rewriting system, hashing is not supported because the word problem
+        is undecidable.
+
+        .. WARNING::
+
+            Computing a confluent rewriting system via Knuth-Bendix
+            completion is not guaranteed to terminate, since the word
+            problem for finitely presented groups is undecidable in
+            general. The call to ``make_confluent()`` may run forever
+            for some groups.
+
+        EXAMPLES:
+
+        Free groups support hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / []  # trivial quotient = free group
+            sage: hash(H([1,2])) == hash(H([1,2]))
+            True
+
+        Finite groups support hashing::
+
+            sage: G.<a,b> = FreeGroup()
+            sage: H = G / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H.inject_variables()
+            Defining a, b
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(H.one())  # equal elements have equal hashes
+            True
+
+        Infinite groups with a confluent rewriting system support hashing::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: D = F / [x^2, y^2]  # infinite dihedral group
+            sage: k = D.rewriting_system()
+            sage: k.make_confluent()
+            sage: D.set_confluent_rewriting_system(k)
+            sage: a, b = D.gens()
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(D.one())  # a^2 = 1
+            True
+            sage: hash(a*b) != hash(b*a)  # different elements
+            True
+
+        Infinite groups without a confluent rewriting system raise an error;
+        use :meth:`~FinitelyPresentedGroup.set_confluent_rewriting_system`
+        to enable hashing::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a*b*a^-1*b^-2]  # Baumslag-Solitar group, infinite
+            sage: hash(G([1]))
+            Traceback (most recent call last):
+            ...
+            NotImplementedError: hashing requires a confluent rewriting system
+            for infinite non-free finitely presented groups;
+            first compute one via k = G.rewriting_system(); k.make_confluent();
+            G.set_confluent_rewriting_system(k)
+
+        TESTS:
+
+        Check that :issue:`40549` is fixed::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: G = F / [x^4, y^13, x*y*x^-1*y^-5]
+            sage: a, b = G.gens()
+            sage: G.order()
+            52
+            sage: cg = G.cayley_graph()
+            sage: cg.num_verts()
+            52
+        """
+        G = self.parent()
+        # Free groups (no relations) - hash by Tietze word
+        if len(G.relations()) == 0:
+            return hash(self.Tietze())
+        # Confluent rewriting system - hash by canonical reduced form
+        rws = G._confluent_rewriting_system
+        if rws is not None:
+            return hash(rws.reduce(self).Tietze())
+        # Finite groups - hash by permutation representation
+        phi = libgap.IsomorphismPermGroup(G.gap())
+        # IsomorphismPermGroup returns 'fail' for infinite groups
+        if str(phi) == 'fail':
+            raise NotImplementedError(
+                "hashing requires a confluent rewriting system\n"
+                "for infinite non-free finitely presented groups;\n"
+                "first compute one via "
+                "k = G.rewriting_system(); k.make_confluent();\n"
+                "G.set_confluent_rewriting_system(k)"
+            )
+        perm_elem = libgap.Image(phi, self.gap())
+        return hash(perm_elem)
+
     def __call__(self, *values, **kwds):
         """
         Replace the generators of the free group with ``values``.
@@ -340,6 +448,9 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         The generator `b` can be eliminated using the relation `a=b`. Any
         values that you plug into a word must satisfy this relation::
 
+            sage: k = H.rewriting_system()
+            sage: k.make_confluent()
+            sage: H.set_confluent_rewriting_system(k)
             sage: A, B = H.gens()
             sage: w = A^2 * B
             sage: w(2,2)
@@ -350,8 +461,8 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
             Traceback (most recent call last):
             ...
             ValueError: the values do not satisfy all relations of the group
-            sage: w(1, 2, check=False)    # result depends on presentation of the group element
-            2
+            sage: w(1, 2, check=False)   # result depends on presentation of the group element
+            8
         """
         values = list(values)
         if kwds.get('check', True):
@@ -780,6 +891,7 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             libgap_fpgroup = free_group.gap() / libgap([rel.gap() for rel in relations])
         ParentLibGAP.__init__(self, libgap_fpgroup)
         Group.__init__(self, category=category)
+        self._confluent_rewriting_system = None
 
     def __hash__(self):
         """
@@ -1907,5 +2019,48 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             a*b
         """
         return RewritingSystem(self)
+
+    def set_confluent_rewriting_system(self, rws):
+        r"""
+        Store a confluent rewriting system for use by element hashing.
+
+        For infinite non-free finitely presented groups, elements cannot
+        be hashed by default because the word problem is undecidable.
+        However, if the user has computed a confluent rewriting system
+        (via Knuth-Bendix completion), the canonical reduced forms
+        provide a valid basis for hashing.
+
+        INPUT:
+
+        - ``rws`` -- a :class:`RewritingSystem` that is confluent
+
+        EXAMPLES::
+
+            sage: F.<x,y> = FreeGroup()
+            sage: D = F / [x^2, y^2]  # infinite dihedral group
+            sage: k = D.rewriting_system()
+            sage: k.make_confluent()
+            sage: D.set_confluent_rewriting_system(k)
+            sage: a, b = D.gens()
+            sage: hash(a) == hash(a)
+            True
+            sage: hash(a*a) == hash(D.one())
+            True
+
+        The rewriting system must be confluent::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: G = F / [a^2, b^3]
+            sage: k = G.rewriting_system()
+            sage: G.set_confluent_rewriting_system(k)
+            Traceback (most recent call last):
+            ...
+            ValueError: the rewriting system must be confluent
+        """
+        if not isinstance(rws, RewritingSystem):
+            raise TypeError("expected a RewritingSystem")
+        if not rws.is_confluent():
+            raise ValueError("the rewriting system must be confluent")
+        self._confluent_rewriting_system = rws
 
     from sage.groups.generic import structure_description
