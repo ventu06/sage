@@ -722,10 +722,8 @@ class GeneralizedYoungWall(CombinatorialElement):
                 diff = self.a(j, k) - self.a((j - 1) % (n + 1), k)
                 if diff <= 0:
                     continue
-                for p in index_set:
-                    if (j + k - p - 1) % (n + 1) == 0 and diff <= La.scalar(ac[p]):
-                        break
-                else:
+                if not any((j + k - p - 1) % (n + 1) == 0
+                           and diff <= La.scalar(ac[p]) for p in index_set):
                     return False
         return True
 
