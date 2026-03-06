@@ -688,7 +688,7 @@ class GrowthDiagram(SageObject):
             if labels is not None:
                 labels = self._process_labels(labels)
 
-            self._filling, (self._lambda, self._mu) = self._process_filling_and_shape(filling, shape, labels)
+            self._filling, (self._lambda, self._mu) = self._process_filling_shape_labels(filling, shape, labels)
 
             if labels is None:
                 rule = self.rule
@@ -1342,7 +1342,7 @@ class GrowthDiagram(SageObject):
                      list(shape[1]) + [0]*(len(shape[0])-len(shape[1])) )
         return (list(shape), [0]*len(shape))
 
-    def _process_filling_and_shape(self, filling, shape, labels):
+    def _process_filling_shape_labels(self, filling, shape, labels):
         r"""
         Return a dict ``F`` such that ``F[(i,j)]`` is the element in row
         ``i`` and column ``j`` and a pair of partitions describing the
