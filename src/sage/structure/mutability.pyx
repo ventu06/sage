@@ -47,7 +47,7 @@ cdef class Mutability:
         6
     """
 
-    def __init__(self, is_immutable=False):
+    def __init__(self, immutable=False):
         r"""
         TESTS::
 
@@ -63,7 +63,7 @@ cdef class Mutability:
             sage: a = A(4)
             sage: TestSuite(a).run(skip ='_test_pickling')
         """
-        self._is_immutable = is_immutable
+        self._is_immutable = immutable
 
     cpdef _require_mutable(self):
         r"""

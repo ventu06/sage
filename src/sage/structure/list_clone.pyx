@@ -953,9 +953,9 @@ cdef class ClonableArray(ClonableElement):
 
 
 ##### Needed for unpickling #####
-def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
+def _make_array_clone(clas, parent, list, needs_check, immutable, dic):
     """
-    Helpler to unpickle :class:`list_clone` instances.
+    Helper to unpickle :class:`list_clone` instances.
 
     TESTS::
 
@@ -985,7 +985,7 @@ def _make_array_clone(clas, parent, list, needs_check, is_immutable, dic):
     res._parent = parent
     res._list = list
     res._needs_check = needs_check
-    res._is_immutable = is_immutable
+    res._is_immutable = immutable
     if dic is not None:
         res.__dict__ = dic
     return res
@@ -1751,7 +1751,7 @@ cdef class ClonableIntArray(ClonableElement):
 ##### Needed for unpickling #####
 def _make_int_array_clone(clas, parent, lst, needs_check, immutable, dic):
     """
-    Helpler to unpickle :class:`list_clone` instances.
+    Helper to unpickle :class:`list_clone` instances.
 
     TESTS::
 

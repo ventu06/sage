@@ -130,8 +130,7 @@ cdef class ToricRationalDivisorClass(Vector_rational_dense):
             Divisor class [1, -2, 3, -4]
         """
         return (_ToricRationalDivisorClass_unpickle_v1,
-                (self._parent, list(self), self._degree,
-                 not self._is_immutable))
+                (self._parent, list(self), self._degree, self._is_immutable))
 
     cpdef _act_on_(self, other, bint self_on_left):
         """
