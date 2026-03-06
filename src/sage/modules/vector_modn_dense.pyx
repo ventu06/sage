@@ -287,7 +287,7 @@ cdef class Vector_modn_dense(free_module_element.FreeModuleElement):
 
     def __reduce__(self):
         return unpickle_v1, (self._parent, self.list(), self._degree,
-                             self._p, not self._is_immutable)
+                             self._p, self._is_immutable)
 
     cpdef _add_(self, right):
         cdef Vector_modn_dense z, r

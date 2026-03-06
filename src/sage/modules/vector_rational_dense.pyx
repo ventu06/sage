@@ -251,7 +251,7 @@ cdef class Vector_rational_dense(free_module_element.FreeModuleElement):
 
     def __reduce__(self):
         return (unpickle_v1, (self._parent, self.list(), self._degree,
-                              not self._is_immutable))
+                              self._is_immutable))
 
     cpdef _add_(self, right):
         cdef Vector_rational_dense z, r
