@@ -3059,9 +3059,9 @@ class DiGraph(GenericGraph):
             return 0, []
 
         if source is not None and source not in self:
-            raise ValueError(f"vertex {source!r} is not in the graph.")
+            raise ValueError(f"vertex {source!r} is not in the graph")
         if target is not None and target not in self:
-            raise ValueError(f"vertex {target!r} is not in the graph.")
+            raise ValueError(f"vertex {target!r} is not in the graph")
 
         is_acyclic, topo_order = self.is_directed_acyclic(certificate=True)
         if not is_acyclic:
