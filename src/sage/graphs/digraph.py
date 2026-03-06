@@ -3046,14 +3046,14 @@ class DiGraph(GenericGraph):
             sage: DiGraph([(0, 1)]).longest_dag_path(source=99)
             Traceback (most recent call last):
             ...
-            ValueError: vertex 99 is not in the graph.
+            ValueError: vertex 99 is not in the graph
 
         Invalid target vertex::
 
             sage: DiGraph([(0, 1)]).longest_dag_path(target=99)
             Traceback (most recent call last):
             ...
-            ValueError: vertex 99 is not in the graph.
+            ValueError: vertex 99 is not in the graph
         """
         if not self:
             return 0, []
