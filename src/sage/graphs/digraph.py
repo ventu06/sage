@@ -3046,22 +3046,22 @@ class DiGraph(GenericGraph):
             sage: DiGraph([(0, 1)]).longest_dag_path(source=99)
             Traceback (most recent call last):
             ...
-            ValueError: Vertex 99 is not in the graph.
+            ValueError: vertex 99 is not in the graph.
 
         Invalid target vertex::
 
             sage: DiGraph([(0, 1)]).longest_dag_path(target=99)
             Traceback (most recent call last):
             ...
-            ValueError: Vertex 99 is not in the graph.
+            ValueError: vertex 99 is not in the graph.
         """
         if not self:
             return 0, []
 
         if source is not None and source not in self:
-            raise ValueError(f"Vertex {source!r} is not in the graph.")
+            raise ValueError(f"vertex {source!r} is not in the graph.")
         if target is not None and target not in self:
-            raise ValueError(f"Vertex {target!r} is not in the graph.")
+            raise ValueError(f"vertex {target!r} is not in the graph.")
 
         is_acyclic, topo_order = self.is_directed_acyclic(certificate=True)
         if not is_acyclic:
