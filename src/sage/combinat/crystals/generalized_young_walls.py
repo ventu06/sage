@@ -721,16 +721,13 @@ class GeneralizedYoungWall(CombinatorialElement):
             for j in index_set:
                 if self.a(j, k) - self.a((j - 1) % (n + 1), k) <= 0:
                     continue
-                else:
-                    p_not_found = True
-                    for p in index_set:
-                        if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
-                            p_not_found = False
-                            continue
-                        else:
-                            continue
-                    if p_not_found:
-                        return False
+                p_not_found = True
+                for p in index_set:
+                    if (j + k - p - 1) % (n + 1) == 0 and self.a(j, k) - self.a((j - 1) % (n + 1), k) <= La.scalar(ac[p]):
+                        p_not_found = False
+                    continue
+                if p_not_found:
+                    return False
         return True
 
 

@@ -640,8 +640,7 @@ def hillman_grassl_inverse(M):
         for j, col_j in enumerate(Mt):
             if all(entry == 0 for entry in col_j):
                 continue
-            else:
-                break
+            break
         else:  # all entries of Mt are 0.
             break
         # Now, j is the index of the leftmost nonzero column of

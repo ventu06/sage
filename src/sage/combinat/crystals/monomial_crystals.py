@@ -460,12 +460,12 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
+            if (i, a) in d:
                 continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
-        return max(sum(S[k][1] for k in range(s)) for s in range(1,len(S)+1))
+            d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
+        return max(sum(S[k][1] for k in range(s)) for s in range(1, len(S)+1))
 
     def _ke(self, i):
         r"""
@@ -490,13 +490,13 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(x[1] for x in d if x[0] == i)
         for a in range(K):
-            if (i,a) in d:
+            if (i, a) in d:
                 continue
-            else:
-                d[(i,a)] = 0
+            d[(i, a)] = 0
         total = ZZ.zero()
         L = []
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
         for var,exp in S:
             total += exp
             if total == phi:
@@ -525,11 +525,11 @@ class NakajimaMonomial(Element):
         d = copy(self._Y)
         K = max(key[1] for key in d if key[0] == i)
         for a in range(K):
-            if (i,a) in d:
+            if (i, a) in d:
                 continue
-            else:
-                d[(i,a)] = 0
-        S = sorted((x for x in d.items() if x[0][0] == i), key=lambda x: x[0][1])
+            d[(i, a)] = 0
+        S = sorted((x for x in d.items() if x[0][0] == i),
+                   key=lambda x: x[0][1])
         sum = 0
         phi = self.phi(i)
         for var,exp in S:
