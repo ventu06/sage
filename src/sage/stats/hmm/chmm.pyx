@@ -948,6 +948,28 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m.emission_parameters()  # rel tol 3e-14
             [(1.2722419172602375, 2.371368751761901),
              (-0.9486174675179113, 0.5762360385123765)]
+
+        TESTS:
+
+        If your luck is bad enough to cause a :exc:`RuntimeError`,
+        re-sampling will fix it. This is a repeat of one of the
+        examples above, without the fixed random seed, but then
+        acknowledging that the algorithm can fail in rare cases::
+
+            sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
+            ....:                                   [(1,.5), (-1,3)],
+            ....:                                   [.1,.9])
+            sage: v = m.sample(10)
+            sage: while True:
+            ....:     try:
+            ....:         l = stats.TimeSeries([m.baum_welch(v, max_iter=1)[0]
+            ....:                               for _ in range(len(v))])
+            ....:         break
+            ....:     except RuntimeError:
+            ....:         v = m.sample(10)
+            sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
+            True
+
         """
         if not isinstance(obs, TimeSeries):
             obs = TimeSeries(obs)
