@@ -768,6 +768,9 @@ REFERENCES:
              approximants on arbitrary staircases*. J. Comput. Appl. Math.,
              40(1):19-42, 1992. :doi:`10.1016/0377-0427(92)90039-Z`.
 
+.. [Beck] \M. Beck, Stanford Math Circle - Parking Functions, October 2010,
+          http://math.stanford.edu/circle/parkingBeck.pdf
+
 .. [BeCoMe] Frits Beukers, Henri Cohen, Anton Mellit,
    *Finite hypergeometric functions*,
    :arxiv:`1505.02900`
@@ -1857,6 +1860,9 @@ REFERENCES:
              \J. Algebr. Comb. **39** (2014) pp. 17-51.
              :doi:`10.1007/s10801-013-0437-x`, :arxiv:`1108.1776`.
 
+.. [CM] Benoit Collins, Sho Matsumoto, *On some properties of
+        orthogonal Weingarten functions*, :arxiv:`0903.5143`.
+        
 .. [CM2000] Paula A.A.B. Carvalho and Ian M. Musson. *Down-up algebras and
             their representation theory*. J. Algebra. **228** no. 1, (2000),
             pp. 286-310. :doi:`10.1006/jabr.1999.8263`
@@ -3318,6 +3324,9 @@ REFERENCES:
               results in the theory of the Wiener number*. Indian Journal of
               Chemistry, 32A:651--661, 1993.
 
+.. [GXZ] \A. M. Garsia, G. Xin, M. Zabrocki, A three shuffle case of the
+         compositional parking function conjecture, :arxiv:`1208.5796v1`
+
 .. [GZ1983] Greene; Zaslavsky, *On the Interpretation of Whitney
             Numbers Through Arrangements of Hyperplanes, Zonotopes,
             Non-Radon Partitions, and Orientations of
@@ -3344,6 +3353,10 @@ REFERENCES:
 .. [Haf2004] Paul R. Hafner. *On the Graphs of Hoffman-Singleton and Higman-Sims*.
              The Electronic Journal of Combinatorics 11 (2004), #R77.
              http://www.combinatorics.org/Volume_11/PDF/v11i1r77.pdf
+
+.. [Hag08] The `q,t` -- Catalan Numbers and the Space of Diagonal Harmonics:
+           With an Appendix on the Combinatorics of Macdonald Polynomials, James Haglund,
+           University of Pennsylvania, Philadelphia -- AMS, 2008, 167 pp.
 
 .. [HaHo2017] Nate Harman and Sam Hopkins,
               *Quantum integer-valued polynomials*,
@@ -5044,6 +5057,11 @@ REFERENCES:
 .. [McC1978] \K. McCrimmon. *Jordan algebras and their
              applications*. Bull. Amer. Math. Soc. **84** 1978.
 
+.. [McD] combinatorics of hyperoctahedral group, double coset algebra and
+         zonal polynomials (I. G. Macdonald, Symmetric functions and Hall
+         polynomials, Oxford University Press, second edition, 1995, chapter
+         VII).
+
 .. [McE1987] Robert J. McEliece. *Finite Fields for Computer
              Scientists and Engineers*. Kluwer Academic Publishers, 1987.
 
@@ -5334,6 +5352,10 @@ REFERENCES:
              regular graphs*.
              J. Algebraic Combin., 25(2):169-187, 2007.
              :doi:`10.1007/s10801-006-0030-7`.
+
+.. [MV] combinatorics of orthogonal polynomials (A. de Medicis et
+        X.Viennot, Moments des q-polynômes de Laguerre et la bijection de
+        Foata-Zeilberger, Adv. Appl. Math., 15 (1994), 262-304)
 
 .. [MV2010] \D. Micciancio, P. Voulgaris. *A Deterministic Single
             Exponential Time Algorithm for Most Lattice Problems based
@@ -6189,6 +6211,9 @@ REFERENCES:
 
 .. [Shim2016] Shimada, Ichiro, *Connected components of the moduli of
             elliptic K3 surfaces*, :arxiv:`1610.04706`.
+
+.. [Shin] \H. Shin, Forests and Parking Functions, slides from talk September 24, 2008,
+          http://www.emis.de/journals/SLC/wpapers/s61vortrag/shin.pdf
 
 .. [Shi1971] Goro Shimura, *Introduction to the arithmetic theory of
              automorphic functions*. Publications of the Mathematical
