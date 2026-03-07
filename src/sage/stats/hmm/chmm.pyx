@@ -910,8 +910,12 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             sage: m.emission_parameters()
             [(-0.2663018798..., 1.0), (-1.99850979..., 1.0)]
 
-        We watch the log likelihoods of the model converge, step by step::
+        We watch the log likelihoods of the model converge, step by
+        step. We set the random seed beforehand so that the output is
+        predictable (and guaranteed to avoid random floating point
+        issues)::
 
+            sage: set_random_seed(0)
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.5,.5]],
             ....:                                   [(1,.5), (-1,3)],
             ....:                                   [.1,.9])
@@ -920,7 +924,7 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             ....:                       for _ in range(len(v))])
             sage: all(l[i] <= l[i+1] + 0.0001 for i in range(9))
             True
-            sage: l  # random
+            sage: l
             [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314,
              -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
 
