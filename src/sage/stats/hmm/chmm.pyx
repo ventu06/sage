@@ -928,12 +928,14 @@ cdef class GaussianHiddenMarkovModel(HiddenMarkovModel):
             [-20.1167, -17.7611, -16.9814, -16.9364, -16.9314,
              -16.9309, -16.9309, -16.9309, -16.9309, -16.9309]
 
-        We illustrate fixing emissions::
+        We illustrate fixing emissions; again the random seed is fixed
+        to ensure that the output is what we expect it to be::
 
+            sage: set_random_seed(0)
             sage: m = hmm.GaussianHiddenMarkovModel([[.1,.9],[.9,.1]],
             ....:                                   [(1,2),(-1,.5)],
             ....:                                   [.3,.7])
-            sage: set_random_seed(0); v = m.sample(100)
+            sage: v = m.sample(100)
             sage: m.baum_welch(v,fix_emissions=True)
             (-164.72944548204..., 23)
             sage: m.emission_parameters()
