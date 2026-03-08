@@ -6,7 +6,8 @@ A perfect matching of a set `S` is a partition into 2-element sets. If `S` is
 the set `\{1,...,n\}`, it is equivalent to fixpoint-free involutions. These
 simple combinatorial objects appear in different domains such as combinatorics
 of orthogonal polynomials and of the hyperoctaedral groups (see [MV]_, [McD]_
-and also [CM]_):
+of orthogonal polynomials and of the hyperoctahedral groups (see [MV]_, Chapter VII of [Mac1995]_
+and [CM]_):
 
 AUTHOR:
 
