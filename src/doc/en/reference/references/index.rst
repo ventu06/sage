@@ -5057,11 +5057,6 @@ REFERENCES:
 .. [McC1978] \K. McCrimmon. *Jordan algebras and their
              applications*. Bull. Amer. Math. Soc. **84** 1978.
 
-.. [McD] combinatorics of hyperoctahedral group, double coset algebra and
-         zonal polynomials (I. G. Macdonald, Symmetric functions and Hall
-         polynomials, Oxford University Press, second edition, 1995, chapter
-         VII).
-
 .. [McE1987] Robert J. McEliece. *Finite Fields for Computer
              Scientists and Engineers*. Kluwer Academic Publishers, 1987.
 
@@ -5353,9 +5348,9 @@ REFERENCES:
              J. Algebraic Combin., 25(2):169-187, 2007.
              :doi:`10.1007/s10801-006-0030-7`.
 
-.. [MV] combinatorics of orthogonal polynomials (A. de Medicis et
-        X.Viennot, Moments des q-polynômes de Laguerre et la bijection de
-        Foata-Zeilberger, Adv. Appl. Math., 15 (1994), 262-304)
+.. [MV] Anne de Médicis and Xavier G. Viennot,
+        *Moments of q-Laguerre polynomials and the Foata-Zeilberger
+        bijection*, Adv. Appl. Math. **15** (1994), No. 3, 262-304.
 
 .. [MV2010] \D. Micciancio, P. Voulgaris. *A Deterministic Single
             Exponential Time Algorithm for Most Lattice Problems based
