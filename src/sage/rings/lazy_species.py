@@ -1542,6 +1542,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
     def _points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
         if i == i_G:
             return fix[i]
+        if fix[i] == fix[i_G]:  # because it must be non-negative
+            return ZZ.zero()
         try:
             return next(b for a, b in self._cache if a == (i, H))
         except StopIteration:
@@ -1557,8 +1559,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                       for F1 in groups]
             self._groups_cache[i] = groups
 
-        r = (fix[i]
-             - self._points_with_stabilizer(i_G, H, i_G, l_G, fix, S)
+        r = (fix[i] - fix[i_G]
              - sum(self._points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
                    for i_F in groups))
         self._cache.append(((i, H), r))
@@ -1614,10 +1615,10 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                  for _, C_N in l_G]
             for i, (C_n, C_N) in enumerate(l_G):
                 m = self._points_with_stabilizer(i, H, i_G, l_G, f, S)
-                F = C_N.Representative()
-                N = libgap.Normalizer(G, F)
-                r = m * F.Size().sage() / N.Size().sage()
-                if r:
+                if m:
+                    F = C_N.Representative()
+                    N = libgap.Normalizer(G, F)
+                    r = m * F.Size().sage() / N.Size().sage()
                     F1 = PermutationGroup(gap_group=C_n,
                                           domain=range(1, n+1))
                     result += c * r * R(F1)
