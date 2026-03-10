@@ -303,6 +303,8 @@ def get_dependencies(pyproject_toml: Path, python: str, platform: str) -> set[st
     if platform != "win-64":
         all_requirements.remove("maxima")
         all_requirements.add("maxima < 5.48.0")
+        all_requirements.remove("singular")
+        all_requirements.add("singular ==4.4.1.p5")
 
     return all_requirements
 
