@@ -33,7 +33,6 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-
 from sage.modules.free_module import (
     FreeModule_ambient,
     Module_free_ambient,
