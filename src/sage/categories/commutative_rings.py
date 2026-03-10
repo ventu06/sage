@@ -577,19 +577,19 @@ class CommutativeRings(CategoryWithAxiom):
         def extension(self, poly, name=None, names=None, **kwds):
             """
             Algebraically extend ``self`` by taking the quotient
-            ``self[x] / (f(x))``.
+            ``self[x] / (poly(x))``.
 
             INPUT:
 
             - ``poly`` -- a polynomial whose coefficients are coercible into
               ``self``
 
-            - ``name`` -- (optional) name for the root of `f`
+            - ``name`` -- (optional) name for the root of ``poly``
 
             .. NOTE::
 
-                Using this method on an algebraically complete field does *not*
-                return this field; the construction ``self[x] / (f(x))`` is done
+                Using this method on an algebraically complete field `k` does *not*
+                return the field `k`; the construction ``self[x] / (poly(x))`` is done
                 anyway.
 
             EXAMPLES::
