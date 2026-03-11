@@ -41,15 +41,13 @@ from sage.misc.functional import rank
 from sage.misc.prandom import choice
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ
 from sage.rings.real_mpfr import RR
 from sage.misc.lazy_import import lazy_import
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
-from typing import TYPE_CHECKING
 
-if TYPE_CHECKING:
-    from sage.rings.integer import Integer
 
 lazy_import("sage.libs.pari", "pari")
 lazy_import("sage.schemes.hyperelliptic_curves.hypellfrob", "hypellfrob")

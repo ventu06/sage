@@ -36,16 +36,13 @@ from sage.modules.free_module_element import vector
 from sage.rings.finite_rings.finite_field_constructor import FiniteField as GF
 from sage.rings.infinity import Infinity
 from sage.rings.integer_ring import ZZ
+from sage.rings.integer import Integer
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.rings.real_mpfr import RR
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
-from typing import TYPE_CHECKING
-
-if TYPE_CHECKING:
-    from sage.rings.integer import Integer
 
 
 class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_generic):
