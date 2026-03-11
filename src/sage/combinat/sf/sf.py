@@ -1080,6 +1080,51 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     ht = induced_trivial_character
 
+    def irreducible_rook_character(self):
+        r"""
+        The irreducible character basis of the rook monoid as
+        symmetric functions.
+
+        It might also be called the induced irreducible character
+        basis because it is the character of an irreducible
+        `S_k` module induced to `S_n` where `n>k`.
+
+        This is a basis of the symmetric functions that has the
+        property that ``self(la).character_to_frobenius_image(n)``
+        is equal to ``s([n-sum(la)])*s(la)``.
+
+        This basis appears implicitly in the paper by Assaf and Spyers.
+        The basis appears explicitly in the paper The Hopf
+        structure of symmetric group characters as symmetric functions
+        by Orellana and Zabrocki.
+
+        .. SEEALSO::
+
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.character_to_frobenius_image`,
+            :meth:`~sage.combinat.sf.sfa.SymmetricFunctionAlgebra_generic_Element.eval_at_permutation_roots`
+
+        EXAMPLES::
+
+            sage: SymmetricFunctions(QQ).irreducible_rook_character()
+            Symmetric Functions over Rational Field in the irreducible symmetric group character basis
+            sage: st = SymmetricFunctions(QQ).xt()
+            sage: s = SymmetricFunctions(QQ).s()
+            sage: s(xt([3,2]).character_to_frobenius_image(7))==s[3,2]*s[2]
+            True
+            sage: xt[1, 1]*xt[3]
+            xt[1, 1, 1] + xt[2, 1] + xt[2, 1, 1] + xt[2, 2] + 2*xt[3, 1] + xt[3, 1, 1] + xt[4] + xt[4, 1]
+            sage: xt[3,2].coproduct().monomial_coefficients()==s[3,2].coproduct().monomial_coefficients()
+            True
+            sage: xt(s[3])
+            xt[1] + xt[1, 1] + xt[2] + xt[3]
+            sage: s(xt[3,1])
+            -s[1] + s[1, 1] - s[1, 1, 1] + 2*s[2] - 2*s[2, 1] - s[3] + s[3, 1]
+        """
+        from .character import RookIrreducibleCharacterBasis
+        return RookIrreducibleCharacterBasis(self)
+
+    xt = irreducible_rook_character
+
     def forgotten(self):
         r"""
         The forgotten basis of the Symmetric Functions (or the basis dual to
@@ -1434,7 +1479,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
     # keep them sorted in alphabetic order
     _shorthands = ('e', 'f', 'h', 'm', 'p', 's')
-    _shorthands_all = ('e', 'f', 'h', 'ht', 'm', 'o', 'p', 's', 'sp', 'st', 'w')
+    _shorthands_all = ('e', 'f', 'h', 'ht', 'm', 'o', 'p', 's', 'sp', 'st', 'w', 'xt')
 
     def __init_extra__(self):
         """

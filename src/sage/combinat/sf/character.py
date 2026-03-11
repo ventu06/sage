@@ -573,3 +573,157 @@ class IrreducibleCharacterBasis(Character_generic):
             3*s[1] - 2*s[1, 1] - 2*s[2] + s[2, 1]
         """
         return self._other(self._self_to_power_on_basis(lam))
+
+
+class RookIrreducibleCharacterBasis(Character_generic):
+    r"""
+    The irreducible character basis of the rook monoid as
+    symmetric functions.
+
+    It might also be called the induced irreducible character
+    basis because it is the character of an irreducible
+    `S_k` module induced to `S_n` where `n>k`.
+
+    This is a basis of the symmetric functions that has the
+    property that ``self(la).character_to_frobenius_image(n)``
+    is equal to ``s([n-sum(la)])*s(la)``.
+
+    This basis appears implicitly in the paper by Assaf and
+    Spyers.
+    The basis appears explicitly in the paper The Hopf
+    structure of symmetric group characters as symmetric functions
+    by Orellana and Zabrocki.
+
+    EXAMPLES::
+
+        sage: Sym = SymmetricFunctions(QQ)
+        sage: s = Sym.s()
+        sage: h = Sym.h()
+        sage: ht = SymmetricFunctions(QQ).ht()
+        sage: st = SymmetricFunctions(QQ).st()
+        sage: xt = rook_irreducible_character_basis(Sym, 'xt'); xt
+        Symmetric Functions over Rational Field in the irreducible rook monoid character basis
+        sage: xt(s[2,1])
+        xt[1, 1] + xt[2] + xt[2, 1]
+        sage: s(xt[2,1])
+        s[1] - s[1, 1] - s[2] + s[2, 1]
+        sage: xt(h[2,1])
+        xt[1] + 2*xt[1, 1] + 2*xt[2] + xt[2, 1] + xt[3]
+        sage: h(xt[2,1])
+        h[1] - h[1, 1] + h[2, 1] - h[3]
+        sage: xt(ht[2,1])
+        xt[2, 1] + xt[3]
+        sage: st(xt[2,1])
+        st[1] + st[1, 1] + st[2] + st[2, 1]
+        sage: xt(st[2,1])
+        xt[1] - xt[1, 1] - xt[2] + xt[2, 1]
+        sage: xt[2]*xt[1,1]
+        xt[1, 1] + xt[1, 1, 1] + 2*xt[2, 1] + xt[2, 1, 1] + xt[3] + xt[3, 1]
+        sage: xt(s[2,1])
+        xt[1, 1] + xt[2] + xt[2, 1]
+        sage: xt[2]*xt[1]
+        xt[1, 1] + xt[2] + xt[2, 1] + xt[3]
+        sage: s(xt[2,1].character_to_frobenius_image(3))
+        s[2,1]
+        sage: s(xt[2,1].character_to_frobenius_image(9))==s[2,1]*s[6]
+        True
+
+    TESTS::
+
+        sage: TestSuite(xt).run()
+    """
+    def __init__(self, Sym):
+        r"""
+        Initialize the basis and register coercions.
+
+        The coercions are set up between the ``other_basis``.
+        This code is almost exactly the same as the
+        induced trivial character basis, but the other basis
+        is the complete symmetric functions instead of the
+        Schur basis.
+
+        INPUT:
+
+        - ``Sym`` -- an instance of the symmetric function algebra
+        - ``pfix`` -- a prefix to use for the basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: xt = rook_irreducible_character_basis(Sym, 'xt'); xt
+            Symmetric Functions over Rational Field in the irreducible
+             rook monoid character basis
+        """
+        SFA_generic.__init__(self, Sym,
+                             basis_name="irreducible rook monoid character",
+                             prefix='xt', graded=False)
+        self._other = Sym.Schur()
+        self._p = Sym.powersum()
+        self._ht = Sym.induced_trivial_character()
+
+        self.module_morphism(self._self_to_power_on_basis,
+                             codomain=Sym.powersum()).register_as_coercion()
+        self.register_coercion(SetMorphism(Hom(self._other, self),
+                                           self._other_to_self))
+
+    def _self_to_power_on_basis(self, lam):
+        r"""
+        An expansion of the rook irreducible character in the powersum basis.
+
+        The formula for the rook irreducible character basis indexed by the
+        partition ``lam`` is given by the formula
+
+        .. MATH::
+
+            \sum_{\gamma} \left\langle s_\lambda, p_\gamma \right\rangle
+            \frac{{\overline {\mathbf p}}_\gamma}{z_\gamma},
+
+        where `{\overline {\mathbf p}}_\gamma` is the
+        power sum expression calculated in the method
+        :meth:`_b_bar_power_gamma`.
+
+        INPUT:
+
+        - ``lam`` -- a partition
+
+        OUTPUT:
+
+        - an expression in the power sum basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: xt = rook_irreducible_character_basis(Sym, 'xt')
+            sage: xt._self_to_power_on_basis([2,1])
+            p[1] - p[1, 1] + 1/3*p[1, 1, 1] - 1/3*p[3]
+            sage: xt._self_to_power_on_basis([1,1,1])
+            1/6*p[1, 1, 1] - 1/2*p[2, 1] + 1/3*p[3]
+
+        """
+        return self._p.sum( c*self._ht._b_bar_power_gamma(ga)
+                            for (ga, c) in self._p(self._other(lam)) )
+
+    @cached_method
+    def _self_to_other_on_basis(self, lam):
+        r"""
+        An expansion of the rook irreducible character basis in Schur basis.
+
+        Compute the Schur expansion by first computing it in the
+        powersum basis and the coercing to the Schur basis.
+
+        INPUT:
+
+        - ``lam`` -- a partition
+
+        OUTPUT:
+
+        - an expression in the Schur (other) basis
+
+        EXAMPLES::
+
+            sage: Sym = SymmetricFunctions(QQ)
+            sage: xt = rook_irreducible_character_basis(Sym, 'xt')
+            sage: xt._self_to_other_on_basis(Partition([2,1]))
+            s[1] - s[1, 1] - s[2] + s[2, 1]
+        """
+        return self._other(self._self_to_power_on_basis(lam))
