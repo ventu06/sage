@@ -100,7 +100,8 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         sage: hash(C1) == hash(C2)
         False
     """
-    def __init__(self, defining_polynomial, f, h, genus: Integer, names=['x', 'y']):
+
+    def __init__(self, defining_polynomial, f, h, genus: Integer, names=["x", "y"]):
         r"""
         Create a hyperelliptic curve as a weighted projective curve.
 
@@ -126,12 +127,12 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             raise ValueError(f"coordinate function names: {names} must have length two")
 
         # Create the printing ring with custom names for _repr_
-        P1 = PolynomialRing(self._base_ring, name = self._names[0])
-        self._printing_ring = PolynomialRing(P1, name = self._names[1])
+        P1 = PolynomialRing(self._base_ring, name=self._names[0])
+        self._printing_ring = PolynomialRing(P1, name=self._names[1])
 
         self._d = max(h.degree(), (f.degree() + 1) // 2)
         if self._d != self._genus + 1:
-            raise ValueError('genus does not match expected value')
+            raise ValueError("genus does not match expected value")
 
         # Initialise the underlying curve
         A = WeightedProjectiveSpace((1, self._genus + 1, 1), self._base_ring)
@@ -177,7 +178,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         x = self._printing_ring.base_ring().gen()
         if h.is_zero():
             return f"Hyperelliptic Curve over {R} defined by {y**2} = {f(x)}"
-        return f"Hyperelliptic Curve over {R} defined by {y**2} + {h(x)*y} = {f(x)}"
+        return f"Hyperelliptic Curve over {R} defined by {y**2} + {h(x) * y} = {f(x)}"
 
     def _latex_(self):
         r"""
@@ -200,11 +201,15 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         y = self._printing_ring.gen()
         x = self._printing_ring.base_ring().gen()
         if h.is_zero():
-            return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
-                    f'defined by ${(y**2)._latex_()} = {(f(x))._latex_()}$}}')
-        return (fr'\text{{Hyperelliptic Curve over ${R._latex_()}$ '
-                f'defined by ${(y**2)._latex_()} + {(h(x)*y)._latex_()} = '
-                f'{(f(x))._latex_()}$}}')
+            return (
+                rf"\text{{Hyperelliptic Curve over ${R._latex_()}$ "
+                f"defined by ${(y**2)._latex_()} = {(f(x))._latex_()}$}}"
+            )
+        return (
+            rf"\text{{Hyperelliptic Curve over ${R._latex_()}$ "
+            f"defined by ${(y**2)._latex_()} + {(h(x) * y)._latex_()} = "
+            f"{(f(x))._latex_()}$}}"
+        )
 
     def genus(self) -> Integer:
         r"""
@@ -1020,7 +1025,9 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             return self._distinguished_point
 
         if self.base_ring().characteristic() == 0:
-            raise ValueError("in characteristic 0, a distinguished_point needs to be specified with `set_distinguished_point`")
+            raise ValueError(
+                "in characteristic 0, a distinguished_point needs to be specified with `set_distinguished_point`"
+            )
 
         # in the inert case we choose a point with minimal x-coordinate
         for x0 in self.base_ring():

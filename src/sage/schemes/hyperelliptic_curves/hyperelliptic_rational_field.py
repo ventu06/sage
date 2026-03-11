@@ -23,12 +23,18 @@ AUTHORS:
 import sage.rings.abc
 from sage.rings.padics.factory import Qp as pAdicField
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
 class HyperellipticCurve_rational_field(
     hyperelliptic_generic.HyperellipticCurve_generic
 ):
-    def __init__(self, projective_model, f, h, genus: Integer, names=['x', 'y']) -> None:
+    def __init__(
+        self, projective_model, f, h, genus: Integer, names=["x", "y"]
+    ) -> None:
         r"""
         Create a hyperelliptic curve over the rationals.
 

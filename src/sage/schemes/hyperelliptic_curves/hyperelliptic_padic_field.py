@@ -42,11 +42,13 @@ from sage.rings.power_series_ring import PowerSeriesRing
 from sage.rings.rational_field import QQ, RationalField
 from sage.rings.real_mpfr import RR
 from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sage.rings.integer import Integer
 
 
-class HyperellipticCurve_padic_field(
-    hyperelliptic_generic.HyperellipticCurve_generic
-):
+class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_generic):
     r"""
     Class of hyperelliptic curves (smooth model) over a `p`-adic field.
     In particular this class implements the necessary functionality to
@@ -75,7 +77,9 @@ class HyperellipticCurve_padic_field(
         3*7 + 4*7^2 + 5*7^4 + 2*7^5 + 2*7^6 + 6*7^7 + 4*7^8 + O(7^9)
     """
 
-    def __init__(self, projective_model, f, h, genus: Integer, names=['x', 'y']) -> None:
+    def __init__(
+        self, projective_model, f, h, genus: Integer, names=["x", "y"]
+    ) -> None:
         r"""
         Create a hyperelliptic curve over a p-adic field.
 
