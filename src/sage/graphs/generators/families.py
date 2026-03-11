@@ -1267,6 +1267,15 @@ def CubeGraph(n, embedding=1, immutable=False):
         sage: g = graphs.CubeGraph(9, embedding=3)
         sage: g.show(figsize=[12,12],vertex_labels=False, vertex_size=20)       # long time, needs sage.plot
 
+    TESTS::
+
+        sage: set_random_seed(0)
+        sage: g = graphs.CubeGraph(2)
+        sage: h = next(u for u in g.connected_subgraph_iterator()
+        ....:          if u.edges(sort=True, labels=False) == [('00', '01')])
+        sage: sorted(h.get_pos().items())
+        [('00', (0.0, 0.0)), ('01', (0.0, 1.0))]
+
     AUTHORS:
 
     - Robert Miller
@@ -1284,8 +1293,9 @@ def CubeGraph(n, embedding=1, immutable=False):
         pn = {}
 
         for i in range(n):
-            ci = float(cos(i*theta))
-            si = float(sin(i*theta))
+            # Avoid tiny floating-point residues such as cos(pi/2) ~= 6e-17.
+            ci = round(float(cos(i * theta)), 10)
+            si = round(float(sin(i * theta)), 10)
             for v, e in d.items():
                 v0 = v + '0'
                 v1 = v + '1'
