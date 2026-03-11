@@ -94,7 +94,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         [4, 24, 64, 288]
     """
 
-    def __init__(self, projective_model, f, h, genus: Integer, names=["x", "y"]) -> None:
+    def __init__(
+        self, projective_model, f, h, genus: Integer, names=["x", "y"]
+    ) -> None:
         r"""
         Create a hyperelliptic curve over a finite field.
 
@@ -559,7 +561,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             sage: C.cardinality_exhaustive()
             7
 
-            sage: K = GF(next_prime(1<<10))
+            sage: K = GF(next_prime(2**10))
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^7 + 3*t^5 + 5)
             sage: H.cardinality_exhaustive()
@@ -663,7 +665,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         EXAMPLES::
 
-            sage: K = GF(next_prime(1<<10))
+            sage: K = GF(next_prime(2**10))
             sage: R.<t> = PolynomialRing(K)
             sage: H = HyperellipticCurve(t^7 + 3*t^5 + 5)
             sage: H.cardinality_hypellfrob()
