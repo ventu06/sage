@@ -468,12 +468,15 @@ class Divisor_curve(Divisor_generic):
             sage: G = C.divisor([(1, Points[0]), (3, Points[0])])
             sage: G.coefficient(Points[0])
             4
+            sage: G.coefficient(Points[1])
+            0
         """
         P = self.parent().scheme()(P)
         if P not in self.support():
             return self.base_ring().zero()
         t, i = search(self.support(), P)
-        assert t
+        if not t:
+            return Integer(0)
         try:
             return self._points[i][0]
         except AttributeError:
