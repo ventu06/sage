@@ -314,7 +314,7 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
             coords = self._coords
             for i in reversed(range(len(coords))):
                 w, c = weights[i], coords[i]
-                if w == 1 and not c == 0:
+                if w.is_one() and not c.is_zero():
                     # we normalise w.r.t this coordinate
                     self.scale_by(~c)
                     self._normalized = True

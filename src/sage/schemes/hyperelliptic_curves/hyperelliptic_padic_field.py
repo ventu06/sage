@@ -75,7 +75,7 @@ class HyperellipticCurve_padic_field(
         3*7 + 4*7^2 + 5*7^4 + 2*7^5 + 2*7^6 + 6*7^7 + 4*7^8 + O(7^9)
     """
 
-    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
+    def __init__(self, projective_model, f, h, genus: Integer, names=['x', 'y']) -> None:
         r"""
         Create a hyperelliptic curve over a p-adic field.
 
@@ -201,7 +201,7 @@ class HyperellipticCurve_padic_field(
             x = x.polynomial()(y).add_bigoh(x.prec())
             return (x, y, 1)
 
-    def is_in_weierstrass_disc(self, P):
+    def is_in_weierstrass_disc(self, P) -> bool:
         r"""
         Checks if `P` is in a Weierstrass disc.
 
@@ -401,7 +401,7 @@ class HyperellipticCurve_padic_field(
                 "The reduction of the hyperelliptic curve is inert. This case should not appear."
             )
 
-    def is_same_disc(self, P, Q):
+    def is_same_disc(self, P, Q) -> bool:
         r"""
         Checks if `P,Q` are in same residue disc
 

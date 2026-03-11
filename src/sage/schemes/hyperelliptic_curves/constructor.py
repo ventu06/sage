@@ -1,6 +1,7 @@
 r"""
 Constructor for hyperelliptic curves using the smooth model
-in weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
+
+Uses weighted projective space `\mathbb{P}(1 : g + 1 : 1)`.
 
 TODO:
 

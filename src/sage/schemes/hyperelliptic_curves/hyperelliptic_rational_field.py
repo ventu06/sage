@@ -28,7 +28,7 @@ from sage.schemes.hyperelliptic_curves import hyperelliptic_generic
 class HyperellipticCurve_rational_field(
     hyperelliptic_generic.HyperellipticCurve_generic
 ):
-    def __init__(self, projective_model, f, h, genus, names=['x', 'y']):
+    def __init__(self, projective_model, f, h, genus: Integer, names=['x', 'y']) -> None:
         r"""
         Create a hyperelliptic curve over the rationals.
 

@@ -94,7 +94,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         [4, 24, 64, 288]
     """
 
-    def __init__(self, projective_model, f, h, genus, names=["x", "y"]):
+    def __init__(self, projective_model, f, h, genus: Integer, names=["x", "y"]) -> None:
         r"""
         Create a hyperelliptic curve over a finite field.
 
@@ -1433,7 +1433,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
 
         # computing F, since the entries of the matrix are c_i where F= \sum c_i x^i
 
-        F = f ** ((p - 1) / 2)
+        F = f ** ((p - 1) >> 1)  # f ** ((p - 1) / 2)
 
         # coefficients returns a_0, ... , a_n where f(x) = a_n x^n + ... + a_0
 

@@ -64,7 +64,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
     from `\deg(u)` and `g`. In these cases, `n` is omitted in the description.
     """
 
-    def dimension(self):
+    def dimension(self) -> Integer:
         r"""
         Return the dimension of this Jacobian.
 
@@ -77,7 +77,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             sage: J.dimension()
             3
         """
-        return Integer(self.curve().genus())
+        return self.curve().genus()
 
     def point(self, *mumford, check=True, **kwargs):
         r"""
@@ -201,8 +201,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         r"""
         Return an iterator over the elements of the Jacobian.
         """
-        for point in self.point_homset().points():
-            yield point
+        yield from self.point_homset().points()
 
     rational_points = points
 

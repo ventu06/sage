@@ -48,6 +48,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian()
             sage: D = J(x^2 + 14*x + 16, 3*x + 4); D # indirect doctest
             (x^2 + 14*x + 16, 3*x + 4)
+            sage: TestSuite(J).run()
         """
         SchemeMorphism.__init__(self, parent)
 
@@ -230,7 +231,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return (self._u, self._v)[n]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Compute the hash value of this element.
 

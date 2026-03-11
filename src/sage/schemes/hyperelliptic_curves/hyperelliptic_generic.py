@@ -100,7 +100,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         sage: hash(C1) == hash(C2)
         False
     """
-    def __init__(self, defining_polynomial, f, h, genus, names=['x', 'y']):
+    def __init__(self, defining_polynomial, f, h, genus: Integer, names=['x', 'y']):
         r"""
         Create a hyperelliptic curve as a weighted projective curve.
 
@@ -324,8 +324,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
     def polynomial_ring(self):
         r"""
-        Return the parent of `f,h`, where ``self`` is the hyperelliptic curve
-        defined by `y^2 + h*y = f`.
+        Return the parent ring of the defining polynomials `f, h`, of this hyperelliptic curve.
 
         EXAMPLES::
 
@@ -980,9 +979,6 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
                 # If Z = 0 then P is a point at infinity,
                 # so we cannot be in the inert case and
                 # must be in the split case here.
-                # If Z = 0 then P is a point at infinity,
-                # so we cannot be in the inert case and
-                # must be in the split case here.
                 points = self.points_at_infinity()
                 if P == points[0]:
                     return points[1]
@@ -1023,9 +1019,8 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             self._distinguished_point = self.points_at_infinity()[0]
             return self._distinguished_point
 
-        assert self.base_ring().characteristic() > 0, (
-            "in characteristic 0, a distinguished_point needs to be specified"
-        )
+        if self.base_ring().characteristic() == 0:
+            raise ValueError("in characteristic 0, a distinguished_point needs to be specified with `set_distinguished_point`")
 
         # in the inert case we choose a point with minimal x-coordinate
         for x0 in self.base_ring():

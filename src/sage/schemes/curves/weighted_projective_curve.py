@@ -128,7 +128,7 @@ class WeightedProjectiveCurve(Curve_generic):
 
         .. TODO:
 
-            Implement this directly for weighted projectivce space, this code currently
+            Implement this directly for weighted projective space, this code currently
             just computes the related projective model and continues the computation from
             there.
 
@@ -154,7 +154,7 @@ class WeightedProjectiveCurve(Curve_generic):
 
         .. TODO:
 
-            Implement this directly for weighted projectivce space, this code currently
+            Implement this directly for weighted projective space, this code currently
             just computes the related projective model and continues the computation from
             there.
 

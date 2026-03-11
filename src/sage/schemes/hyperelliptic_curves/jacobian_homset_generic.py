@@ -129,7 +129,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return X
 
     @cached_method
-    def order(self):
+    def order(self) -> Integer:
         r"""
         Compute the order of the Jacobian.
 
@@ -182,7 +182,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         roots = self.extended_curve().frobenius_polynomial().roots(QQbar)
         return [r for r, e in roots for _ in range(e)]
 
-    def cardinality(self, extension_degree=1):
+    def cardinality(self, extension_degree=1) -> Integer:
         r"""
         Return `|Jac(C) / \mathbb{F}_{q^n}|`.
 

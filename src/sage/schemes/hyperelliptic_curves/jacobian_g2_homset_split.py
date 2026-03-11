@@ -26,7 +26,7 @@ from sage.schemes.hyperelliptic_curves.jacobian_homset_split import (
 class HyperellipticJacobianHomsetSplit_g2(HyperellipticJacobianHomsetSplit):
     r"""
     Special class to handle optimisations for jacobian homset computations
-    in genus two for hyperlliptic curves with an split model
+    in genus two for hyperlliptic curves with a split model
     """
 
     pass
