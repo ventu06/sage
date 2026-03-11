@@ -11,7 +11,7 @@ NRM='\e[0m'  # normal
 # ---------------------------------------------------------------------------
 
 init_file_lists() {
-  python_files=$(git diff --staged --name-only | grep "\.py$")
+  python_files=$(git diff --staged --name-only | grep "\.py$\|\.pyi$")
   cython_files=$(git diff --staged --name-only | grep "\.pyx$\|\.pxd$\|\.pxi$")
   c_files=$(git diff --staged --name-only | grep "\.c$\|\.cpp$\|\.h$")
   [ -z "$python_files" ] && [ -z "$cython_files" ] && [ -z "$c_files" ] && exit 0
@@ -35,7 +35,7 @@ To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
 init_flags() {
   # Set formatter flags
   autopep8_flags="-j0 --exit-code"
-  ruff_flags="--preview"
+  ruff_flags="check --config .github/workflows/ruff.toml --preview"
   clang_format_flags="--Werror"
   if [ "$1" == "in-place" ]; then
     autopep8_flags="--in-place $autopep8_flags"
@@ -75,7 +75,7 @@ check_autopep8() {
 check_ruff() {
   [ -z "$python_files" ] && return 0
   printf "${YLLW}ruff${NRM}: Checking code formatting..."
-  if ! ruff check $ruff_flags --select $ruff_rules $python_files > /dev/null; then
+  if ! ruff $ruff_flags $python_files > /dev/null; then
     printf " failure.\n" && return 1
   fi
   printf " success.\n"
@@ -109,8 +109,8 @@ format_autopep8() {
 format_ruff() {
   [ -z "$python_files" ] && return 0
   printf "${YLLW}ruff${NRM}: Auto-formatting..."
-  if ! ruff check $ruff_flags --select $ruff_rules $python_files > /dev/null; then
-    ruff check $ruff_flags -q --fix --select $ruff_rules $python_files
+  if ! ruff $ruff_flags $python_files > /dev/null; then
+    ruff $ruff_flags -q --fix $python_files
     printf " check the unstaged changes.\n" && return 1
   fi
   printf " no changes required.\n"
