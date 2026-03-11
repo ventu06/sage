@@ -1269,10 +1269,9 @@ def CubeGraph(n, embedding=1, immutable=False):
 
     TESTS::
 
-        sage: set_random_seed(0)
         sage: g = graphs.CubeGraph(2)
         sage: h = next(u for u in g.connected_subgraph_iterator()
-        ....:          if u.edges(sort=True, labels=False) == [('00', '01')])
+        ....:          if u.order() == 2 and u.has_edge('00', '01'))
         sage: sorted(h.get_pos().items())
         [('00', (0.0, 0.0)), ('01', (0.0, 1.0))]
 
