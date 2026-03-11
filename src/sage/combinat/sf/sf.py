@@ -1106,8 +1106,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: SymmetricFunctions(QQ).irreducible_rook_character()
-            Symmetric Functions over Rational Field in the irreducible symmetric group character basis
-            sage: st = SymmetricFunctions(QQ).xt()
+            Symmetric Functions over Rational Field in the irreducible rook monoid character basis
+            sage: xt = SymmetricFunctions(QQ).xt()
             sage: s = SymmetricFunctions(QQ).s()
             sage: s(xt([3,2]).character_to_frobenius_image(7))==s[3,2]*s[2]
             True

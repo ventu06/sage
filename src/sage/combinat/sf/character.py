@@ -599,9 +599,9 @@ class RookIrreducibleCharacterBasis(Character_generic):
         sage: Sym = SymmetricFunctions(QQ)
         sage: s = Sym.s()
         sage: h = Sym.h()
-        sage: ht = SymmetricFunctions(QQ).ht()
-        sage: st = SymmetricFunctions(QQ).st()
-        sage: xt = rook_irreducible_character_basis(Sym, 'xt'); xt
+        sage: ht = Sym.ht()
+        sage: st = Sym.st()
+        sage: xt = Sym.xt(); xt
         Symmetric Functions over Rational Field in the irreducible rook monoid character basis
         sage: xt(s[2,1])
         xt[1, 1] + xt[2] + xt[2, 1]
@@ -624,7 +624,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
         sage: xt[2]*xt[1]
         xt[1, 1] + xt[2] + xt[2, 1] + xt[3]
         sage: s(xt[2,1].character_to_frobenius_image(3))
-        s[2,1]
+        s[2, 1]
         sage: s(xt[2,1].character_to_frobenius_image(9))==s[2,1]*s[6]
         True
 
@@ -650,7 +650,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
-            sage: xt = rook_irreducible_character_basis(Sym, 'xt'); xt
+            sage: xt = Sym.xt(); xt
             Symmetric Functions over Rational Field in the irreducible
              rook monoid character basis
         """
@@ -693,7 +693,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
-            sage: xt = rook_irreducible_character_basis(Sym, 'xt')
+            sage: xt = Sym.xt()
             sage: xt._self_to_power_on_basis([2,1])
             p[1] - p[1, 1] + 1/3*p[1, 1, 1] - 1/3*p[3]
             sage: xt._self_to_power_on_basis([1,1,1])
@@ -722,7 +722,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
         EXAMPLES::
 
             sage: Sym = SymmetricFunctions(QQ)
-            sage: xt = rook_irreducible_character_basis(Sym, 'xt')
+            sage: xt = Sym.xt()
             sage: xt._self_to_other_on_basis(Partition([2,1]))
             s[1] - s[1, 1] - s[2] + s[2, 1]
         """
