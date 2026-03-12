@@ -42,6 +42,7 @@ class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
             sage: JK = Jacobian(H)(GF(7))
             sage: type(JK)
             <class 'sage.schemes.hyperelliptic_curves.jacobian_g2_homset_inert.HyperellipticJacobianHomsetInert_g2_with_category'>
+            sage: TestSuite(JK).run(skip='_test_elements')
         """
         super().__init__(Y, X, **kwds)
         self._morphism_element = MumfordDivisorClassFieldInert

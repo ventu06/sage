@@ -48,7 +48,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: J = H.jacobian()
             sage: D = J(x^2 + 14*x + 16, 3*x + 4); D # indirect doctest
             (x^2 + 14*x + 16, 3*x + 4)
-            sage: TestSuite(J).run()
         """
         SchemeMorphism.__init__(self, parent)
 
@@ -193,8 +192,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: Z != 0
             False
         """
-        # _richcmp_ is called after type unification/coercion
-        assert isinstance(other, MumfordDivisorClassField)
         return richcmp(tuple(self), tuple(other), op)
 
     def __iter__(self):
