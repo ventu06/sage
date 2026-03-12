@@ -62,6 +62,21 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
 
+    def _element_constructor_(self, *args, **kwds):
+        r"""
+        Construct an element of this homset.
+
+        TESTS::
+
+            sage: x = polygen(GF(5))
+            sage: H = HyperellipticCurve(x^5 + 3*x + 1)
+            sage: J = H.jacobian()
+            sage: P = J.random_element()
+            sage: loads(dumps(P)) == P
+            True
+        """
+        return self(*args, **kwds)
+
     def _repr_(self) -> str:
         r"""
         Return the string representation of the Jacobian Hom-set.
@@ -650,6 +665,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         H = self.extended_curve()
         K = H.base_ring()
         g = H.genus()
+        R = H.polynomial_ring()
 
         H_is_split = H.is_split()
 
@@ -670,7 +686,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 "lift_u is only implemented for Jacobians over a finite field of prime order"
             )
 
-        R = H.polynomial_ring()
         f, h = H.hyperelliptic_polynomials()
         u1, v1 = R.one(), R.zero()
 

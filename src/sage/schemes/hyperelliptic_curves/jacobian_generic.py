@@ -79,6 +79,22 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         return self.curve().genus()
 
+    def is_parent_of(self, element):
+        r"""
+        Return whether ``self`` is the parent of ``element``.
+
+        TESTS::
+
+            sage: R.<x> = GF(19)[]
+            sage: H = HyperellipticCurve(x^5 + x, x^2 + 1)
+            sage: J = H.jacobian()
+            sage: J.is_parent_of(J.zero())
+            True
+        """
+        from sage.structure.element import parent as get_parent
+        p = get_parent(element)
+        return p == self or p == self.point_homset()
+
     def point(self, *mumford, check=True, **kwargs):
         r"""
         Return a point on the Jacobian, given:

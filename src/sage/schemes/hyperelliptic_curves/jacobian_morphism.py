@@ -246,6 +246,21 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return hash(tuple(self))
 
+    def __reduce__(self):
+        r"""
+        Return data for pickling.
+
+        TESTS::
+
+            sage: x = polygen(GF(5))
+            sage: H = HyperellipticCurve(x^5 + 3*x + 1)
+            sage: J = H.jacobian()
+            sage: P = J.random_element()
+            sage: loads(dumps(P)) == P
+            True
+        """
+        return (self._parent, tuple(self))
+
     def __bool__(self):
         r"""
         Return "True" if this is not the zero element of the Jacobian.

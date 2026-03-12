@@ -27,6 +27,8 @@ from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
 
 
 class HyperellipticJacobianHomsetInert(HyperellipticJacobianHomset):
+    Element = MumfordDivisorClassFieldInert
+
     def __init__(self, Y, X, **kwds):
         r"""
         Create the Jacobian Hom-set of a hyperelliptic curve without

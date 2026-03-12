@@ -33,6 +33,8 @@ from sage.structure.element import parent
 
 
 class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
+    Element = MumfordDivisorClassFieldSplit
+
     def __init__(self, Y, X, **kwds):
         r"""
         Create the Jacobian Hom-set of a hyperelliptic curve with
@@ -200,7 +202,9 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
                 v = R.zero()
                 n = (g + 1) // 2
             elif isinstance(P1, self._morphism_element):
-                return P1
+                if parent(P1) is self:
+                    return P1
+                args = tuple(P1)
             elif isinstance(P1, SchemeMorphism_point_weighted_projective_ring):
                 # TODO: Test this path when args is a tuple
                 args = args + (
