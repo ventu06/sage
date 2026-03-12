@@ -52,7 +52,6 @@ init_flags() {
   # For Cython files we are less aggressive in order to avoid adding whitespace
   # around pointers (e.g., `cdef int *array`) and casting syntax (e.g., `<int *>`).
   python_flags="--ignore=E203,E24,W50,W690"
-  ruff_rules="RET505"
   cython_flags="--ignore=E203,E211,E225,E226,E227,E228,E24,W50,W690"
 }
 
