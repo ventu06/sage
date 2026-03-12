@@ -31,6 +31,7 @@ from sage.schemes.hyperelliptic_curves import (
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
 from sage.misc.lazy_attribute import lazy_attribute
 
+
 class HyperellipticJacobian_generic(Jacobian_generic):
     r"""
     This is the base class for Jacobians of hyperelliptic curves.
