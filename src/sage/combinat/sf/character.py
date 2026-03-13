@@ -11,6 +11,8 @@ REFERENCES:
 
 .. [OZ2015] \R. Orellana, M. Zabrocki, *Symmetric group characters
    as symmetric functions*, :arxiv:`1510.00438`.
+.. [OZ2019] \R. Orellana, M. Zabrocki, *The Hopf structure of symmetric
+   group characters as symmetric functions*, :arxiv:`1901.00378`.
 """
 
 # ****************************************************************************
@@ -590,9 +592,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
 
     This basis appears implicitly in the paper by Assaf and
     Spyers.
-    The basis appears explicitly in the paper The Hopf
-    structure of symmetric group characters as symmetric functions
-    by Orellana and Zabrocki.
+    The basis appears explicitly in [OZ2019]_.
 
     EXAMPLES::
 
