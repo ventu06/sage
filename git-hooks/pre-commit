@@ -50,9 +50,10 @@ init_flags() {
   # (e.g., [start: end: step]).
   # For Python files, include E226 to add whitespace around operator (e.g., 2*3).
   # For Cython files we are less aggressive in order to avoid adding whitespace
-  # around pointers (e.g., `cdef int *array`) and casting syntax (e.g., `<int *>`).
+  # around pointers (e.g., `cdef int *array`), casting syntax (e.g., `<int *>`),
+  # and keywords (e.g., `except?`).
   python_flags="--ignore=E203,E24,W50,W690"
-  cython_flags="--ignore=E203,E211,E225,E226,E227,E228,E24,W50,W690"
+  cython_flags="--ignore=E203,E211,E225,E226,E227,E228,E24,E275,W50,W690"
 }
 
 # ---------------------------------------------------------------------------
