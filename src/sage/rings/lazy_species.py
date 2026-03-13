@@ -93,6 +93,7 @@ from sage.groups.perm_gps.permgroup_named import (AlternatingGroup,
                                                   CyclicPermutationGroup,
                                                   DihedralGroup,
                                                   SymmetricGroup)
+from sage.modules.free_module_element import vector
 from sage.misc.inherit_comparison import InheritComparisonClasscallMetaclass
 from sage.structure.element import parent
 from sage.structure.unique_representation import UniqueRepresentation
@@ -1539,36 +1540,10 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         self._right = args[0]
         self._right_gf = args[0].generating_series()
 
-    def _points_with_stabilizer(self, i, H, i_G, l_G, fix, S):
-        if i == i_G:
-            return fix[i]
-        if fix[i] == fix[i_G]:  # because it must be non-negative
-            return ZZ.zero()
-        try:
-            return next(b for a, b in self._cache if a == (i, H))
-        except StopIteration:
-            pass
-
-        if i in self._groups_cache:
-            groups = self._groups_cache[i]
-        else:
-            F = l_G[i][1].Representative()
-            G = l_G[i_G][1].Representative()
-            groups = libgap.IntermediateSubgroups(G, F)["subgroups"]
-            groups = [next(i for i, C in enumerate(l_G) if F1 in C[1])
-                      for F1 in groups]
-            self._groups_cache[i] = groups
-
-        r = (fix[i] - fix[i_G]
-             - sum(self._points_with_stabilizer(i_F, H, i_G, l_G, fix, S)
-                   for i_F in groups))
-        self._cache.append(((i, H), r))
-        return r
-
     def _coefficient_subgroups(self, n):
         r"""
-        Return the `n`-th coefficient using Dave Witte Morris'
-        idea, identifying multiplicities of subgroups.
+        Return the `n`-th coefficient using the table of marks
+        identifying multiplicities of subgroups.
 
         TESTS::
 
@@ -1579,8 +1554,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        G = self._right
         g_count = factorial(n) * self._right_gf[n]
+        G = self._right
         R = G.parent()._laurent_poly_ring
         left = self._left
         if not left[g_count]:
@@ -1594,36 +1569,26 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             f_g_count = left.generating_series()[g_count] * factorial(g_count)
             return f_g_count * R(S_n)
 
-        S = _SymmetricGroup(g_count)
+        M = libgap.TableOfMarks(S_n)
         l = [H.gap()
              for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
              for _ in range(c)]
-        g_act = libgap.FactorCosetAction(S_n, l)
-        G = libgap.Image(g_act, S_n)
-        l_G = [(libgap.PreImage(g_act, C.Representative()), C)
-               for C in libgap.ConjugacyClassesSubgroups(G)]
-        i_G = next(i for i, C in enumerate(l_G) if G in C[1])
+        g = libgap.FactorCosetAction(S_n, l)
+        m = libgap.MarksTom(M).Length().sage()
+        C_S_n = [libgap.RepresentativeTom(M, i+1) for i in range(m)]
+        C_S_N = [libgap.Image(g, H) for H in C_S_n]
 
-        self._cache = []
-        self._groups_cache = dict()
-        result = R.zero()
+        coeffs = vector([ZZ.zero()] * m)
         for h, c in left[g_count]:
-            H = h.permutation_group()[0].gap()
             f = [fixed_points_factorized(g_count,
                                          [(A._dis, e) for A, e in h._monomial.items()],
-                                         C_N.Representative())
-                 for _, C_N in l_G]
-            for i, (C_n, C_N) in enumerate(l_G):
-                m = self._points_with_stabilizer(i, H, i_G, l_G, f, S)
-                if m:
-                    F = C_N.Representative()
-                    N = libgap.Normalizer(G, F)
-                    r = m * F.Size().sage() / N.Size().sage()
-                    F1 = PermutationGroup(gap_group=C_n,
-                                          domain=range(1, n+1))
-                    result += c * r * R(F1)
+                                         C)
+                 for C in C_S_N]
+            coeffs += c * vector(libgap.DecomposedFixedPointVector(M, f).sage())
 
-        return result
+        return sum(coeff * F for coeff, H in zip(coeffs, C_S_n)
+                   if coeff and (F := R(PermutationGroup(gap_group=H,
+                                                         domain=range(1, n+1)))))
 
     def _coefficient(self, n):
         left = self._left
@@ -2785,6 +2750,21 @@ def fixed_points(k, A, B):
     r"""
     Compute the number of fixed points of the action of `B` on
     `S_n / A`.
+
+    INPUT:
+
+    - ``n`` -- the degree of the ambient symmetric group
+    - ``A``, ``B`` -- subgroups of `S_n`
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import fixed_points
+        sage: C = SymmetricGroup(3).conjugacy_classes_subgroups()
+        sage: matrix([[fixed_points(3, A, B) for A in C] for B in C])
+        [6 3 2 1]
+        [0 1 0 1]
+        [0 0 2 1]
+        [0 0 0 1]
     """
     if libgap.Size(B) > libgap.Size(A):
         return ZZ.zero()
@@ -2848,8 +2828,23 @@ def fixed_points_factorized(n, lA, B):
       multiplicity in `A`
 
     - ``B`` -- a subgroup of `S_n`
+
+    EXAMPLES::
+
+        sage: from sage.rings.lazy_species import fixed_points_factorized
+        sage: C = SymmetricGroup(3).conjugacy_classes_subgroups()
+        sage: matrix([[fixed_points_factorized(3, [(A, 1)], B) for A in C] for B in C])
+        [6 3 2 1]
+        [0 1 0 1]
+        [0 0 2 1]
+        [0 0 0 1]
     """
-    # if A_i is the trivial group, there are no moved points
+    # sanitize lA - only necessary to drop the condition that A_i is
+    # directly indecomposable
+    lA = [(A_i, e_i) for A_i, e_i in lA if not libgap.IsTrivial(A_i).sage()]
+    degree = ZZ(n) - sum(e_i * libgap.NrMovedPoints(A_i).sage() for A_i, e_i in lA)
+    if degree:
+        lA.append((libgap.SymmetricGroup(1), degree))
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
     lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
