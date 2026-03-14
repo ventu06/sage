@@ -1554,11 +1554,11 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        g_count = factorial(n) * self._right_gf[n]
+        N = factorial(n) * self._right_gf[n]
         G = self._right
         R = G.parent()._laurent_poly_ring
         left = self._left
-        if not left[g_count]:
+        if not left[N]:
             return R.zero()
 
         S_n = _SymmetricGroup(n)
@@ -1566,34 +1566,35 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
         if not G_n or (len(G_n) == 1
                        and next(iter(G_n)).permutation_group()[0] == S_n):
             # we act trivially on G[n]
-            f_g_count = left.generating_series()[g_count] * factorial(g_count)
-            return f_g_count * R(S_n)
+            f_N = left.generating_series()[N] * factorial(N)
+            return f_N * R(S_n)
 
         M = libgap.TableOfMarks(S_n)
-        l = [H.gap()
-             for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
-             for _ in range(c)]
-        g = libgap.FactorCosetAction(S_n, l)
         m = libgap.MarksTom(M).Length().sage()
-        C_S_n = [libgap.RepresentativeTom(M, i+1) for i in range(m)]
-        C_S_N = [libgap.Image(g, H) for H in C_S_n]
+        C_n = [libgap.RepresentativeTom(M, i+1) for i in range(m)]
+        l_G = [H.gap()
+               for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
+               for _ in range(c)]
+        act = libgap.FactorCosetAction(S_n, l_G)
+        C_N = [libgap.Image(act, H) for H in C_n]
+        C_N_orbits = [libgap.Orbits(B, list(range(1, N+1))).sage() for B in C_N]
 
         coeffs = vector([ZZ.zero()] * m)
-        for h, c in left[g_count]:
-            f = [fixed_points_factorized(g_count,
+        for h, c in left[N]:
+            f = [fixed_points_factorized(N,
                                          [(A._dis, e) for A, e in h._monomial.items()],
-                                         C)
-                 for C in C_S_N]
+                                         B, B_orbits)
+                 for B, B_orbits in zip(C_N, C_N_orbits)]
             v = libgap.DecomposedFixedPointVector(M, f).sage()
             coeffs += c * vector(v + [0]*(m - len(v)))
 
-        return sum(coeff * F for coeff, H in zip(coeffs, C_S_n)
+        return sum(coeff * F for coeff, H in zip(coeffs, C_n)
                    if coeff and (F := R(PermutationGroup(gap_group=H,
                                                          domain=range(1, n+1)))))
 
     def _coefficient(self, n):
         left = self._left
-        G = self._rightp9g
+        G = self._right
         R = G.parent()._laurent_poly_ring
 
         S_n = _SymmetricGroup(n)
@@ -2767,7 +2768,7 @@ def fixed_points(k, A, B):
         [0 0 2 1]
         [0 0 0 1]
     """
-    if libgap.Size(B) > libgap.Size(A):
+    if libgap.Size(B).sage() > libgap.Size(A).sage():
         return ZZ.zero()
 
     index = ZZ(k).factorial() / libgap.Size(A).sage()
@@ -2791,31 +2792,7 @@ def fixed_points(k, A, B):
     return count
 
 
-def restricted_group(gens, X):
-    r"""
-    Return a group restricted to a collection of its orbits.
-
-    INPUT:
-
-    - ``gens`` -- the generators of a permutation group
-    - ``X`` -- a subset of its domain
-
-    OUTPUT:
-
-    ``None``, if the result is the trivial group, and the restricted
-    group otherwise.
-
-    It is assumed that ``X`` is indeed the union of orbits of the
-    group.
-    """
-    new_gens = [libgap.PermList([X.index(x ** g) + 1 for x in X])
-                for g in gens]
-    if not new_gens:
-        return
-    return libgap.Group(new_gens)
-
-
-def fixed_points_factorized(n, lA, B):
+def fixed_points_factorized(n, lA, B, orbits=None):
     r"""
     Compute the number of fixed points of the action of `B` on
     `S_n / A`, where `A` is the direct product of the given groups.
@@ -2829,6 +2806,8 @@ def fixed_points_factorized(n, lA, B):
       multiplicity in `A`
 
     - ``B`` -- a subgroup of `S_n`
+
+    - ``orbits`` -- the orbits of ``B`` or ``None``
 
     EXAMPLES::
 
@@ -2852,13 +2831,14 @@ def fixed_points_factorized(n, lA, B):
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
     lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
-    orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
+    if orbits is None:
+        orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
     orbit_sizes = [len(o) for o in orbits]
     assignments = weighted_partitions_by_capacity(orbit_sizes,
                                                   capacities)
     total_count = ZZ.zero()
     for f in assignments:
-        pts = [tuple(sorted(p for i in b for p in orbits[i])) for b in f]
+        pts = [tuple(sorted(p for j in b for p in orbits[j])) for b in f]
         local_product = ZZ.one()
         for A_i, pts_i in zip(lA_flat, pts):
             B_prime_i = libgap.Action(B, pts_i)
