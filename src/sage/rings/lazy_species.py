@@ -1584,7 +1584,8 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                                          [(A._dis, e) for A, e in h._monomial.items()],
                                          C)
                  for C in C_S_N]
-            coeffs += c * vector(libgap.DecomposedFixedPointVector(M, f).sage())
+            v = libgap.DecomposedFixedPointVector(M, f).sage()
+            coeffs += c * vector(v + [0]*(m - len(v)))
 
         return sum(coeff * F for coeff, H in zip(coeffs, C_S_n)
                    if coeff and (F := R(PermutationGroup(gap_group=H,
@@ -1592,7 +1593,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
     def _coefficient(self, n):
         left = self._left
-        G = self._right
+        G = self._rightp9g
         R = G.parent()._laurent_poly_ring
 
         S_n = _SymmetricGroup(n)
@@ -2839,6 +2840,9 @@ def fixed_points_factorized(n, lA, B):
         [0 0 2 1]
         [0 0 0 1]
     """
+    if libgap.IsTrivial(B):
+        return factorial(n) / prod(libgap.Size(A_i).sage() ** e_i
+                                   for A_i, e_i in lA)
     # sanitize lA - only necessary to drop the condition that A_i is
     # directly indecomposable
     lA = [(A_i, e_i) for A_i, e_i in lA if not libgap.IsTrivial(A_i).sage()]
@@ -2848,7 +2852,6 @@ def fixed_points_factorized(n, lA, B):
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
     lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
-    gensB = libgap.GeneratorsOfGroup(B)
     orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
     orbit_sizes = [len(o) for o in orbits]
     assignments = weighted_partitions_by_capacity(orbit_sizes,
@@ -2858,11 +2861,8 @@ def fixed_points_factorized(n, lA, B):
         pts = [tuple(sorted(p for i in b for p in orbits[i])) for b in f]
         local_product = ZZ.one()
         for A_i, pts_i in zip(lA_flat, pts):
-            B_prime_i = restricted_group(gensB, pts_i)
-            if B_prime_i is None:
-                fix = ZZ(len(pts_i)).factorial() / libgap.Size(A_i).sage()
-            else:
-                fix = fixed_points(ZZ(len(pts_i)), A_i, B_prime_i)
+            B_prime_i = libgap.Action(B, pts_i)
+            fix = fixed_points(ZZ(len(pts_i)), A_i, B_prime_i)
             local_product *= fix
             if not local_product:
                 break
