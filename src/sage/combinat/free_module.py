@@ -1254,10 +1254,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
-        if not isinstance(d, dict):
-            raise TypeError(
-                "expected a dictionary mapping basis indices to coefficients"
-            )
+        assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
             d = {key: R(coeff) for key, coeff in d.items()}
