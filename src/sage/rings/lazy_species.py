@@ -1577,14 +1577,13 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                for _ in range(c)]
         act = libgap.FactorCosetAction(S_n, l_G)
         C_N = [libgap.Image(act, H) for H in C_n]
-        C_N_orbits = [libgap.Orbits(B, list(range(1, N+1))).sage() for B in C_N]
 
         coeffs = vector([ZZ.zero()] * m)
         for h, c in left[N]:
             f = [fixed_points_factorized(N,
                                          [(A._dis, e) for A, e in h._monomial.items()],
-                                         B, B_orbits)
-                 for B, B_orbits in zip(C_N, C_N_orbits)]
+                                         B)
+                 for B in C_N]
             v = libgap.DecomposedFixedPointVector(M, f).sage()
             coeffs += c * vector(v + [0]*(m - len(v)))
 
@@ -2792,7 +2791,7 @@ def fixed_points(k, A, B):
     return count
 
 
-def fixed_points_factorized(n, lA, B, orbits=None):
+def fixed_points_factorized(n, lA, B):
     r"""
     Compute the number of fixed points of the action of `B` on
     `S_n / A`, where `A` is the direct product of the given groups.
@@ -2806,8 +2805,6 @@ def fixed_points_factorized(n, lA, B, orbits=None):
       multiplicity in `A`
 
     - ``B`` -- a subgroup of `S_n`
-
-    - ``orbits`` -- the orbits of ``B`` or ``None``
 
     EXAMPLES::
 
@@ -2831,8 +2828,7 @@ def fixed_points_factorized(n, lA, B, orbits=None):
     capacities = [(max(ZZ.one(), libgap.NrMovedPoints(A_i).sage()),
                    e_i) for A_i, e_i in lA]
     lA_flat = [A_i for A_i, e_i in lA for _ in range(e_i)]
-    if orbits is None:
-        orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
+    orbits = libgap.Orbits(B, list(range(1, n+1))).sage()
     orbit_sizes = [len(o) for o in orbits]
     assignments = weighted_partitions_by_capacity(orbit_sizes,
                                                   capacities)
