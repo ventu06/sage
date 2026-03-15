@@ -1353,6 +1353,9 @@ def graph_from_GQ_spread(const int s, const int t):
 
          sage: from sage.graphs.generators.distance_regular import \
          ....: graph_from_GQ_spread
+         sage: G = graph_from_GQ_spread(2, 2)                                           # needs sage.libs.pari
+         sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
+         ([4, 2, 1, None], [None, 1, 1, 4])
          sage: G = graph_from_GQ_spread(4, 16)                                          # needs sage.libs.pari
          sage: G.is_distance_regular(True)                                              # needs sage.libs.pari
          ([64, 60, 1, None], [None, 1, 15, 64])
