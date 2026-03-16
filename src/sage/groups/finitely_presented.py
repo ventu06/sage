@@ -2061,6 +2061,8 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             raise TypeError("expected a RewritingSystem")
         if not rws.is_confluent():
             raise ValueError("the rewriting system must be confluent")
+        if rws.finitely_presented_group() is not self:
+            raise ValueError("the rewriting system must belong to this group")
         self._confluent_rewriting_system = rws
 
     from sage.groups.generic import structure_description
