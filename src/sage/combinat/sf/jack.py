@@ -2,8 +2,8 @@
 r"""
 Jack symmetric functions
 
-Jack's symmetric functions appear in [Ma1995]_ Chapter VI, section 10.
-Zonal polynomials are the subject of [Ma1995]_ Chapter VII.
+Jack's symmetric functions appear in [Mac1995]_ Chapter VI, section 10.
+Zonal polynomials are the subject of [Mac1995]_ Chapter VII.
 The parameter `\alpha` in that reference is the parameter `t` in this
 implementation in sage.
 """

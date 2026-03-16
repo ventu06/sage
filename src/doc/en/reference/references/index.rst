@@ -4947,12 +4947,6 @@ REFERENCES:
 .. [Mac1916] \F.S. Macaulay. *The algebraic theory of modular systems*
              Cambridge university press, 1916.
 
-.. [Ma1995] \I. G. Macdonald,
-            *Symmetric functions and Hall polynomials*,
-            second ed.,
-            The Clarendon Press, Oxford University Press, New York, 1995, With contributions
-            by A. Zelevinsky, Oxford Science Publications.
-
 .. [MacCM2022] Thomas McConville and Henri Mühle. *Shuffle lattices and bubble
                lattices*. Sémin. Lothar. Comb. 86B, Article 63 (2022).
 
