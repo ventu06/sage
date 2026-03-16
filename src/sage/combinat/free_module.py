@@ -1241,7 +1241,7 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             Rational Field
 
         With ``remove_zeros=True``, zero coefficients are removed::
-
+            
             sage: s._from_dict({part: 0})                                               # needs sage.combinat
             0
 
@@ -1254,14 +1254,24 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
                 sage: list(s._from_dict({part: 0}, remove_zeros=False))                 # needs sage.combinat
                 [([2, 1], 0)]
         """
-        assert isinstance(d, dict)
         if coerce:
             R = self.base_ring()
-            d = {key: R(coeff) for key, coeff in d.items()}
-        if remove_zeros:
+            if remove_zeros:
+                # Single pass: coerce and remove zeros simultaneously,
+                # avoiding allocation of an intermediate dictionary.
+                result = {}
+                for key, coeff in d.items():
+                    c = R(coeff)
+                    if c:
+                        result[key] = c
+                d = result
+            else:
+                d = {key: R(coeff) for key, coeff in d.items()}
+        elif remove_zeros:
             d = {key: coeff for key, coeff in d.items() if coeff}
         return self.element_class(self, d)
-
+           
+        
 
 class CombinatorialFreeModule_Tensor(CombinatorialFreeModule):
     """
