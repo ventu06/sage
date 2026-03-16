@@ -1259,12 +1259,8 @@ class CombinatorialFreeModule(UniqueRepresentation, Module, IndexedGenerators):
             if remove_zeros:
                 # Single pass: coerce and remove zeros simultaneously,
                 # avoiding allocation of an intermediate dictionary.
-                result = {}
-                for key, coeff in d.items():
-                    c = R(coeff)
-                    if c:
-                        result[key] = c
-                d = result
+                d = {key: c for key, coeff in d.items()
+                     if (c := R(coeff))}
             else:
                 d = {key: R(coeff) for key, coeff in d.items()}
         elif remove_zeros:
