@@ -339,7 +339,13 @@ class Divisor_curve(Divisor_generic):
 
         if know_points:
             self._points = points
-            self._sort_points()
+        else:
+            # TODO: in the next line, we should probably replace
+            # rational_points() with irreducible_components()
+            # once Sage can deal with divisors that are not only
+            # rational points (see trac #16225)
+            self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
+        self._sort_points()
 
     def _repr_(self):
         r"""
@@ -427,17 +433,7 @@ class Divisor_curve(Divisor_generic):
         try:
             return self._support
         except AttributeError:
-            try:
-                pts = self._points
-            except AttributeError:
-                # TODO: in the next line, we should probably replace
-                # rational_points() with irreducible_components()
-                # once Sage can deal with divisors that are not only
-                # rational points (see trac #16225)
-                self._points = [(m, self.scheme().ambient_space().subscheme(p).rational_points()[0]) for (m, p) in self]
-                self._sort_points()
-                pts = self._points
-            self._support = [s[1] for s in pts]
+            self._support = [s[1] for s in self._points]
             return self._support
 
     def coefficient(self, P):
