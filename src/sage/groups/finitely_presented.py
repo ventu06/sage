@@ -408,9 +408,8 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         if rws is not None:
             return hash(rws.reduce(self).Tietze())
         # Finite groups - hash by permutation representation
-        phi = libgap.IsomorphismPermGroup(G.gap())
-        # IsomorphismPermGroup returns 'fail' for infinite groups
-        if str(phi) == 'fail':
+        phi = G._perm_isomorphism()
+        if phi is None:
             raise NotImplementedError(
                 "hashing requires a confluent rewriting system\n"
                 "for infinite non-free finitely presented groups;\n"
@@ -1021,6 +1020,32 @@ class FinitelyPresentedGroup(GroupMixinLibGAP, CachedRepresentation, Group, Pare
             True
         """
         return self._relations
+
+    @cached_method
+    def _perm_isomorphism(self):
+        r"""
+        Return a permutation representation isomorphism, if available.
+
+        OUTPUT:
+
+        A GAP isomorphism from ``self`` to a permutation group, or ``None``
+        if ``libgap.IsomorphismPermGroup`` returns ``fail``.
+
+        EXAMPLES::
+
+            sage: F.<a,b> = FreeGroup()
+            sage: H = F / [a^2, b^3, a*b*a^-1*b^-1]
+            sage: H._perm_isomorphism() is not None
+            True
+
+            sage: G = F / [a*b*a^-1*b^-2]
+            sage: G._perm_isomorphism() is None
+            True
+        """
+        phi = libgap.IsomorphismPermGroup(self.gap())
+        if str(phi) == 'fail':
+            return None
+        return phi
 
     @cached_method
     def cardinality(self, limit=4096000):
