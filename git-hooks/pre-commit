@@ -147,7 +147,7 @@ $clang_format_flag && { run "$action" clang-format || changes=true; }
 if [ "$mode" = "check-only" ] && $changes; then
   printf "${RED}Error${NRM}: Ill-formatted files staged for commit.\n\
 To view the issues, use 'git hook run pre-commit -- verbose'.\n\
-To auto-format the files, use 'git hook run pre-commit -- in-place'.\n\
+To attempt to auto-format the files, use 'git hook run pre-commit -- in-place'.\n\
 To avoid these pre-commit checks, use 'git commit --no-verify'.\n"
   exit 1
 fi
