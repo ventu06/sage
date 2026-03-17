@@ -333,12 +333,15 @@ class Package(object):
             else:
                 source_tarballs.append(tarball_info)
         
-        # Batch parse all wheel filenames in a single subprocess call
-        # This avoids subprocess overhead for packages with many wheels
+        # Batch parse all wheel filenames in a single subprocess call.
+        # Use concrete filenames so patterns containing VERSION remain parseable.
         wheel_tags_map = {}
         if wheel_tarballs:
             try:
-                wheel_filenames = [info['tarball'] for info in wheel_tarballs]
+                wheel_filenames = [
+                    self._substitute_variables(info['tarball'])
+                    for info in wheel_tarballs
+                ]
                 python_code = 'import packaging.utils as pu,json,sys;d={};[exec(f"try: d[f]=[str(t)for t in pu.parse_wheel_filename(f)[3]]\\nexcept: d[f]=None",{"f":f,"d":d,"pu":pu})for f in sys.argv[1:]];print(json.dumps(d))'
                 result = subprocess.run(
                     [sage_script, '-python', '-c', python_code] + wheel_filenames,
@@ -364,7 +367,7 @@ class Package(object):
         
         # Check wheel tarballs first (they have higher priority than source)
         for tarball_info in wheel_tarballs:
-            tarball = tarball_info['tarball']
+            tarball = self._substitute_variables(tarball_info['tarball'])
             wheel_tags_str = wheel_tags_map.get(tarball)
             
             if wheel_tags_str is None:
