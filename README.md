@@ -221,11 +221,12 @@ in the Installation Guide.
       See [build/pkgs/_prereq/SPKG.rst](build/pkgs/_prereq/SPKG.rst) for
       more details.
 
-    - Python 3.4 or later, or Python 2.7, a full installation including
-      `urllib`; but ideally version 3.12.x or later, which
-      will avoid having to build Sage's own copy of Python 3.
-      See [build/pkgs/python3/SPKG.rst](build/pkgs/python3/SPKG.rst)
-      for more details.
+    - Python 3 with a full standard library installation.
+      Sage's `./configure` currently requires Python `>= 3.12` and `< 3.15`,
+      with modules including `sqlite3`, `ctypes`, `math`, `hashlib`,
+      `socket`, `ssl`, `ensurepip`, and `zlib`.
+      See the [installation guide](https://doc.sagemath.org/html/en/installation/source-distro.html#using-an-external-python-installed-by-uv)
+      for details on using a system or `uv`-managed Python.
 
     We have collected lists of system packages that provide these build
     prerequisites. See, in the folder
@@ -362,6 +363,18 @@ in the Installation Guide.
 12. Type `./configure`, followed by any options that you wish to use.
     For example, to build Sage with `gf2x` package supplied by Sage,
     use `./configure --with-system-gf2x=no`.
+
+    If you want to use an external Python installed with `uv`, Sage's
+    `./configure` check currently expects Python `>= 3.12` and `< 3.15`.
+    On Python 3.12 and newer, it also requires `setuptools`, because the
+    configure test creates a fresh virtual environment from the selected
+    interpreter and builds small extension modules there. For a `uv`-managed
+    Python, one working setup is:
+
+        $ uv python install 3.13
+        $ PYTHON3="$(uv python find --managed-python --resolve-links 3.13)"
+        $ uv pip install --python "$PYTHON3" --break-system-packages setuptools
+        $ ./configure --with-python="$PYTHON3"
 
     At the end of a successful `./configure` run, you may see messages
     recommending to install extra system packages using your package
@@ -629,4 +642,3 @@ part of the Sage git repository.
 <p align="center">
    https://www.sagemath.org
 </p>
-
