@@ -289,6 +289,23 @@ class Package(object):
         
         if not self.__tarballs_info:
             return None
+
+        source_tarballs = [
+            tarball_info for tarball_info in self.__tarballs_info
+            if not tarball_info['tarball'].endswith('.whl')
+        ]
+
+        def fallback_to_source_tarball(reason):
+            if not source_tarballs:
+                return None
+            tarball_info = source_tarballs[0]
+            log.warning(
+                'Falling back to source tarball for %s: %s (%s)',
+                self.name,
+                tarball_info['tarball'],
+                reason,
+            )
+            return tarball_info
         
         # If only one tarball, return it
         if len(self.__tarballs_info) == 1:
@@ -297,6 +314,11 @@ class Package(object):
         # Get compatible tags from Sage's Python using packaging.tags
         sage_script = os.path.join(SAGE_ROOT, 'sage')
         if not os.path.exists(sage_script):
+            tarball_info = fallback_to_source_tarball(
+                'Sage script not found at: {0}'.format(sage_script)
+            )
+            if tarball_info is not None:
+                return tarball_info
             raise RuntimeError('Sage script not found at: {0}'.format(sage_script))
         
         try:
@@ -311,13 +333,28 @@ class Package(object):
                 cwd=SAGE_ROOT
             )
             if result.returncode != 0:
+                tarball_info = fallback_to_source_tarball(
+                    'failed to get compatible tags from sage -python: {0}'.format(result.stderr)
+                )
+                if tarball_info is not None:
+                    return tarball_info
                 raise RuntimeError('Failed to get compatible tags from sage -python: {0}'.format(result.stderr))
             
             compatible_tags = json.loads(result.stdout.strip())
             
         except subprocess.TimeoutExpired:
+            tarball_info = fallback_to_source_tarball(
+                'timeout while querying compatible tags via ./sage -python'
+            )
+            if tarball_info is not None:
+                return tarball_info
             raise RuntimeError('Timeout while querying compatible tags via ./sage -python')
         except Exception as e:
+            tarball_info = fallback_to_source_tarball(
+                'error querying compatible tags via ./sage -python: {0}'.format(str(e))
+            )
+            if tarball_info is not None:
+                return tarball_info
             raise RuntimeError('Error querying compatible tags via ./sage -python: {0}'.format(str(e)))
         
         # Convert tags list to a set for fast lookup with priority
@@ -326,12 +363,9 @@ class Package(object):
         
         # Separate wheels from non-wheel tarballs
         wheel_tarballs = []
-        source_tarballs = []
         for tarball_info in self.__tarballs_info:
             if tarball_info['tarball'].endswith('.whl'):
                 wheel_tarballs.append(tarball_info)
-            else:
-                source_tarballs.append(tarball_info)
         
         # Batch parse all wheel filenames in a single subprocess call.
         # Use concrete filenames so patterns containing VERSION remain parseable.
@@ -386,7 +420,7 @@ class Package(object):
         
         # If no wheel matched, consider source distributions
         if best_match is None and source_tarballs:
-            best_match = source_tarballs[0]
+            best_match = fallback_to_source_tarball('no compatible wheel found')
             best_priority = len(compatible_tags) + 1000
         
         if best_match:
