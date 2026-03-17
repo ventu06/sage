@@ -3323,7 +3323,7 @@ def random_bistochastic_matrix(parent):
 
     OUTPUT:
 
-    A random unitary matrix in ``parent``. A :exc:`ValueError` is
+    A random bistochastic matrix in ``parent``. A :exc:`ValueError` is
     raised if ``parent`` is not an appropriate matrix space (is not
     square, or is not over a usable field).
 
