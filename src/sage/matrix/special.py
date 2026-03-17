@@ -3403,9 +3403,8 @@ def random_bistochastic_matrix(parent):
         ...
         ValueError: base ring of parent must be a subfield of the real numbers
     """
-    from sage.rings.real_lazy import RLF
-    F = parent.base_ring()
-    if not (RLF.has_coerce_map_from(F) or F.has_coerce_map_from(RLF)):
+    from sage.rings.real_mpfr import RR
+    if not parent.base_ring().is_subring(RR):
         raise ValueError("base ring of parent must be a subfield of the real "
                          "numbers")
 
