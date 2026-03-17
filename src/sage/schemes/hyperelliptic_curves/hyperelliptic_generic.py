@@ -180,7 +180,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             return f"Hyperelliptic Curve over {R} defined by {y**2} = {f(x)}"
         return f"Hyperelliptic Curve over {R} defined by {y**2} + {h(x) * y} = {f(x)}"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         LaTeX representation of hyperelliptic curves.
 

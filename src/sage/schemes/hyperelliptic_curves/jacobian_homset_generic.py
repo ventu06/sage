@@ -61,21 +61,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         SchemeHomset_points.__init__(self, Y, X, **kwds)
         self._morphism_element = None
 
-    def _element_constructor_(self, *args, **kwds):
-        r"""
-        Construct an element of this homset.
-
-        TESTS::
-
-            sage: x = polygen(GF(5))
-            sage: H = HyperellipticCurve(x^5 + 3*x + 1)
-            sage: J = H.jacobian()
-            sage: P = J.random_element()
-            sage: loads(dumps(P)) == P
-            True
-        """
-        return self(*args, **kwds)
-
     def _repr_(self) -> str:
         r"""
         Return the string representation of the Jacobian Hom-set.
@@ -276,7 +261,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         v = R(Y)
         return u, v
 
-    def __call__(self, *args, check=True):
+    def _element_constructor_(self, *args, check=True):
         r"""
         Return a rational point in the abstract Homset `J(K)`, given:
 
