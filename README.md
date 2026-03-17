@@ -210,8 +210,9 @@ in the Installation Guide.
 
 4.  [Linux, WSL] Install the required minimal build prerequisites:
 
-    - Compilers: `gcc`, `gfortran`, `g++` (GCC versions from 8.4.0 to 13.x
-      and recent versions of Clang (LLVM) are supported).
+    - Compilers: `gcc`, `gfortran`, `g++`, or other suitable C, C++, and
+      Fortran compilers. Sage's classical build checks for a C compiler that
+      can compile C99 code and a C++ compiler with C++11 support.
       See [build/pkgs/gcc/SPKG.rst](build/pkgs/gcc/SPKG.rst) and
       [build/pkgs/gfortran/SPKG.rst](build/pkgs/gfortran/SPKG.rst)
       for a discussion of suitable compilers.
