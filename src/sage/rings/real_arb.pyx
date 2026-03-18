@@ -671,7 +671,7 @@ class RealBallField(UniqueRepresentation, sage.rings.abc.RealBallField):
             sage: RealBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """

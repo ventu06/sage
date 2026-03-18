@@ -739,7 +739,7 @@ class ComplexBallField(UniqueRepresentation, sage.rings.abc.ComplexBallField):
             sage: ComplexBallField().characteristic()
             0
         """
-        return 0
+        return ZZ.zero()
 
     def some_elements(self):
         """
