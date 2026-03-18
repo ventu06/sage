@@ -333,6 +333,9 @@ If you want Sage's classical ``./configure && make`` build to use an
 external Python that is not provided by your system package manager, you can
 install one with `uv <https://docs.astral.sh/uv/>`_.
 
+Sage no longer builds its own Python interpreter, so you need to provide one
+either from your system package manager or from a tool such as ``uv``.
+
 Sage's ``./configure`` currently accepts Python versions in the range
 ``>= 3.12`` and ``< 3.15``. It also checks that the interpreter provides the
 modules ``sqlite3``, ``ctypes``, ``math``, ``hashlib``, ``socket``, ``ssl``,

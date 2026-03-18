@@ -122,8 +122,9 @@ How do I import Sage into a Python script?
 """"""""""""""""""""""""""""""""""""""""""
 
 You can import Sage as a library in a Python script. One caveat is
-that you need to run that Python script using the version of Python
-that is bundled with Sage (Sage 9.2 ships with Python 3.7.x).
+that you need to run that Python script inside Sage's Python
+environment. In a source build, Sage creates this environment from the
+external Python selected at build time.
 To import Sage, put the following in your Python script:
 
 .. CODE-BLOCK:: python
@@ -131,9 +132,8 @@ To import Sage, put the following in your Python script:
     from sage.all import *
 
 When you want to run your script, you need to invoke Sage with the
-option ``-python`` which would run your script using the version of
-Python that comes with Sage. For example, if Sage is in your ``PATH``
-variable then you can do this:
+option ``-python`` which runs your script inside that environment. For
+example, if Sage is in your ``PATH`` variable then you can do this:
 
 .. code-block:: console
 

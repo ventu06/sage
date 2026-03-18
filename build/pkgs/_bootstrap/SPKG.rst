@@ -12,8 +12,11 @@ Namely, the following standard tools must be installed on your computer:
 
 - **liblzma/xz**: XZ Utils, the free general-purpose data compression software
   with a high compression ratio.
-- **python**: Python 3.12 or later; it needs to have the development headers and the following standard
-  modules available: sqlite3, ctypes, math, hashlib, socket, ssl, ensurepip, zlib, setuptools
+- **python**: Python 3.12 or later from your system package manager or another
+  external installation. Sage no longer builds its own Python interpreter; it
+  uses this interpreter to create ``SAGE_VENV``. It needs to have the
+  development headers and the following standard modules available:
+  sqlite3, ctypes, math, hashlib, socket, ssl, ensurepip, zlib, setuptools
 
 XZ Utils (liblzma) is available with most supported distributions (package
 names such as ``xz-devel`` on Fedora, ``liblzma-dev`` on Debian/Ubuntu).
@@ -50,4 +53,4 @@ modules (``sqlite3``, ``ctypes``, ``zlib``, ``ssl``, etc.) are installed
 before building Python; otherwise these modules will be missing.
 
 It is also possible to use a Python installed by `uv <https://docs.astral.sh/uv/>`_
-in a venv.
+and pass it to ``./configure`` with ``--with-python=...``.
