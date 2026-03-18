@@ -3957,10 +3957,14 @@ class SimplicialComplex(Parent, GenericCellComplex):
         face_sets = {f: f.set() for f in faces}
         # Track nonempty intersections incrementally to avoid recomputing all
         # intersections from scratch in every pass.
-        intersections = {f: {inter for a_set in new_facet_sets
-                             for inter in [a_set.intersection(face_sets[f])]
-                             if inter}
-                         for f in faces}
+        intersections = {
+            f: {
+                inter
+                for a_set in new_facet_sets
+                if (inter := a_set.intersection(face_sets[f]))
+            }
+            for f in faces
+        }
         # Cache contractibility tests for repeated intersection complexes.
         contractible_intersections = {}
         while not done:
