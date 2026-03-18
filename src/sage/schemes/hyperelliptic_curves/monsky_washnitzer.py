@@ -2245,7 +2245,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
         coeffs = self._f.list()
         return repr_lincomb([(x**i, coeffs[i]) for i in range(len(coeffs))])
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return a LateX string for ``self``.
 
@@ -3100,7 +3100,7 @@ class MonskyWashnitzerDifferential(ModuleElement):
             s = "(%s)" % s
         return s + " dx/2y"
 
-    def _latex_(self):
+    def _latex_(self) -> str:
         r"""
         Return the latex representation of ``self``.
 

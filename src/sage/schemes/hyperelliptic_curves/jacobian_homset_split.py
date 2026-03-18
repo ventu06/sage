@@ -107,7 +107,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         v = R(Y)
         return u, v, 0
 
-    def __call__(self, *args, check=True):
+    def _element_constructor_(self, *args, check=True):
         r"""
         Return a rational point in the abstract Homset `J(K)`, given:
 

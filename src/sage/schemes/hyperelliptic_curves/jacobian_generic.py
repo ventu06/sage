@@ -192,6 +192,9 @@ class HyperellipticJacobian_generic(Jacobian_generic):
         """
         return self.point_homset().random_element(*args, **kwds)
 
+    def some_elements(self) -> list[jacobian_morphism.MumfordDivisorClassField]:
+        return [self.zero()] + [self.random_element(), self.random_element(), self.random_element()]
+
     def points(self, *args, **kwds):
         r"""
         Return all points on the Jacobian.

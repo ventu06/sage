@@ -22,6 +22,15 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+from __future__ import annotations
+
+from typing import Self, TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from collections.abc import Iterator
+
+    from sage.rings.integer import Integer
+
 from sage.groups.generic import order_from_multiple
 from sage.misc.cachefunc import cached_method
 from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField_generic
@@ -37,7 +46,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
     `J(K) = \mathrm{Pic}^0_K(C)`.
     """
 
-    def __init__(self, parent, u, v, check=True):
+    def __init__(self, parent, u, v, check=True) -> None:
         """
         Create an element of the Jacobian of a hyperelliptic curve.
 
@@ -69,23 +78,8 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             # too large?
 
         self._parent = parent
-        self._u = u
-        self._v = v
-
-    def parent(self):
-        r"""
-        Return the parent of the divisor class.
-
-        EXAMPLES::
-
-            sage: R.<x> = QQ[]
-            sage: H = HyperellipticCurve(x^5 - 1)
-            sage: J = H.jacobian()
-            sage: D = J(x-1,0)
-            sage: D.parent()
-            Abelian group of points over Rational Field on Jacobian of Hyperelliptic Curve over Rational Field defined by y^2 = x^5 - 1
-        """
-        return self._parent
+        self._u: Polynomial = u
+        self._v: Polynomial = v
 
     def scheme(self):
         r"""
@@ -133,25 +127,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return f"({self._u}, {self._v})"
 
-    def is_zero(self):
-        r"""
-        Return ``True`` if this point is zero.
-
-        EXAMPLES::
-
-            sage: x = polygen(GF(5))
-            sage: H = HyperellipticCurve(x^5 + 3 * x + 1)
-            sage: J = H.jacobian(); J
-            Jacobian of Hyperelliptic Curve over Finite Field of size 5 defined by y^2 = x^5 + 3*x + 1
-            sage: points = list(J)
-            sage: [P for P in points if P.is_zero()]
-            [(1, 0)]
-            sage: [P for P in points if P == 0]
-            [(1, 0)]
-        """
-        return self._u.is_one() and self._v.is_zero()
-
-    def uv(self):
+    def uv(self) -> tuple[Polynomial, Polynomial]:
         r"""
         Return the `u` and `v` component of this Mumford divisor.
 
@@ -194,7 +170,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return richcmp(tuple(self), tuple(other), op)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Polynomial]:
         r"""
         TESTS:
 
@@ -211,7 +187,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         yield from [self._u, self._v]
 
-    def __getitem__(self, n):
+    def __getitem__(self, n) -> Polynomial:
         r"""
         Return the n-th item in the Mumford presentation of the divisor.
 
@@ -243,7 +219,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return hash(tuple(self))
 
-    def __reduce__(self):
+    def __reduce__(self) -> tuple:
         r"""
         Return data for pickling.
 
@@ -258,9 +234,9 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return (self._parent, tuple(self))
 
-    def __bool__(self):
+    def __bool__(self) -> bool:
         r"""
-        Return "True" if this is not the zero element of the Jacobian.
+        Return ``True`` if this is not the zero element of the Jacobian.
 
         EXAMPLES::
 
@@ -272,10 +248,10 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: bool(J.zero())
             False
         """
-        return not self.is_zero()
+        return not (self._u.is_one() and not self._v.is_zero())
 
     @cached_method
-    def order(self):
+    def order(self) -> Integer:
         r"""
         Returns the order of self.
         This is only implemented over finite fields.
@@ -297,7 +273,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         n = self.parent().order()
         return order_from_multiple(self, n)
 
-    def degree(self):
+    def degree(self) -> Integer:
         r"""
         Returns the degree of the affine part of the divisor.
 
@@ -315,7 +291,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         """
         return self._u.degree()
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         r"""
         Add `other` to the divisor `self`.
 
@@ -334,9 +310,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
             sage: D1 + D2 + D3 == D3 + D1 + D2
             True
         """
-        # `other` should be coerced automatically before reaching here
-        assert isinstance(other, type(self))
-
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
         g = H.genus()
@@ -357,7 +330,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
         return self._parent(u3, v3, check=False)
 
-    def _neg_(self):
+    def _neg_(self) -> Self:
         r"""
         Multiply the divisor by `[-1]`.
 
@@ -391,7 +364,7 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
 
 
 class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
-    def __init__(self, parent, u, v, check=True):
+    def __init__(self, parent, u, v, check=True) -> None:
         r"""
         Create an element of the Jacobian of a ramified
         hyperelliptic curve.
@@ -414,7 +387,7 @@ class MumfordDivisorClassFieldRamified(MumfordDivisorClassField):
 
 
 class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
-    def __init__(self, parent, u, v, check=True):
+    def __init__(self, parent, u, v, check=True) -> None:
         r"""
         Create an element of the Jacobian of a ramified
         hyperelliptic curve.
@@ -440,7 +413,7 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
         self._n = (g - u.degree()) // 2
         super().__init__(parent, u, v, check=check)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         Return a representation of the element.
 
@@ -458,7 +431,7 @@ class MumfordDivisorClassFieldInert(MumfordDivisorClassField):
 
 
 class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
-    def __init__(self, parent, u, v, n=0, check=True):
+    def __init__(self, parent, u, v, n=0, check=True) -> None:
         r"""
         Create an element of the Jacobian of a split
         hyperelliptic curve.
@@ -485,7 +458,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
 
         super().__init__(parent, u, v, check=check)
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         r"""
         Return a representation of the element.
 
@@ -499,11 +472,11 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         """
         return f"({self._u}, {self._v} : {self._n})"
 
-    def is_zero(self):
+    def __bool__(self) -> bool:
         r"""
-        Return ``True`` if this element is zero.
+        Return ``True`` if this is not the zero element of the Jacobian.
 
-        EXAMPLES:
+        TESTS:
 
         We consider a genus-3 hyperelliptic curve with two points
         at infinity ``P_0``, ``P_1``. Elements of the Jacobian are
@@ -529,9 +502,9 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             False
         """
         g = self._parent.curve().genus()
-        return self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2
+        return not (self._u.is_one() and self._v.is_zero() and self._n == (g + 1) // 2)
 
-    def __iter__(self):
+    def __iter__(self) -> Iterator[Polynomial]:
         r"""
         TESTS:
 
@@ -555,7 +528,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         """
         yield from [self._u, self._v, self._n]
 
-    def __hash__(self):
+    def __hash__(self) -> int:
         r"""
         Compute the hash value of this element.
 
@@ -571,7 +544,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         """
         return hash(tuple(self))
 
-    def _add_(self, other):
+    def _add_(self, other) -> Self:
         r"""
         Return the sum of the two elements.
 
@@ -594,9 +567,6 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
             sage: D1 + D3
             (x^2 - 1/2*x, 5/4*x - 1 : 0)
         """
-        # Ensure we are adding two divisors
-        assert isinstance(other, type(self))
-
         # Collect data from HyperellipticCurve
         H = self.parent().curve()
         g = H.genus()
