@@ -810,7 +810,7 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: set_random_seed(0)  # Results are reproducible
             sage: P = posets.RandomPoset(5, 0.3)
             sage: P.cover_relations()
-            [[5, 4], [4, 2], [1, 2]]
+            [[3, 2], [2, 5], [1, 5]]
 
         .. SEEALSO:: :meth:`RandomLattice`
 
@@ -888,7 +888,17 @@ class Posets(metaclass=ClasscallMetaclass):
             sage: L = posets.RandomLattice(8, 0.995); L
             Finite lattice containing 8 elements
             sage: L.cover_relations()
-            [[7, 6], [7, 3], [7, 1], ..., [5, 4], [2, 4], [1, 4], [0, 4]]
+            [[3, 5],
+             [3, 7],
+             [3, 0],
+             [5, 6],
+             [5, 4],
+             [5, 1],
+             [6, 2],
+             [7, 4],
+             [4, 2],
+             [1, 2],
+             [0, 2]]
             sage: L = posets.RandomLattice(10, 0, properties=['dismantlable'])
             sage: L.is_dismantlable()
             True
@@ -2001,7 +2011,7 @@ def _random_dismantlable_lattice(n):
         sage: D = sage.combinat.posets.poset_examples._random_dismantlable_lattice(10); D
         Digraph on 10 vertices
         sage: D.neighbors_in(8)
-        [0]
+        [1]
 
     ALGORITHM::
 

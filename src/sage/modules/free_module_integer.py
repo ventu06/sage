@@ -566,22 +566,22 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
             sage: from sage.modules.free_module_integer import IntegerLattice
             sage: A = sage.crypto.gen_lattice(type='random', n=1, m=30, q=2^40, seed=42)
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector().norm().n()                                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector().norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=False)
-            sage: min(v.norm().n() for v in L.reduced_basis)                            # needs sage.symbolic
-            6.03890756700000e10
+            sage: min(v.norm().n() for v in L.reduced_basis)
+            3.64971138300000e9
 
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
 
             sage: L = IntegerLattice(A, lll_reduce=True)
-            sage: L.shortest_vector(algorithm='pari').norm().n()                        # needs sage.symbolic
-            3.74165738677394
+            sage: L.shortest_vector(algorithm='pari').norm().n()
+            3.46410161513775
         """
         if algorithm == "pari":
             if self._basis_is_LLL_reduced:
