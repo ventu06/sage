@@ -969,7 +969,7 @@ cdef class CoercionModel:
 
         all = []
         if xp is yp:
-            all.append("Identical parents, arithmetic performed immediately." % xp)
+            all.append("Identical parents, arithmetic performed immediately.")
             if op is truediv and isinstance(xp, Parent):
                 xp = self.division_parent(xp)
             return all, xp
