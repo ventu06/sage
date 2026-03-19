@@ -261,6 +261,21 @@ class WeylGroup_gens(UniqueRepresentation,
         FinitelyGeneratedMatrixGroup_gap.__init__(
             self, degree, ring, libgap_group, category=category)
 
+    def __hash__(self):
+        r"""
+        Return a hash compatible with matrix-group equality.
+
+        EXAMPLES::
+
+            sage: W = CoxeterGroup(['A',2], implementation='matrix')                    # needs sage.libs.gap
+            sage: G = MatrixGroup(W.gens())                                             # needs sage.libs.gap
+            sage: W == G                                                                # needs sage.libs.gap
+            True
+            sage: hash(W) == hash(G)                                                    # needs sage.libs.gap
+            True
+        """
+        return FinitelyGeneratedMatrixGroup_gap.__hash__(self)
+
     @cached_method
     def cartan_type(self):
         """

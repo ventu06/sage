@@ -815,6 +815,34 @@ class PermutationGroup_generic(FiniteGroup):
 
         return gSelf._richcmp_(gRight, op)
 
+    def __hash__(self):
+        r"""
+        Return a hash for this permutation group.
+
+        The hash is computed from GAP's canonical smallest generating set,
+        ensuring compatibility with equality of permutation groups.
+
+        EXAMPLES::
+
+            sage: G = SymmetricGroup(3)
+            sage: H = PermutationGroup([(1,2,3), (1,2)])
+            sage: G == H
+            True
+            sage: hash(G) == hash(H)
+            True
+
+        This is also compatible with permutation subgroups that compare
+        equal to their ambient group::
+
+            sage: G3 = G.subgroup([G((1,2,3)), G((1,2))])
+            sage: G == G3
+            True
+            sage: hash(G) == hash(G3)
+            True
+        """
+        gens = self._libgap_().GeneratorsSmallest()
+        return hash(tuple(self.element_class(g, self, check=False) for g in gens))
+
     Element = PermutationGroupElement
 
     def _element_constructor_(self, x, check=True):
