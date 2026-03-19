@@ -267,11 +267,12 @@ class WeylGroup_gens(UniqueRepresentation,
 
         EXAMPLES::
 
-            sage: W = CoxeterGroup(['A',2], implementation='matrix')                    # needs sage.libs.gap
-            sage: G = MatrixGroup(W.gens())                                             # needs sage.libs.gap
-            sage: W == G                                                                # needs sage.libs.gap
+            sage: # needs sage.libs.gap
+            sage: W = CoxeterGroup(['A',2], implementation='matrix')
+            sage: G = MatrixGroup(W.gens())
+            sage: W == G
             True
-            sage: hash(W) == hash(G)                                                    # needs sage.libs.gap
+            sage: hash(W) == hash(G)
             True
         """
         return FinitelyGeneratedMatrixGroup_gap.__hash__(self)
