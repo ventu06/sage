@@ -819,10 +819,10 @@ class PermutationGroup_generic(FiniteGroup):
         r"""
         Return a hash for this permutation group.
 
-        The hash is computed from the group order. For permutation groups,
-        GAP obtains the size from a stabilizer chain, so this remains
-        compatible with equality while keeping the hash inexpensive at the
-        cost of allowing many collisions.
+        The hash is computed from the group order together with the largest
+        moved point and the moved-point orbits. This remains compatible with
+        equality while reducing collisions compared to hashing by the group
+        order alone.
 
         EXAMPLES::
 
@@ -842,7 +842,8 @@ class PermutationGroup_generic(FiniteGroup):
             sage: hash(G) == hash(G3)
             True
         """
-        return hash(self._libgap_().Size().sage())
+        g = self._libgap_()
+        return hash((g.Size(), g.LargestMovedPoint(), g.OrbitsMovedPoints()))
 
     Element = PermutationGroupElement
 
