@@ -819,8 +819,10 @@ class PermutationGroup_generic(FiniteGroup):
         r"""
         Return a hash for this permutation group.
 
-        The hash is computed from GAP's canonical smallest generating set,
-        ensuring compatibility with equality of permutation groups.
+        The hash is computed from the group order. For permutation groups,
+        GAP obtains the size from a stabilizer chain, so this remains
+        compatible with equality while keeping the hash inexpensive at the
+        cost of allowing many collisions.
 
         EXAMPLES::
 
@@ -840,8 +842,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: hash(G) == hash(G3)
             True
         """
-        gens = self._libgap_().GeneratorsSmallest()
-        return hash(tuple(self.element_class(g, self, check=False) for g in gens))
+        return hash(self._libgap_().Size().sage())
 
     Element = PermutationGroupElement
 
