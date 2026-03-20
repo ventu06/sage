@@ -586,12 +586,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
     basis because it is the character of an irreducible
     `S_k` module induced to `S_n` where `n>k`.
 
-    This is a basis of the symmetric functions that has the
-    property that ``self(la).character_to_frobenius_image(n)``
-    is equal to ``s([n-sum(la)])*s(la)``.
-
-    This basis appears implicitly in the paper by Assaf and
-    Spyers.
+    This basis appears implicitly in the paper by Assaf and Spyers.
     The basis appears explicitly in [OZ2019]_.
 
     EXAMPLES::
@@ -623,14 +618,16 @@ class RookIrreducibleCharacterBasis(Character_generic):
         xt[1, 1] + xt[2] + xt[2, 1]
         sage: xt[2]*xt[1]
         xt[1, 1] + xt[2] + xt[2, 1] + xt[3]
+
+    This is a basis of the symmetric functions that has the
+    property that ``self(la).character_to_frobenius_image(n)``
+    is equal to ``s([n-sum(la)]) * s(la)``.::
+
         sage: s(xt[2,1].character_to_frobenius_image(3))
         s[2, 1]
-        sage: s(xt[2,1].character_to_frobenius_image(9))==s[2,1]*s[6]
+        sage: s(xt[2,1].character_to_frobenius_image(9)) == s[2,1] * s[6]
         True
 
-    TESTS::
-
-        sage: TestSuite(xt).run()
     """
     def __init__(self, Sym):
         r"""
@@ -653,6 +650,10 @@ class RookIrreducibleCharacterBasis(Character_generic):
             sage: xt = Sym.xt(); xt
             Symmetric Functions over Rational Field in the irreducible
              rook monoid character basis
+
+        TESTS::
+
+            sage: TestSuite(xt).run()
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible rook monoid character",
@@ -678,9 +679,13 @@ class RookIrreducibleCharacterBasis(Character_generic):
             \sum_{\gamma} \left\langle s_\lambda, p_\gamma \right\rangle
             \frac{{\overline {\mathbf p}}_\gamma}{z_\gamma},
 
-        where `{\overline {\mathbf p}}_\gamma` is the
-        power sum expression calculated in the method
-        :meth:`_b_bar_power_gamma`.
+        where if `\gamma = (1^{m_1}2^{m_2}\cdots \ell^{m_\ell})` then
+
+        .. MATH::
+
+            {\overline {\mathbf p}}_\gamma =
+            \prod_{i \ge 1} i^{m_i} \prod_{n = 0}^{m_i-1} \left(
+            \Big( \frac{1}{i} \sum_{d|i} \mu(i/d) p_d \Big) - n \right) .
 
         INPUT:
 
@@ -700,8 +705,8 @@ class RookIrreducibleCharacterBasis(Character_generic):
             1/6*p[1, 1, 1] - 1/2*p[2, 1] + 1/3*p[3]
 
         """
-        return self._p.sum( c*self._ht._b_bar_power_gamma(ga)
-                            for (ga, c) in self._p(self._other(lam)) )
+        return self._p.sum(c * self._ht._b_bar_power_gamma(ga)
+                            for (ga, c) in self._p(self._other(lam)))
 
     @cached_method
     def _self_to_other_on_basis(self, lam):

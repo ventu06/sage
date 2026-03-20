@@ -1089,9 +1089,28 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
         basis because it is the character of an irreducible
         `S_k` module induced to `S_n` where `n>k`.
 
-        This is a basis of the symmetric functions that has the
-        property that ``self(la).character_to_frobenius_image(n)``
-        is equal to ``s([n-sum(la)])*s(la)``.
+        The formula for the rook irreducible character basis indexed by the
+        partition ``lam`` is given by the formula
+
+        .. MATH::
+
+            \sum_{\gamma} \left\langle s_\lambda, p_\gamma \right\rangle
+            \frac{{\overline {\mathbf p}}_\gamma}{z_\gamma},
+
+        where if `\gamma = (1^{m_1}2^{m_2}\cdots \ell^{m_\ell})` then
+
+        .. MATH::
+
+            {\overline {\mathbf p}}_\gamma =
+            \prod_{i \ge 1} i^{m_i} \prod_{n = 0}^{m_i-1} \left(
+            \Big( \frac{1}{i} \sum_{d|i} \mu(i/d) p_d \Big) - n \right) .
+
+        Let `\phi_n` be the Frobenius image of the symmetric function
+        as a character, then
+
+        .. MATH::
+
+            \phi_n( {\tilde x}_{\lambda} ) = s_{\lambda} s_{n - |\lambda|}
 
         This basis appears implicitly in the paper by Assaf and Spyers.
         The basis appears explicitly in the paper The Hopf
