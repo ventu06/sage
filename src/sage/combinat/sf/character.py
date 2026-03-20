@@ -660,7 +660,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
                              prefix='xt', graded=False)
         self._other = Sym.Schur()
         self._p = Sym.powersum()
-        self._ht = Sym.induced_trivial_character()
+        self._tilde_power = Sym.induced_trivial_character()._b_bar_power_gamma
 
         self.module_morphism(self._self_to_power_on_basis,
                              codomain=Sym.powersum()).register_as_coercion()
@@ -705,7 +705,7 @@ class RookIrreducibleCharacterBasis(Character_generic):
             1/6*p[1, 1, 1] - 1/2*p[2, 1] + 1/3*p[3]
 
         """
-        return self._p.sum(c * self._ht._b_bar_power_gamma(ga)
+        return self._p.sum(c * self._tilde_power(ga)
                             for (ga, c) in self._p(self._other(lam)))
 
     @cached_method
