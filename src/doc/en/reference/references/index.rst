@@ -2931,6 +2931,10 @@ REFERENCES:
                50(2):259-273, 1995.
                :doi:`10.1006/jcss.1995.1022`
 
+.. [Gal2018] Steven D Galbraith. *Mathematics of Public Key Cryptography*.
+             Version 2.0, October 31, 2018.
+             https://www.math.auckland.ac.nz/~sgal018/crypto-book/main.pdf
+
 .. [Gallai] \T. Gallai, *Elementare Relationen bezueglich der
             Glieder und trennenden Punkte von Graphen*, Magyar
             Tud. Akad. Mat. Kutato Int. Kozl. 9 (1964) 235-236
@@ -3012,7 +3016,7 @@ REFERENCES:
               Patterns: Elements of Reusable Object-Oriented
               Software*. Addison-Wesley (1994). ISBN 0-201-63361-2.
               
-.. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales, 
+.. [GHM2008] \S. Galbraith, M. Harrison, D. Mireles Morales,
              *Efficient hyperelliptic arithmetic using balanced representation for divisors*,
              Algorithmic Number Theory: 8th International Symposium, ANTS-VIII Banff, Canada, May 17-22, 2008 Proceedings 8.
 
@@ -5120,6 +5124,10 @@ REFERENCES:
 .. [Mil2017] Arthur Milchior, *(Quasi-)linear time algorithm to compute
              LexDFS, LexUP and LexDown orderings*. (2017)
              :arxiv:`1701.00305`
+
+.. [Mireles2008] David J. Mireles Morales, *Efficient Arithmetic on Hyperelliptic Curves With Real Representation*,
+                 PhD thesis, University of London, UK, 2008.
+                 https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
 
 .. [MirMor2009] \R. Miranda, D.R. Morrison, "Embeddings of Integral Quadratic Forms"
                 http://www.math.ucsb.edu/~drm/manuscripts/eiqf.pdf .
