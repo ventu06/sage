@@ -87,6 +87,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
 
     TESTS::
 
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import is_GQ_with_spread
         sage: GQ, S = designs.generalised_quadrangle_with_spread(2, 2)
         sage: is_GQ_with_spread(GQ, S, s=2, t=2)                                        # needs networkx
         True
@@ -317,6 +318,8 @@ def generalised_quadrangle_symplectic_with_spread(const int q, check=True):
     s = -p[0]
 
     PG = ProjectiveGeometryDesign(3, 1, F, point_coordinates=True, check=False)
+    point_lookup = {_normalize_projective_point(point): point
+                    for point in PG.ground_set()}
     lines = [block for block in PG.blocks()
              if _symplectic_form(block[0], block[1], s) == 0]
 
@@ -325,19 +328,19 @@ def generalised_quadrangle_symplectic_with_spread(const int q, check=True):
     zero = F.zero()
     for a0 in F:
         for a1 in F:
-            line = [_normalize_projective_point((one,
-                                                lam,
-                                                a0 + lam * a1 * s,
-                                                a1 + lam * (a0 + a1 * r)))
+            line = [point_lookup[_normalize_projective_point((one,
+                                                              lam,
+                                                              a0 + lam * a1 * s,
+                                                              a1 + lam * (a0 + a1 * r)))]
                     for lam in F]
-            line.append(_normalize_projective_point((zero, one,
-                                                    a1 * s,
-                                                    a0 + a1 * r)))
+            line.append(point_lookup[_normalize_projective_point((zero, one,
+                                                                  a1 * s,
+                                                                  a0 + a1 * r))])
             spread.append(line)
 
-    spread.append([_normalize_projective_point((zero, zero, one, lam))
+    spread.append([point_lookup[_normalize_projective_point((zero, zero, one, lam))]
                    for lam in F] +
-                  [_normalize_projective_point((zero, zero, zero, one))])
+                  [point_lookup[_normalize_projective_point((zero, zero, zero, one))]])
 
     GQ = IncidenceStructure(PG.ground_set(), lines)
     if check and not is_GQ_with_spread(GQ, spread, s=q, t=q):
