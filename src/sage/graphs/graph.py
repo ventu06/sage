@@ -1587,7 +1587,7 @@ class Graph(GenericGraph):
                 for u2, v2, w2 in multiple_edges[1:]:
                     if u1 == u2 and v1 == v2:
                         return (False, [(u1, v1, w1), (v2, u2, w2)])
-                    elif u1 == v2 and v1 == u2:
+                    if u1 == v2 and v1 == u2:
                         return (False, [(u1, v1, w1), (u2, v2, w2)])
 
             if output == 'edge':
@@ -2475,7 +2475,7 @@ class Graph(GenericGraph):
                     return False
             return (True, []) if certificate else True
 
-        elif algorithm == 'matrix':
+        if algorithm == 'matrix':
             if self.order() < 3:
                 return True
             return (self.adjacency_matrix()**3).trace() == 0
@@ -3488,17 +3488,17 @@ class Graph(GenericGraph):
         if algorithm == "DLX":
             from sage.graphs.graph_coloring import chromatic_number
             return chromatic_number(self)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, value_only=True, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        elif algorithm == "CP":
+        if algorithm == "CP":
             f = self.chromatic_polynomial()
             i = 0
             while not f(i):
                 i += 1
             return i
-        elif algorithm == "parallel":
+        if algorithm == "parallel":
             def use_all(algorithms):
                 @parallel(len(algorithms), verbose=False)
                 def func(alg):
@@ -3590,7 +3590,7 @@ class Graph(GenericGraph):
             from sage.graphs.graph_coloring import vertex_coloring
             return vertex_coloring(self, hex_colors=hex_colors, solver=solver, verbose=verbose,
                                    integrality_tolerance=integrality_tolerance)
-        elif algorithm == "DLX":
+        if algorithm == "DLX":
             from sage.graphs.graph_coloring import first_coloring
             return first_coloring(self, hex_colors=hex_colors)
 
@@ -4059,7 +4059,7 @@ class Graph(GenericGraph):
         g = self
         if not g:
             return ZZ.zero() if value_only else g.parent()()
-        elif not g.size():
+        if not g.size():
             return ZZ.zero() if value_only else g.parent()([[next(g.vertex_iterator())], []])
         from sage.numerical.mip import MixedIntegerLinearProgram
 
@@ -5945,7 +5945,7 @@ class Graph(GenericGraph):
         if algorithm == "native":
             from sage.graphs.independent_sets import IndependentSets
             return list(IndependentSets(self, maximal=True, complement=True))
-        elif algorithm == "NetworkX":
+        if algorithm == "NetworkX":
             import networkx
             return list(networkx.find_cliques(self.networkx_graph()))
         raise ValueError("Algorithm must be equal to 'native' or to 'NetworkX'.")
@@ -6028,10 +6028,10 @@ class Graph(GenericGraph):
         if algorithm == "Cliquer":
             from sage.graphs.cliquer import max_clique
             return max_clique(self)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             return self.complement().independent_set(algorithm=algorithm, solver=solver, verbose=verbose,
                                                      integrality_tolerance=integrality_tolerance)
-        elif algorithm == "mcqd":
+        if algorithm == "mcqd":
             return mcqd(self)
         raise NotImplementedError("Only 'MILP', 'Cliquer' and 'mcqd' are supported.")
 
@@ -6130,13 +6130,13 @@ class Graph(GenericGraph):
         if algorithm == "Cliquer":
             from sage.graphs.cliquer import clique_number
             return clique_number(self)
-        elif algorithm == "networkx":
+        if algorithm == "networkx":
             import networkx
             return networkx.graph_clique_number(self.networkx_graph(), cliques)
-        elif algorithm == "MILP":
+        if algorithm == "MILP":
             return len(self.complement().independent_set(algorithm=algorithm, solver=solver, verbose=verbose,
                                                          integrality_tolerance=integrality_tolerance))
-        elif algorithm == "mcqd":
+        if algorithm == "mcqd":
             return len(mcqd(self))
         raise NotImplementedError("Only 'networkx' 'MILP' 'Cliquer' and 'mcqd' are supported.")
 
@@ -6903,7 +6903,7 @@ class Graph(GenericGraph):
                 value[v] = 1 + clique_number(self.subgraph(self.neighbors(v)))
                 self.subgraph(self.neighbors(v)).plot()
             return value
-        elif algorithm == "networkx":
+        if algorithm == "networkx":
             import networkx
             return dict(networkx.node_clique_number(self.networkx_graph(), vertices, cliques))
         raise NotImplementedError("Only 'networkx' and 'cliquer' are supported.")
@@ -7580,7 +7580,7 @@ class Graph(GenericGraph):
 
             return relabel(D)
 
-        elif style == 'tree':
+        if style == 'tree':
             from sage.combinat.rooted_tree import LabelledRootedTree
             if D.is_empty():
                 return LabelledRootedTree([])

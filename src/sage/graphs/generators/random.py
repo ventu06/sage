@@ -120,12 +120,21 @@ def RandomGNP(n, p, seed=None, fast=True, algorithm='Sage', immutable=False):
             G = networkx.fast_gnp_random_graph(n, p, seed=seed)
         else:
             G = networkx.gnp_random_graph(n, p, seed=seed)
+<<<<<<< HEAD
         return Graph(G, format="NX", immutable=immutable)
     if algorithm in ['Sage', 'sage']:
         # We use the Sage generator
         from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
         return sageGNP(n, p, seed=seed, immutable=immutable)
     raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'")
+=======
+        return Graph(G)
+    if algorithm in ['Sage', 'sage']:
+        # We use the Sage generator
+        from sage.graphs.graph_generators_pyx import RandomGNP as sageGNP
+        return sageGNP(n, p, seed=seed)
+    raise ValueError("'algorithm' must be equal to 'networkx' or to 'Sage'.")
+>>>>>>> d74f6b69236 (refactor: ruff RET505 in graphs)
 
 
 def RandomBarabasiAlbert(n, m, seed=None, immutable=False):
@@ -727,10 +736,15 @@ def RandomGNM(n, m, dense=False, seed=None, immutable=False):
         seed = int(current_randstate().long_seed() % sys.maxsize)
     import networkx
     if dense:
+<<<<<<< HEAD
         return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed),
                      format="NX", immutable=immutable)
     return Graph(networkx.gnm_random_graph(n, m, seed=seed),
                  format="NX", immutable=immutable)
+=======
+        return Graph(networkx.dense_gnm_random_graph(n, m, seed=seed))
+    return Graph(networkx.gnm_random_graph(n, m, seed=seed))
+>>>>>>> d74f6b69236 (refactor: ruff RET505 in graphs)
 
 
 def RandomNewmanWattsStrogatz(n, k, p, seed=None, immutable=False):
@@ -1296,7 +1310,7 @@ def pruned_tree(T, f, s):
     if not ke:
         # No removed edge. Only one possible subtree
         return [tuple(T)] * n
-    elif ke == n - 1:
+    if ke == n - 1:
         # All edges are removed. Only n possible subtrees
         return [(u,) for u in T]
 
