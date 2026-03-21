@@ -593,8 +593,7 @@ class Random(_random.Random):
         y = self.gammavariate(alpha, 1.)
         if y == 0:
             return 0.0
-        else:
-            return y / (y + self.gammavariate(beta, 1.))
+        return y / (y + self.gammavariate(beta, 1.))
 
 ## -------------------- Pareto --------------------
 
