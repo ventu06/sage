@@ -491,7 +491,7 @@ class Permutation(CombinatorialElement):
         """
         if isinstance(l, Permutation):
             return l
-        elif isinstance(l, PermutationGroupElement):
+        if isinstance(l, PermutationGroupElement):
             l = l.domain()
         # if l is a string, then assume it is in cycle notation
         elif isinstance(l, str):
@@ -519,13 +519,11 @@ class Permutation(CombinatorialElement):
                 if isinstance(l[0], tuple):
                     n = max(max(x) for x in l)
                     return from_cycles(n, [list(x) for x in l])
-                else:
-                    n = max(l)
-                    return from_cycles(n, [list(l)])
-            elif len(l) <= 1:
+                n = max(l)
+                return from_cycles(n, [list(l)])
+            if len(l) <= 1:
                 return Permutations()([])
-            else:
-                raise ValueError("cannot convert l (= %s) to a Permutation" % l)
+            raise ValueError("cannot convert l (= %s) to a Permutation" % l)
 
         # otherwise, it gets processed by CombinatorialElement's __init__.
         return Permutations()(l, algorithm, sjt, check)
@@ -713,11 +711,11 @@ class Permutation(CombinatorialElement):
         display = self.parent().options.display
         if display == 'list':
             return repr(self._list)
-        elif display == 'cycle':
+        if display == 'cycle':
             return self.cycle_string()
-        elif display == 'singleton':
+        if display == 'singleton':
             return self.cycle_string(singletons=True)
-        elif display == 'reduced_word':
+        if display == 'reduced_word':
             return repr(self.reduced_word())
         raise ValueError('unknown display option')
 
@@ -831,8 +829,7 @@ class Permutation(CombinatorialElement):
         cycles = self.to_cycles(singletons=singletons)
         if not cycles:
             return "()"
-        else:
-            return "".join("("+",".join(str(l) for l in x)+")" for x in cycles)
+        return "".join("("+",".join(str(l) for l in x)+")" for x in cycles)
 
     def __next__(self):
         r"""
@@ -1427,8 +1424,7 @@ class Permutation(CombinatorialElement):
         """
         if self.parent().options.mult == 'l2r':
             return self._left_to_right_multiply_on_right(rp)
-        else:
-            return self._left_to_right_multiply_on_left(rp)
+        return self._left_to_right_multiply_on_left(rp)
 
     def __rmul__(self, lp):
         """
@@ -1452,8 +1448,7 @@ class Permutation(CombinatorialElement):
             return get_coercion_model().bin_op(lp, self, operator.mul)
         if self.parent().options.mult == 'l2r':
             return self._left_to_right_multiply_on_left(lp)
-        else:
-            return self._left_to_right_multiply_on_right(lp)
+        return self._left_to_right_multiply_on_right(lp)
 
     def left_action_product(self, lp):
         r"""
@@ -2979,8 +2974,7 @@ class Permutation(CombinatorialElement):
         # choose the best implementations
         if l < 577:
             return self._to_lehmer_code_small()
-        else:
-            return self.inverse().to_inversion_vector()
+        return self.inverse().to_inversion_vector()
 
     def _to_lehmer_code_small(self) -> list[int]:
         r"""
@@ -3389,7 +3383,7 @@ class Permutation(CombinatorialElement):
                 right = elt
             if right - left == end:
                 return False
-            elif right - left == n - 1:
+            if right - left == n - 1:
                 break
             end += 1
 
@@ -3405,7 +3399,7 @@ class Permutation(CombinatorialElement):
                     right = elt
                 if right - left == end - start:
                     return False
-                elif right - left > n - 1 - start:
+                if right - left > n - 1 - start:
                     break
                 end += 1
 
@@ -5544,10 +5538,9 @@ class Permutation(CombinatorialElement):
         """
         if side == "right":
             return Permutations()(list(self) + [a + len(self) for a in other])
-        elif side == "left":
+        if side == "left":
             return Permutations()([a + len(self) for a in other] + list(self))
-        else:
-            raise ValueError("%s must be \"left\" or \"right\"" % side)
+        raise ValueError("%s must be \"left\" or \"right\"" % side)
 
     def shifted_shuffle(self, other):
         r"""
@@ -6092,27 +6085,25 @@ class Permutations(UniqueRepresentation, Parent):
                         if a in StandardPermutations_all():
                             if a == [1, 2]:
                                 return StandardPermutations_avoiding_12(n)
-                            elif a == [2, 1]:
+                            if a == [2, 1]:
                                 return StandardPermutations_avoiding_21(n)
-                            elif a == [1, 2, 3]:
+                            if a == [1, 2, 3]:
                                 return StandardPermutations_avoiding_123(n)
-                            elif a == [1, 3, 2]:
+                            if a == [1, 3, 2]:
                                 return StandardPermutations_avoiding_132(n)
-                            elif a == [2, 1, 3]:
+                            if a == [2, 1, 3]:
                                 return StandardPermutations_avoiding_213(n)
-                            elif a == [2, 3, 1]:
+                            if a == [2, 3, 1]:
                                 return StandardPermutations_avoiding_231(n)
-                            elif a == [3, 1, 2]:
+                            if a == [3, 1, 2]:
                                 return StandardPermutations_avoiding_312(n)
-                            elif a == [3, 2, 1]:
+                            if a == [3, 2, 1]:
                                 return StandardPermutations_avoiding_321(n)
-                            else:
-                                return StandardPermutations_avoiding_generic(n, (a,))
-                        elif isinstance(a, (list, tuple)):
+                            return StandardPermutations_avoiding_generic(n, (a,))
+                        if isinstance(a, (list, tuple)):
                             a = tuple(map(Permutation, a))
                             return StandardPermutations_avoiding_generic(n, a)
-                        else:
-                            raise ValueError("do not know how to avoid %s" % a)
+                        raise ValueError("do not know how to avoid %s" % a)
                     else:
                         return StandardPermutations_n(n)
                 else:
@@ -6125,27 +6116,21 @@ class Permutations(UniqueRepresentation, Parent):
                     if all(i == j for i, j in enumerate(n, start=1)):
                         if k is None:
                             return StandardPermutations_n(len(n))
-                        else:
-                            return Permutations_nk(len(n), k)
-                    else:
-                        if k is None:
-                            return Permutations_set(n)
-                        else:
-                            return Permutations_setk(n, k)
-                else:
+                        return Permutations_nk(len(n), k)
                     if k is None:
-                        return Permutations_mset(n)
-                    else:
-                        return Permutations_msetk(n, k)
+                        return Permutations_set(n)
+                    return Permutations_setk(n, k)
+                if k is None:
+                    return Permutations_mset(n)
+                return Permutations_msetk(n, k)
         elif 'descents' in kwargs:
             # Descent positions specified
             if isinstance(kwargs['descents'], tuple):
                 # Descent positions and size specified
                 args = kwargs['descents']
                 return StandardPermutations_descents(tuple(args[0]), args[1])
-            else:
-                # Size not specified
-                return StandardPermutations_descents(kwargs['descents'])
+            # Size not specified
+            return StandardPermutations_descents(kwargs['descents'])
         elif 'bruhat_smaller' in kwargs:
             return StandardPermutations_bruhat_smaller(Permutation(kwargs['bruhat_smaller']))
         elif 'bruhat_greater' in kwargs:
