@@ -457,7 +457,7 @@ class MPolynomialRing_polydict(MPolynomialRing_macaulay2_repr, PolynomialRing_si
                                         x._mpoly_dict_recursive(self.variable_names(),
                                                                 self.base_ring()))
 
-        elif isinstance(x, MPolynomial_libsingular):
+        if isinstance(x, MPolynomial_libsingular):
             P = x.parent()
             if P == self:
                 return MPolynomial_polydict(self, x.monomial_coefficients())

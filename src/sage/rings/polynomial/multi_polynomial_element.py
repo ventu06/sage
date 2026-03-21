@@ -167,8 +167,7 @@ class MPolynomial_element(MPolynomial):
             f = self.subs(**kwds)
             if len(x) > 0:
                 return f(*x)
-            else:
-                return f
+            return f
         if len(x) == 1 and isinstance(x[0], (list, tuple)):
             x = x[0]
         n = self.parent().ngens()
@@ -571,8 +570,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         if not self:
             return polydict.ETuple({}, self.parent().ngens())
-        else:
-            return self._MPolynomial_element__element.max_exp()
+        return self._MPolynomial_element__element.max_exp()
 
     def degree(self, x=None, std_grading=False):
         """
@@ -1270,8 +1268,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         """
         if as_ETuples:
             return list(self._exponents)  # Make a shallow copy
-        else:
-            return [tuple(e) for e in self._exponents]
+        return [tuple(e) for e in self._exponents]
 
     def inverse_of_unit(self):
         """
@@ -1568,8 +1565,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 if found != i:
                     if found != -1:
                         return False
-                    else:
-                        found = i
+                    found = i
         return True
 
     def univariate_polynomial(self, R=None):
@@ -1612,8 +1608,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
         if self.parent().ngens() == 0:
             if R is None:
                 return self.base_ring()(self)
-            else:
-                return R(self)
+            return R(self)
 
         if not self.is_univariate():
             raise TypeError("polynomial must involve at most one variable")
@@ -2176,9 +2171,8 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             base_ring = self.base_ring()
             if base_ring.is_field():
                 return Factorization([],unit=self.base_ring()(self))
-            else:
-                F = base_ring(self).factor()
-                return Factorization([(R(f),m) for f,m in F], unit=F.unit())
+            F = base_ring(self).factor()
+            return Factorization([(R(f),m) for f,m in F], unit=F.unit())
 
         base_ring = self.base_ring()
         if hasattr(base_ring, '_factor_multivariate_polynomial'):
@@ -2302,8 +2296,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
                 g = f.section()
                 q,r = f(self).quo_rem(f(right))
                 return g(q), g(r)
-            else:
-                raise
+            raise
         else:
             X = self._singular_().division(right._singular_())
             return R(X[1][1,1]), R(X[2][1])
@@ -2383,8 +2376,7 @@ class MPolynomial_polydict(Polynomial_singular_repr, MPolynomial_element):
             r = self.sylvester_matrix(other, variable).det()
         if R.ngens() <= 1 and r.degree() <= 0:
             return R.base_ring()(r[0])
-        else:
-            return r
+        return r
 
     @coerce_binop
     @handle_AA_and_QQbar

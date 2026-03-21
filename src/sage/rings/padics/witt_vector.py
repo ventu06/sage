@@ -219,7 +219,7 @@ class WittVector(CommutativeRingElement):
         # As a slight optimization, we'll check for one ahead of time.
         if other == P.one():
             return self
-        elif self == P.one():
+        if self == P.one():
             return ~other
 
         return self * ~other
@@ -709,7 +709,7 @@ class WittVector_finotti(WittVector):
         # As a slight optimization, we'll check for zero ahead of time.
         if other == P.zero():
             return self
-        elif self == P.zero():
+        if self == P.zero():
             return other
 
         G = []
@@ -788,7 +788,7 @@ class WittVector_pinvertible(WittVector):
         # As a slight optimization, we'll check for zero ahead of time.
         if other == P.zero():
             return self
-        elif self == P.zero():
+        if self == P.zero():
             return other
 
         p = P.prime()  # we know p is a unit in this case!
@@ -865,7 +865,7 @@ class WittVector_standard(WittVector):
         # As a slight optimization, we'll check for zero ahead of time.
         if other == P.zero():
             return self
-        elif self == P.zero():
+        if self == P.zero():
             return other
 
         s = P.sum_polynomials()

@@ -178,9 +178,9 @@ class RingHomset_generic(HomsetWithBase):
         if x.parent() == self:
             if isinstance(x, morphism.RingHomomorphism_im_gens):
                 return morphism.RingHomomorphism_im_gens(self, x.im_gens())
-            elif isinstance(x, morphism.RingHomomorphism_cover):
+            if isinstance(x, morphism.RingHomomorphism_cover):
                 return morphism.RingHomomorphism_cover(self)
-            elif isinstance(x, morphism.RingHomomorphism_from_base):
+            if isinstance(x, morphism.RingHomomorphism_from_base):
                 return morphism.RingHomomorphism_from_base(self, x.underlying_map())
         # Case 2: unique extension via fraction field
         try:
