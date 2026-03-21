@@ -919,9 +919,7 @@ class PHC:
         if e:
             from sage.features import Executable
             phc_executable = Executable(name='phc', executable='phc')
-            if not phc_executable.is_present():
-                print(str(os.system('which phc')) + '  PHC needs to be installed and in your path')
-                raise RuntimeError
+            phc_executable.require()
             # todo -- why? etc.
             with open(log_filename) as f:
                 msg = f.read()
