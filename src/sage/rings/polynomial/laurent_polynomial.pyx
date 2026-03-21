@@ -296,8 +296,7 @@ cdef class LaurentPolynomial(CommutativeAlgebraElement):
             R = R.change_ring(new_base_ring)
         elif isinstance(f, Map):
             R = R.change_ring(f.codomain())
-        return R(dict([(k, f(v))
-                       for k, v in self.monomial_coefficients().items()]))
+        return R({k: f(v) for k, v in self.monomial_coefficients().items()})
 
 
 cdef class LaurentPolynomial_univariate(LaurentPolynomial):

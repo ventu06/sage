@@ -9060,7 +9060,7 @@ class Graph(GenericGraph):
             sage: a, F = G.arboricity(True)                                             # needs sage.modules
             sage: a                                                                     # needs sage.modules
             2
-            sage: all([f.is_forest() for f in F])                                       # needs sage.modules
+            sage: all(f.is_forest() for f in F)                                       # needs sage.modules
             True
             sage: len(set.union(*[set(f.edges(sort=False)) for f in F])) == G.size()    # needs sage.modules
             True
