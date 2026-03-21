@@ -203,8 +203,7 @@ class KnotInfoFilename(Enum):
         """
         if self == KnotInfoFilename.knots:
             return self.value[0]
-        else:
-            return self.value[0]
+        return self.value[0]
 
     def excel(self):
         r"""
@@ -219,8 +218,7 @@ class KnotInfoFilename(Enum):
         """
         if self == KnotInfoFilename.knots:
             return '%s.xls' % (self.value[1])
-        else:
-            return '%s.xlsx' % (self.value[1])
+        return '%s.xlsx' % (self.value[1])
 
     def csv(self):
         r"""
@@ -292,8 +290,7 @@ class KnotInfoFilename(Enum):
         """
         if column.column_type() == column.types.OnlyLinks:
             return 'linkinfo_%s' % (column.name)
-        else:
-            return 'knotinfo_%s' % (column.name)
+        return 'knotinfo_%s' % (column.name)
 
     def description_url(self, column):
         r"""
@@ -323,8 +320,7 @@ class KnotInfoFilename(Enum):
         """
         if single:
             return '%sdiagrams/%s' % (self.url(), fname)
-        else:
-            return '%sdiagram_display.php?%s' % (self.url(), fname)
+        return '%sdiagram_display.php?%s' % (self.url(), fname)
 
     knots = ['https://knotinfo.org/', 'knotinfo_data_complete']
     links = ['https://link-info-repo.onrender.com/', 'linkinfo_data_complete']

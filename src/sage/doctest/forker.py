@@ -1728,8 +1728,7 @@ class SageDocTestRunner(doctest.DocTestRunner):
         if hasattr(self, 'failures'):
             D['failures'] = self.failures
             return self.failures
-        else:
-            return False
+        return False
 
 
 def dummy_handler(sig, frame):
