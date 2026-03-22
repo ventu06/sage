@@ -23,7 +23,7 @@ from sage.arith.misc import is_prime_power
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 
-def SymplecticPolarGraph(d, q, algorithm=None):
+def SymplecticPolarGraph(d, q, algorithm=None, immutable=False):
     r"""
     Return the Symplectic Polar Graph `Sp(d,q)`.
 
@@ -43,6 +43,9 @@ def SymplecticPolarGraph(d, q, algorithm=None):
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for `q>3`.  Otherwise it is done
       directly.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -79,16 +82,18 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         sage: graphs.SymplecticPolarGraph(4,4,algorithm='blah')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: blah
     """
     if d < 1 or d % 2:
         raise ValueError("d must be even and greater than 2")
 
+    name = f"Symplectic Polar Graph Sp({d},{q})"
     if algorithm == "gap":     # faster for larger (q>3)  fields
         from sage.libs.gap.libgap import libgap
-        G = _polar_graph(d, q, libgap.SymplecticGroup(d, q))
+        return _polar_graph(d, q, libgap.SymplecticGroup(d, q),
+                            immutable=immutable, name=name, relabel=True)
 
-    elif algorithm is None:    # faster for small (q<4) fields
+    if algorithm is None:    # faster for small (q<4) fields
         from sage.modules.free_module import VectorSpace
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.matrix.constructor import identity_matrix, block_matrix, zero_matrix
@@ -101,15 +106,11 @@ def SymplecticPolarGraph(d, q, algorithm=None):
                           zero_matrix(F, d/2)])
 
         V = VectorSpace(F, d)
-        PV = list(ProjectiveSpace(d - 1, F))
-        G = Graph([[tuple(_) for _ in PV], lambda x, y: V(x)*(M*V(y)) == 0], loops=False)
+        PV = [tuple(_) for _ in ProjectiveSpace(d - 1, F)]
+        return Graph([range(len(PV)), lambda i, j: V(PV[i])*(M*V(PV[j])) == 0],
+                     format="rule", loops=False, name=name, immutable=immutable)
 
-    else:
-        raise ValueError("unknown algorithm!")
-
-    G.name("Symplectic Polar Graph Sp({},{})".format(d, q))
-    G.relabel()
-    return G
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
 def AffineOrthogonalPolarGraph(d, q, sign='+'):
@@ -203,7 +204,8 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     return G
 
 
-def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
+def _orthogonal_polar_graph(m, q, sign='+', point_type=[0], immutable=False,
+                            name=None):
     r"""
     A helper function to build ``OrthogonalPolarGraph`` and ``NO2,3,5`` graphs.
 
@@ -218,6 +220,12 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
       is even, ``'+'`` (default) otherwise
 
     - ``point_type`` -- list of elements from `F_q`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
 
     EXAMPLES:
 
@@ -319,13 +327,11 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
 
     V = [x for x in PG if F(x) in point_type]
 
-    G = Graph([V, lambda x, y: P(x, y) == 0], loops=False)
-
-    G.relabel()
-    return G
+    return Graph([range(len(V)), lambda i, j: P(V[i], V[j]) == 0],
+                 format="rule", loops=False, immutable=immutable, name=name)
 
 
-def OrthogonalPolarGraph(m, q, sign='+'):
+def OrthogonalPolarGraph(m, q, sign='+', immutable=False):
     r"""
     Return the Orthogonal Polar Graph `O^{\epsilon}(m,q)`.
 
@@ -338,6 +344,9 @@ def OrthogonalPolarGraph(m, q, sign='+'):
 
     - ``sign`` -- string (default: ``'+'``); must be ``'+'`` or ``'-'`` if `m`
       is even, ``'+'`` (default) otherwise
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -373,14 +382,15 @@ def OrthogonalPolarGraph(m, q, sign='+'):
         ...
         ValueError: sign must be equal to either '' or '+' when m is odd
     """
-    G = _orthogonal_polar_graph(m, q, sign=sign)
+    G = _orthogonal_polar_graph(m, q, sign=sign, immutable=immutable)
     if m % 2:
         sign = ""
-    G.name("Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q)))
+    G._name = "Orthogonal Polar Graph O" + ("^" + sign if sign else "") + str((m, q))
     return G
 
 
-def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
+def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None,
+                                     immutable=False):
     r"""
     Return the Graph `NO^{\epsilon,\perp}_{m}(q)`.
 
@@ -411,6 +421,9 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     - ``q`` -- a power of a prime number, the size of the underlying field
 
     - ``sign`` -- string (default: ``'+'``); must be either ``'+'`` or ``'-'``
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -497,13 +510,15 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
     dec = ''
     if not m % 2:
         if q in [2, 3]:
-            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1])
+            G = _orthogonal_polar_graph(m, q, sign=sign, point_type=[1],
+                                        immutable=immutable)
         else:
             raise ValueError("for m even q must be 2 or 3")
     elif perp is not None:
         if q == 5:
             pt = [-1, 1] if sign == '+' else [2, 3] if sign == '-' else []
-            G = _orthogonal_polar_graph(m, q, point_type=pt)
+            G = _orthogonal_polar_graph(m, q, point_type=pt,
+                                        immutable=immutable)
             dec = ",perp"
         else:
             raise ValueError("for perp not None q must be 5")
@@ -532,13 +547,13 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
                  if len(x) == deg)
         Vh = Vh[0]
         L = libgap.Orbit(gp, [1, Vh], libgap.OnSets)
-        G = Graph()
-        G.add_edges(L)
-    G.name("NO^" + sign + dec + str((m, q)))
+        G = Graph(L, format="list_of_edges", immutable=immutable)
+    G._name = "NO^" + sign + dec + str((m, q))
     return G
 
 
-def _polar_graph(m, q, g, intersection_size=None):
+def _polar_graph(m, q, g, intersection_size=None, immutable=False, name=None,
+                 relabel=False):
     r"""
     The helper function to build graphs `(D)U(m,q)` and `(D)Sp(m,q)`.
 
@@ -564,6 +579,15 @@ def _polar_graph(m, q, g, intersection_size=None):
       Otherwise, build the graph on the maximal totally isotropic subspaces,
       with adjacency specified by ``intersection_size`` being as given.
 
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
+
+    - ``name`` -- string (default: ``None``); used as the name of the returned
+      graph when set
+
+    - ``relabel`` -- boolean (default: ``False``); whether to relabel the
+      vertices as integers
+
     TESTS::
 
         sage: from sage.graphs.generators.classical_geometries import _polar_graph
@@ -571,6 +595,19 @@ def _polar_graph(m, q, g, intersection_size=None):
         Graph on 45 vertices
         sage: _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)             # needs sage.libs.gap
         Graph on 27 vertices
+
+    Check the behavior of parameter ``relabel``::
+
+        sage: # needs sage.libs.gap
+        sage: A = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2))
+        sage: B = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), relabel=True)
+        sage: A.is_isomorphic(B)
+        True
+        sage: A = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2), intersection_size=1)
+        sage: B = _polar_graph(4, 4, libgap.GeneralUnitaryGroup(4, 2),
+        ....:                  intersection_size=1, relabel=True)
+        sage: A.is_isomorphic(B)
+        True
     """
     from sage.libs.gap.libgap import libgap
     W = libgap.FullRowSpace(libgap.GF(q), m)   # F_q^m
@@ -583,16 +620,24 @@ def _polar_graph(m, q, g, intersection_size=None):
     h = libgap.Set([libgap.Position(V, x) for x in sp])  # indices of the points in s
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on these subspaces
     if intersection_size is None:
-        G = Graph()
-        for x in L:  # every pair of points in the subspace is adjacent to each other in G
-            G.add_edges(combinations(x, 2))
-        return G
-    else:
-        return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
-                     loops=False)
+        from itertools import chain
+        # every pair of points in the subspace is adjacent to each other in G
+        if relabel:
+            vertices = set(chain.from_iterable(L))
+            v_to_i = {u: i for i, u in enumerate(vertices)}
+            L = [[v_to_i[u] for u in x] for x in L]
+        return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                     format="list_of_edges", loops=False, immutable=immutable,
+                     name=name)
+    if relabel:
+        return Graph([range(len(L)),
+                      lambda i, j: libgap.Size(libgap.Intersection(L[i], L[j])) == intersection_size],
+                     format="rule", loops=False, immutable=immutable, name=name)
+    return Graph([L, lambda i, j: libgap.Size(libgap.Intersection(i, j)) == intersection_size],
+                 format="rule", loops=False, immutable=immutable, name=name)
 
 
-def UnitaryPolarGraph(m, q, algorithm='gap'):
+def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
     r"""
     Return the Unitary Polar Graph `U(m,q)`.
 
@@ -607,6 +652,9 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
       computation is carried via GAP library interface, computing totally
       singular subspaces, which is faster for large examples (especially with
       `q>2`). Otherwise it is done directly.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -628,13 +676,20 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
         sage: graphs.UnitaryPolarGraph(4,3, algorithm='foo')
         Traceback (most recent call last):
         ...
-        ValueError: unknown algorithm!
+        ValueError: unknown algorithm: foo
     """
+    name = "Unitary Polar Graph U" + str((m, q))
+    if m == 4:
+        name += '; GQ' + str((q**2, q))
+    if m == 5:
+        name += '; GQ' + str((q**2, q**3))
+
     if algorithm == "gap":
         from sage.libs.gap.libgap import libgap
-        G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q))
+        return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                            name=name, immutable=immutable, relabel=True)
 
-    elif algorithm is None:  # slow on large examples
+    if algorithm is None:  # slow on large examples
         from sage.schemes.projective.projective_space import ProjectiveSpace
         from sage.modules.free_module_element import free_module_element as vector
         Fq = FiniteField(q**2, 'a')
@@ -648,17 +703,10 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
 
         V = [x for x in PG if P(x, x)]
         # bottleneck is here, of course
-        G = Graph([V, lambda x, y: P(x, y)], loops=False)
-    else:
-        raise ValueError("unknown algorithm!")
+        return Graph([range(len(V)), lambda x, y: P(V[x], V[y])], format="rule",
+                     loops=False, name=name, immutable=immutable)
 
-    G.relabel()
-    G.name("Unitary Polar Graph U" + str((m, q)))
-    if m == 4:
-        G.name(G.name() + '; GQ' + str((q**2, q)))
-    if m == 5:
-        G.name(G.name() + '; GQ' + str((q**2, q**3)))
-    return G
+    raise ValueError(f"unknown algorithm: {algorithm}")
 
 
 def NonisotropicUnitaryPolarGraph(m, q):
@@ -726,7 +774,7 @@ def NonisotropicUnitaryPolarGraph(m, q):
     return G
 
 
-def UnitaryDualPolarGraph(m, q):
+def UnitaryDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Dual Unitary Polar Graph `U(m,q)`.
 
@@ -736,6 +784,9 @@ def UnitaryDualPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -769,18 +820,17 @@ def UnitaryDualPolarGraph(m, q):
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
-                     intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)))
-    G.relabel()
-    G.name("Unitary Dual Polar Graph DU" + str((m, q)))
+    name = "Unitary Dual Polar Graph DU" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q**2)))
+        name += '; GQ' + str((q, q**2))
     if m == 5:
-        G.name(G.name() + '; GQ' + str((q**3, q**2)))
-    return G
+        name += '; GQ' + str((q**3, q**2))
+    return _polar_graph(m, q**2, libgap.GeneralUnitaryGroup(m, q),
+                        intersection_size=int((q**(2*(m//2 - 1)) - 1)/(q**2 - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
-def SymplecticDualPolarGraph(m, q):
+def SymplecticDualPolarGraph(m, q, immutable=False):
     r"""
     Return the Symplectic Dual Polar Graph `DSp(m,q)`.
 
@@ -790,6 +840,9 @@ def SymplecticDualPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power, and `m` must be even
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -810,14 +863,12 @@ def SymplecticDualPolarGraph(m, q):
         GAPError: Error, <subfield> must be a prime or a finite field
     """
     from sage.libs.gap.libgap import libgap
-    G = _polar_graph(m, q, libgap.SymplecticGroup(m, q),
-                     intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)))
-
-    G.relabel()
-    G.name("Symplectic Dual Polar Graph DSp" + str((m, q)))
+    name = "Symplectic Dual Polar Graph DSp" + str((m, q))
     if m == 4:
-        G.name(G.name() + '; GQ' + str((q, q)))
-    return G
+        name += '; GQ' + str((q, q))
+    return _polar_graph(m, q, libgap.SymplecticGroup(m, q),
+                        intersection_size=int((q**(m/2 - 1) - 1)/(q - 1)),
+                        name=name, immutable=immutable, relabel=True)
 
 
 def TaylorTwographDescendantSRG(q, clique_partition=False):
