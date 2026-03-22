@@ -4532,6 +4532,7 @@ def CubeConnectedCycle(d, immutable=False):
                      immutable=immutable)
 
     from itertools import chain
+
     def cycle(x, d):
         return chain((((x, y), (x, y + 1)) for y in range(d - 1)),
                      (((x, 0), (x, d - 1)),))

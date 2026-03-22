@@ -343,7 +343,6 @@ class JacobianGroup(UniqueRepresentation, JacobianGroup_base):
             self._infinite_ideal_mult = self._noncaching_infinite_ideal_mult
             self._inverse_infinite_matrix = self._noncaching_inverse_infinite_matrix
 
-
     @cached_method
     def _cached_inverse_infinite_matrix(self, J):
         r"""

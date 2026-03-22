@@ -812,7 +812,7 @@ class TermOrder(SageObject):
                             block_name, block_length, _ = re.split(length_pattern, block.strip())
                             block_length = int(block_length)
                             if block_length > 0:  # ignore blocks with length 0
-                                blocks.append( TermOrder(block_name, block_length, force=force) )
+                                blocks.append(TermOrder(block_name, block_length, force=force))
                                 singular_str.append("%s(%d)" % (singular_name_mapping.get(block_name, block_name), block_length))
                                 macaulay2_str.append("%s => %d" % (macaulay2_name_mapping.get(block_name, block_name), block_length))
                                 length += block_length
@@ -1311,7 +1311,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf > sg or ( sf == sg and f > g )) and f or g
+        return (sf > sg or (sf == sg and f > g)) and f or g
 
     def greater_tuple_degrevlex(self, f, g):
         """
@@ -1337,7 +1337,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf > sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
+        return (sf > sg or (sf == sg and f.reversed() < g.reversed())) and f or g
 
     def greater_tuple_negdegrevlex(self, f, g):
         """
@@ -1365,7 +1365,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
+        return (sf < sg or (sf == sg and f.reversed() < g.reversed())) and f or g
 
     def greater_tuple_negdeglex(self, f, g):
         """
@@ -1393,7 +1393,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf < sg or ( sf == sg and f > g )) and f or g
+        return (sf < sg or (sf == sg and f > g)) and f or g
 
     def greater_tuple_degneglex(self, f, g):
         """
@@ -1419,7 +1419,7 @@ class TermOrder(SageObject):
         """
         sf = sum(f.nonzero_values(sort=False))
         sg = sum(g.nonzero_values(sort=False))
-        return ( sf > sg or ( sf == sg and f < g )) and f or g
+        return (sf > sg or (sf == sg and f < g)) and f or g
 
     def greater_tuple_neglex(self, f, g):
         """
@@ -1471,7 +1471,7 @@ class TermOrder(SageObject):
         """
         sf = sum(l * r for l, r in zip(f, self._weights))
         sg = sum(l * r for l, r in zip(g, self._weights))
-        return (sf > sg or ( sf == sg and f > g )) and f or g
+        return (sf > sg or (sf == sg and f > g)) and f or g
 
     def greater_tuple_wdegrevlex(self, f, g):
         """
@@ -1527,7 +1527,7 @@ class TermOrder(SageObject):
         """
         sf = sum(l * r for l, r in zip(f, self._weights))
         sg = sum(l * r for l, r in zip(g, self._weights))
-        return (sf < sg or ( sf == sg and f > g )) and f or g
+        return (sf < sg or (sf == sg and f > g)) and f or g
 
     def greater_tuple_negwdegrevlex(self, f, g):
         """
@@ -1556,7 +1556,7 @@ class TermOrder(SageObject):
         """
         sf = sum(l * r for l, r in zip(f, self._weights))
         sg = sum(l * r for l, r in zip(g, self._weights))
-        return (sf < sg or ( sf == sg and f.reversed() < g.reversed() )) and f or g
+        return (sf < sg or (sf == sg and f.reversed() < g.reversed())) and f or g
 
     def greater_tuple_block(self, f, g):
         """
