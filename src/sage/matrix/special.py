@@ -41,6 +41,7 @@ The following constructions are available:
     :meth:`~sage.matrix.special.random_subspaces_matrix`
     :meth:`~sage.matrix.special.random_unimodular_matrix`
     :meth:`~sage.matrix.special.random_unitary_matrix`
+    :meth:`~sage.matrix.special.random_bistochastic_matrix`
     :meth:`~sage.matrix.special.toeplitz`
     :meth:`~sage.matrix.special.vandermonde`
     :meth:`~sage.matrix.special.vector_on_axis_rotation_matrix`
@@ -243,6 +244,9 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
 
       - ``'unitary'`` -- creates a (square) unitary matrix over a
         subfield of the complex numbers
+
+      - ``'bistochastic'`` -- creates a (square) bistochastic matrix over a
+        subfield of the real numbers
 
       - ``'diagonalizable'`` -- creates a diagonalizable matrix. if the
         base ring is ``QQ`` creates a diagonalizable matrix whose eigenvectors,
@@ -670,6 +674,8 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         return random_unimodular_matrix(parent, *args, **kwds)
     elif algorithm == 'unitary':
         return random_unitary_matrix(parent, *args, **kwds)
+    elif algorithm == 'bistochastic':
+        return random_bistochastic_matrix(parent, *args, **kwds)
     else:
         raise ValueError('random matrix algorithm "%s" is not recognized' % algorithm)
 
@@ -3311,6 +3317,108 @@ def random_unitary_matrix(parent):
 
     return U
 
+@matrix_method
+def random_bistochastic_matrix(parent):
+    """
+    Generate a random (square) bistochastic matrix of a given size with entries
+    in a subfield of the real numbers.
+
+    INPUT:
+
+    - ``parent`` -- :class:`sage.matrix.matrix_space.MatrixSpace`; a square
+      matrix space over a subfield of the real numbers having characteristic
+      zero.
+
+    OUTPUT:
+
+    A random bistochastic matrix in ``parent``. A :exc:`ValueError` is
+    raised if ``parent`` is not an appropriate matrix space (is not
+    square, or is not over a usable field).
+
+    ALGORITHM:
+
+    A unitary matrix over a subfield of the real numbers which entries are
+    squared will result in a bistochastic matrix. However, not all bistochastic
+    matrices arise in this way.
+
+    .. WARNING:
+
+        Inexact rings may violate your expectations; in particular,
+        the rings ``RR`` and ``RDF`` are accepted by this method but
+        the resulting matrix will usually fail the ``is_bistochastic()``
+        check due to floating point precision.
+
+    EXAMPLES:
+
+    Matrices with rational entries::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()
+        True
+
+    Matrices over the real field may expose approximation errors::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(RR, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()  # random
+        False
+
+    It only works over subfields of the real numbers and for square matrices::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(CC, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
+    TESTS::
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        sage: B.is_bistochastic()
+        True
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(QQ, 4, 3)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: parent must be square
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(GF(2), 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+
+        sage: from sage.matrix.constructor import random_bistochastic_matrix
+        sage: MS = MatrixSpace(CC, 4)
+        sage: B = random_bistochastic_matrix(MS)
+        Traceback (most recent call last):
+        ...
+        ValueError: base ring of parent must be a subfield of the real numbers
+    """
+    from sage.rings.real_mpfr import RR
+    if not parent.base_ring().is_subring(RR):
+        raise ValueError("base ring of parent must be a subfield of the real "
+                         "numbers")
+
+    B = random_unitary_matrix(parent)
+    # Squaring every entry.
+    return B.elementwise_product(B)
 
 @matrix_method
 def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
