@@ -896,6 +896,10 @@ REFERENCES:
             invariants and the braid group*,
             :arxiv:`1212.2222`
 
+.. [BGHT1999] \F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
+              positivity conjectures for some remarkable operators in the theory of symmetric
+              functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
+
 .. [BGM2012] \G. Brinkmann, J. Goedgebeur and B.D. McKay,
              *Generation of Fullerenes*, Journal of Chemical Information and
              Modeling, 52(11):2910-2918, 2012. :doi:`10.1021/ci3003107`.
@@ -910,6 +914,10 @@ REFERENCES:
 
 .. [BH1994] \S. Billey, M. Haiman. *Schubert polynomials for the
             classical groups*. J. Amer. Math. Soc., 1994.
+
+.. [BH2013] \F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
+            Special edition in honor of Christophe Reutenauer 60 birthday, International
+            Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 
 .. [BH2017] Georgia Benkart and Tom Halverson. *Partition algebras*
             `\mathsf{P}_k(n)` *with* `2k > n` *and the fundamental theorems
@@ -3031,6 +3039,9 @@ REFERENCES:
               *On the category* `\mathcal{O}` *for rational Cherednik algebras*.
               Invent. Math. **154** (2003). :arxiv:`math/0212036`.
 
+.. [GH1993] \A. Garsia, M. Haiman, A graded representation module for Macdonald's
+            polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
+
 .. [GHJ2016] Ewgenij Gawrilow, Simon Hampe, and Michael Joswig, The polymake XML
              file format, Mathematical software - ICMS 2016. 5th international
              congress, Berlin, Germany, July 11-14, 2016. Proceedings, Berlin:
@@ -4642,6 +4653,10 @@ REFERENCES:
               Network Cost of the Hypercube*, Eurasian Conference on Information
               and Communication Technology, LNCS 2510, pp 858-865, 2002.
               :doi:`10.1007/3-540-36087-5_99`
+
+.. [LLM1998] \L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
+             Macdonald Polynomials, IRMN no. 18 (1998).
+             :arxiv:`math/9808050`.
 
 .. [LLM2003] \A. Lascoux, L. Lapointe, and J. Morse.  *Tableau atoms and a new
              Macdonald positivity conjecture.* Duke Math Journal, **116 (1)**,
