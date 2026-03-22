@@ -251,6 +251,17 @@ def _normalize_projective_point(coords):
     INPUT:
 
     - ``coords`` -- iterable of field elements; a nonzero vector
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import _normalize_projective_point
+        sage: F = GF(5)
+        sage: _normalize_projective_point((F(0), F(2), F(4), F(1)))
+        (0, 1, 2, 3)
+        sage: _normalize_projective_point((F(0), F(0), F(0), F(0)))
+        Traceback (most recent call last):
+        ...
+        ValueError: the zero vector does not define a projective point
     """
     for c in coords:
         if c:
@@ -269,6 +280,20 @@ def _symplectic_form(point1, point2, s):
 
         \langle (x_0, x_1, y_0, y_1), (x'_0, x'_1, y'_0, y'_1) \rangle =
         x_0 y'_0 + s x_1 y'_1 - y_0 x'_0 - s y_1 x'_1.
+
+    EXAMPLES::
+
+        sage: from sage.combinat.designs.gen_quadrangles_with_spread import _symplectic_form
+        sage: F = GF(5)
+        sage: s = F(2)
+        sage: p = (F(1), F(0), F(0), F(0))
+        sage: q = (F(0), F(0), F(1), F(0))
+        sage: _symplectic_form(p, q, s)
+        1
+        sage: _symplectic_form(p, p, s)
+        0
+        sage: _symplectic_form(p, q, s) + _symplectic_form(q, p, s)
+        0
     """
     return (point1[0] * point2[2] + s * point1[1] * point2[3]
             - point1[2] * point2[0] - s * point1[3] * point2[1])
