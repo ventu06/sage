@@ -2111,7 +2111,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 4     6     0]
             [    5     1     0]
 
-            sage: # needs sage.combinat
             sage: P, U = M.weak_popov_form(transformation=True,
             ....:                          row_wise=False,
             ....:                          include_zero_vectors=False)
@@ -2232,7 +2231,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: F.<a> = GF(2^4, 'a')
             sage: PF.<x> = F[]
             sage: A = matrix(PF,[[1,  a*x^17 + 1 ],
@@ -2393,7 +2391,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             ....:     [      6*x+4,       5*x^3+5*x,       6*x^2+2*x+2],
             ....:     [4*x^2+5*x+2, x^4+5*x^2+2*x+4, 4*x^3+6*x^2+6*x+5]])
 
-            sage: # needs sage.combinat
             sage: P, U = M.popov_form(transformation=True)
             sage: P
             [            4 x^2 + 4*x + 1             3]
@@ -2406,7 +2403,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         Demonstrating shifts and specific case of Hermite form::
 
-            sage: # needs sage.combinat
             sage: P = M.popov_form(shifts=[0,2,4]); P
             [              4*x^2 + 3*x + 4 x^4 + 3*x^3 + 5*x^2 + 5*x + 5                             0]
             [                            6               5*x^2 + 6*x + 5                             1]
@@ -2429,7 +2425,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [x + 2     6     0]
             [    0     1     0]
 
-            sage: # needs sage.combinat
             sage: P, U = M.popov_form(transformation=True,
             ....:                     row_wise=False,
             ....:                     include_zero_vectors=False)
@@ -2637,7 +2632,6 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
         The last example shows the usage of the transformation parameter::
 
-            sage: # needs sage.rings.finite_rings
             sage: Fq.<a> = GF(2^3)
             sage: pR.<x> = Fq[]
             sage: A = matrix(pR, [[x^2+a,  x^4+a],

@@ -364,7 +364,6 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         ....:     A = random_matrix(*args, **kwds)
         ....:     density_sum += float(A.density())
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=-10, y=10, density=0.75)
@@ -374,14 +373,12 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=-10, y=10, density=0.75)
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 5, x=20, y=30, density=0.75)
         sage: while abs(density_sum/total_count - expected_density) > 0.001:
         ....:     add_sample(ZZ, 5, x=20, y=30, density=0.75)
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: density_sum = 0.0
         sage: total_count = 0.0
         sage: add_sample(ZZ, 100, x=20, y=30, density=0.75)
@@ -404,7 +401,6 @@ def random_matrix(ring, nrows, ncols=None, algorithm='randomize', implementation
     For algorithm testing you might want to control the number of bits,
     say 10,000 entries, each limited to 16 bits.  ::
 
-        sage: # needs sage.libs.linbox (otherwise timeout)
         sage: A = random_matrix(ZZ, 100, 100, x=2^16); A
         100 x 100 dense matrix over Integer Ring (use the '.str()' method to see the entries)
 
@@ -1025,7 +1021,6 @@ def zero_matrix(ring, nrows=None, ncols=None, sparse=False):
 
     Check that :issue:`38221` is fixed::
 
-        sage: # needs sage.groups
         sage: G = CyclicPermutationGroup(7)
         sage: R = GF(2)
         sage: A = G.algebra(R)
@@ -1321,18 +1316,15 @@ def elementary_matrix(arg0, arg1=None, **kwds):
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Rational Field
 
-        sage: # needs sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=I)
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over
          Number Field in I with defining polynomial x^2 + 1 with I = 1*I
 
-        sage: # needs sage.rings.complex_double sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=CDF(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Complex Double Field
 
-        sage: # needs sage.rings.number_field sage.symbolic
         sage: E = elementary_matrix(4, row1=1, scale=QQbar(I))
         sage: E.parent()
         Full MatrixSpace of 4 by 4 dense matrices over Algebraic Field
@@ -2393,7 +2385,6 @@ def companion_matrix(poly, format='right'):
         [ 1  0 -8]
         [ 0  1  4]
 
-        sage: # needs sage.symbolic
         sage: y = var('y')
         sage: q = y^3 - 2*y + 1
         sage: companion_matrix(q)
@@ -2761,7 +2752,6 @@ def random_echelonizable_matrix(parent, rank, upper_bound=None, max_tries=100):
 
     Matrices can be generated over any exact ring. ::
 
-        sage: # needs sage.rings.finite_rings
         sage: F.<a> = GF(2^3)
         sage: B = random_matrix(F, 4, 5, algorithm='echelonizable', rank=4,
         ....:                   upper_bound=None)
@@ -3105,7 +3095,6 @@ def random_unimodular_matrix(parent, upper_bound=None, max_tries=100):
 
     A matrix over the number Field in `y` with defining polynomial `y^2-2y-2`. ::
 
-        sage: # needs sage.rings.number_field
         sage: y = polygen(ZZ, 'y')
         sage: K = NumberField(y^2 - 2*y - 2, 'y')
         sage: C = random_matrix(K, 3, algorithm='unimodular')
@@ -3464,7 +3453,6 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         sage: matrix_space = sage.matrix.matrix_space.MatrixSpace(QQ, 5)
         sage: A = random_diagonalizable_matrix(matrix_space)
 
-        sage: # needs sage.rings.number_field
         sage: eigenvalues = A.eigenvalues()
         sage: S = A.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*A*S).diagonal()
@@ -3485,7 +3473,6 @@ def random_diagonalizable_matrix(parent, eigenvalues=None, dimensions=None):
         sage: all(x in ZZ for x in (B-(6*identity_matrix(6))).rref().list())
         True
 
-        sage: # needs sage.rings.number_field
         sage: S = B.right_eigenmatrix()[1]
         sage: eigenvalues2 = (S.inverse()*B*S).diagonal()
         sage: all(e in eigenvalues for e in eigenvalues2)
@@ -3693,7 +3680,6 @@ def vector_on_axis_rotation_matrix(v, i, ring=None):
 
     ::
 
-        sage: # needs sage.symbolic
         sage: x,y = var('x,y')
         sage: v = vector((x,y))
         sage: vector_on_axis_rotation_matrix(v, 1)
@@ -3797,7 +3783,6 @@ def ith_to_zero_rotation_matrix(v, i, ring=None):
 
     On the symbolic ring::
 
-        sage: # needs sage.symbolic
         sage: x,y,z = var('x,y,z')
         sage: v = vector((x,y,z))
         sage: ith_to_zero_rotation_matrix(v, 2)
