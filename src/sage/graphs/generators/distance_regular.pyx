@@ -910,7 +910,7 @@ def AlternatingFormsGraph(const int n, const int q):
     return G
 
 
-def HermitianFormsGraph(const int n, const int r):
+def HermitianFormsGraph(const int n, const int r, immutable=False):
     r"""
     Return the Hermitian forms graph with the given parameters.
 
@@ -924,7 +924,11 @@ def HermitianFormsGraph(const int n, const int r):
     INPUT:
 
     - ``n`` -- integer
+
     - ``r`` -- a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1008,12 +1012,11 @@ def HermitianFormsGraph(const int n, const int r):
             N = tuple([M[i] + R[i] for i in range((n * (n+1)) // 2)])
             edges.append((M, N))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name(f"Hermitian forms graph on (F_{q})^{n}")
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Hermitian forms graph on (F_{q})^{n}")
 
 
-def DoubleOddGraph(const int n):
+def DoubleOddGraph(const int n, immutable=False):
     r"""
     Return the double odd graph on `2n+1` points.
 
@@ -1026,6 +1029,9 @@ def DoubleOddGraph(const int n):
     INPUT:
 
     - ``n`` -- integer; must be greater than 0
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1060,26 +1066,27 @@ def DoubleOddGraph(const int n):
     if n < 1:
         raise ValueError("n must be >= 1")
 
-    cdef list edges, s1
+    cdef list edges, s2
+    cdef tuple s1
     cdef int i
+    cdef int k = 2*n + 1
 
     # a binary vector of size 2n + 1 represents a set
     edges = []
-    for s in IntegerVectors(n, k=2*n + 1, max_part=1):
-        s1 = list(s)
+    for s in IntegerVectors(n, k=k, max_part=1):
+        s1 = tuple(s)
         for i in range(2*n + 1):
             sig_check()
             if s1[i] == 0:
                 s2 = list(s)  # duplicate list
                 s2[i] = 1
-                edges.append((tuple(s1), tuple(s2)))
+                edges.append((s1, tuple(s2)))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Bipartite double of Odd graph on a set of %d elements" % (2*n + 1))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Bipartite double of Odd graph on a set of {k} elements")
 
 
-def HalfCube(const int n):
+def HalfCube(const int n, immutable=False):
     r"""
     Return the halved cube in `n` dimensions.
 
@@ -1089,6 +1096,9 @@ def HalfCube(const int n):
     INPUT:
 
     - ``n`` -- integer; must be greater than 2
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1142,13 +1152,14 @@ def HalfCube(const int n):
                 if u < v:
                     E.append((u, v))
 
-    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges')
+    G = Graph([range(2**(n - 1)), E], format='vertices_and_edges',
+              name=f"Half {n} Cube", immutable=immutable)
     G.set_pos(pos)
-    G.name("Half %d Cube" % n)
     return G
 
 
-def GrassmannGraph(const int q, const int n, const int input_e):
+def GrassmannGraph(const int q, const int n, const int input_e,
+                   immutable=False):
     r"""
     Return the Grassmann graph with parameters `(q, n, e)`.
 
@@ -1163,7 +1174,11 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``n``, ``e`` -- integers with `n > e+1`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1197,12 +1212,12 @@ def GrassmannGraph(const int q, const int n, const int input_e):
     # we want the intersection graph
     # the size of the intersection must be (q^{e-1} - 1) / (q-1)
     size = (q**(e - 1) - 1) // (q - 1)
-    G = PG.intersection_graph([size])
-    G.name("Grassmann graph J_%d(%d, %d)" % (q, n, e))
+    G = PG.intersection_graph([size], immutable=immutable)
+    G._name = f"Grassmann graph J_{q}({n}, {e})"
     return G
 
 
-def DoubleGrassmannGraph(const int q, const int e):
+def DoubleGrassmannGraph(const int q, const int e, immutable=False):
     r"""
     Return the bipartite double of the distance-`e` graph of the Grassmann graph `J_q(n,e)`.
 
@@ -1216,7 +1231,11 @@ def DoubleGrassmannGraph(const int q, const int e):
     INPUT:
 
     - ``q`` -- a prime power
+
     - ``e`` -- integer
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1255,9 +1274,8 @@ def DoubleGrassmannGraph(const int q, const int e):
             Ubasis = frozenset(U.basis())
             edges.append((Wbasis, Ubasis))
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Double Grassmann graph (%d, %d, %d)" % (n, e, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name=f"Double Grassmann graph ({n}, {e}, {q})")
 
 
 def is_from_GQ_spread(list arr):
@@ -1330,7 +1348,7 @@ def is_from_GQ_spread(list arr):
     return (s, t)
 
 
-def graph_from_GQ_spread(const int s, const int t):
+def graph_from_GQ_spread(const int s, const int t, immutable=False):
     r"""
     Return the point graph of the generalised quadrangle with
     order `(s, t)` after removing one of its spreads.
@@ -1341,6 +1359,9 @@ def graph_from_GQ_spread(const int s, const int t):
     INPUT:
 
     - ``s``, ``t`` -- integers; order of the generalised quadrangle
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1377,7 +1398,7 @@ def graph_from_GQ_spread(const int s, const int t):
             sig_check()
             edges.append((p1, p2))
 
-    return Graph(edges, format='list_of_edges')
+    return Graph(edges, format='list_of_edges', immutable=immutable)
 
 
 def GeneralisedDodecagonGraph(const int s, const int t):
