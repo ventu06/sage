@@ -997,6 +997,11 @@ REFERENCES:
             Invent. Math. *178* (2009), no. 3, 451-484.
             :mathscinet:`MR2551762`
 
+.. [BKSTY06] \A. Buch, A. Kresch, M. Shimozono, H. Tamvakis, and A. Yong.
+             *Stable Grothendieck polynomials and* `K`-*theoretic factor sequences*.
+             Math. Ann. **340** Issue 2, (2008), pp. 359--382.
+             :arxiv:`math/0601514v1`.        
+
 .. [BK2009] \J. Brundan and A. Kleshchev.
             *Graded decomposition numbers for cyclotomic Hecke algebras*.
             Adv. Math. **222** (2009), 1883-1942.
@@ -2601,6 +2606,11 @@ REFERENCES:
              Journal of Combinatorial Theory, Series A, Volume 31, Issue 2,
              1981, Pages 108-125. :doi:`10.1016/0097-3165(81)90007-8`.
 
+.. [EG1987] Paul Edelman, Curtis Greene.
+            *Balanced Tableaux*.
+            Advances in Mathematics 63 (1987), pp. 42-99.
+            :doi:`10.1016/0001-8708(87)90063-6`             
+
 .. [EGNO2015] Pavel Etingof, Shlomo Gelaki, Dmitri Nikshych and Victor Ostrik,
                *Tensor Categories*, AMS Mathematical Surveys and Monographs 205 (2015).
 
@@ -3233,6 +3243,11 @@ REFERENCES:
 .. [GR2013] Darij Grinberg, Tom Roby. *Iterative properties of
             birational rowmotion*.
             http://www.cip.ifi.lmu.de/~grinberg/algebra/skeletal.pdf
+
+.. [GR2018v5sol] Darij Grinberg, Victor Reiner.
+                 *Hopf Algebras In Combinatorics*,
+                 :arxiv:`1409.8356v5`, available with solutions at
+                 https://arxiv.org/src/1409.8356v5/anc/HopfComb-v73-with-solutions.pdf            
 
 .. [Gri2005] \G. Grigorov, Kato's Euler System and the Main Conjecture,
              Harvard Ph.D. Thesis (2005).
@@ -4208,6 +4223,11 @@ REFERENCES:
              \J. Phys. A, **44** (2011), no. 10.
 
 .. [KnotAtlas] The Knot atlas. http://katlas.org/wiki/Main_Page
+
+.. [Knu1970] Donald E. Knuth.
+             *Permutations, matrices, and generalized Young tableaux*.
+             Pacific J. Math. Volume 34, Number 3 (1970), pp. 709-727.
+             http://projecteuclid.org/euclid.pjm/1102971948
 
 .. [Knu1995] Donald E. Knuth, *Overlapping Pfaffians*,
              :arxiv:`math/9503234v1`.
