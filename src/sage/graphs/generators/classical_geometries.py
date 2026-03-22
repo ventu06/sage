@@ -998,7 +998,7 @@ def TaylorTwographSRG(q, immutable=False):
     return G.copy(immutable=True) if immutable else G
 
 
-def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
+def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False, immutable=False):
     r"""
     Return the collinearity graph of the generalized quadrangle `AS(q)`, or of
     its dual
@@ -1020,6 +1020,9 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
 
     - ``dual`` -- boolean (default: ``False``); whether to return the
       collinearity graph of `AS(q)` or of the dual `AS(q)` (when ``True``)
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1045,15 +1048,16 @@ def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
             for c in F:
                 L.append(tuple((c*s**2 - b*s + a, -2*c*s + b, s) for s in F))
     if dual:
-        G = IncidenceStructure(L).intersection_graph()
-        G.name('AS(' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
+        G = IncidenceStructure(L).intersection_graph(immutable=immutable)
+        G._name = f"AS({q})*; GQ{(q + 1, q - 1)}"
     else:
-        G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('AS(' + str(q) + '); GQ' + str((q - 1, q + 1)))
+        G = IncidenceStructure(L).dual().intersection_graph(immutable=immutable)
+        G._name = f"AS({q}); GQ{(q - 1, q + 1)}"
     return G
 
 
-def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, check_hyperoval=True):
+def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None,
+                                     check_hyperoval=True, immutable=False):
     r"""
     Return the collinearity graph of the generalized quadrangle `T_2^*(q)`, or
     of its dual
@@ -1088,6 +1092,9 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1160,11 +1167,11 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
          for z in Theta.blocks() if len(HO.intersection(z)) == 1]
 
     if dual:
-        G = IncidenceStructure(L).intersection_graph()
-        G.name('T2*(O,' + str(q) + ')*; GQ' + str((q + 1, q - 1)))
+        G = IncidenceStructure(L).intersection_graph(immutable=immutable)
+        G._name = f"T2*(O,{q})*; GQ{(q + 1, q - 1)}"
     else:
-        G = IncidenceStructure(L).dual().intersection_graph()
-        G.name('T2*(O,' + str(q) + '); GQ' + str((q - 1, q + 1)))
+        G = IncidenceStructure(L).dual().intersection_graph(immutable=immutable)
+        G._name = f"T2*(O,{q}); GQ{(q - 1, q + 1)}"
     return G
 
 
