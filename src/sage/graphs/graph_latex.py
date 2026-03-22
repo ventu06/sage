@@ -265,7 +265,6 @@ the possible options available through Sage's interface to the ``tkz-graph``
 package.  So it is worth viewing this in the notebook to see the effects of
 various defaults and choices.::
 
-    sage: # needs sage.symbolic
     sage: var('x y u w')
     (x, y, u, w)
     sage: G = Graph(loops=True)

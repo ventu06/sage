@@ -1634,7 +1634,6 @@ class DiGraph(GenericGraph):
 
         Loops are part of the feedback edge set (:issue:`23989`)::
 
-            sage: # needs sage.combinat
             sage: D = digraphs.DeBruijn(2, 2)
             sage: sorted(D.loops(labels=None))
             [('00', '00'), ('11', '11')]
@@ -2543,7 +2542,6 @@ class DiGraph(GenericGraph):
 
         EXAMPLES::
 
-            sage: # needs sage.combinat
             sage: G = digraphs.DeBruijn(5,4)
             sage: G.diameter()
             4
@@ -3324,7 +3322,6 @@ class DiGraph(GenericGraph):
 
         Using a different choice of sources and sinks::
 
-            sage: # needs sage.geometry.polyhedron
             sage: fl = H.flow_polytope(ends=([1], [3])); fl
             A 1-dimensional polyhedron in QQ^6 defined as the convex hull
             of 2 vertices

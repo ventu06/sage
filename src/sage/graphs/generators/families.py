@@ -602,7 +602,6 @@ def BarbellGraph(n1, n2, immutable=False):
         sage: K_n1 = graphs.CompleteGraph(n1)
         sage: P_n2 = graphs.PathGraph(n2)
 
-        sage: # needs sage.modules
         sage: s_K = g.subgraph_search(K_n1, induced=True)
         sage: s_P = g.subgraph_search(P_n2, induced=True)
         sage: K_n1.is_isomorphic(s_K)
@@ -1130,7 +1129,6 @@ def CirculantGraph(n, adjacency, immutable=False, name=None):
     use the ``CirculantGraph`` constructor, which fills in
     the position dictionary::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -1242,7 +1240,6 @@ def CubeGraph(n, embedding=1, immutable=False):
 
     Plot several `n`-cubes in a Sage Graphics Array::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(6):
@@ -1532,7 +1529,6 @@ def FriendshipGraph(n, immutable=False):
 
     The first few friendship graphs. ::
 
-        sage: # needs sage.plot
         sage: A = []; B = []
         sage: for i in range(9):
         ....:     g = graphs.FriendshipGraph(i + 1)
@@ -2820,7 +2816,6 @@ def SquaredSkewHadamardMatrixGraph(n, immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.combinat sage.modules
         sage: G = graphs.SquaredSkewHadamardMatrixGraph(4)
         sage: G.is_strongly_regular(parameters=True)
         (225, 112, 55, 56)
@@ -2881,7 +2876,6 @@ def SwitchedSquaredSkewHadamardMatrixGraph(n, immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.combinat sage.modules
         sage: g = graphs.SwitchedSquaredSkewHadamardMatrixGraph(4)
         sage: g.is_strongly_regular(parameters=True)
         (226, 105, 48, 49)
@@ -3449,7 +3443,6 @@ def SierpinskiGasketGraph(n, immutable=False):
 
     EXAMPLES::
 
-        sage: # needs sage.modules
         sage: s4 = graphs.SierpinskiGasketGraph(4); s4
         Graph on 42 vertices
         sage: s4.size()
@@ -3550,7 +3543,6 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None, immutable=False):
     The generalized Sierpinski graph of dimension `k` of any graph `G` with `n`
     vertices and `m` edges has `n^k` vertices and `m\sum_{i=0}^{k-1}n^i` edges::
 
-        sage: # needs sage.modules
         sage: n = randint(2, 6)
         sage: k = randint(1, 5)
         sage: G = graphs.RandomGNP(n, .5)
@@ -3589,7 +3581,6 @@ def GeneralizedSierpinskiGraph(G, k, stretch=None, immutable=False):
 
     TESTS::
 
-        sage: # needs sage.modules
         sage: graphs.GeneralizedSierpinskiGraph(Graph(), 3)
         Generalized Sierpinski Graph of Graph on 0 vertices of dimension 3: Graph on 0 vertices
         sage: graphs.GeneralizedSierpinskiGraph(Graph(1), 3).vertices(sort=False)
@@ -3676,7 +3667,6 @@ def WheelGraph(n, immutable=False):
     We view many wheel graphs with a Sage Graphics Array, first with this
     constructor (i.e., the position dictionary filled)::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -3970,7 +3960,6 @@ def MathonPseudocyclicMergingGraph(M, t, immutable=False):
         ...
         AssertionError...
 
-        sage: # needs sage.libs.gap
         sage: M = ES(3)
         sage: M = [M[1],M[0],M[2],M[3]]
         sage: G = mer(M, 2)
@@ -4043,7 +4032,6 @@ def MathonPseudocyclicStronglyRegularGraph(t, G=None, L=None, immutable=False):
     :meth:`~sage.groups.perm_gps.permgroup.PermutationGroup_generic.normal_subgroups`
     method::
 
-        sage: # needs sage.groups sage.libs.gap sage.rings.finite_rings
         sage: G = graphs.PaleyGraph(9)
         sage: a = G.automorphism_group(partition=[sorted(G)])
         sage: it = (x for x in a.normal_subgroups() if x.order() == 9)
@@ -4268,7 +4256,6 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
 
     EXAMPLES::
 
-        sage: # needs sage.combinat sage.modules sage.rings.finite_rings
         sage: graphs.MuzychukS6Graph(3, 3).is_strongly_regular(parameters=True)
         (378, 116, 34, 36)
         sage: phi = {(2,(0,2)):0, (1,(1,3)):1, (0,(0,3)):1, (2,(1,2)):1,
@@ -4278,7 +4265,6 @@ def MuzychukS6Graph(n, d, Phi='fixed', Sigma='fixed', verbose=False,
 
     TESTS::
 
-        sage: # needs sage.modules
         sage: graphs.MuzychukS6Graph(2,2,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
         (16, 5, 0, 2)
         sage: graphs.MuzychukS6Graph(3,3,Phi='random',Sigma='random').is_strongly_regular(parameters=True)              # needs sage.rings.finite_rings
@@ -4605,7 +4591,6 @@ def StaircaseGraph(n, immutable=False):
 
     Create several staircase graphs in a Sage graphics array::
 
-        sage: # needs sage.plots
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -4717,7 +4702,6 @@ def BiwheelGraph(n, immutable=False):
 
     Create several biwheel graphs in a Sage graphics array::
 
-        sage: # needs sage.plots
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -4814,7 +4798,6 @@ def TruncatedBiwheelGraph(n, immutable=False):
 
     Create several truncated biwheel graphs in a Sage graphics array::
 
-        sage: # needs sage.plots
         sage: g = []
         sage: j = []
         sage: for i in range(9):

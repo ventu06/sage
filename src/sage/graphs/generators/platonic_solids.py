@@ -92,7 +92,6 @@ def HexahedralGraph():
     Create several hexahedral graphs in a Sage graphics array. They will be
     drawn differently due to the use of the spring-layout algorithm::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -145,7 +144,6 @@ def OctahedralGraph():
     Create several octahedral graphs in a Sage graphics array They will be drawn
     differently due to the use of the spring-layout algorithm::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -190,7 +188,6 @@ def IcosahedralGraph():
     Create several icosahedral graphs in a Sage graphics array. They will be
     drawn differently due to the use of the spring-layout algorithm::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):
@@ -235,7 +232,6 @@ def DodecahedralGraph():
     Create several dodecahedral graphs in a Sage graphics array They will be
     drawn differently due to the use of the spring-layout algorithm::
 
-        sage: # needs sage.plot
         sage: g = []
         sage: j = []
         sage: for i in range(9):

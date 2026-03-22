@@ -61,7 +61,6 @@ def SymplecticPolarGraph(d, q, algorithm=None):
         sage: G.is_strongly_regular(parameters=True)
         (40, 12, 2, 4)
 
-        sage: # needs sage.libs.gap
         sage: O = graphs.OrthogonalPolarGraph(5, 3)
         sage: O.is_strongly_regular(parameters=True)
         (40, 12, 2, 4)
@@ -156,7 +155,6 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     Some examples from `Brouwer's table or strongly regular graphs
     <https://www.win.tue.nl/~aeb/graphs/srg/srgtab.html>`_::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.AffineOrthogonalPolarGraph(6,2,"-"); g
         Affine Polar Graph VO^-(6,2): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -168,7 +166,6 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
 
     When ``sign is None``::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.AffineOrthogonalPolarGraph(5,2,None); g
         Affine Polar Graph VO^-(5,2): Graph on 32 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -277,7 +274,6 @@ def _orthogonal_polar_graph(m, q, sign='+', point_type=[0]):
 
     TESTS::
 
-        sage: # needs sage.libs.gap
         sage: g = _orthogonal_polar_graph(5,3,point_type=[-1])
         sage: g.is_strongly_regular(parameters=True)
         (45, 12, 3, 3)
@@ -345,7 +341,6 @@ def OrthogonalPolarGraph(m, q, sign='+'):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.OrthogonalPolarGraph(6,3,"+"); G
         Orthogonal Polar Graph O^+(6, 3): Graph on 130 vertices
         sage: G.is_strongly_regular(parameters=True)
@@ -428,7 +423,6 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
 
     `NO^-(6,2)` and `NO^+(6,2)`::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(6,2,'-')
         sage: g.is_strongly_regular(parameters=True)
         (36, 15, 6, 6)
@@ -445,7 +439,6 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
 
     Wilbrink's graphs for `q=5`::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,5,perp=1)
         sage: g.is_strongly_regular(parameters=True)    # long time
         (325, 60, 15, 10)
@@ -455,7 +448,6 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
 
     Wilbrink's graphs::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(5,4,'+')
         sage: g.is_strongly_regular(parameters=True)
         (136, 75, 42, 40)
@@ -469,7 +461,6 @@ def NonisotropicOrthogonalPolarGraph(m, q, sign='+', perp=None):
 
     TESTS::
 
-        sage: # needs sage.libs.gap
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(4,2); g
         NO^+(4, 2): Graph on 6 vertices
         sage: g = graphs.NonisotropicOrthogonalPolarGraph(4,3,'-')
@@ -619,7 +610,6 @@ def UnitaryPolarGraph(m, q, algorithm='gap'):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.UnitaryPolarGraph(4,2); G
         Unitary Polar Graph U(4, 2); GQ(4, 2): Graph on 45 vertices
         sage: G.is_strongly_regular(parameters=True)
@@ -858,7 +848,6 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.finite_rings
         sage: g = graphs.TaylorTwographDescendantSRG(3); g
         Taylor two-graph descendant SRG: Graph on 27 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -873,7 +862,6 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
 
     TESTS::
 
-        sage: # needs sage.rings.finite_rings
         sage: g,l,_ = graphs.TaylorTwographDescendantSRG(3, clique_partition=True)
         sage: all(g.is_clique(x) for x in l)
         True
@@ -1041,7 +1029,6 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     using the built-in construction::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.T2starGeneralizedQuadrangleGraph(4); g
         T2*(O,4); GQ(3, 5): Graph on 64 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1053,7 +1040,6 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     supplying your own hyperoval::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')
         sage: O = [vector(F,(0,0,0,1)),vector(F,(0,0,1,0))] + [vector(F, (0,1,x^2,x))
         ....:                                                  for x in F]
@@ -1064,7 +1050,6 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
 
     TESTS::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')  # repeating a point...
         sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.T2starGeneralizedQuadrangleGraph(4, hyperoval=O, field=F)
@@ -1164,7 +1149,6 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     using the built-in constructions::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.HaemersGraph(4); g
         Haemers(4): Graph on 96 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1172,7 +1156,6 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     supplying your own hyperoval_matching::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.HaemersGraph(4, hyperoval_matching=((0,5),(1,4),(2,3))); g
         Haemers(4): Graph on 96 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1180,7 +1163,6 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     TESTS::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(4,'b')  # repeating a point...
         sage: O = [vector(F,(0,1,0,0)),vector(F,(0,0,1,0))]+[vector(F, (0,1,x^2,x)) for x in F]
         sage: graphs.HaemersGraph(4, hyperoval=O, field=F)
@@ -1388,7 +1370,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     using the built-in construction::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: g = graphs.Nowhere0WordsTwoWeightCodeGraph(8); g
         Nowhere0WordsTwoWeightCodeGraph(8): Graph on 196 vertices
         sage: g.is_strongly_regular(parameters=True)
@@ -1399,7 +1380,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     supplying your own hyperoval::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(8)
         sage: O = [vector(F,(0,0,1)),vector(F,(0,1,0))] + [vector(F, (1,x^2,x))
         ....:                                              for x in F]
@@ -1410,7 +1390,6 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     TESTS::
 
-        sage: # needs sage.combinat sage.rings.finite_rings
         sage: F = GF(8)  # repeating a point...
         sage: O = [vector(F,(1,0,0)),vector(F,(0,1,0))]+[vector(F, (1,x^2,x)) for x in F]
         sage: graphs.Nowhere0WordsTwoWeightCodeGraph(8,hyperoval=O,field=F)
@@ -1486,7 +1465,6 @@ def OrthogonalDualPolarGraph(e, d, q):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.OrthogonalDualPolarGraph(1,3,2)
         sage: G.is_distance_regular(True)
         ([7, 6, 4, None], [None, 1, 3, 7])
@@ -1502,7 +1480,6 @@ def OrthogonalDualPolarGraph(e, d, q):
 
     TESTS::
 
-        sage: # needs sage.libs.gap
         sage: G = graphs.OrthogonalDualPolarGraph(0,3,2)
         sage: G.is_distance_regular(True)
         ([14, 12, 8, None], [None, 1, 3, 7])
