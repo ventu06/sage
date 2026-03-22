@@ -113,7 +113,7 @@ def SymplecticPolarGraph(d, q, algorithm=None, immutable=False):
     raise ValueError(f"unknown algorithm: {algorithm}")
 
 
-def AffineOrthogonalPolarGraph(d, q, sign='+'):
+def AffineOrthogonalPolarGraph(d, q, sign='+', immutable=False):
     r"""
     Return the affine polar graph `VO^+(d,q),VO^-(d,q)` or `VO(d,q)`.
 
@@ -137,6 +137,9 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     - ``sign`` -- string (default: ``'+'``); must be equal to ``'+'``, ``'-'``,
       or ``None`` to compute (respectively) `VO^+(d,q),VO^-(d,q)` or
       `VO(d,q)`
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. NOTE::
 
@@ -193,15 +196,13 @@ def AffineOrthogonalPolarGraph(d, q, sign='+'):
     F = libgap.GF(q).sage()
     V = list(VectorSpace(F, d))
 
-    G = Graph()
-    G.add_vertices([tuple(_) for _ in V])
-    for x, y in combinations(V, 2):
-        if not (x - y)*M*(x - y):
-            G.add_edge(tuple(x), tuple(y))
-
-    G.name("Affine Polar Graph VO^" + str('+' if s == 1 else '-') + "(" + str(d) + "," + str(q) + ")")
-    G.relabel()
-    return G
+    Vi = {tuple(x): i for i, x in enumerate(V)}
+    edges = ((Vi[tuple(x)], Vi[tuple(y)])
+             for x, y in combinations(V, 2)
+             if not (x - y)*M*(x - y))
+    name = f"Affine Polar Graph VO^{'+' if s == 1 else '-'}({d},{q})"
+    return Graph([range(len(V)), edges], format="vertices_and_edges",
+                 name=name, immutable=immutable)
 
 
 def _orthogonal_polar_graph(m, q, sign='+', point_type=[0], immutable=False,
@@ -709,7 +710,7 @@ def UnitaryPolarGraph(m, q, algorithm='gap', immutable=False):
     raise ValueError(f"unknown algorithm: {algorithm}")
 
 
-def NonisotropicUnitaryPolarGraph(m, q):
+def NonisotropicUnitaryPolarGraph(m, q, immutable=False):
     r"""
     Return the Graph `NU(m,q)`.
 
@@ -722,6 +723,9 @@ def NonisotropicUnitaryPolarGraph(m, q):
     INPUT:
 
     - ``m``, ``q`` -- integers; `q` must be a prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -766,12 +770,14 @@ def NonisotropicUnitaryPolarGraph(m, q):
     h = libgap.Set([libgap.Position(V, x)
                     for x in libgap.Intersection(V, sp)])  # indices
     L = libgap.Orbit(gp, h, libgap.OnSets)  # orbit on the tangent lines
-    G = Graph()
-    for x in L:  # every pair of points in the subspace is adjacent to each other in G
-        G.add_edges(combinations(x, 2))
-    G.relabel()
-    G.name("NU" + str((m, q)))
-    return G
+
+    from itertools import chain
+    vertices = set(chain.from_iterable(L))
+    v_to_i = {u: i for i, u in enumerate(vertices)}
+    L = [[v_to_i[u] for u in x] for x in L]
+    return Graph(chain.from_iterable(combinations(x, 2) for x in L),
+                 format="list_of_edges", immutable=immutable,
+                 name=f"NU{(m, q)}")
 
 
 def UnitaryDualPolarGraph(m, q, immutable=False):
@@ -871,7 +877,7 @@ def SymplecticDualPolarGraph(m, q, immutable=False):
                         name=name, immutable=immutable, relabel=True)
 
 
-def TaylorTwographDescendantSRG(q, clique_partition=False):
+def TaylorTwographDescendantSRG(q, clique_partition=False, immutable=False):
     r"""
     Return the descendant graph of the Taylor's two-graph for `U_3(q)`, `q` odd.
 
@@ -896,6 +902,9 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
       ``True``, return `q^2-1` cliques of size `q` with empty pairwise
       intersection. (Removing all of them leaves a clique, too), and the point
       removed from the unital.
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -939,20 +948,21 @@ def TaylorTwographDescendantSRG(q, clique_partition=False):
     V = [x for x in PG if S(x, x) == 0]  # the points of the unital
     v0 = V[0]
     V.remove(v0)
+    name = "Taylor two-graph descendant SRG"
     if mod(q, 4) == 1:
-        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
+        G = Graph([V, lambda y, z: not (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     else:
-        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()], loops=False)
-    G.name("Taylor two-graph descendant SRG")
+        G = Graph([V, lambda y, z: (S(v0, y)*S(y, z)*S(z, v0)).is_square()],
+                  format="rule", loops=False, name=name, immutable=immutable)
     if clique_partition:
         lines = [[t for t in V if t[0] + z * t[1] == 0]
                  for z in Fq if z]
         return (G, lines, v0)
-    else:
-        return G
+    return G
 
 
-def TaylorTwographSRG(q):
+def TaylorTwographSRG(q, immutable=False):
     r"""
     Return a strongly regular graph from the Taylor's two-graph for `U_3(q)`,
     `q` odd
@@ -966,6 +976,9 @@ def TaylorTwographSRG(q):
     INPUT:
 
     - ``q`` -- a power of an odd prime number
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -982,7 +995,7 @@ def TaylorTwographSRG(q):
     G.add_vertex(v0)
     G.seidel_switching(sum(l[:(q**2 + 1)/2], []))
     G.name("Taylor two-graph SRG")
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
 def AhrensSzekeresGeneralizedQuadrangleGraph(q, dual=False):
@@ -1155,7 +1168,8 @@ def T2starGeneralizedQuadrangleGraph(q, dual=False, hyperoval=None, field=None, 
     return G
 
 
-def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_hyperoval=True):
+def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None,
+                 check_hyperoval=True, immutable=False):
     r"""
     Return the Haemers graph obtained from `T_2^*(q)^*`.
 
@@ -1195,6 +1209,9 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1271,10 +1288,10 @@ def HaemersGraph(q, hyperoval=None, hyperoval_matching=None, field=None, check_h
         G.delete_edges(G.edge_boundary(I_ks[i], I_ks[j]))  # edges on (I_i,I_j)
     G.add_edges(e for c in cliques for e in combinations(c, 2))
     G.name('Haemers(' + str(q) + ')')
-    return G
+    return G.copy(immutable=True) if immutable else G
 
 
-def CossidentePenttilaGraph(q):
+def CossidentePenttilaGraph(q, immutable=False):
     r"""
     Return the Cossidente-Penttila
     `((q^3+1)(q+1)/2,(q^2+1)(q-1)/2,(q-3)/2,(q-1)^2/2)`-strongly regular graph
@@ -1308,6 +1325,9 @@ def CossidentePenttilaGraph(q):
     INPUT:
 
     - ``q`` -- an odd prime power
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES:
 
@@ -1367,14 +1387,14 @@ def CossidentePenttilaGraph(q):
         end;""")
 
     adj = adj_list(q)  # for each vertex, we get the list of vertices it is adjacent to
-    G = Graph(((i, int(j - 1))
-               for i, ni in enumerate(adj) for j in ni),
-              format='list_of_edges', multiedges=False)
-    G.name('CossidentePenttila(' + str(q) + ')')
-    return G
+    return Graph(((i, int(j - 1))
+                  for i, ni in enumerate(adj) for j in ni),
+                 format='list_of_edges', multiedges=False, immutable=immutable,
+                 name=f"CossidentePenttila({q})")
 
 
-def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperoval=True):
+def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None,
+                                    check_hyperoval=True, immutable=False):
     r"""
     Return the subgraph of nowhere 0 words from two-weight code of projective
     plane hyperoval.
@@ -1412,6 +1432,9 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     - ``check_hyperoval`` -- boolean (default: ``True``); whether to check
       ``hyperoval`` for correctness or not
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     .. SEEALSO::
 
@@ -1490,13 +1513,12 @@ def Nowhere0WordsTwoWeightCodeGraph(q, hyperoval=None, field=None, check_hyperov
 
     for x in C:
         x.set_immutable()
-    G = Graph([C, lambda x, y: F.zero() not in x + y])
-    G.name('Nowhere0WordsTwoWeightCodeGraph(' + str(q) + ')')
-    G.relabel()
-    return G
+    return Graph([range(len(C)), lambda x, y: F_0 not in C[x] + C[y]],
+                 format="rule", immutable=immutable,
+                 name=f"Nowhere0WordsTwoWeightCodeGraph({q})")
 
 
-def OrthogonalDualPolarGraph(e, d, q):
+def OrthogonalDualPolarGraph(e, d, q, immutable=False):
     r"""
     Return the dual polar graph on `GO^e(n,q)` of diameter `d`.
 
@@ -1513,6 +1535,9 @@ def OrthogonalDualPolarGraph(e, d, q):
 
     - ``q`` -- integer; prime power; order of the finite field over which to
       build the polar space
+
+    - ``immutable`` -- boolean (default: ``False``); whether to return an
+      immutable or a mutable graph
 
     EXAMPLES::
 
@@ -1626,6 +1651,5 @@ def OrthogonalDualPolarGraph(e, d, q):
                                                 allIsoSubspaces[j]))
              == intersection_size]
 
-    G = Graph(edges, format='list_of_edges')
-    G.name("Dual Polar Graph on Orthogonal group (%d, %d, %d)" % (e, m, q))
-    return G
+    return Graph(edges, format='list_of_edges', immutable=immutable,
+                 name = f"Dual Polar Graph on Orthogonal group {(e, m, q)}")
