@@ -128,7 +128,6 @@ You can also perform these checks::
 
 You can work with subcones that form faces of other cones::
 
-    sage: # needs sage.graphs
     sage: face = four_rays.faces(dim=2)[0]
     sage: face
     2-d face of 3-d cone in 3-d lattice N
@@ -145,7 +144,6 @@ You can work with subcones that form faces of other cones::
 
 If you need to know inclusion relations between faces, you can use ::
 
-    sage: # needs sage.graphs
     sage: L = four_rays.face_lattice()
     sage: [len(s) for s in L.level_sets()]
     [1, 4, 4, 1]
@@ -2045,7 +2043,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
             sage: octant.adjacent()
             ()
@@ -2126,7 +2123,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone.ambient() is cone
             True
 
-            sage: # needs sage.graphs
             sage: face = cone.faces(1)[0]
             sage: face
             1-d face of 3-d cone in 3-d lattice N
@@ -2324,7 +2320,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         If we want to operate with this ray as a face of the cone, we need to
         embed it first::
 
-            sage: # needs sage.graphs
             sage: e_ray = c.embed(ray)
             sage: e_ray
             1-d face of 3-d cone in 3-d lattice N
@@ -2440,7 +2435,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: # needs sage.graphs
             sage: face = quadrant.faces(1)[0]
             sage: face
             1-d face of 2-d cone in 2-d lattice N
@@ -2460,7 +2454,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         Note that if ``cone`` is a face of ``supercone``, then the face
         lattice of ``cone`` consists of (appropriate) faces of ``supercone``::
 
-            sage: # needs sage.combinat sage.graphs
             sage: supercone = Cone([(1,2,3,4), (5,6,7,8),
             ....:                   (1,2,4,8), (1,3,9,7)])
             sage: supercone.face_lattice()
@@ -2665,7 +2658,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         In the case of non-strictly convex cones even faces of small
         nonnegative dimension may be missing::
 
-            sage: # needs sage.graphs
             sage: halfplane = Cone([(1,0), (0,1), (-1,0)])
             sage: halfplane.faces(0)
             ()
@@ -2849,7 +2841,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: octant = Cone([(1,0,0), (0,1,0), (0,0,1)])
             sage: octant.facet_of()
             ()
@@ -3196,7 +3187,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         We check that :issue:`18613` is fixed::
 
-            sage: # needs sage.graphs sage.groups
             sage: K = cones.trivial(0)
             sage: K.is_isomorphic(K)
             True
@@ -3890,7 +3880,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: C2_Z2 = Cone([(1,0), (1,2)])     # C^2/Z_2
             sage: c1, c2 = C2_Z2.facets()
             sage: c2.sublattice_quotient()
@@ -4173,7 +4162,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: rho = Cone([(1,1,1,3), (1,-1,1,3), (-1,-1,1,3), (-1,1,1,3)])
             sage: rho.orthogonal_sublattice()
             Sublattice <M(0, 0, 3, -1)>
@@ -4191,7 +4179,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         Different codimension::
 
-            sage: # needs sage.graphs
             sage: rho = Cone([[1,-1,1,3],[-1,-1,1,3]])
             sage: sigma = rho.facets()[0]
             sage: sigma.orthogonal_sublattice()
@@ -5716,7 +5703,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The positive operators on a permuted cone can be obtained by
         conjugation::
 
-            sage: # needs sage.groups
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
@@ -6040,7 +6026,6 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         The cross-positive operators of a permuted cone can be obtained by
         conjugation::
 
-            sage: # needs sage.groups
             sage: K = random_cone(max_ambient_dim=3)
             sage: L = ToricLattice(K.lattice_dim()**2)
             sage: p = SymmetricGroup(K.lattice_dim()).random_element().matrix()
