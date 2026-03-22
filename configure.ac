@@ -112,7 +112,7 @@ if test "$enable_meson_check" != no; then
   AC_MSG_CHECKING([for Arch Linux])
   if grep -qi 'arch' /etc/os-release 2>/dev/null || test -f /etc/arch-release; then
     AC_MSG_RESULT([yes])
-    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/meson.html. Use --disable-meson-check to override.])
+    AC_MSG_ERROR([Building on Arch Linux using make is not recommended. Please use Meson as described at https://doc.sagemath.org/html/en/installation/source.html. Use --disable-meson-check to override.])
   else
     AC_MSG_RESULT([no])
   fi
