@@ -2747,6 +2747,11 @@ REFERENCES:
              und Geometrie*, Dissertation, University of
              Bayreuth, 2013.
 
+.. [FFN2025] Wenjie Fang, Éric Fusy, Philippe Nadeau, 
+             *Tamari intervals and blossoming trees*.
+             Combinatorial Theory, Volume 5, Issue 1.
+             :doi:`10.5070/C65165015`.
+
 .. [FG1965] Fulkerson, D.R. and Gross, OA,
             *Incidence matrices and interval graphs*.
             Pacific J. Math 1965,
