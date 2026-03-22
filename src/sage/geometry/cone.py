@@ -3309,6 +3309,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
     is_compact = is_trivial
 
+    @cached_method
     def is_strictly_convex(self) -> bool:
         r"""
         Check if ``self`` is strictly convex.
@@ -3316,6 +3317,10 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
         A cone is called **strictly convex** if it does not contain any lines.
 
         OUTPUT: ``True`` if ``self`` is strictly convex, ``False`` otherwise
+
+        .. SEEALSO::
+
+            :meth:`is_pointed`
 
         EXAMPLES::
 
@@ -3326,14 +3331,60 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
             sage: cone2.is_strictly_convex()
             False
         """
-        if "_is_strictly_convex" not in self.__dict__:
-            convex = True
-            for gs in self._PPL_cone().minimized_generators():
-                if gs.is_line():
-                    convex = False
-                    break
-            self._is_strictly_convex = convex
-        return self._is_strictly_convex
+        return all(not gs.is_line()
+                   for gs in self._PPL_cone().minimized_generators())
+
+    def is_pointed(self) -> bool:
+        r"""
+        Check if ``self`` is pointed.
+
+        A convex cone is said to be *pointed* if (and only if) it
+        contains no lines. For a closed convex cone, this is
+        equivalent to saying that the origin is the only point
+        contained in both the cone and its negation.
+
+        This is an alias for :meth:`is_strictly_convex`. The "pointed"
+        terminology is however standard in many settings, and for
+        example is consistent with the ``isPointed()`` function in
+        Macaulay2.
+
+        OUTPUT:
+
+        ``True`` if :meth:`lineality` is zero, and ``False`` otherwise.
+
+        .. SEEALSO::
+
+            :meth:`is_strictly_convex`,
+            :meth:`is_solid`,
+            :meth:`is_proper`
+
+        EXAMPLES:
+
+        The Barker-Foran cone must be pointed, because it is self-dual
+        under the canonical dual space identification::
+
+            sage: cones.barker_foran().is_pointed()
+            True
+
+        The nonnegative orthant and trivial cone are always pointed::
+
+            sage: n = ZZ.random_element(10)
+            sage: L = ToricLattice(n)
+            sage: cones.nonnegative_orthant(n, lattice=L).is_pointed()
+            True
+            sage: cones.trivial(lattice=L).is_pointed()
+            True
+
+        TESTS:
+
+        Random test for the claim made in the ``OUTPUT`` block::
+
+            sage: K = random_cone(max_ambient_dim = 8)
+            sage: K.is_pointed() == K.lineality().is_zero()
+            True
+
+        """
+        return self.is_strictly_convex()
 
     @cached_method
     def linear_subspace(self):
@@ -4622,7 +4673,9 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         .. SEEALSO::
 
-            :meth:`is_strictly_convex`, :meth:`is_solid`
+            :meth:`is_strictly_convex`,
+            :meth:`is_pointed`,
+            :meth:`is_solid`
 
         EXAMPLES:
 
