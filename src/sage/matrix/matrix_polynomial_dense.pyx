@@ -285,8 +285,8 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
 
             :meth:`sage.rings.polynomial.polynomial_element.Polynomial.is_constant`
         """
-        return all([self[i,j].is_constant()
-            for j in range(self.ncols()) for i in range(self.nrows())])
+        return all(self[i, j].is_constant()
+                   for j in range(self.ncols()) for i in range(self.nrows()))
 
     def coefficient_matrix(self, d, row_wise=True):
         r"""
@@ -2786,7 +2786,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: rdegR = R.row_degrees(); rdegB = B[:2,:].row_degrees()
             sage: A[:2,:] == B[:2,:]*Q+R
             True
-            sage: all([rdegR[i] < rdegB[i] for i in range(len(rdegR))])
+            sage: all(rdegR[i] < rdegB[i] for i in range(len(rdegR)))
             True
 
             sage: A.left_quo_rem(B[:,:2])
@@ -2881,7 +2881,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             [              1 5*x^2 + 2*x + 3         6*x + 3]
             )
             sage: cdegR = R.column_degrees(); cdegB = B.column_degrees()
-            sage: A == Q*B+R and all([cdegR[i] < cdegB[i] for i in range(3)])
+            sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
         With a nonsingular but also non-reduced matrix, there exists a
@@ -3006,9 +3006,9 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             # (compute normal form w.r.t a well-chosen shift and check degrees
             # are as expected)
             s = [-d for d in B.column_degrees()]
-            (Q,R) = self.reduce(B,shifts=s,return_quotient=True)
+            Q, R = self.reduce(B, shifts=s, return_quotient=True)
             cdeg = R.column_degrees()
-            if all([cdeg[i] + s[i] < 0 for i in range(B.ncols())]):
+            if all(cdeg[i] + s[i] < 0 for i in range(B.ncols())):
                 return (Q, R)
             raise ValueError("division of these matrices does not admit a "
                              "remainder with the required degree property")
@@ -3125,7 +3125,7 @@ cdef class Matrix_polynomial_dense(Matrix_generic_dense):
             sage: B.is_reduced(row_wise=False)
             True
             sage: cdegR = R.column_degrees(); cdegB = B.column_degrees()
-            sage: A == Q*B+R and all([cdegR[i] < cdegB[i] for i in range(3)])
+            sage: A == Q*B+R and all(cdegR[i] < cdegB[i] for i in range(3))
             True
 
         With a nonsingular but also non-reduced matrix, there exists a solution

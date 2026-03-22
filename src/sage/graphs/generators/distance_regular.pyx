@@ -2876,10 +2876,10 @@ def distance_regular_graph(list arr, existence=False, check=True):
                                  f"parameters {arr} exists; error: {err}"))
     else:
         # basic checks
-        if len(arr) % 2 == 1 or any([i <= 0 for i in arr]) or \
-           any([x != int(x) for x in arr]) or \
-           any([(arr[i] - arr[i + 1]) < 0 for i in range(d - 1)]) or \
-           any([(arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)]):
+        if len(arr) % 2 == 1 or any(i <= 0 for i in arr) or \
+           any(x != int(x) for x in arr) or \
+           any((arr[i] - arr[i + 1]) < 0 for i in range(d - 1)) or \
+           any((arr[d + i + 1] - arr[d + i]) < 0 for i in range(d - 1)):
             if existence:
                 return False
             raise EmptySetError(("No distance-regular graphs with "
