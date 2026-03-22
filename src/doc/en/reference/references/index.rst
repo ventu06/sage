@@ -185,6 +185,10 @@ REFERENCES:
                31:1137-1153, 2015.
                :doi:`10.1007/s00373-014-1447-8`
 
+.. [AHM2018] Edward Allen, Joshua Hallam, Sarah Mason, *Dual Immaculate
+             Quasisymmetric Functions Expand Positively into Young Quasisymmetric
+             Schur Functions*. :arxiv:`1606.03519`
+             
 .. [AHMP2008] \J.-P. Aumasson, L. Henzen, W. Meier, and R. C-W Phan,
               *Sha-3 proposal blake*; in Submission to NIST, (2008).
 
@@ -631,6 +635,12 @@ REFERENCES:
              Pseudo-Random Number Generator. *SIAM Journal on
              Computing*, 15(2):364--383, 1986.
 
+.. [BBSSZ2012] Chris Berg, Nantel Bergeron, Franco Saliola,
+               Luis Serrano, Mike Zabrocki,
+               *A lift of the Schur and Hall-Littlewood bases to
+               non-commutative symmetric functions*,
+               :arxiv:`1208.5191v3`.
+
 .. [BIANCO] \L. Bianco, P. Dell‘Olmo, S. Giordani
             An Optimal Algorithm to Find the Jump Number of Partially Ordered Sets
             Computational Optimization and Applications,
@@ -733,6 +743,9 @@ REFERENCES:
             Groebner basis framework for Boolean polynomials*;
             pre-print available at
             https://kluedo.ub.rptu.de/frontdoor/deliver/index/docId/1976/file/bericht122.pdf
+
+.. [BDHMN2017] Cristina Ballantine, Zajj Daugherty, Angela Hicks, Sarah Mason,
+               Elizabeth Niese. *Quasisymmetric power sums*. :arxiv:`1710.11613`.
 
 .. [BDHPR2019] Marthe Bonamy, Oscar Defrain, Marc Heinrich, Michał
                Pilipczuk, and Jean-Florent Raymond.
@@ -3238,6 +3251,10 @@ REFERENCES:
 .. [Ger2008] Gert-Martin Greuel and Gerhard Pfister. A Singular introduction
              to commutative algebra. Vol. 348. Berlin: Springer, 2008.
 
+.. [Ges] \I. Gessel, *Multipartite P-partitions and inner products of skew Schur
+         functions*, Contemp. Math. **34** (1984), 289-301.
+         http://people.brandeis.edu/~gessel/homepage/papers/multipartite.pdf
+
 .. [Gri2021] \O. Gritsenko, *On strongly regular graph with parameters (65; 32; 15; 16)*,
               :arxiv:`2102.05432`.
 
@@ -3462,6 +3479,10 @@ REFERENCES:
 .. [Harv2007] David Harvey. *Kedlaya's algorithm in larger characteristic*,
               :arxiv:`math/0610973`.
 
+.. [Haz2004] Michiel Hazewinkel, *Explicit polynomial generators for the
+             ring of quasisymmetric functions over the integers*.
+             :arxiv:`math/0410366v1`
+
 .. [BGS2007] Alin Bostan, Pierrick Gaudry, and Eric Schost, *Linear recurrences
              with polynomial coefficients and application to integer factorization and
              Cartier-Manin operator*, SIAM Journal on Computing 36 (2007), no. 6,
@@ -3555,6 +3576,10 @@ REFERENCES:
              matroid representations*, Discrete Applied Mathematics
              154 (2006), pp. 1210-1222.
 
+.. [HLNT09] \F. Hivert, J.-G. Luque, J.-C. Novelli, J.-Y. Thibon,
+            *The (1-E)-transform in combinatorial Hopf algebras*.
+            :arxiv:`math/0912.0184v2`
+
 .. [HLT1993] \F. Harary, E. Loukakis, C. Tsouros,
              *The geodetic number of a graph*.
              Mathematical and computer modelling,
@@ -3625,6 +3650,11 @@ REFERENCES:
 .. [HNT2005] Florent Hivert, Jean-Christophe Novelli, and Jean-Yves Thibon.
              *The algebra of binary search trees*,
              :arxiv:`math/0401089v2`.
+
+.. [Hoff2015] Michael Hoffman.
+              *Quasi-symmetric functions and mod* `p` *multiple harmonic sums*.
+              Kyushu J. Math. **69** (2015), pp. 345-366.
+              :doi:`10.2206/kyushujm.69.345`, :arxiv:`math/0401319v3`.
 
 .. [Hora]    \K. J. Horadam, *Hadamard Matrices and Their Applications*,
              Princeton University Press, 2006.
@@ -3884,6 +3914,10 @@ REFERENCES:
              *Supersingular Isogeny Key Encapsulation*.
              Technical report, National Institute of Standards and Technology,
              2022. https://sike.org/files/SIDH-spec.pdf
+
+.. [Jack1970] \H. Jack,
+              *A class of symmetric functions with a parameter*,
+              Proc. R. Soc. Edinburgh (A), 69, 1-18.
 
 .. [Jer2006] Mark Jerrum. *Two remarks concerning balanced matroids*.
              Combinatorica 26, no. 6 (2006): 733-742.
@@ -4748,6 +4782,12 @@ REFERENCES:
              -- a new family of hypertrees*, Discrete & Computational
              Geometry, 2010, Volume 44, Number 3, Pages 622-636
 
+.. [LMvW13] Kurt Luoto, Stefan Mykytiuk and Stephanie van Willigenburg,
+            *An introduction to quasisymmetric Schur functions -- Hopf algebras,
+            quasisymmetric functions, and Young composition tableaux*,
+            May 23, 2013, Springer.
+            http://www.math.ubc.ca/%7Esteph/papers/QuasiSchurBook.pdf
+
 .. [LNSSS2013] \C. Lenart, S. Naito, D. Sagaki, A. Schilling, M. Shimozono,
                *A uniform model for Kirillov-Reshetikhin crystals. Extended abstract.*
                DMTCS proc, to appear ( :arxiv:`1211.6019` )
@@ -5008,6 +5048,11 @@ REFERENCES:
 
 .. [MagmaHGM] *Hypergeometric motives* in Magma,
    http://magma.maths.usyd.edu.au/~watkins/papers/HGM-chapter.pdf
+
+.. [Mal1993] Claudia Malvenuto, *Produits et coproduits des fonctions
+             quasi-symétriques et de l'algèbre des descentes*,
+             thesis, November 1993.
+             http://www1.mat.uniroma1.it/people/malvenuto/Thesis.pdf
 
 .. [Mar1980] Jacques Martinet, Petits discriminants des corps de
              nombres, Journ. Arithm. 1980, Cambridge Univ. Press,
@@ -5315,6 +5360,10 @@ REFERENCES:
              *A Crystal on Decreasing Factorizations in the 0-Hecke Monoid*
              Electron. J. Combin., **27(2)** (2020) #P2.29. :arxiv:`1911.08732`.
 
+.. [MR] \C. Malvenuto and C. Reutenauer, *Duality between quasi-symmetric
+        functions and the Solomon descent algebra*, J. Algebra **177** (1995),
+        no. 3, 967-982. http://www.mat.uniroma1.it/people/malvenuto/Duality.pdf
+
 .. [MR1985] \R. Mathon and A. Rosa,
             *A new strongly regular graph*,
             Journal of Combinatorial Theory, Series A 38, no. 1 (1985): 84-86.
@@ -5476,6 +5525,15 @@ REFERENCES:
 .. [Nas1950] John Nash. *Equilibrium points in n-person games.*
              Proceedings of the National Academy of Sciences 36.1
              (1950): 48-49.
+
+.. [NCSF1] Israel Gelfand, D. Krob, Alain Lascoux, B. Leclerc,
+           V. S. Retakh, J.-Y. Thibon,
+           *Noncommutative symmetric functions*.
+           :arxiv:`hep-th/9407124v1`
+
+.. [NCSF2] \D. Krob, B. Leclerc, J.-Y. Thibon,
+           *Noncommutative symmetric functions II: Transformations of alphabets*.
+           http://www-igm.univ-mlv.fr/~jyt/ARTICLES/NCSF2.ps
 
 .. [Neu2018] Christian Neurohr, *Efficient Integration on Riemann Surfaces &
              Applications*,
@@ -5902,6 +5960,9 @@ REFERENCES:
 .. _ref-R:
 
 **R**
+
+.. [Rad1979] David E. Radford, *A natural ring basis for the shuffle algebra
+             and an application to group schemes*, J. Algebra **58** (1979), 432-454.
 
 .. [Rai2012] Alexander Raichev.  *Leinartas's partial fraction
              decomposition*.  :arxiv:`1206.4740`.
@@ -6666,6 +6727,10 @@ REFERENCES:
 .. [SU2014] Christopher Skinner and Eric Urban,
             *The Iwasawa main conjectures for GL2*.
             Invent. Math. 195 (2014), no. 1, 1-277.
+
+.. [SW2010] John Shareshian and Michelle Wachs.
+            *Eulerian quasisymmetric functions*. (2010).
+            :arxiv:`0812.0764v2`
 
 .. [sudoku:escargot]  *Al Escargot*, due to Arto Inkala,
                       http://timemaker.blogspot.com/2006/12/ai-escargot-vwv.html
