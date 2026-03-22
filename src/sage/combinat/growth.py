@@ -678,14 +678,17 @@ class GrowthDiagram(SageObject):
             labels = self._process_labels(labels)
 
             if shape is None:
-                shape = self._shape_from_labels(labels)
+                shape = self._shape_from_labels(labels, complement=False)
 
             self._lambda, self._mu = self._process_shape(shape)
             self._out_labels = labels
             self._check_labels(self._out_labels)
             self._shrink()
         else:
-            self._filling, (self._lambda, self._mu) = self._process_filling_and_shape(filling, shape)
+            if labels is not None:
+                labels = self._process_labels(labels)
+
+            self._filling, (self._lambda, self._mu) = self._process_filling_shape_labels(filling, shape, labels)
 
             if labels is None:
                 rule = self.rule
@@ -694,7 +697,6 @@ class GrowthDiagram(SageObject):
                 else:
                     self._in_labels = [rule.zero] * self.half_perimeter()
             else:
-                labels = self._process_labels(labels)
                 self._in_labels = labels
 
             self._check_labels(self._in_labels)
@@ -1191,15 +1193,18 @@ class GrowthDiagram(SageObject):
         else:
             return [rule.normalize_vertex(la) for la in labels]
 
-    def _shape_from_labels(self, labels):
+    def _shape_from_labels(self, labels, complement=False):
         r"""
         Determine the shape of the growth diagram given a list of labels
         during initialization.
 
         The shape can be determined from the labels if the size of
-        each label differs from the size of its successor.
+        each label differs from the size of its successor. Otherwise raise
+        an error.
 
-        Otherwise raise an error.
+        If ``complement`` is ``True``, return the skew shape given by the
+        complement of the partition inferred from the labels in the rectangle
+        determined by the number of horizontal and vertical steps in the path.
 
         .. WARNING::
 
@@ -1228,34 +1233,41 @@ class GrowthDiagram(SageObject):
         rule = self.rule
         is_P_edge = getattr(rule, "is_P_edge", None)
         is_Q_edge = getattr(rule, "is_Q_edge", None)
+
+        seq = []
         if rule.has_multiple_edges:
-            def right_left_multi(la, mu, e) -> int:
+            for i in range(0, len(labels) - 2, 2):
+                la, e, mu = labels[i], labels[i+1], labels[i+2]
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and e not in is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in Q" % (la, mu, e))
-                    return 1
+                    seq.append(1)
                 elif rule.rank(la) > rule.rank(mu):
                     if is_P_edge is not None and e not in is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but there is no edge of color %s in P" % (mu, la, e))
-                    return 0
-                raise ValueError("can only determine the shape of the growth"
-                                 " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left_multi(labels[i], labels[i+2], labels[i+1])
-                                              for i in range(0, len(labels)-2, 2)])
+                    seq.append(0)
+                else:
+                    raise ValueError("can only determine the shape of the growth diagram if ranks of successive labels differ")
         else:
-            def right_left(la, mu) -> int:
+            for i in range(len(labels) - 1):
+                la, mu = labels[i], labels[i+1]
                 if rule.rank(la) < rule.rank(mu):
                     if is_Q_edge is not None and not is_Q_edge(la, mu):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in Q" % (la, mu))
-                    return 1
+                    seq.append(1)
                 elif rule.rank(la) > rule.rank(mu):
                     if is_P_edge is not None and not is_P_edge(mu, la):
                         raise ValueError("%s has smaller rank than %s but is not covered by it in P" % (mu, la))
-                    return 0
-                raise ValueError("can only determine the shape of the growth"
-                                 " diagram if ranks of successive labels differ")
-            return _Partitions.from_zero_one([right_left(labels[i], labels[i+1])
-                                              for i in range(len(labels)-1)])
+                    seq.append(0)
+                else:
+                    raise ValueError("can only determine the shape of the growth diagram if ranks of successive labels differ")
+
+        inner = _Partitions.from_zero_one(seq)
+        if complement:
+            h = seq.count(0)
+            w = seq.count(1)
+            return SkewPartition([[w] * h, inner])
+        return inner
 
     def _check_labels(self, labels):
         r"""
@@ -1330,11 +1342,21 @@ class GrowthDiagram(SageObject):
                      list(shape[1]) + [0]*(len(shape[0])-len(shape[1])) )
         return (list(shape), [0]*len(shape))
 
-    def _process_filling_and_shape(self, filling, shape):
+    def _process_filling_shape_labels(self, filling, shape, labels):
         r"""
         Return a dict ``F`` such that ``F[(i,j)]`` is the element in row
         ``i`` and column ``j`` and a pair of partitions describing the
         region of the growth diagram.
+
+        if ``shape`` is ``None``, we try to infer it from the
+        remaining data, as follows.
+
+        If the filling is given as a list of lists, the shape is the
+        list of the lengths of the individual lists.
+
+        Otherwise, if ``labels`` are provided, we try to infer the
+        shape from them.  If this inference fails, we use the minimal
+        bounding rectangle of ``filling``.
 
         TESTS:
 
@@ -1429,7 +1451,8 @@ class GrowthDiagram(SageObject):
                 for i, row in enumerate(filling):
                     for j, v in enumerate(row):
                         if v != 0:
-                            F[j,i] = int(v)
+                            F[j, i] = int(v)
+
                 if shape is None:
                     shape = [len(row) for row in filling]
 
@@ -1442,13 +1465,20 @@ class GrowthDiagram(SageObject):
                         F[i, -l-1] = -1
 
         if shape is None:
-            if F == {}:
-                shape = []
-            else:
-                # find bounding rectangle of ``filling``
-                max_row = max(i for i, _ in F)+1
-                max_col = max(j for _, j in F)+1
-                shape = [max_row] * max_col
+            if labels is not None:
+                try:
+                    shape = self._shape_from_labels(labels, complement=True)
+                except ValueError:
+                    pass
+
+            if shape is None:
+                if F == {}:
+                    shape = []
+                else:
+                    # find bounding rectangle of ``filling``
+                    max_row = max(i for i, _ in F)+1
+                    max_col = max(j for _, j in F)+1
+                    shape = [max_row] * max_col
 
         return (F, self._process_shape(shape))
 
