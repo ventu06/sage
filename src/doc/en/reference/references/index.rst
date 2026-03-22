@@ -491,6 +491,10 @@ REFERENCES:
              \J. Algebraic Geom. 3 (1994), no. 3, 493-535.
              :arxiv:`alg-geom/9310003v1`
 
+.. [Banc2011] \E. E. Bancroft, *Shard Intersections and Cambrian Congruence
+               Classes in Type A.*, Ph.D. Thesis, North Carolina State University. 2011.
+               :arxiv:`1103.1910`
+
 .. [Baz2011] Ivan Bazhov,
              On orbits of the automorphism group on a complete toric
              variety.
@@ -5658,6 +5662,10 @@ REFERENCES:
 .. [Pet2010] Christiane Peters, Information-set decoding for linear codes over
              `GF(q)`, Proc. of PQCrypto 2010, pp. 81-94.
 
+.. [Pete2013] \T. Kyle Petersen, *On the shard intersection order of
+              a Coxeter group*, SIAM J. Discrete Math. 27 (2013), no. 4, 1880-1912.
+              :doi:`10.1137/110847202`
+
 .. [Pha2002] \R. C.-W. Phan. Mini advanced encryption standard
              (mini-AES): a testbed for cryptanalysis
              students. Cryptologia, 26(4):283--306, 2002.
@@ -5860,6 +5868,10 @@ REFERENCES:
 .. [Rea2009] Nathan Reading, *Noncrossing partitions and the shard
              intersection order*, DMTCS Proceedings of FPSAC 2009, 745--756
 
+.. [Read2011] \N. Reading, *Noncrossing partitions and the shard intersection
+               order*, J. Algebraic Combin., 33 (2011), 483-530.
+               :doi:`10.1007/s10801-010-0255-3`
+               
 .. [ReSt2020] Nathan Reading and Salvatore Stella, *An affine almost positive
               roots model*, J. Comb. Algebra Volume 4, Issue 1, 2020, pp. 1--59
 
