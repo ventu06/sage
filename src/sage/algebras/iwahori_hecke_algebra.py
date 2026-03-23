@@ -2010,9 +2010,10 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 return
 
             # check if products can be computed directly using ``coxeter3``
-            try:
+            from sage.features.coxeter3 import Coxeter3
+            if Coxeter3().is_present():
                 from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-            except ImportError:
+            else:
                 return
 
             self._delta = v + ~v
