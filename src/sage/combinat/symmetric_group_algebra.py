@@ -2622,9 +2622,13 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
         R = self.base_ring()
         one = R.one()
         # check if the KL polynomials can be computed using ``coxeter3``
-        try:
+        from sage.features.coxeter3 import Coxeter3
+        if Coxeter3().is_present():
             from sage.libs.coxeter3.coxeter_group import CoxeterGroup as Coxeter3Group
-        except ImportError:
+            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
+            self._KLG = self._cellular_KL
+            polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
+        else:
             # Fallback to using the KL polynomial
             from sage.combinat.kazhdan_lusztig import KazhdanLusztigPolynomial
             from sage.groups.perm_gps.permgroup_named import SymmetricGroup
@@ -2632,10 +2636,6 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
             self._KLG = SymmetricGroup(self.n)
             self._cellular_KL = KazhdanLusztigPolynomial(self._KLG, q)
             polyfunc = self._cellular_KL.P
-        else:
-            self._cellular_KL = Coxeter3Group(['A', self.n + 1])
-            self._KLG = self._cellular_KL
-            polyfunc = self._cellular_KL.kazhdan_lusztig_polynomial
 
         if w.parent() is not self._KLG:
             w = self._KLG.from_reduced_word(w.reduced_word())
