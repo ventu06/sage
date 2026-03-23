@@ -325,7 +325,6 @@ class MumfordDivisorClassField(AdditiveGroupElement, SchemeMorphism):
         # the degree of u is smaller than g + 1
         while u3.degree() > g:
             u3, v3 = self._parent.cantor_reduction(u3, v3)
-        u3 = u3.monic()
         v3 = v3 % u3
 
         return self._parent(u3, v3, check=False)
@@ -548,11 +547,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         r"""
         Return the sum of the two elements.
 
-        Follows algorithm 3.7 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        Follows algorithm 3.7 of [Mireles2008]_.
 
         EXAMPLES::
 
@@ -585,19 +580,13 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         # the degree of u is smaller than g + 1
         while u3.degree() > (g + 1):
             u3, v3, n3 = self._parent.cantor_reduction(u3, v3, n3)
-        u3 = u3.monic()
 
         # Step three: compose and then reduce at infinity to ensure
         # unique representation of D
         while n3 < 0 or n3 > g - u3.degree():
-            if n3 < 0:
-                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                    u3, v3, n3, plus=False
-                )
-            else:
-                u3, v3, n3 = self._parent.cantor_compose_at_infinity(
-                    u3, v3, n3, plus=True
-                )
+            u3, v3, n3 = self._parent.cantor_compose_at_infinity(
+                u3, v3, n3, plus=(n3 >= 0)
+            )
 
         return self._parent(u3, v3, n3, check=False)
 
@@ -605,11 +594,7 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         r"""
         Return the divisor multiplied by -1.
 
-        Follows algorithm 3.8 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        Follows algorithm 3.8 of [Mireles2008]_.
 
         TESTS::
 
@@ -639,16 +624,17 @@ class MumfordDivisorClassFieldSplit(MumfordDivisorClassField):
         # Odd genus, positive n0
         elif n0 > 0:
             v1 = (-h - v0) % u0
-            # Note: I think this is a typo in the paper
-            # n1 = g - m0 - u1.degree() + 1
             u1 = u0
+            # There is a typo for n1 in [GHM2008]_ and [Mireles2008]_.
+            # This is corrected on page 617 of [Gal2018]_.
             n1 = m0 + 1
         else:
             # Composition at infinity always with plus=True.
-            # want to "substract" \infty_+ - \infty_-
+            # want to "subtract" \infty_+ - \infty_-
             (u1, v1, n1) = self._parent.cantor_compose_at_infinity(
                 u0, -h - v0, n0, plus=True
             )
-            n1 = n1 - n0 + m0 + 1
+            n1 = n1 - n0 + m0 + 1  # Shouldn't this always be 0? (See Alg 3.8 of [Mireles2008]_)
+            assert n1 == 0
 
         return self._parent(u1, v1, n1, check=False)

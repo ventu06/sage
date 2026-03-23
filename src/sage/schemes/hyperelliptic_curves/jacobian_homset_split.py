@@ -1,6 +1,8 @@
 r"""
 Rational point sets on a Jacobian of a hyperelliptic curve (split case)
 
+Uses the balanced divisors technique described in [Mireles2008]_, [GHM2008]_, and [Gal2018]_.
+
 AUTHORS:
 
 - Sabrina Kunzweiler, Gareth Ma, Giacomo Pope (2024): adapt to smooth model
@@ -254,11 +256,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         Here ``n1`` and ``n2`` denote the multiplicity of the point
         `\infty_+`.
 
-        Follows algorithm 3.4 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        Follows algorithm 3.4 of [Mireles2008]_.
 
         TODO: when h = 0 we can speed this up.
 
@@ -292,11 +290,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         where ``(u0,v0)`` represent an affine semi-reduced divisor and
         ``n0`` is the multiplicity of the point `\infty_+`.
 
-        Follows algorithm 3.5 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        Follows algorithm 3.5 of [Mireles2008]_.
 
         EXAMPLES::
 
@@ -308,7 +302,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
             sage: D3 = JF.cantor_composition(*D1, *D2); D3
             (x^5 + 3*x^4 + 5*x^3 + 4*x, 3*x^3 + 3*x^2 + 3*x + 3, -1)
             sage: JF.cantor_reduction(*D3)
-            (6*x^3 + 3*x^2 + 5*x + 2, 2*x^2 + 3*x + 5, 0)
+            (x^3 + 4*x^2 + 2*x + 5, 2*x^2 + 3*x + 5, 0)
         """
         # Collect data from HyperellipticCurve
         H = self.curve()
@@ -339,11 +333,7 @@ class HyperellipticJacobianHomsetSplit(HyperellipticJacobianHomset):
         Compute the composition of `(u_0,v_0,n_0)` with a divisor supported
         at `\infty_+` (default) or `\infty_-` , and apply a reduction step.
 
-        Follows algorithm 3.6 of
-
-        Efficient Arithmetic on Hyperelliptic Curves With Real Representation
-        David J. Mireles Morales (2008)
-        https://www.math.auckland.ac.nz/~sgal018/Dave-Mireles-Full.pdf
+        Follows algorithm 3.6 of [Mireles2008]_.
 
         EXAMPLES::
 

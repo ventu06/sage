@@ -543,11 +543,6 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
         The reduced divisor of ``(u0, v0)``.
 
-        NOTE:
-
-        The `u`-coordinate of the output is not necessarily monic. That step is
-        delayed to :meth:`cantor_reduction` to save time.
-
         TESTS::
 
             sage: R.<x> = GF(13)[]
@@ -557,14 +552,14 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             sage: (u2,v2) = (x + 5, R(8))
             sage: (u3,v3,s) = JK._cantor_composition_generic(u1,v1,u2,v2)
             sage: JK._cantor_reduction_generic(u3,v3)
-            (12*x^2 + 8*x + 11, 9*x + 3)
+            (x^2 + 5*x + 2, 9*x + 3)
         """
         # Collect data from HyperellipticCurve
         H = self.extended_curve()
         f, h = H.hyperelliptic_polynomials()
 
         # Compute u' and v'
-        u1 = (v0**2 + h * v0 - f) // u0
+        u1 = ((v0**2 + h * v0 - f) // u0).monic()
         v1 = (-h - v0) % u1
 
         return u1, v1
