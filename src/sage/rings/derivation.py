@@ -1117,7 +1117,6 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(5)[]
             sage: Dx = R.derivation(x)
             sage: Dx.pth_power()
@@ -1151,7 +1150,6 @@ class RingDerivationWithoutTwist(RingDerivation):
 
         TESTS::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<x,y> = GF(3)[]
             sage: D = R.derivation_module().random_element()
             sage: Dp = D.pth_power()
@@ -1530,7 +1528,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         TESTS::
 
-            sage: # needs sage.libs.singular
             sage: from sage.rings.derivation import RingDerivationWithoutTwist_wrapper
             sage: R.<x,y> = GF(5)[]
             sage: S = R.quo([x^5, y^5])
@@ -1567,7 +1564,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1583,7 +1579,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1599,7 +1594,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1614,7 +1608,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1631,7 +1624,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: Dx = S.derivation(x)
@@ -1649,7 +1641,6 @@ class RingDerivationWithoutTwist_wrapper(RingDerivationWithoutTwist):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: M = S.derivation_module()
@@ -1932,7 +1923,6 @@ class RingDerivationWithoutTwist_quotient(RingDerivationWithoutTwist_wrapper):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<X,Y> = GF(5)[]
             sage: S.<x,y> = R.quo([X^5, Y^5])
             sage: f = x^3*S.derivation(); f
@@ -2030,7 +2020,6 @@ class RingDerivationWithTwist_generic(RingDerivation):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(5^3)
             sage: Frob = k.frobenius_endomorphism()
             sage: der = k.derivation(a + 1, twist=Frob)

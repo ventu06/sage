@@ -68,7 +68,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(2,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -113,7 +112,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R = Zp(3,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -125,7 +123,6 @@ class InductiveValuation(DevelopingValuation):
 
         In an extended valuation over an extension field::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -138,7 +135,6 @@ class InductiveValuation(DevelopingValuation):
 
         Extending the valuation once more::
 
-            sage: # needs sage.libs.ntl
             sage: v = v.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
             sage: h = v.equivalence_reciprocal(f); h
             (u + 1) + O(2^5)
@@ -149,7 +145,6 @@ class InductiveValuation(DevelopingValuation):
 
         A case that caused problems at some point::
 
-            sage: # needs sage.libs.ntl
             sage: K = Qp(2, 4)
             sage: R.<x> = K[]
             sage: L.<a> = K.extension(x^4 + 4*x^3 + 6*x^2 + 4*x + 2)
@@ -238,7 +233,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: S.<x> = Qp(3,5)[]
             sage: v = GaussValuation(S)
             sage: v.equivalence_unit(2)
@@ -269,7 +263,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -284,7 +277,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -300,7 +292,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -315,7 +306,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -402,7 +392,6 @@ class InductiveValuation(DevelopingValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -579,7 +568,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: R.<u> = Qq(4,5)
         sage: S.<x> = R[]
         sage: v = GaussValuation(S)
@@ -589,7 +577,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
         r"""
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -620,7 +607,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -924,7 +910,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -971,7 +956,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4, 5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -983,7 +967,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         TESTS::
 
-            sage: # needs sage.libs.ntl
             sage: K = Qp(2, 10)
             sage: R.<x> = K[]
             sage: vp = K.valuation()
@@ -1118,7 +1101,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,5)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1188,7 +1170,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
@@ -1224,7 +1205,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         Examples over an iterated unramified extension::
 
-            sage: # needs sage.libs.ntl
             sage: v = v.augmentation(x^2 + x + u, 1)
             sage: v = v.augmentation((x^2 + x + u)^2 + 2*x*(x^2 + x + u) + 4*x, 3)
             sage: v.equivalence_decomposition(x)
@@ -1238,7 +1218,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         TESTS::
 
-            sage: # needs sage.geometry.polyhedron sage.groups sage.rings.number_field
             sage: R.<x> = QQ[]
             sage: K1.<pi> = NumberField(x^3 - 2)
             sage: K.<alpha> = K1.galois_closure()
@@ -1350,14 +1329,12 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)
             sage: v.minimal_representative(x + 2)
             (1 + O(2^10))*x
 
-            sage: # needs sage.libs.ntl
             sage: v = v.augmentation(x, 1)
             sage: v.minimal_representative(x + 2)
             (1 + O(2^10))*x + 2 + O(2^11)
@@ -1429,7 +1406,6 @@ class NonFinalInductiveValuation(FiniteInductiveValuation, DiscreteValuation):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: R.<u> = Qq(4,10)
             sage: S.<x> = R[]
             sage: v = GaussValuation(S)

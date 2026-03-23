@@ -633,7 +633,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, x*y])
             sage: I = S.algebraic_dependence(); I
@@ -641,7 +640,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(QQ)
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
@@ -653,7 +651,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         ::
 
-            sage: # needs sage.libs.singular
             sage: R.<x,y> = PolynomialRing(GF(7))
             sage: S = Sequence([x, (x^2 + y^2 - 1)^2, x*y - 2])
             sage: I = S.algebraic_dependence(); I
@@ -722,7 +719,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127), 4)
             sage: I = sage.rings.ideal.Katsura(P)
             sage: I.gens()
@@ -1089,7 +1085,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); F
@@ -1142,7 +1137,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); print(F._repr_())
@@ -1168,7 +1162,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I); F  # indirect doctest
@@ -1196,7 +1189,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: P.<a,b,c,d> = PolynomialRing(GF(127))
             sage: I = sage.rings.ideal.Katsura(P)
             sage: F = Sequence(I)
@@ -1524,7 +1516,6 @@ class PolynomialSequence_generic(Sequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.singular
             sage: R.<a,b,c,d,e,f,g,h,i,j> = PolynomialRing(GF(127), 10)
             sage: I = sage.rings.ideal.Cyclic(R, 4)
             sage: I.basis.is_groebner()
@@ -2067,7 +2058,6 @@ class PolynomialSequence_gf2e(PolynomialSequence_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(2^2)
             sage: P.<x,y> = PolynomialRing(k, 2)
             sage: a = P.base_ring().gen()

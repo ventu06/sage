@@ -47,7 +47,6 @@ class pAdicRelativeBaseringInjection(Morphism):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: K.<a> = Qq(125)
         sage: R.<x> = K[]
         sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -62,7 +61,6 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -82,7 +80,6 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -101,7 +98,6 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -119,7 +115,6 @@ class pAdicRelativeBaseringInjection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(125,2)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^3 + 15*a*x - 5*(1+a^2))
@@ -137,7 +132,6 @@ class pAdicRelativeBaseringSection(Morphism):
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: K.<a> = Qq(2^10)
         sage: R.<x> = K[]
         sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6)
@@ -152,7 +146,6 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
@@ -168,7 +161,6 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
@@ -191,7 +183,6 @@ class pAdicRelativeBaseringSection(Morphism):
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: K.<a> = Qq(2^10)
             sage: R.<x> = K[]
             sage: W.<w> = K.extension(x^4 + 2*a*x^2 - 16*x - 6*a)
@@ -208,7 +199,6 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: A.<a> = ZqFM(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -222,7 +212,6 @@ class RelativeRamifiedExtensionRingFixedMod(EisensteinExtensionGeneric, pAdicFix
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = ZqFM(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
@@ -249,7 +238,6 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: A.<a> = ZqCA(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -263,7 +251,6 @@ class RelativeRamifiedExtensionRingCappedAbsolute(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = ZqCA(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
@@ -290,7 +277,6 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: A.<a> = ZqCR(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -304,7 +290,6 @@ class RelativeRamifiedExtensionRingCappedRelative(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: A.<a> = ZqCR(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
@@ -331,7 +316,6 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
 
     EXAMPLES::
 
-        sage: # needs sage.libs.ntl
         sage: A.<a> = QqCR(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -345,7 +329,6 @@ class RelativeRamifiedExtensionFieldCappedRelative(EisensteinExtensionGeneric, p
 
         EXAMPLES::
 
-            sage: # needs sage.libs.ntl
             sage: A.<a> = QqCR(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
@@ -374,7 +357,6 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: A.<a> = ZqFP(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -388,7 +370,6 @@ class RelativeRamifiedExtensionRingFloatingPoint(EisensteinExtensionGeneric, pAd
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = ZqFP(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))
@@ -415,7 +396,6 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
 
     EXAMPLES::
 
-        sage: # needs sage.libs.flint
         sage: A.<a> = QqFP(2^10)
         sage: R.<x> = A[]
         sage: W.<w> = A.extension(x^4 + 2*a*x^2 - 16*x - 6*a); W
@@ -429,7 +409,6 @@ class RelativeRamifiedExtensionFieldFloatingPoint(EisensteinExtensionGeneric, pA
 
         EXAMPLES::
 
-            sage: # needs sage.libs.flint
             sage: A.<a> = QqFP(5^4)
             sage: R.<x> = A[]
             sage: W.<w> = A.extension(x^3 - 25*(a+1)*x + 10*(a^2+2))

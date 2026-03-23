@@ -303,7 +303,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + z, y - z])
@@ -338,7 +337,6 @@ class LaurentPolynomialIdeal( Ideal_generic ):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.number_field
             sage: K.<z> = CyclotomicField(3)
             sage: P.<x,y> = LaurentPolynomialRing(K, 2)
             sage: I = P.ideal([x + 1, y - 1])
