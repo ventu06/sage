@@ -25,6 +25,7 @@ from sage.misc.misc_c import prod
 from sage.structure.richcmp import op_EQ, op_NE, richcmp
 
 from sage.categories.fields import Fields
+from sage.categories.commutative_rings import CommutativeRings
 from sage.misc.latex import latex
 from sage.rings.fraction_field import FractionField
 from sage.schemes.generic.morphism import SchemeMorphism, SchemeMorphism_point
@@ -92,14 +93,12 @@ class SchemeMorphism_point_weighted_projective_ring(SchemeMorphism_point):
                     f"ambient space {X} must be a weighted projective space"
                 )
 
-            from sage.rings.ring import CommutativeRing
-
             d = X.codomain().ambient_space().ngens()
             if isinstance(v, SchemeMorphism):
                 v = list(v)
             else:
                 try:
-                    if isinstance(v.parent(), CommutativeRing):
+                    if v.parent() in CommutativeRings():
                         v = [v]
                 except AttributeError:
                     pass
