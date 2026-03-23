@@ -16,13 +16,11 @@ AUTHORS:
 #                  http://www.gnu.org/licenses/
 # *****************************************************************************
 
+from sage.schemes.hyperelliptic_curves.jacobian_morphism import MumfordDivisorClassField
 from sage.schemes.projective.projective_space import ProjectiveSpace
 from sage.schemes.projective.projective_subscheme import (
     AlgebraicScheme_subscheme_projective,
 )
-from sage.categories.homset import Hom
-from sage.categories.schemes import Schemes
-from sage.schemes.hyperelliptic_curves.jacobian_morphism import MumfordDivisorClassField
 
 
 class KummerSurface(AlgebraicScheme_subscheme_projective):

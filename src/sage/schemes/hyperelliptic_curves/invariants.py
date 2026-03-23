@@ -121,9 +121,9 @@ def diffsymb(U, f, g):
     ).objgens()
     res = 0
     for coeff, mon in list(U):
-        mon = R(mon)
-        a = diffxy(f, x, mon.degree(fx), y, mon.degree(fy))
-        b = diffxy(g, x, mon.degree(gx), y, mon.degree(gy))
+        m = R(mon)
+        a = diffxy(f, x, m.degree(fx), y, m.degree(fy))
+        b = diffxy(g, x, m.degree(gx), y, m.degree(gy))
         temp = coeff * a * b
         res = res + temp
     return res

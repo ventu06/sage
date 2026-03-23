@@ -25,10 +25,10 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_ring import polygen
 from sage.schemes.generic.homset import SchemeHomset_points
-from sage.structure.element import parent
 from sage.schemes.weighted_projective.weighted_projective_point import (
     SchemeMorphism_point_weighted_projective_ring,
 )
+from sage.structure.element import parent
 
 
 class HyperellipticJacobianHomset(SchemeHomset_points):

@@ -21,14 +21,12 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.rings.integer import Integer
-
 from sage.schemes.hyperelliptic_curves.jacobian_homset_generic import (
     HyperellipticJacobianHomset,
 )
 from sage.schemes.hyperelliptic_curves.jacobian_morphism import (
     MumfordDivisorClassFieldSplit,
 )
-
 from sage.schemes.weighted_projective.weighted_projective_point import (
     SchemeMorphism_point_weighted_projective_ring,
 )

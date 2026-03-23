@@ -27,7 +27,6 @@ from sage.schemes.hyperelliptic_curves import (
 from sage.schemes.hyperelliptic_curves.jacobian_generic import (
     HyperellipticJacobian_generic,
 )
-
 from sage.schemes.hyperelliptic_curves.kummer_surface import KummerSurface
 
 

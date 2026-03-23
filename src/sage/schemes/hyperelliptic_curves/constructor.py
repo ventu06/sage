@@ -30,8 +30,8 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-from sage.functions.other import ceil
 from sage.categories.finite_fields import FiniteFields
+from sage.functions.other import ceil
 from sage.rings.abc import pAdicField
 from sage.rings.integer import Integer
 from sage.rings.polynomial.polynomial_element import Polynomial
@@ -55,6 +55,7 @@ from sage.schemes.hyperelliptic_curves.hyperelliptic_padic_field import (
 from sage.schemes.hyperelliptic_curves.hyperelliptic_rational_field import (
     HyperellipticCurve_rational_field,
 )
+
 
 def HyperellipticCurve(
     f, h=0, names = ['x', 'y'], check_squarefree: bool = True, distinguished_point=None

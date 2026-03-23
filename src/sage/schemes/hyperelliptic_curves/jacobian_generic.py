@@ -20,6 +20,7 @@ AUTHORS:
 # ****************************************************************************
 
 from sage.misc.cachefunc import cached_method
+from sage.misc.lazy_attribute import lazy_attribute
 from sage.rings.integer import Integer
 from sage.rings.rational_field import QQ
 from sage.schemes.hyperelliptic_curves import (
@@ -29,7 +30,6 @@ from sage.schemes.hyperelliptic_curves import (
     jacobian_morphism,
 )
 from sage.schemes.jacobians.abstract_jacobian import Jacobian_generic
-from sage.misc.lazy_attribute import lazy_attribute
 
 
 class HyperellipticJacobian_generic(Jacobian_generic):
@@ -335,6 +335,7 @@ class HyperellipticJacobian_generic(Jacobian_generic):
             True
         """
         from sage.interfaces.genus2reduction import genus2reduction
+
         from .jacobian_endomorphism_utils import get_is_geom_field
 
         if self._have_established_geometrically_field:
