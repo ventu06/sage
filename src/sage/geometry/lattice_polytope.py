@@ -5084,8 +5084,7 @@ def _palp(command, polytopes, reduce_dimension=False):
         dot = command.find(".")
         command = command[:dot] + "-%dd" % _palp_dimension + command[dot:]
     executable, args = command.split(" ", 1)
-    if executable.endswith('.x'):
-        executable = executable[:-2]
+    executable = executable.removesuffix('.x')
     executable = PalpExecutable(executable).absolute_filename()
     command = " ".join([shlex.quote(executable), args])
     input_file_name = tmp_filename()

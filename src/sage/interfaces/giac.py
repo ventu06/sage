@@ -1016,10 +1016,8 @@ class GiacElement(ExpectElement):
             \frac{...x^{4}...-...y...}{...y^{2}-3...x...}
         """
         s = self.parent().eval('latex(%s)' % self.name())
-        if s.startswith('"'):
-            s = s[1:]
-        if s.endswith('"'):
-            s = s[:-1]
+        s = s.removeprefix('"')
+        s = s.removesuffix('"')
         return s.strip()
 
     def _matrix_(self, R):
