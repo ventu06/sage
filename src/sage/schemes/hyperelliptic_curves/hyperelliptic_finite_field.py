@@ -459,11 +459,10 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
         if algorithm == "traces":
             M = self.frobenius_matrix(N=N, algorithm="hypellfrob")
             return self.count_points_matrix_traces(n=n, M=M, N=N)
-        elif algorithm == "charpoly":
+        if algorithm == "charpoly":
             f = self.frobenius_polynomial_matrix(algorithm="hypellfrob")
             return self.count_points_frobenius_polynomial(n=n, f=f)
-        else:
-            raise ValueError("Unknown algorithm")
+        raise ValueError("Unknown algorithm")
 
     def count_points(self, n=1):
         r"""
@@ -543,7 +542,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             N2 = self._frobenius_coefficient_bound_charpoly()
             if n < g and q > (2 * g + 1) * (2 * N1 - 1):
                 return self.count_points_hypellfrob(n, N=N1, algorithm="traces")
-            elif q > (2 * g + 1) * (2 * N2 - 1):
+            if q > (2 * g + 1) * (2 * N2 - 1):
                 return self.count_points_hypellfrob(n, N=N2, algorithm="charpoly")
 
         # No smart method available
@@ -743,7 +742,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             N2 = self._frobenius_coefficient_bound_charpoly()
             if n < g and q > (2 * g + 1) * (2 * N1 - 1):
                 return self.cardinality_hypellfrob(n, algorithm="traces")
-            elif q > (2 * g + 1) * (2 * N2 - 1):
+            if q > (2 * g + 1) * (2 * N2 - 1):
                 return self.cardinality_hypellfrob(n, algorithm="charpoly")
 
         # No smart method available
@@ -974,8 +973,7 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             N = self._frobenius_coefficient_bound_charpoly()
 
         matrix_of_frobenius = hypellfrob(p, N, f)
-        matrix_of_frobenius = sign * matrix_of_frobenius
-        return matrix_of_frobenius
+        return sign * matrix_of_frobenius
 
     def frobenius_matrix(self, N=None, algorithm="hypellfrob"):
         r"""
@@ -1317,10 +1315,9 @@ class HyperellipticCurve_finite_field(hyperelliptic_generic.HyperellipticCurve_g
             and f.degree() % 2
         ):
             return self.frobenius_polynomial_matrix()
-        elif q % 2 == 1:
+        if q % 2 == 1:
             return self.frobenius_polynomial_pari()
-        else:
-            return self.frobenius_polynomial_cardinalities()
+        return self.frobenius_polynomial_cardinalities()
 
     # This where Cartier Matrix is actually computed. This is either called by
     # E.Cartier_matrix, E.a_number, or E.Hasse_Witt.

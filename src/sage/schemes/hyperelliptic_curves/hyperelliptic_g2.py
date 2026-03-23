@@ -66,12 +66,11 @@ class HyperellipticCurve_g2(
         df = f.degree()
         if h.degree() < 3:
             return df % 2 == 1
-        elif df < 6:
+        if df < 6:
             return False
-        else:
-            a0 = f.leading_coefficient()
-            c0 = h.leading_coefficient()
-            return (c0**2 + 4 * a0) == 0
+        a0 = f.leading_coefficient()
+        c0 = h.leading_coefficient()
+        return (c0**2 + 4 * a0) == 0
 
     @cached_method
     def jacobian(self):

@@ -827,13 +827,11 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
             ys.sort()  # Make lifting deterministic
             if all:
                 return [self.point([x, y, one], check=False) for y in ys]
-            else:
-                return self.point([x, ys[0], one], check=False)
+            return self.point([x, ys[0], one], check=False)
 
         if all:
             return []
-        else:
-            raise ValueError(f"No point with x-coordinate {x} on {self}")
+        raise ValueError(f"No point with x-coordinate {x} on {self}")
 
     def affine_coordinates(self, P):
         r"""
@@ -915,9 +913,8 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         f, h = self.hyperelliptic_polynomials()
         if P[2] == 0:
             return self.is_ramified()
-        else:
-            x, y = self.affine_coordinates(P)
-            return y == -y - h(x)
+        x, y = self.affine_coordinates(P)
+        return y == -y - h(x)
 
     def rational_weierstrass_points(self):
         r"""
@@ -953,8 +950,7 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
 
         if self.is_ramified():  # the point at infinity is Weierstrass
             return self.points_at_infinity() + affine_weierstrass_points
-        else:
-            return affine_weierstrass_points
+        return affine_weierstrass_points
 
     def hyperelliptic_involution(self, P):
         r"""
@@ -980,20 +976,17 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         if Z == 0:
             if self.is_ramified():
                 return P
-            else:
-                # If Z = 0 then P is a point at infinity,
-                # so we cannot be in the inert case and
-                # must be in the split case here.
-                points = self.points_at_infinity()
-                if P == points[0]:
-                    return points[1]
-                else:
-                    return points[0]
-        elif Z == 1:
+            # If Z = 0 then P is a point at infinity,
+            # so we cannot be in the inert case and
+            # must be in the split case here.
+            points = self.points_at_infinity()
+            if P == points[0]:
+                return points[1]
+            return points[0]
+        if Z == 1:
             Y_inv = -Y - h(X)
             return self.point([X, Y_inv])
-        else:
-            raise ValueError("the point P has to be normalized")
+        raise ValueError("the point P has to be normalized")
 
     def distinguished_point(self):
         r"""
@@ -1861,10 +1854,8 @@ class HyperellipticCurve_generic(WeightedProjectiveCurve):
         if P[2] == 0:
             if self.is_ramified():
                 return self.local_coordinates_at_infinity_ramified(prec, name)
-            else:
-                return self.local_coordinates_at_infinity_split(P, prec, name)
+            return self.local_coordinates_at_infinity_split(P, prec, name)
 
-        elif self.is_weierstrass_point(P):
+        if self.is_weierstrass_point(P):
             return self.local_coordinates_at_weierstrass(P, prec, name)
-        else:
-            return self.local_coordinates_at_nonweierstrass(P, prec, name)
+        return self.local_coordinates_at_nonweierstrass(P, prec, name)

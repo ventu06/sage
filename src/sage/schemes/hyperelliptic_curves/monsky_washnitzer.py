@@ -1110,8 +1110,7 @@ def reduce_all(Q, p, coeffs, offset, compute_exact_form=False):
 
     if exact_form is None:
         return coeffs[int(offset)][0], coeffs[int(offset)][1]
-    else:
-        return (coeffs[int(offset)][0], coeffs[int(offset)][1]), exact_form
+    return (coeffs[int(offset)][0], coeffs[int(offset)][1]), exact_form
 
 
 def frobenius_expansion_by_newton(Q, p, M):
@@ -1812,13 +1811,12 @@ def matrix_of_frobenius(Q, p, M, trace=None, compute_exact_forms=False):
             f_0,
             f_1,
         )
-    else:
-        return matrix(
-            base_ring,
-            2,
-            2,
-            [F0_reduced[0], F1_reduced[0], F0_reduced[1], F1_reduced[1]],
-        )
+    return matrix(
+        base_ring,
+        2,
+        2,
+        [F0_reduced[0], F1_reduced[0], F0_reduced[1], F1_reduced[1]],
+    )
 
 
 # ****************************************************************************
@@ -2047,8 +2045,7 @@ class SpecialHyperellipticQuotientElement(ModuleElement):
         if self._f.degree() == 0 and self._f[0].is_unit():
             P = self.parent()
             return P.element_class(P, ~self._f[0])
-        else:
-            raise ZeroDivisionError("element not invertible")
+        raise ZeroDivisionError("element not invertible")
 
     def __bool__(self):
         """
@@ -2596,9 +2593,8 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
         ):
             if offset == 0:
                 return val
-            else:
-                return val << offset
-        elif isinstance(val, MonskyWashnitzerDifferential):
+            return val << offset
+        if isinstance(val, MonskyWashnitzerDifferential):
             return self._monsky_washnitzer(val)
         return self.element_class(self, val, offset, check)
 
@@ -2737,13 +2733,11 @@ class SpecialHyperellipticQuotientRing(UniqueRepresentation, Parent):
                 A, B, two_i_x_to_i = self._precomputed_diff_coeffs[i]
             if i == 0:
                 return j * A, j * B
-            else:
-                return j * A, j * B + two_i_x_to_i
-        else:
-            dg = self.monomial(i, j).diff()
-            coeffs = [dg.extract_pow_y(j - 1), dg.extract_pow_y(j + 1)]
-            self._monomial_diff_coeffs[i, j] = coeffs
-            return coeffs
+            return j * A, j * B + two_i_x_to_i
+        dg = self.monomial(i, j).diff()
+        coeffs = [dg.extract_pow_y(j - 1), dg.extract_pow_y(j + 1)]
+        self._monomial_diff_coeffs[i, j] = coeffs
+        return coeffs
 
     def monomial_diff_coeffs_matrices(self):
         r"""

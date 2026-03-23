@@ -56,7 +56,7 @@ class HyperellipticJacobian_g2_generic(HyperellipticJacobian_generic):
             return jacobian_g2_homset_ramified.HyperellipticJacobianHomsetRamified_g2(
                 *args, **kwds
             )
-        elif H.is_split():
+        if H.is_split():
             return jacobian_g2_homset_split.HyperellipticJacobianHomsetSplit_g2(
                 *args, **kwds
             )

@@ -92,8 +92,7 @@ def differential_operator(f, g, k):
         f.base_ring(), 4, "dfdx,dfdy,dgdx,dgdy"
     ).objgens()
     const = (m - k).factorial() * (n - k).factorial() / (m.factorial() * n.factorial())
-    U = f.base_ring()(const) * (fx * gy - fy * gx) ** k
-    return U
+    return f.base_ring()(const) * (fx * gy - fy * gx) ** k
 
 
 def diffsymb(U, f, g):

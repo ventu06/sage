@@ -191,16 +191,15 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
             pts = self.lift_x(x, all=True)
             if pts[0][1][0] == P[1]:
                 return pts[0]
-            else:
-                return pts[1]
-        else:  # Weierstrass disc
-            S = self.find_char_zero_weierstrass_point(P)
-            x, y = self.local_coord(S, prec)
-            a = P[1]
-            b = Q[1] - P[1]
-            y = a + b * t
-            x = x.polynomial()(y).add_bigoh(x.prec())
-            return (x, y, 1)
+            return pts[1]
+        # Weierstrass disc
+        S = self.find_char_zero_weierstrass_point(P)
+        x, y = self.local_coord(S, prec)
+        a = P[1]
+        b = Q[1] - P[1]
+        y = a + b * t
+        x = x.polynomial()(y).add_bigoh(x.prec())
+        return (x, y, 1)
 
     def is_in_weierstrass_disc(self, P) -> bool:
         r"""
@@ -254,9 +253,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         f, h = self.hyperelliptic_polynomials()
         if P[2].valuation() > P[0].valuation():  # infinite W-disc
             return self.is_ramified()
-        else:  # affine W-disc
-            x, y = self.affine_coordinates(P)
-            return (2 * y + h(x)).valuation() > 0
+        # affine W-disc
+        x, y = self.affine_coordinates(P)
+        return (2 * y + h(x)).valuation() > 0
 
     def find_char_zero_weierstrass_point(self, Q):
         """
@@ -311,6 +310,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         for P in points:
             if self.is_same_disc(P, Q):
                 return P
+        raise ValueError("unable to find the center of the Weierstrass disc")
 
     def residue_disc(self, P):
         r"""
@@ -386,7 +386,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         # in any other case, the point reduces to infinity.
         if HF.is_ramified():
             return HF.points_at_infinity()[0]
-        elif HF.is_split():
+        if HF.is_split():
             [Q1, Q2] = HF.points_at_infinity()
             alpha = P[1].expansion(0) / P[0].expansion(0) ** (self.genus() + 1)
             if (
@@ -395,12 +395,10 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                 return Q1
             if alpha == Q2[1]:
                 return Q2
-            else:
-                raise ValueError("Unexpected behaviour.")
-        else:
-            raise ValueError(
-                "The reduction of the hyperelliptic curve is inert. This case should not appear."
-            )
+            raise ValueError("Unexpected behaviour.")
+        raise ValueError(
+            "The reduction of the hyperelliptic curve is inert. This case should not appear."
+        )
 
     def is_same_disc(self, P, Q) -> bool:
         r"""
@@ -576,8 +574,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         pts = self.lift_x(x, all=True)
         if (pts[0][1] - P[1]).valuation() > 0:
             return pts[0]
-        else:
-            return pts[1]
+        return pts[1]
 
     def coleman_integrals_on_basis(self, P, Q, algorithm=None):
         r"""
@@ -681,11 +678,10 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         if self.is_weierstrass_point(P):
             if self.is_weierstrass_point(Q):
                 return V(0)
-            else:
-                PP = None
-                QQ = Q
-                TP = None
-                TQ = self.frobenius(Q)
+            PP = None
+            QQ = Q
+            TP = None
+            TQ = self.frobenius(Q)
         elif self.is_weierstrass_point(Q):
             PP = P
             QQ = None
@@ -788,8 +784,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         prof("done")
         if algorithm == "teichmuller":
             return P_to_TP + TP_to_TQ + TQ_to_Q
-        else:
-            return TP_to_TQ
+        return TP_to_TQ
 
     coleman_integrals_on_basis_hyperelliptic = coleman_integrals_on_basis
 
@@ -949,9 +944,9 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         if self.is_weierstrass_point(P):
             if self.is_weierstrass_point(Q):
                 return 0
-            elif f == 0:
+            if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif (
+            if (
                 w._coeff(x, -y) * x.derivative() / (-2 * y)
                 + w._coeff(x, y) * x.derivative() / (2 * y)
                 == 0
@@ -962,15 +957,14 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                     )
                     / 2
                 )
-            else:
-                raise ValueError(
-                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
-                )
+            raise ValueError(
+                "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+            )
 
-        elif self.is_weierstrass_point(Q):
+        if self.is_weierstrass_point(Q):
             if f == 0:
                 return sum([vec[i] * basis_values[i] for i in range(dim)])
-            elif (
+            if (
                 w._coeff(x, -y) * x.derivative() / (-2 * y)
                 + w._coeff(x, y) * x.derivative() / (2 * y)
                 == 0
@@ -981,16 +975,14 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
                     )
                     / 2
                 )
-            else:
-                raise ValueError(
-                    "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
-                )
-        else:
-            return (
-                f(Q[0], Q[1])
-                - f(P[0], P[1])
-                + sum([vec[i] * basis_values[i] for i in range(dim)])
-            )  # this is just a dot product...
+            raise ValueError(
+                "The differential is not odd: use coleman_integral_from_weierstrass_via_boundary"
+            )
+        return (
+            f(Q[0], Q[1])
+            - f(P[0], P[1])
+            + sum([vec[i] * basis_values[i] for i in range(dim)])
+        )  # this is just a dot product...
 
     def frobenius(self, P=None):
         r"""
@@ -1087,8 +1079,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
 
         if P is None:
             return _frob
-        else:
-            return _frob(P)
+        return _frob(P)
 
     def newton_sqrt(self, f, x0, prec):
         r"""
@@ -1296,8 +1287,7 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         prec2 = prec * deg
         x, y = self.local_coord(P, prec2)
         int_sing = (w.coeff()(x, y) * x.derivative() / (2 * y)).integral()
-        int_sing_a = int_sing(S[1])
-        return int_sing_a
+        return int_sing(S[1])
 
     def S_to_Q(self, S, Q):
         r"""
@@ -1442,11 +1432,10 @@ class HyperellipticCurve_padic_field(hyperelliptic_generic.HyperellipticCurve_ge
         const = f(Q[0], Q[1]) - f(S[0], S[1])
         if vec == vector(2 * g * [0]):
             return const
-        else:
-            basis_values = self.S_to_Q(S, Q)
-            dim = len(basis_values)
-            dot = sum([vec[i] * basis_values[i] for i in range(dim)])
-            return const + dot
+        basis_values = self.S_to_Q(S, Q)
+        dim = len(basis_values)
+        dot = sum([vec[i] * basis_values[i] for i in range(dim)])
+        return const + dot
 
     def coleman_integral_from_weierstrass_via_boundary(self, w, P, Q, d):
         r"""

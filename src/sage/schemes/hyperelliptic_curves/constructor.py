@@ -200,7 +200,7 @@ def HyperellipticCurve(
         if f.base_ring().characteristic() == 2:
             if h.is_zero():
                 return False
-            elif h.is_constant():
+            if h.is_constant():
                 return True
             return h.gcd(f.derivative() ** 2 - f * h.derivative() ** 2).is_one()
 

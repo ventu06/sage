@@ -387,7 +387,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
             P1 = args[0]
             if P1 == 0:
                 return self.zero(check=check)
-            elif isinstance(P1, self._morphism_element):
+            if isinstance(P1, self._morphism_element):
                 if parent(P1) is self:
                     return P1
                 # may have to change polynomial ring etc.
