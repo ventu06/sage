@@ -4346,6 +4346,26 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
     EXAMPLES::
 
         sage: a, b = PolynomialRing(QQ, 'a,b').gens()
+        sage: P = PseudoDifferentialOperatorRing(a)
+        sage: D = P.gen()
+        sage: D * a^5
+        a^5*Da + 5*a^4
+        sage: D * b
+        b*Da
+        sage: phi = P(lambda n: (n-2) * a^(n+2) * b^(n+2), valuation=-2); phi
+        -4*Da^2 - 3*a*b*Da - 2*a^2*b^2 - a^3*b^3*Da^-1 + a^5*b^5*Da^-3
+         + 2*a^6*b^6*Da^-4 + O(Da^-5)
+        sage: psi = ~phi; psi
+        -1/4*Da^-2 + 3/16*a*b*Da^-3 + (-1/64*a^2*b^2 - 3/8*b)*Da^-4
+         + (-5/256*a^3*b^3 + 13/64*a*b^2)*Da^-5
+         + (-25/1024*a^4*b^4 + 45/256*a^2*b^3 - 3/8*b^2)*Da^-6
+         + (-125/4096*a^5*b^5 + 75/512*a^3*b^4 - 117/256*a*b^3)*Da^-7
+         + (-625/16384*a^6*b^6 + 125/1024*a^4*b^5 - 327/1024*a^2*b^4 + 9/16*b^3)*Da^-8
+         + O(Da^-9)
+        sage: phi * psi
+        1 + O(Da^-7)
+        sage: psi * phi
+        1 + O(Da^-7)
 
     Next, we compute the Lax formulation of the KdV hierarchy. First, we
     construct the operator `L`::
@@ -4441,9 +4461,6 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 
         if base_ring.is_zero():
             category = category.Finite()
-
-        if base_ring.is_zero():
-            category = category.Finite()
         else:
             category = category.Infinite()
 
@@ -4458,7 +4475,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 
     def _repr_(self):
         r"""
-        String representation of this Taylor series ring.
+        String representation of ``self``.
 
         EXAMPLES::
 
@@ -4473,7 +4490,7 @@ class LazyPseudoDifferentialOperatorRing(LazySeriesRing):
 
     def _latex_(self):
         r"""
-        Return a latex representation of ``self``.
+        Return a LaTeX representation of ``self``.
 
         EXAMPLES::
 

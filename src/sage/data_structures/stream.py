@@ -2957,7 +2957,7 @@ class Stream_dirichlet_convolve(Stream_binary):
 class Stream_pseudo_diff_mul(Stream_binary):
     r"""
     Operator for multiplication of two coefficient streams treated as
-    psuedo-differential operators.
+    pseudo-differential operators.
 
     This uses the convention that the value of the stream at `i` corresponds
     to the coefficient of `\partial^{-i}`.
@@ -3125,8 +3125,8 @@ class Stream_pseudo_diff_mul(Stream_binary):
         mj = -self._right._approximate_order  # max j value
         return R.sum(binomial(i, k) * l * self.right_der(i-k+n, k)
                      for i in range(-n-mj, -self._left._approximate_order+1)
-                     for k in range(max(i, i+mj+n) + 1)
-                     if (l := self._left[-i]))
+                     if (l := self._left[-i])
+                     for k in range(max(i, i+mj+n) + 1))
 
     def is_nonzero(self):
         r"""
