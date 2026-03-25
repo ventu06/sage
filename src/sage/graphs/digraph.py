@@ -612,7 +612,8 @@ class DiGraph(GenericGraph):
             sage: copy(g) is g    # copy is mutable again
             False
 
-        The vertex iteration order is preserved when creating an immutable digraph::
+        When the input provides an explicit vertex list, creating an immutable
+        digraph preserves this order::
 
             sage: D = DiGraph([['b', 'a'], []])
             sage: list(D)
@@ -874,7 +875,7 @@ class DiGraph(GenericGraph):
             ib = StaticSparseBackend(self,
                                      loops=self.allows_loops(),
                                      multiedges=self.allows_multiple_edges(),
-                                     sort=not immutable)
+                                     sort=(format != "vertices_and_edges"))
             self._backend = ib
             self._immutable = True
 
