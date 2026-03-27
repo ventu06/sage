@@ -2077,9 +2077,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
                 raise ValueError('algorithm "minpoly" only supports odd prime-power degrees')
 
             xx = P.xy()[0]
-            ext = xx.parent().over(self.base_ring())
-            mu = ext(xx).minpoly()
-            assert mu.base_ring() == self.base_ring()
+            mu = xx.minpoly_over(self.base_ring())
+            assert mu.base_ring() == self.base_ring()  # just to be sure -- see #34907
 
             return self.kernel_polynomial_from_divisor(mu, P.order(), check=False)
 
