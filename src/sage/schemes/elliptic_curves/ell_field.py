@@ -2029,6 +2029,34 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             sage: set(isogs) == set(E.isogenies_prime_degree(11))
             True
 
+        TESTS:
+
+        Check that it works correctly for points defined over the base field (see :issue:`41900`)::
+
+            sage: E = EllipticCurve(GF(419), [1,0])
+            sage: P = E.lift_x(343)
+            sage: P.order()
+            7
+            sage: E.kernel_polynomial_from_point(P, algorithm='minpoly')
+            x^3 + 274*x^2 + 350*x + 6
+
+        ::
+
+            sage: F.<i> = GF((419,2), modulus=[1,0,1])
+            sage: EE = EllipticCurve(F, [1,0])
+            sage: Q = EE.lift_x(83*i + 16)
+            sage: Q.order()
+            7
+            sage: EE.kernel_polynomial_from_point(Q, algorithm='minpoly')
+            x^3 + (389*i + 98)*x^2 + (36*i + 186)*x + 69*i + 282
+
+        ::
+            sage: R = EE.lift_x(76)
+            sage: R.order()
+            7
+            sage: E.kernel_polynomial_from_point(R, algorithm='minpoly')
+            x^3 + 145*x^2 + 350*x + 413
+
         ALGORITHM:
 
         - The ``'basic'`` algorithm is to multiply together all the linear
