@@ -233,6 +233,7 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
         n = P.order()
         m = self._d.prime_to_m_part(n)
         P *= m.inverse_mod(n)
+        coercion = k.hom(k)
         for q, e in (self._d//m).factor():
             for _ in range(e):
                 f = P.division_points(q, poly_only=True)
@@ -240,9 +241,13 @@ class EllipticCurveHom_fractional(EllipticCurveHom):
                     f.any_root(assume_squarefree=True)
                 except ValueError:
                     g = f.factor()[0][0]
-                    F = F.extension(g.degree())
-                    g.any_root(ring=F)
+                    F, emb = F.extension(g.degree(), 'W', map=True)
+                    coercion = emb * coercion
                 P = P.change_ring(F).division_points(q)[0]
+        try:
+            F.register_coercion(coercion)
+        except AssertionError:  # coercion already exists
+            pass
 
         Q = self._phi._eval(P).change_ring(k)
 
