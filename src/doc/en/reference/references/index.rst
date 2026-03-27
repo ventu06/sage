@@ -377,6 +377,10 @@ REFERENCES:
             of crystals for the quantum queer superalgebra*.
             Preprint (2018). :arxiv:`1803.06317`
 
+.. [AS2020] \S. Assaf, D. Speyer, *Specht modules decompose as alternating
+            sums of restrictions of Schur modules*, Proceedings of the AMS,
+            148 (2020), no. 3, 1015-1029.
+
 .. [AS2003] Jean-Paul Allouche, Jeffrey Shallit,
             *Automatic Sequences: Theory, Applications, Generalizations*,
             Cambridge University Press, 2003.
@@ -5575,6 +5579,12 @@ REFERENCES:
 
 .. [Oxl2011] James Oxley, *Matroid Theory, Second Edition*. Oxford
              University Press, 2011.
+
+.. [OZ2015] \R. Orellana, M. Zabrocki, *Symmetric group characters
+            as symmetric functions*, :arxiv:`1510.00438`.
+
+.. [OZ2019] \R. Orellana, M. Zabrocki, *The Hopf structure of symmetric
+            group characters as symmetric functions*, :arxiv:`1901.00378`.
 
 .. _ref-P:
 

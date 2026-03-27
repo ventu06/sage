@@ -1112,10 +1112,8 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
             \phi_n( {\tilde x}_{\lambda} ) = s_{\lambda} s_{n - |\lambda|}
 
-        This basis appears implicitly in the paper by Assaf and Spyers.
-        The basis appears explicitly in the paper The Hopf
-        structure of symmetric group characters as symmetric functions
-        by Orellana and Zabrocki.
+        This basis appears implicitly in a paper by Assaf and Speyer [AS2020]_.
+        The basis appears explicitly in a paper by Orellana and Zabrocki [OZ2019]_.
 
         .. SEEALSO::
 
@@ -1128,9 +1126,9 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
             Symmetric Functions over Rational Field in the irreducible rook monoid character basis
             sage: xt = SymmetricFunctions(QQ).xt()
             sage: s = SymmetricFunctions(QQ).s()
-            sage: s(xt([3,2]).character_to_frobenius_image(7))==s[3,2]*s[2]
+            sage: s(xt([3,2]).character_to_frobenius_image(7)) == s[3,2] * s[2]
             True
-            sage: xt[1, 1]*xt[3]
+            sage: xt[1, 1] * xt[3]
             xt[1, 1, 1] + xt[2, 1] + xt[2, 1, 1] + xt[2, 2] + 2*xt[3, 1] + xt[3, 1, 1] + xt[4] + xt[4, 1]
             sage: xt[3,2].coproduct().monomial_coefficients()==s[3,2].coproduct().monomial_coefficients()
             True
