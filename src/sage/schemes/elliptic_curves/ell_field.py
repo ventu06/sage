@@ -2088,7 +2088,7 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
         if algorithm is None:
             if R in FiniteFields():
                 # In this case the minpoly approach is likely to be faster.
-                if l & 1 and l.is_prime_power():
+                if l & 1 and l.is_prime():
                     algorithm = 'minpoly'
             if algorithm is None:
                 algorithm = 'basic'
@@ -2101,8 +2101,8 @@ class EllipticCurve_field(ell_generic.EllipticCurve_generic, ProjectivePlaneCurv
             return f.change_ring(R)
 
         if algorithm == 'minpoly':
-            if not l & 1 or not l.is_prime_power():
-                raise ValueError('algorithm "minpoly" only supports odd prime-power degrees')
+            if not l & 1 or not l.is_prime():
+                raise ValueError('algorithm "minpoly" only supports odd prime degrees')
 
             xx = P.xy()[0]
             mu = xx.minpoly_over(self.base_ring())
