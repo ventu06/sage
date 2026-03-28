@@ -682,4 +682,3 @@ class IrreducibleCharacterBasis(Character_generic):
             3*s[1] - 2*s[1, 1] - 2*s[2] + s[2, 1]
         """
         return self._other(self._self_to_power_on_basis(lam))
-
