@@ -436,7 +436,7 @@ cdef class Cache_givaro(Cache_base):
             # FF_to_FpXQ below silently builds an unrelated element.
             F = self.parent
             E = e.parent()
-            if E.degree() > 1 and F.degree() > 1 and not E.degree().divides(F.degree()):
+            if not E.degree().divides(F.degree()):
                 raise TypeError(
                     "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
