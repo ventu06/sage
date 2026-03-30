@@ -1087,7 +1087,7 @@ class SymmetricFunctions(UniqueRepresentation, Parent):
 
         It might also be called the induced irreducible character
         basis because it is the character of an irreducible
-        `S_k` module induced to `S_n` where `n>k`.
+        `S_k` module induced to `S_n` where `n > k`.
 
         The formula for the rook irreducible character basis indexed by the
         partition ``lam`` is given by the formula
