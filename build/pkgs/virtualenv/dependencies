@@ -1,4 +1,4 @@
-distlib filelock importlib_metadata platformdirs typing_extensions python_discovery | pip $(PYTHON)
+distlib filelock platformdirs typing_extensions python_discovery | pip $(PYTHON)
 
 ----------
 All lines of this file are ignored except the first.
