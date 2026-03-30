@@ -269,7 +269,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
 
-        But not between extensions of incompatible degrees::
+        But not between extensions of incompatible degrees (see :issue:`41899`)::
 
             sage: L = GF(2^2, implementation='ntl')
             sage: P = GF(2^3, implementation='pari_ffelt')
@@ -342,7 +342,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Require a field embedding GF(p^m) -> GF(p^n), i.e. m | n (same as Givaro).
             F = self._parent
             E = e.parent()
-            if E.degree() > 1 and F.degree() > 1 and not E.degree().divides(F.degree()):
+            if not E.degree().divides(F.degree()):
                 raise TypeError(
                     "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
