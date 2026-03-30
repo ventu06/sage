@@ -439,7 +439,6 @@ class RookIrreducibleCharacterBasis(InducedCharacterBases):
         s[2, 1]
         sage: s(xt[2,1].character_to_frobenius_image(9)) == s[6] * s[2,1]
         True
-
     """
     def __init__(self, Sym):
         r"""
