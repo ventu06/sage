@@ -340,8 +340,8 @@ cdef class Cache_givaro(Cache_base):
             ...
             TypeError: unable to coerce from a finite field other than the prime subfield
 
-        Incompatible extension degrees (no field embedding when the source
-        extension degree does not divide the target degree)::
+        Incompatible extension degrees (no field embedding exists when the source
+        extension degree does not divide the target degree; see :issue:`41899`)::
 
             sage: GF(101^2)(GF(101^3).gen())
             Traceback (most recent call last):
