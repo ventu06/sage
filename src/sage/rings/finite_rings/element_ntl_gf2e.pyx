@@ -342,7 +342,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
             # Require a field embedding GF(p^m) -> GF(p^n), i.e. m | n (same as Givaro).
             F = self._parent
             E = e.parent()
-            if E.degree() > 1 and F.degree() > 1 and not E.degree().divides(F.degree()):
+            if not E.degree().divides(F.degree()):
                 raise TypeError(
                     "cannot coerce element: source field is not a subfield of the target field")
             e = e.__pari__()
