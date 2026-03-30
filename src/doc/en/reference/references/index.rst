@@ -5733,7 +5733,8 @@ REFERENCES:
             as symmetric functions*, :arxiv:`1510.00438`.
 
 .. [OZ2019] \R. Orellana, M. Zabrocki, *The Hopf structure of symmetric
-            group characters as symmetric functions*, :arxiv:`1901.00378`.
+            group characters as symmetric functions*, Algebr. Combin.,
+            **4** (2021), no. 3, 551-574. :arxiv:`1901.00378`
 
 .. _ref-P:
 
