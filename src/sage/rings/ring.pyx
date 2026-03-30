@@ -372,7 +372,6 @@ cdef class Ring(ParentWithGens):
 
         The following was implemented in :issue:`7797`::
 
-            sage: # needs sage.combinat sage.modules
             sage: A = SteenrodAlgebra(2)
             sage: A * [A.1 + A.2, A.1^2]
             Left Ideal (Sq(2) + Sq(4), Sq(1,1)) of mod 2 Steenrod algebra, milnor basis
