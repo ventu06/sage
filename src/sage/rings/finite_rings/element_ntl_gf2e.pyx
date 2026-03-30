@@ -269,7 +269,7 @@ cdef class Cache_ntl_gf2e(Cache_base):
             sage: K(c^20)
             a^6 + a^3 + a^2 + a
 
-        But not between extensions of incompatible degrees::
+        But not between extensions of incompatible degrees (see :issue:`41899`)::
 
             sage: L = GF(2^2, implementation='ntl')
             sage: P = GF(2^3, implementation='pari_ffelt')
