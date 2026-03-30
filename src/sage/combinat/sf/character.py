@@ -141,12 +141,26 @@ class Character_generic(SFA_generic):
             return ~k * self._p.linear_combination((self._p([d]),moebius(k//d))
                                     for d in divisors(k))
 
+
 class InducedCharacterBases(Character_generic):
     r"""
     Character basis with Frobenius image of other times complete.
-
-    A basis that uses these methods must set `self._p` and `self._other`.
     """
+    def __init__(self, Sym, other_basis):
+        r"""
+        Initialize the basis and register coercions.
+
+        INPUT:
+
+        - ``Sym`` -- an instance of the symmetric function algebra
+        - ``other_basis`` -- the target basis of the symmetric functions
+        """
+        self._other = other_basis
+        self._p = Sym.powersum()
+        self.module_morphism(self._self_to_power_on_basis,
+                             codomain=Sym.powersum()).register_as_coercion()
+        self.register_coercion(SetMorphism(Hom(self._other, self),
+                                           self._other_to_self))
 
     def _b_bar_power_k_r(self, k, r):
         r"""
@@ -268,10 +282,10 @@ class InducedCharacterBases(Character_generic):
     @cached_method
     def _self_to_other_on_basis(self, lam):
         r"""
-        An expansion of the induced character basis in the `other` basis.
+        An expansion of the induced character basis in the ``other`` basis.
 
-        Compute the `self._other` expansion by first computing it in the
-        powersum basis and the coercing to the `self._other` basis.
+        Compute the ``self._other`` expansion by first computing it in the
+        powersum basis and the coercing to the ``self._other`` basis.
 
         INPUT:
 
@@ -308,6 +322,7 @@ class InducedCharacterBases(Character_generic):
             True
         """
         return self._other(self._self_to_power_on_basis(lam))
+
 
 class InducedTrivialCharacterBasis(InducedCharacterBases):
     r"""
@@ -356,7 +371,6 @@ class InducedTrivialCharacterBasis(InducedCharacterBases):
         sage: s[4,2].kronecker_product(s[5,1])
         s[3, 2, 1] + s[3, 3] + s[4, 1, 1] + s[4, 2] + s[5, 1]
     """
-
     def __init__(self, Sym):
         r"""
         Initialize the basis and register coercions.
@@ -369,25 +383,14 @@ class InducedTrivialCharacterBasis(InducedCharacterBases):
 
         EXAMPLES::
 
-            sage: Sym = SymmetricFunctions(QQ)
-            sage: ht = SymmetricFunctions(QQ).ht(); ht
-            Symmetric Functions over Rational Field in the induced trivial
-             symmetric group character basis
-
-       TESTS::
-
+            sage: ht = SymmetricFunctions(QQ).ht()
             sage: TestSuite(ht).run()
         """
         SFA_generic.__init__(self, Sym,
                              basis_name="induced trivial symmetric group character",
                              prefix='ht', graded=False)
-        self._other = Sym.complete()
-        self._p = Sym.powersum()
+        InducedCharacterBases.__init__(self, Sym, Sym.complete())
 
-        self.module_morphism(self._self_to_power_on_basis,
-                             codomain=Sym.powersum()).register_as_coercion()
-        self.register_coercion(SetMorphism(Hom(self._other, self),
-                                           self._other_to_self))
 
 class RookIrreducibleCharacterBasis(InducedCharacterBases):
     r"""
@@ -396,7 +399,7 @@ class RookIrreducibleCharacterBasis(InducedCharacterBases):
 
     It might also be called the induced irreducible character
     basis because it is the character of an irreducible
-    `S_k` module induced to `S_n` where `n>k`.
+    `S_k` module induced to `S_n` where `n > k`.
 
     This basis appears implicitly in the paper by Assaf and Speyer [AS2020]_.
     The basis appears explicitly in [OZ2019]_.
@@ -462,13 +465,8 @@ class RookIrreducibleCharacterBasis(InducedCharacterBases):
         SFA_generic.__init__(self, Sym,
                              basis_name="irreducible rook monoid character",
                              prefix='xt', graded=False)
-        self._other = Sym.Schur()
-        self._p = Sym.powersum()
+        InducedCharacterBases.__init__(self, Sym, Sym.Schur())
 
-        self.module_morphism(self._self_to_power_on_basis,
-                             codomain=Sym.powersum()).register_as_coercion()
-        self.register_coercion(SetMorphism(Hom(self._other, self),
-                                           self._other_to_self))
 
 class IrreducibleCharacterBasis(Character_generic):
     r"""
