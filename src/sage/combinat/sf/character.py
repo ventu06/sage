@@ -457,13 +457,7 @@ class RookIrreducibleCharacterBasis(InducedCharacterBases):
 
         EXAMPLES::
 
-            sage: Sym = SymmetricFunctions(QQ)
-            sage: xt = Sym.xt(); xt
-            Symmetric Functions over Rational Field in the irreducible
-             rook monoid character basis
-
-        TESTS::
-
+            sage: xt = SymmetricFunctions(QQ).xt()
             sage: TestSuite(xt).run()
         """
         SFA_generic.__init__(self, Sym,
