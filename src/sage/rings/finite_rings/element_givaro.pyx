@@ -357,8 +357,10 @@ cdef class Cache_givaro(Cache_base):
 
         A subfield embeds into a larger field with compatible degrees::
 
-            sage: GF(5^4)(GF(5^2)(1))
-            1
+            sage: L = GF(5^4)
+            sage: K, inc = L.subfield(2, map=True)
+            sage: inc(K.gen()).parent() is L
+            True
 
         For more examples, see
         ``finite_field_givaro.FiniteField_givaro._element_constructor_``
