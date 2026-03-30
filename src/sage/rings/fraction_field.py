@@ -24,7 +24,6 @@ Quotienting is a constructor for an element of the fraction field::
 The GCD is not taken (since it doesn't converge sometimes) in the
 inexact case::
 
-    sage: # needs sage.rings.real_mpfr
     sage: Z.<z> = CC[]
     sage: I = CC.gen()
     sage: (1+I+z)/(z+0.1*I)
@@ -252,7 +251,6 @@ class FractionField_generic(ring.Field):
         We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
-            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
             sage: R = K.ring_of_integers()
@@ -286,7 +284,6 @@ class FractionField_generic(ring.Field):
             sage: 1/(R.gen() + 1)
             1/(x + 1)
 
-            sage: # needs sage.modules
             sage: R = LaurentPolynomialRing(ZZ, 'x,y')
             sage: FF = FractionField(PolynomialRing(ZZ, 'x,y'))
             sage: prod(R.gens()) + prod(FF.gens())
@@ -304,7 +301,6 @@ class FractionField_generic(ring.Field):
 
         Coercion from a localization::
 
-            sage: # needs sage.libs.pari
             sage: R.<x> = ZZ[]
             sage: L = Localization(R, (x**2 + 1,7))
             sage: F = L.fraction_field()
@@ -384,7 +380,6 @@ class FractionField_generic(ring.Field):
         We demonstrate that :issue:`7958` is resolved in the case of
         number fields::
 
-            sage: # needs sage.rings.number_field
             sage: _.<x> = ZZ[]
             sage: K.<a> = NumberField(x^5 - 3*x^4 + 2424*x^3 + 2*x - 232)
             sage: R = K.ring_of_integers()
@@ -1123,7 +1118,6 @@ class FractionField_1poly_field(FractionField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: k.<a> = GF(9)
             sage: K = k['t'].fraction_field()
             sage: R.<x> = K[]
@@ -1160,7 +1154,6 @@ class FractionField_1poly_field(FractionField_generic):
 
         EXAMPLES::
 
-            sage: # needs sage.rings.finite_rings
             sage: R.<t> = GF(5)[]
             sage: K = R.fraction_field()
             sage: L = K.function_field()
@@ -1331,7 +1324,6 @@ class FractionFieldEmbeddingSection(Section):
         Over inexact rings, we have to take the precision of the denominators
         into account::
 
-            sage: # needs sage.rings.padics
             sage: R = ZpCR(2)
             sage: S.<x> = R[]
             sage: f = x/S(R(3, absprec=2))
