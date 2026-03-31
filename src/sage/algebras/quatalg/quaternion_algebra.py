@@ -2675,6 +2675,13 @@ class QuaternionOrder(Parent):
             True
             sage: I.norm() == norm
             True
+
+        Check that the ``side`` argument is validated correctly::
+
+            sage: O0.random_ideal(side='both')
+            Traceback (most recent call last):
+            ...
+            ValueError: side must be "left" or "right"
         """
         if side == 'left':
             idl = self.left_ideal
@@ -2707,7 +2714,7 @@ class QuaternionOrder(Parent):
         gram = O.gram_matrix() / 4
         x = polygen(ZZ)
         vecs, mods = [], []
-        for l,e in norm.factor():
+        for l, e in norm.factor():
             mod = l**e
             extra = l**(e + 1 + (l == 2))
             for _ in range(999):
@@ -2715,7 +2722,6 @@ class QuaternionOrder(Parent):
                 nf = vec * gram * vec
                 if (rs := (nf - mod).roots(ring=Zmod(extra), multiplicities=False)):
                     r = ZZ(choice(rs))
-#                    assert (mod**2).gcd(nf(r)) == mod
                     break
             else:
                 raise RuntimeError('overwhelmingly unlikely event, or (more likely) a bug in QuaternionOrder.random_ideal()')
@@ -2723,20 +2729,14 @@ class QuaternionOrder(Parent):
             vec[0] = r
             vec = vec.change_ring(ZZ)
 
-#            if __debug__:
-#                elt = B.sum(c*g for c,g in zip(vec, O.gens()))
-#                assert elt.reduced_norm() == nf(r)
-
             vecs.append(vec)
             mods.append(extra)
 
         from sage.arith.misc import CRT_vectors
         vec = vector(ZZ, CRT_vectors(vecs, mods))
         elt = B.sum(c*g for c,g in zip(vec, O.gens()))
-#        assert (norm**2).gcd(elt.reduced_norm()) == norm
 
         I = idl((norm, elt))
-#        assert I.norm() == norm
 
         if reduce:
             I = I.reduce_equiv(side)
@@ -3411,8 +3411,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         If the ideal is integral, it is guaranteed that `N \in \ZZ` and that
         this value equals the norm of the ideal.
 
-        (The implementation of this method is currently deterministic, but there
-        is no guarantee that it will remain so in future releases of Sage.)
+        .. NOTE::
+
+            The implementation of this method is currently deterministic, but there
+            is no guarantee that it will remain so in future releases of Sage.
 
         EXAMPLES::
 
@@ -4418,6 +4420,17 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
               Defn: i |--> -1555944509277/1806777827077*i - 38035560/78555557699*j + 950751220/1806777827077*k
                     j |--> -57099028943295/3613555654154*i - 593494326683/628444461592*j - 961404429945/14454222616616*k
                     k |--> 1720916783627635/3613555654154*i - 948118691745/628444461592*j + 11644714791909/14454222616616*k
+
+        TESTS:
+
+        Check that the ``side`` argument is validated correctly::
+
+            sage: B.<i,j,k> = QuaternionAlgebra(-23, -900001)
+            sage: I = B.ideal([777777799, 777777799/2 + 777777799/2*i, 239167896 + 128896225*i + j, 444024735 + 3546335033/23*i + 1/2*j + 1/46*k])
+            sage: I.reduce_equiv(side='both')
+            Traceback (most recent call last):
+            ...
+            ValueError: side must be "left" or "right"
         """
         gamma = self.minimal_element().conjugate() / self.norm()
         if side == 'left':
