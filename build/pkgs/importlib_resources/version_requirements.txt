@@ -1,2 +1,0 @@
-# importlib_resources is a backport of Python 3.9+ importlib.resources.
-# Since Sage requires Python >= 3.12, this package is no longer needed.
