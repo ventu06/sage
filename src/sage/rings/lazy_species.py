@@ -169,7 +169,7 @@ def weighted_compositions(n, d, weight_multiplicities, _w0=0):
 
 def weighted_vector_compositions(n_vec, d, weight_multiplicities_vec):
     r"""
-    Return all compositions of the vector `n_vec` of weight `d`.
+    Return all compositions of the vector ``n_vec`` of weight ``d``.
 
     INPUT:
 
@@ -1034,7 +1034,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def arithmetic_product(self, other):
         r"""
-        Return the arithmetic product of `F` and `G`.
+        Return the arithmetic product of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1053,7 +1053,7 @@ class LazyCombinatorialSpeciesElement(LazyCompletionGradedAlgebraElement):
 
     def hadamard_product(self, other):
         r"""
-        Return the Hadamard product of `F` and `G`.
+        Return the Hadamard product of ``self`` and ``other``.
 
         EXAMPLES::
 
@@ -1531,7 +1531,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: E = L.Sets()
             sage: subsets = E^2
-            sage: pairs = E*E.restrict(2, 2)
+            sage: pairs = E * E.restrict(2, 2)
             sage: G = subsets.functorial_composition(pairs)
             sage: TestSuite(G).run(skip=['_test_category', '_test_pickling'])
         """
@@ -1713,7 +1713,7 @@ class ArithmeticProductSpeciesElement(LazyCombinatorialSpeciesElement):
 
         def coefficient(n):
             if not n:
-                return 0
+                return R.zero()
             result = R.zero()
             for k in divisors(n):
                 for m1, c1 in F[k]:
