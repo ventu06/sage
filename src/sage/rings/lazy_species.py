@@ -1608,6 +1608,21 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
                                                          domain=range(1, n+1)))))
 
     def _coefficient(self, n):
+        r"""
+        Return the `n`-th coefficient using naive enumeration of orbits.
+
+        This may be much faster than using :meth:`_coefficient_subgroups`
+        if the number of structures is small.
+
+        TESTS::
+
+            sage: L.<X> = LazyCombinatorialSpecies(QQ)
+            sage: one = L.one()
+            sage: one.functorial_composition(one, algorithm="orbits")
+            X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+            sage: one.functorial_composition(X, algorithm="orbits")
+            1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
+        """
         left = self._left
         G = self._right
         R = G.parent()._laurent_poly_ring
