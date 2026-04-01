@@ -146,7 +146,7 @@ class InducedCharacterBases(Character_generic):
     r"""
     Character basis with Frobenius image of other times complete.
     """
-    def __init__(self, Sym, other_basis):
+    def __init__(self, Sym, other_basis, **kwds):
         r"""
         Initialize the basis and register coercions.
 
@@ -155,6 +155,7 @@ class InducedCharacterBases(Character_generic):
         - ``Sym`` -- an instance of the symmetric function algebra
         - ``other_basis`` -- the target basis of the symmetric functions
         """
+        SFA_generic.__init__(self, Sym, **kwds)
         self._other = other_basis
         self._p = Sym.powersum()
         self.module_morphism(self._self_to_power_on_basis,
@@ -386,10 +387,9 @@ class InducedTrivialCharacterBasis(InducedCharacterBases):
             sage: ht = SymmetricFunctions(QQ).ht()
             sage: TestSuite(ht).run()
         """
-        SFA_generic.__init__(self, Sym,
-                             basis_name="induced trivial symmetric group character",
-                             prefix='ht', graded=False)
-        InducedCharacterBases.__init__(self, Sym, Sym.complete())
+        InducedCharacterBases.__init__(self, Sym, Sym.complete(),
+            basis_name="induced trivial symmetric group character",
+            prefix='ht', graded=False)
 
 
 class RookIrreducibleCharacterBasis(InducedCharacterBases):
@@ -462,10 +462,9 @@ class RookIrreducibleCharacterBasis(InducedCharacterBases):
             sage: xt = SymmetricFunctions(QQ).xt()
             sage: TestSuite(xt).run()
         """
-        SFA_generic.__init__(self, Sym,
-                             basis_name="irreducible rook monoid character",
-                             prefix='xt', graded=False)
-        InducedCharacterBases.__init__(self, Sym, Sym.Schur())
+        InducedCharacterBases.__init__(self, Sym, Sym.Schur(),
+            basis_name="irreducible rook monoid character",
+            prefix='xt', graded=False)
 
 
 class IrreducibleCharacterBasis(Character_generic):
