@@ -2584,17 +2584,18 @@ class QuaternionOrder(Parent):
 
         INPUT:
 
-        - ``side`` (``"left"`` or ``"right"``): Sample a left or right
-          ideal of this order.
+        - ``side`` -- either ``"left"`` (the default) or ``"right"``; specifies
+          whether to sample a left or a right ideal of this order.
 
-        - ``norm`` (positive integer or ``None``): Sample a random ideal
-          of the given norm. Must be coprime to the discriminant.
+        - ``norm`` -- positive integer or (default) ``None``; indicates to
+          sample a random ideal of the given norm. Must be coprime to the
+          discriminant.
 
-        - ``reduce`` (boolean or (default) ``None``): Reduce the ideal using
-          :meth:`reduce_equiv` prior to returning it or not. Note that the
-          norm of the ideal is only preserved when this is ``False``; thus,
-          the default is ``False`` when ``norm`` is explicitly given and
-          ``True`` otherwise.
+        - ``reduce`` -- boolean or (default) ``None``; whether to reduce
+          the ideal using :meth:`reduce_equiv` prior to returning it or not.
+          Note that the norm of the ideal is only preserved when this is
+          ``False``; thus, the default is ``False`` when ``norm`` is explicitly
+          given and ``True`` otherwise.
 
         EXAMPLES::
 
@@ -2734,7 +2735,7 @@ class QuaternionOrder(Parent):
 
         from sage.arith.misc import CRT_vectors
         vec = vector(ZZ, CRT_vectors(vecs, mods))
-        elt = B.sum(c*g for c,g in zip(vec, O.gens()))
+        elt = B.sum(c*g for c, g in zip(vec, O.gens()))
 
         I = idl((norm, elt))
 
