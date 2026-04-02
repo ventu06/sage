@@ -451,13 +451,13 @@ class SEXEvaluator:
 
 class LazyParent:
     def __init__(self, domain):
-        self.domain = domain
+        self._domain = domain
 
     def head(self):
-        return self.domain[0]
+        return self._domain[0]
 
     def args(self):
-        return self.domain[1:]
+        return self._domain[1:]
 
     @cached_method
     def base(self):
