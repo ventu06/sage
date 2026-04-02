@@ -1,7 +1,7 @@
 r"""
 To add handling of a FriCAS type constructor, proceed as follows:
 
-* in ``LazyParent``, add the translation of the contructor to a
+* in ``LazyParent``, add the translation of the constructor to a
   SageMath parent.
 
 * in ``fricas.spad``, add an appropriate package, if necessary.
@@ -40,6 +40,7 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Polynomial": ("_simple", "_eval_polynomialring"),
              "Factored": ("_simple", "_eval_factorization"),
              "DistributedMultivariatePolynomial": ("_list_symbol", "_eval_polynomialring")}
+
 
 class SEXPorter:
     def __init__(self, domain):
@@ -107,13 +108,14 @@ class SEXPorter:
         head = self._domain[0]
         return getattr(self, _DISPATCH[head][0])()
 
+
 class SEXEvaluator:
     def __init__(self, ast, dom):
         """
         INPUT:
 
         - ``ast`` -- a nested list of strings and integers describing a FriCAS object
-        - ``dom`` -- a :cls:`LazyParent` describing the domain of ``ast``
+        - ``dom`` -- a :class:`LazyParent` describing the domain of ``ast``
         """
         self._ast = ast
         self._dom = dom
@@ -148,7 +150,7 @@ class SEXEvaluator:
 
             sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
             sage: SEXEvaluator("true", LazyParent(['Boolean']))._eval_bool()
-            -5
+            True
         """
         return self._ast == "true"
 
@@ -168,6 +170,7 @@ class SEXEvaluator:
             sage: obj = SEXParser(obj_str).parse(); obj
             ('float', 231801786030234225607, -66, 2)
             sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            3.1415000000000000000
         """
         from sage.rings.real_mpfr import RealField
         _, x, e, b = self._ast
@@ -380,8 +383,8 @@ class SEXEvaluator:
             sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
             sage: obj = SEXParser(obj_str).parse(); obj
             ('::',
- ('rootOf', ('+', ('+', ('^', 'x', 5), ('*', -1, 'x')), -1), 'x'),
- ('AlgebraicNumber',))
+             ('rootOf', ('+', ('+', ('^', 'x', 5), ('*', -1, 'x')), -1), 'x'),
+             ('AlgebraicNumber',))
             sage: SEXEvaluator(obj, LazyParent(dom)).eval()
             1.167303978261419?
         """
@@ -444,6 +447,7 @@ class SEXEvaluator:
         return ex.subs({var: (val.radical_expression()
                               if val.parent() is QQbar else val)
                         for var, val in rootOf_ev.items()})
+
 
 class LazyParent:
     def __init__(self, domain):
@@ -533,7 +537,7 @@ class SEXParser:
 
         TESTS::
 
-            sage: from sage.interfaces.fricas_translator import SEXParser
+            sage: from sage.interfaces.fricas_translator import SEXParser, SEXPorter
             sage: SEXParser("abc").parse()
             'abc'
 
@@ -544,8 +548,9 @@ class SEXParser:
             ('pi',)
 
             sage: f = fricas('(x + y/2)::DMP(["x", "y", "z"], FRAC INT)')
-            sage: i = fricas.get_InputForm(f"dom({f._name})::Any")
-            sage: SEXParser(i).parse()
+            sage: P = f._check_valid()
+            sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
+            sage: dom = SEXParser(dom_str).parse(); dom
             ('DistributedMultivariatePolynomial',
              ('x', 'y', 'z'),
              ('Fraction', ('Integer',)))
