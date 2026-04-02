@@ -25,8 +25,13 @@ FRICAS_CONSTANTS = {'%i': I,
 # the dispatch dictionary for SEXPorter and Evaluator
 _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "PositiveInteger": ("_inputform", "_eval_simple"),
+             "Float": ("_inputform", "_eval_float"),
+             "Boolean": ("_inputform", "_eval_bool"),
+             "AlgebraicNumber": ("_inputform", "_eval_qqbar"),
              "Expression": ("_inputform", "_eval_sr"),
+             "PiDomain": ("_inputform", "_eval_sr"),
              "PrimeField": ("_finite", "_eval_gf"),
+             "IntegerMod": ("_finite", "_eval_simple"),
              "FiniteField": ("_finite", "_eval_gf"),
              "Fraction": ("_simple", "_eval_fraction"),
              "List": ("_simple", "_eval_list"),
@@ -134,6 +139,45 @@ class SEXEvaluator:
         """
         return self._dom.parent()(self._ast)
 
+    def _eval_bool(self):
+        r"""
+        Return the evaluation as a boolean.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
+            sage: SEXEvaluator("true", LazyParent(['Boolean']))._eval_bool()
+            -5
+        """
+        return self._ast == "true"
+
+    def _eval_float(self):
+        r"""
+        Return the evaluation as an arbitrary precision float.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
+            sage: f = fricas("3.1415::Float")
+            sage: P = f._check_valid()
+            sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
+            sage: dom = SEXParser(dom_str).parse()
+            sage: pkg = SEXPorter(dom).package_call()
+            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: obj = SEXParser(obj_str).parse(); obj
+            ('float', 231801786030234225607, -66, 2)
+            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+        """
+        from sage.rings.real_mpfr import RealField
+        _, x, e, b = self._ast
+        # Warning: precision$Float gives the current precision,
+        # whereas the bitlength of two's complement gives the
+        # precision of self.
+        x = int(x)
+        prec = max(x.bit_length() if x >= 0 else (~x).bit_length(), 53)
+        R = RealField(prec)
+        return R(Integer(x) * Integer(b) ** Integer(e))
+
     def _eval_gf(self):
         r"""
         Return the evaluation as an element of a finite field.
@@ -144,7 +188,8 @@ class SEXEvaluator:
             sage: SEXEvaluator(5, LazyParent(['FiniteField', 2, 3]))._eval_gf()
             z3^2 + 1
         """
-        return self._dom.parent().from_integer(self._ast)
+        P = self._dom.parent()
+        return P.from_integer(self._ast % P.order())
 
     def _eval_list(self):
         r"""
@@ -224,6 +269,16 @@ class SEXEvaluator:
         base = self._dom.base()
         names = sorted(set(v for mon, _ in self._ast for v, _ in mon))
         P = PolynomialRing(base.parent(), names=names)
+        if len(names) == 1:
+
+            def to_exponent(mon):
+                if len(mon):
+                    return mon[0][1]
+                return 0
+
+            return P._from_dict({to_exponent(mon): SEXEvaluator(c, base).eval()
+                                 for mon, c in self._ast})
+
         def to_tuple(mon):
             t = [0]*len(names)
             for v, e in mon:
@@ -249,6 +304,7 @@ class SEXEvaluator:
             sage: obj = SEXParser(obj_str).parse(); obj
             (-1, ((2, 4), (3, 1)))
             sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            -1 * 2^4 * 3
         """
         from sage.structure.factorization import Factorization
         base = self._dom.base()
@@ -308,9 +364,33 @@ class SEXEvaluator:
         args_eval = [SEXEvaluator(a, self._dom)._eval_sr_aux() for a in args]
         return fun(*args_eval)
 
+    def _eval_qqbar(self):
+        r"""
+        Evaluate as element of the algebraic field.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
+            sage: f = fricas("rootOf(x^5 - x - 1)$AN")
+            sage: P = f._check_valid()
+            sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
+            sage: dom = SEXParser(dom_str).parse()
+            sage: pkg = SEXPorter(dom).package_call()
+            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: obj = SEXParser(obj_str).parse(); obj
+            ('::',
+ ('rootOf', ('+', ('+', ('^', 'x', 5), ('*', -1, 'x')), -1), 'x'),
+ ('AlgebraicNumber',))
+            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            1.167303978261419?
+        """
+        ex = SEXEvaluator(self._ast[1], None)._eval_sr()
+        return self._dom.parent()(ex)
+
     def _eval_sr(self):
         r"""
         Evaluate as element of the symbolic ring.
+
         """
         # a FriCAS expressions may contain implicit references to a
         # rootOf expression within itself, as for example in the
@@ -400,9 +480,17 @@ class LazyParent:
             from sage.rings.finite_rings.finite_field_constructor import GF
             return GF(args[0])
 
+        if head == "IntegerMod":
+            from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
+            return IntegerModRing(args[0])
+
         if head in ["Integer", "PositiveInteger"]:
             from sage.rings.integer_ring import ZZ
             return ZZ
+
+        if head == "AlgebraicNumber":
+            from sage.rings.qqbar import QQbar
+            return QQbar
 
         if head == "Fraction":
             from sage.rings.fraction_field import FractionField

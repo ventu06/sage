@@ -763,33 +763,6 @@ http://fricas.sourceforge.net.
         # double quotes
         return self.get(str(var)).replace("\n", "").strip()[1:-1]
 
-    def get_integer(self, var):
-        """
-        Return the value of a FriCAS integer as an integer, without
-        checking that it is an integer.
-
-        TESTS::
-
-            sage: fricas.get_integer('factorial 1111') == factorial(1111)
-            True
-        """
-        return int(self.get_unparsed_InputForm(str(var)))
-
-    def get_boolean(self, var):
-        """
-        Return the value of a FriCAS boolean as a boolean, without checking
-        that it is a boolean.
-
-        TESTS::
-
-            sage: fricas.get_boolean('(1=1)::Boolean') == True
-            True
-
-            sage: fricas.get_boolean('(1=2)::Boolean') == False
-            True
-        """
-        return self.get(str(var)).replace("\n", "") == "true"
-
     def _assign_symbol(self):
         """
         Return the symbol used for setting a variable in FriCAS.
@@ -1223,11 +1196,11 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: a.sage()
             x^2 + 1
             sage: _.parent()
-            Symbolic Ring
+            Univariate Polynomial Ring in x over Integer Ring
             sage: fricas('x^2 + y^2 + 1/2').sage()
-            y^2 + x^2 + 1/2
+            x^2 + y^2 + 1/2
             sage: _.parent()
-            Symbolic Ring
+            Multivariate Polynomial Ring in x, y over Rational Field
 
             sage: fricas("1$Polynomial Integer").sage()
             1
@@ -1255,7 +1228,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         Rational functions::
 
             sage: fricas("x^2 + 1/z").sage()
-            x^2 + 1/z
+            (x^2*z + 1)/z
 
         Expressions::
 
