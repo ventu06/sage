@@ -25,6 +25,7 @@ FRICAS_CONSTANTS = {'%i': I,
 # the dispatch dictionary for SEXPorter and Evaluator
 _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "PositiveInteger": ("_inputform", "_eval_simple"),
+             "NonNegativeInteger": ("_inputform", "_eval_simple"),
              "Float": ("_inputform", "_eval_float"),
              "Boolean": ("_inputform", "_eval_bool"),
              "AlgebraicNumber": ("_inputform", "_eval_qqbar"),
@@ -484,7 +485,7 @@ class LazyParent:
             from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
             return IntegerModRing(args[0])
 
-        if head in ["Integer", "PositiveInteger"]:
+        if head in ["Integer", "PositiveInteger", "NonNegativeInteger"]:
             from sage.rings.integer_ring import ZZ
             return ZZ
 
