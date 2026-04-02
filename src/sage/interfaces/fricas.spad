@@ -48,14 +48,10 @@ SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with
 
         if T has Ring then
             monomial(ie: IndexedExponents Symbol): SExpression ==
-	        l: List SExpression := [convert([convert("^"::Symbol)@SExpression,
-                                                 convert(t.k)@SExpression,
+	        l: List SExpression := [convert([convert(t.k)@SExpression,
                                                  convert((t.c)::Integer)@SExpression])@SExpression
                                         for t in listOfTerms(ie)]
-		(# l = 0) => convert(1::Integer)@SExpression
-		(# l = 1) => l.1
-                convert(concat([convert("*"::Symbol)@SExpression], l))@SExpression
-
+                convert(l)@SExpression
 
             sexport(obj: Polynomial T): SExpression ==
                 l := listOfTerms obj

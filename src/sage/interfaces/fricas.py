@@ -77,7 +77,7 @@ For many FriCAS types, translation to an appropriate SageMath type is
 available::
 
     sage: f.factor().sage()
-    (y - x) * (y^4 + y^3*x + y^2*x^2 + y*x^3 + x^4)
+    (-1) * (-x + y) * (x^4 + x^3*y + x^2*y^2 + x*y^3 + y^4)
 
 Control-C interruption works well with the FriCAS interface. For
 example, try the following sum but with a much bigger range, and hit
@@ -256,12 +256,13 @@ FRICAS_INIT_CODE = (
 # code (one-liners!) executed after having set up the prompt
 FRICAS_HELPER_CODE = (
     ')co fricas.spad',
-    'sageprint(x:InputForm):String == ' +
+    'sageprint(x:SExpression):String == ' +
     '(atom? x => (' +
     'float? x => return float(x)::String;' +
     'integer? x => return integer(x)::String;' +
     'string? x => return concat(["_"", string(x)::String, "_""])$String;' +
-    'symbol? x => return string(symbol(x)));' +
+    'symbol? x => return string(symbol(x));' +
+    'list? x => return "()");' +
     'S: List String := [sageprint y for y in destruct x];' +
     'R: String := new(1 + reduce(_+, [1 + #(s)$String for s in S], 0),' +
     'space()$Character);' +

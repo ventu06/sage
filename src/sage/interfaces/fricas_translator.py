@@ -207,10 +207,57 @@ class SEXEvaluator:
 
         EXAMPLES::
 
-            sage: fricas('(3 + x/2 + 5*y*x)::DMP(["x", "y", "z"], FRAC INT)').sage()
+            sage: from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
+            sage: f = fricas("x^2*y - 3*z + 1")
+            sage: P = f._check_valid()
+            sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
+            sage: dom = SEXParser(dom_str).parse()
+            sage: pkg = SEXPorter(dom).package_call()
+            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: obj = SEXParser(obj_str).parse(); obj
+            (((('z', 1),), -3), ((('y', 1), ('x', 2)), 1), ((), 1))
+            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            x^2*y - 3*z + 1
         """
-        raise NotImplementedError
+        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 
+        base = self._dom.base()
+        names = sorted(set(v for mon, _ in self._ast for v, _ in mon))
+        P = PolynomialRing(base.parent(), names=names)
+        def to_tuple(mon):
+            t = [0]*len(names)
+            for v, e in mon:
+                t[names.index(v)] = e
+            return tuple(t)
+
+        return P._from_dict({to_tuple(mon): SEXEvaluator(c, base).eval()
+                             for mon, c in self._ast})
+
+    def _eval_factorization(self):
+        r"""
+        Return the evaluation as a factored object.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
+            sage: f = fricas("-48").factor()
+            sage: P = f._check_valid()
+            sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
+            sage: dom = SEXParser(dom_str).parse()
+            sage: pkg = SEXPorter(dom).package_call()
+            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: obj = SEXParser(obj_str).parse(); obj
+            (-1, ((2, 4), (3, 1)))
+            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+        """
+        from sage.structure.factorization import Factorization
+        base = self._dom.base()
+        unit, factors = self._ast
+        return Factorization([(SEXEvaluator(f, base).eval(), e)
+                              for f, e in factors],
+                             unit=SEXEvaluator(unit, base).eval(),
+                             sort=False,
+                             simplify=False)
 
     def _eval_sr_aux(self):
         r"""
@@ -331,7 +378,7 @@ class LazyParent:
     def base(self):
         head = self.head()
         args = self.args()
-        if head in ["List", "Matrix", "Polynomial", "Fraction"]:
+        if head in ["List", "Matrix", "Polynomial", "Fraction", "Factored"]:
             return LazyParent(args[0])
 
         if head in ["DistributedMultivariatePolynomial"]:
