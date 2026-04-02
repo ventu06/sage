@@ -259,6 +259,7 @@ FRICAS_INIT_CODE = (
     "               (princ #\\Newline))))")
 # code (one-liners!) executed after having set up the prompt
 FRICAS_HELPER_CODE = (
+    ')co fricas.spad',
     'sageprint(x:InputForm):String == ' +
     '(atom? x => (' +
     'float? x => return float(x)::String;' +
@@ -273,7 +274,7 @@ FRICAS_HELPER_CODE = (
     'for s in S repeat'
     '(copyInto!(R, s, i); i := i + 1 + #(s)$String);' +
     'copyInto!(R, ")", i-1);' +
-    'return R)',)
+    'return R)')
 
 FRICAS_LINENUMBER_OFF_CODE = ")lisp (setf |$IOindex| NIL)"
 FRICAS_FIRST_PROMPT = r"\(1\) -> "
@@ -2151,163 +2152,15 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             <BLANKLINE>
                Cannot convert the value from type Any to InputForm .
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-        from sage.rings.real_double import RDF
-        from sage.rings.imaginary_unit import I
-        from sage.rings.real_mpfr import RealField
-        from sage.symbolic.ring import SR
-        from sage.matrix.constructor import matrix
-        from sage.modules.free_module_element import vector
-        from sage.structure.factorization import Factorization
-        from sage.misc.sage_eval import sage_eval
-
-        # TODO: perhaps we should translate the type first?
-        # TODO: perhaps we should get the InputForm as SExpression?
-
-        # remember: fricas.new gives a FriCASElement
-
+        from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
         P = self._check_valid()
         # the coercion to Any gets rid of the Union domain
-        dom_inputform = P.get_InputForm(f"dom({self._name})::Any")
-        dom_ast = FriCASElement._parse(dom_inputform, raw=True)[0]
-        dom = FriCASElement.LazyParent(dom_ast)
-        try:
-            obj_inputform = P.get_InputForm(self._name)
-        except Exception:
-            pass
-        else:
-            obj_ast = FriCASElement._parse(obj_inputform)[0]
-            return FriCASElement._eval_ast(obj_ast, dom)
-
-        # The coercion to Any gets rid of the Union domain.
-        domain = P.new("dom((%s)::Any)" % self._name)  # domain is now a fricas SExpression
-
-        # first translate dummy domains such as "failed".  We must
-        # not recurse here!
-        if P.get_boolean("string?(%s)" % domain._name):
-            return P.get_string("string(%s)" % domain._name)
-
-        # now translate domains which cannot be coerced to InputForm,
-        # or where we do not need it.
-        head = str(domain.car())
-        if head == "Record":
-            fields = fricas("[string symbol(e.2) for e in rest destruct %s]" % domain._name).sage()
-            return {field: self.elt(field).sage() for field in fields}
-
-        if head == "List":
-            n = P.get_integer('#(%s)' % self._name)
-            return [self.elt(k).sage() for k in range(1, n + 1)]
-
-        if head == "Vector" or head == "DirectProduct":
-            n = P.get_integer('#(%s)' % self._name)
-            return vector([self.elt(k).sage() for k in range(1, n + 1)])
-
-        if head == "Matrix":
-            base_ring = self._get_sage_type(domain[1])
-            rows = self.listOfLists().sage()
-            return matrix(base_ring, rows)
-
-        if head == "Fraction":
-            return self.numer().sage() / self.denom().sage()
-
-        if head == "Complex":
-            return self.real().sage() + self.imag().sage() * I
-
-        if head == "Factored":
-            l = P.new('[[f.factor, f.exponent] for f in factors(%s)]' % self._name).sage()
-            return Factorization(list(l))
-
-        if head == "UnivariatePolynomial":
-            base_ring = self._get_sage_type(domain[2])
-            vars = str(domain[1])
-            R = PolynomialRing(base_ring, vars)
-            return R([self.coefficient(i).sage()
-                      for i in range(ZZ(self.degree()) + 1)])
-
-        # finally translate domains with InputForm - we do this
-        # lazily, because sometimes we can use unparse, sometimes we
-        # need our custom sageprint
-
-        def unparsed_InputForm():
-            try:
-                return P.get_unparsed_InputForm(self._name)
-            except RuntimeError as error:
-                raise NotImplementedError("the translation of the FriCAS object\n\n%s\n\nto sage is not yet implemented:\n%s" % (self, error))
-
-        if head == "Boolean":
-            return unparsed_InputForm() == "true"
-
-        if head in ["Integer", "NonNegativeInteger", "PositiveInteger"]:
-            return ZZ(unparsed_InputForm())
-
-        if head == "String":
-            return unparsed_InputForm()
-
-        if head == "Float":
-            # Warning: precision$Float gives the current precision,
-            # whereas length(mantissa(self)) gives the precision of
-            # self.
-            prec = max(P.new("length mantissa(%s)" % self._name).sage(), 53)
-            R = RealField(prec)
-            x, e, b = unparsed_InputForm().lstrip('float(').rstrip(')').split(',')
-            return R(ZZ(x) * ZZ(b)**ZZ(e))
-
-        if head == "DoubleFloat":
-            return RDF(unparsed_InputForm())
-
-        if head == "AlgebraicNumber":
-            s = unparsed_InputForm()[:-len("::AlgebraicNumber()")]
-            return sage_eval("QQbar(" + s + ")")
-
-        if head == "IntegerMod" or head == "PrimeField":
-            # one might be tempted not to go via InputForm here, but
-            # it turns out to be safer to do it.
-            s = unparsed_InputForm()[len("index("):]
-            s = s[:s.find(")")]
-            return self._get_sage_type(domain)(s)
-
-        if head == 'DistributedMultivariatePolynomial':
-            base_ring = self._get_sage_type(domain[2])
-            vars = domain[1].car()
-            R = PolynomialRing(base_ring, vars)
-
-        if head == "FiniteField":
-            ring = self._get_sage_type(domain)
-            coords = P.new(
-                '[retract(c)::Integer for c in parts coordinates(%s)]'
-                % self._name).sage()
-            return ring(coords)
-
-        if head in ['MultivariatePolynomial', 'DistributedMultivariatePolynomial']:
-            R = self._get_sage_type(domain)
-            return R(unparsed_InputForm())
-
-        if head == "Polynomial":
-            base_ring = self._get_sage_type(domain[1])
-            # Polynomial Complex is translated into SR
-            if base_ring is SR:
-                return FriCASElement._sage_expression(P.get_InputForm(self._name))
-
-            # the following is a bad hack, we should be getting a list here
-            vars = P.get_unparsed_InputForm("variables(%s)" % self._name)[1:-1]
-            s = unparsed_InputForm()
-            if vars == "":
-                return base_ring(s)
-
-            R = PolynomialRing(base_ring, vars)
-            return R(s)
-
-        if head in ["OrderedCompletion", "OnePointCompletion"]:
-            # it would be more correct to get the type parameter
-            # (which might not be Expression Integer) and recurse
-            return FriCASElement._sage_expression(P.get_InputForm(self._name))
-
-        if head == "Expression" or head == "Pi" or head == "PiDomain":
-            # we treat Expression Integer and Expression Complex
-            # Integer just the same
-            return FriCASElement._sage_expression(P.get_InputForm(self._name))
-
-        raise NotImplementedError("the translation of the FriCAS object %s to sage is not yet implemented" % (unparsed_InputForm()))
+        dom_str = P.get_string(f"sageprint(dom({self._name})::Any)")
+        dom = SEXParser(dom_str, raw=True).parse()
+        pkg = SEXPorter(dom).package_call()
+        obj_str = P.get_string(f"sageprint(sexport({self._name})${pkg})")
+        obj = SEXParser(obj_str).parse()
+        return SEXEvaluator(obj, LazyParent(dom)).eval()
 
 
 @instancedoc

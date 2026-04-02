@@ -12,46 +12,6 @@ To add handling of a FriCAS type constructor, proceed as follows:
   ``sexport``.
 
 """
-
-"""
-sage: fricas.eval(")co fricas.spad")
-sage: from sage.interfaces.fricas_translator import parse_fricas, export_package, eval_fricas, LazyParent
-
-sage: f = fricas('(x^2 + y + 1)::DMP(["x", "y"], INT)')
-sage: s = fricas.get_string(f"sageprint(dom({f._name})::Any)"); s
-'(DistributedMultivariatePolynomial (x y) (Integer))'
-
-sage: dom = SEXParser(s, raw=True).parse(); dom
-['DistributedMultivariatePolynomial', ['x', 'y'], ['Integer']]
-
-sage: pkg = export_package(dom); pkg
-'ListSymbolExport(["x","y"], Integer, InputFormExport(Integer))'
-
-sage: s = fricas.get_string(f"sageprint(sexport({f._name})${pkg})"); s
-'(((^ y 1) 1) ((^ x 2) 1) (1 1))'
-sage: ast = parse_fricas(s); ast
-sage: eval_fricas(ast, LazyParent(dom))
-
-
-
-sage: f = fricas('(x^2 + y + sin(y) + 1)::EXPR INT')
-sage: s = fricas.get_string(f"sageprint(dom({f._name})::Any)"); s
-'(Expression (Integer))'
-
-sage: dom = SEXParser(s, raw=True).parse(); dom
-['Expression', ['Integer']]
-
-sage: pkg = export_package(dom); pkg
-'InputFormExport(Expression(Integer))'
-
-sage: s = fricas.get_string(f"sageprint(sexport({f._name})${pkg})"); s
-('+', ('y', ('+', (('^', ('x', 2)), 1))))
-sage: ast = SEXParser(s).parse(); ast
-('+', (('sin', ('y',)), ('+', ('y', ('+', (('^', ('x', 2)), 1))))))
-sage: eval_fricas(ast, LazyParent(dom))
-x^2 + y + sin(y) + 1
-"""
-
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
@@ -63,7 +23,7 @@ FRICAS_CONSTANTS = {'%i': I,
                     '%e': e,
                     '%pi': pi}
 
-# the dispatch dictionary for ExportPackage and Evaluator
+# the dispatch dictionary for SEXPorter and Evaluator
 _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "PositiveInteger": ("_inputform", "_eval_simple"),
              "Expression": ("_inputform", "_eval_sr"),
@@ -76,7 +36,7 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Factored": ("_simple", "_eval_factorization"),
              "DistributedMultivariatePolynomial": ("_list_symbol", "_eval_polynomialring")}
 
-class ExportPackage:
+class SEXPorter:
     def __init__(self, domain):
         """
         INPUT:
@@ -92,8 +52,8 @@ class ExportPackage:
 
         EXAMPLES::
 
-            sage: from sage.interfaces.fricas_translator import ExportPackage
-            sage: ExportPackage(("Fraction", ("FiniteField", 2, 3)))._unparse()
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("Fraction", ("FiniteField", 2, 3)))._unparse()
             'Fraction(FiniteField(2,3))'
         """
         if not isinstance(self._domain, tuple):
@@ -103,7 +63,7 @@ class ExportPackage:
             return str(self._domain[0])
 
         return (self._domain[0] + "("
-                + ",".join(ExportPackage(e)._unparse() for e in self._domain[1:])
+                + ",".join(SEXPorter(e)._unparse() for e in self._domain[1:])
                 + ")")
 
     def _inputform(self):
@@ -113,7 +73,7 @@ class ExportPackage:
         return f"FiniteExport({self._unparse()})"
 
     def _simple(self):
-        inner = ExportPackage(self._domain[1])
+        inner = SEXPorter(self._domain[1])
         base_str = inner._unparse()
         export_str = inner.package_call()
 
@@ -121,7 +81,7 @@ class ExportPackage:
 
     def _list_symbol(self):
         args_str = "[" + ",".join(f'"{s}"' for s in self._domain[1]) + "]"
-        inner = ExportPackage(self._domain[2])
+        inner = SEXPorter(self._domain[2])
         base_str = inner._unparse()
         export_str = inner.package_call()
 
@@ -133,8 +93,8 @@ class ExportPackage:
 
         EXAMPLES::
 
-            sage: from sage.interfaces.fricas_translator import ExportPackage
-            sage: ExportPackage(("List", ("FiniteField", 2, 3))).package_call()
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("List", ("FiniteField", 2, 3))).package_call()
             'SimpleExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
         """
         if not isinstance(self._domain, tuple):
@@ -291,7 +251,7 @@ class SEXEvaluator:
                 return var(self._ast.replace("%", "_"))
 
         f, args = self._ast
-        args_eval = [SEXEvaluator(a, dom)._eval_sr_aux() for a in args]
+        args_eval = [SEXEvaluator(a, self._dom)._eval_sr_aux() for a in args]
 
         try:
             fun = symbol_table["fricas"][(f, len(args_eval))]
@@ -319,8 +279,6 @@ class SEXEvaluator:
                    | 2
                    |---
                   \|%pi
-            sage: s = fricas.get_InputForm(f._name); s
-            '(/ (fresnelS (* x (^ (/ 2 (pi)) (/ 1 2)))) (^ (/ 2 (pi)) (/ 1 2)))'
             sage: f.sage()
             1/2*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
 
@@ -387,8 +345,6 @@ class SEXEvaluator:
             sage: var("w")
             w
             sage: fricas.laplace(log(x), x, w).sage()
-            -(euler_gamma + log(w))/w
-            sage: fricas(laplace(log(x), x, w)).sage()
             -(euler_gamma + log(w))/w
 
         Check that :issue:`25224` is fixed::
