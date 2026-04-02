@@ -10,7 +10,6 @@ To add handling of a FriCAS type constructor, proceed as follows:
   constructs the package containing ``sexport`` and a function that
   constructs the element given the parsed string produced by
   ``sexport``.
-
 """
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_import import lazy_import
@@ -154,7 +153,7 @@ class SEXEvaluator:
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXParser, LazyParent, SEXEvaluator
-            sage: ast = SEXParser("(1 2 3)", raw=True).parse()
+            sage: ast = SEXParser("(1 2 3)").parse()
             sage: dom = LazyParent(('List', ('Integer',)))
             sage: SEXEvaluator(ast, dom)._eval_list()
             [1, 2, 3]
@@ -169,7 +168,7 @@ class SEXEvaluator:
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXParser, LazyParent, SEXEvaluator
-            sage: ast = SEXParser("(3 2)", raw=True).parse()
+            sage: ast = SEXParser("(3 2)").parse()
             sage: SEXEvaluator(ast, LazyParent(('Fraction', ('Integer',))))._eval_fraction()
             3/2
         """
@@ -190,7 +189,7 @@ class SEXEvaluator:
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXParser, LazyParent, SEXEvaluator
-            sage: ast = SEXParser("((1 2) (3 4))", raw=True).parse()
+            sage: ast = SEXParser("((1 2) (3 4))").parse()
             sage: SEXEvaluator(ast, LazyParent(('Matrix', ('Integer',))))._eval_matrix()
             [1 2]
             [3 4]
@@ -250,239 +249,21 @@ class SEXEvaluator:
             except KeyError:
                 return var(self._ast.replace("%", "_"))
 
-        f, args = self._ast
-        args_eval = [SEXEvaluator(a, self._dom)._eval_sr_aux() for a in args]
-
+        f, *args = self._ast
         try:
-            fun = symbol_table["fricas"][(f, len(args_eval))]
+            fun = symbol_table["fricas"][(f, len(args))]
         except KeyError:
             try:
                 fun = symbol_table["fricas"][(f, -1)]
             except KeyError:
                 fun = function(f)
 
+        args_eval = [SEXEvaluator(a, self._dom)._eval_sr_aux() for a in args]
         return fun(*args_eval)
 
     def _eval_sr(self):
         r"""
         Evaluate as element of the symbolic ring.
-
-        TESTS::
-
-            sage: f = fricas('integrate(sin(x^2), x)'); f
-                       +---+
-                       | 2
-            fresnelS(x |--- )
-                      \|%pi
-            -----------------
-                   +---+
-                   | 2
-                   |---
-                  \|%pi
-            sage: f.sage()
-            1/2*sqrt(2)*sqrt(pi)*fresnel_sin(sqrt(2)*x/sqrt(pi))
-
-        Check that :issue:`22525` is fixed::
-
-            sage: l = [sin, cos, sec, csc, cot, tan, asin, acos, atan, acot, acsc, asec, arcsin, arccos, arctan, arccot, arccsc, arcsec]
-            sage: [f(x)._fricas_().sage().subs(x=0.9) for f in l]
-            [0.783326909627483,
-             0.621609968270664,
-             1.60872581046605,
-             1.27660621345890,
-             0.793551147842317,
-             1.26015821755034,
-             1.11976951499863,
-             0.451026811796262,
-             0.732815101786507,
-             0.837981225008390,
-             1.57079632679490 - 0.467145308103262*I,
-             0.467145308103262*I,
-             1.11976951499863,
-             0.451026811796262,
-             0.732815101786507,
-             0.837981225008390,
-             1.57079632679490 - 0.467145308103262*I,
-             0.467145308103262*I]
-            sage: l = [tanh, sinh, cosh, coth, sech, csch, asinh, acosh, atanh, acoth, asech, acsch, arcsinh, arccosh, arctanh, arccoth, arcsech, arccsch]
-            sage: [f(x)._fricas_().sage().subs(x=0.9) for f in l]
-            [0.716297870199024,
-             1.02651672570818,
-             1.43308638544877,
-             1.39606725303001,
-             0.697794641100332,
-             0.974168247780004,
-             0.808866935652782,
-             0.451026811796262*I,
-             1.47221948958322,
-             1.47221948958322 - 1.57079632679490*I,
-             0.467145308103262,
-             0.957800449200672,
-             0.808866935652782,
-             0.451026811796262*I,
-             1.47221948958322,
-             1.47221948958322 - 1.57079632679490*I,
-             0.467145308103262,
-             0.957800449200672]
-
-        Check that :issue:`23782` is fixed::
-
-            sage: s = '((3*n^10-25*n^9+50*n^8+62*n^7-229*n^6-25*n^5+320*n^4-12*n^3-144*n^2)/11520)::EXPR INT'
-            sage: fricas(s).sage()
-            1/3840*n^10 - 5/2304*n^9 + 5/1152*n^8 + 31/5760*n^7 - 229/11520*n^6 - 5/2304*n^5 + 1/36*n^4 - 1/960*n^3 - 1/80*n^2
-
-        Some checks for digamma and polygamma (:issue:`31853`)::
-
-            sage: fricas.digamma(1.0)
-            - 0.5772156649_0153286061
-            sage: psi(1.0)
-            -0.577215664901533
-            sage: fricas.polygamma(1, 1.0)
-            1.644934066848226...
-            sage: psi(1, 1).n()
-            1.64493406684823
-
-            sage: var("w")
-            w
-            sage: fricas.laplace(log(x), x, w).sage()
-            -(euler_gamma + log(w))/w
-
-        Check that :issue:`25224` is fixed::
-
-            sage: integrate(log(x)/(1-x),x,algorithm='fricas')
-            dilog(-x + 1)
-            sage: fricas(dilog(-x + 1))
-            dilog(x)
-            sage: dilog._fricas_()(1.0)
-            1.6449340668_4822643647_24152
-            sage: dilog(1.0)
-            1.64493406684823
-
-        Check that :issue:`25987` is fixed::
-
-            sage: integrate(lambert_w(x), x, algorithm='fricas')
-            (x*lambert_w(x)^2 - x*lambert_w(x) + x)/lambert_w(x)
-
-        Check that :issue:`25838` is fixed::
-
-            sage: F = function('f'); f = SR.var('f')
-            sage: FF = fricas(F(f)); FF
-            f(f)
-            sage: FF.D(f).sage()
-            diff(f(f), f)
-            sage: bool(FF.D(f).integrate(f).sage() == F(f))
-            True
-
-        Check that :issue:`25602` is fixed::
-
-            sage: r = fricas.integrate(72000/(1+x^5), x).sage()
-            sage: abs(n(r.subs(x=5) - r.subs(x=3)) - 193.020947266210) <= 0.1
-            True
-
-            sage: var("a"); r = fricas.integrate(72000*a^8/(a^5+x^5), x).sage()
-            a
-            sage: abs(n(r.subs(a=1, x=5) - r.subs(a=1, x=3)) - 193.020947266268) <= 0.1
-            True
-
-        Check conversions of sums and products::
-
-            sage: var("k, m, n")
-            (k, m, n)
-            sage: fricas("sum(1/factorial(k), k=1..n)").sage()
-            sum(1/factorial(_...), _..., 1, n)
-            sage: fricas("eval(sum(x/k, k=1..n), x=k)").sage()
-            k*harmonic_number(n)
-            sage: fricas("product(1/factorial(k), k=1..n)").sage()
-            1/product(factorial(_...), _..., 1, n)
-
-            sage: f = fricas.guess([sum(1/k, k,1,n) for n in range(10)])[0]; f
-             n - 1
-              --+       1
-              >      -------
-              --+    s   + 1
-            s   = 0   10
-             10
-
-            sage: f.sage()
-            harmonic_number(n)
-
-            sage: f = fricas.guess([0, 1, 3, 9, 33])[0]; f
-                    s  - 1
-            n - 1    5
-             --+    ++-++
-             >       | |    p  + 2
-             --+     | |     4
-            s  = 0  p  = 0
-             5       4
-
-            sage: f.sage()
-            sum(factorial(_... + 1), _..., 0, n - 1)
-
-        Check that :issue:`26746` is fixed::
-
-            sage: _ = var('x, y, z')
-            sage: f = sin(x^2) + y^z
-            sage: f.integrate(x, algorithm='fricas')
-            1/2*sqrt(2)*sqrt(pi)*(sqrt(2)*x*y^z/sqrt(pi) + fresnel_sin(sqrt(2)*x/sqrt(pi)))
-
-            sage: fricas(fresnel_sin(1))
-            fresnelS(1)
-            sage: fricas("fresnelS(1.0)")
-            0.4382591473_9035476607_676
-
-            sage: fricas(fresnel_cos(1))
-            fresnelC(1)
-            sage: fricas("fresnelC(1.0)")
-            0.7798934003_7682282947_42
-
-        Check that :issue:`17908` is fixed::
-
-            sage: fricas(abs(x)).sage().subs(x=-1783)
-            1783
-
-        Check that :issue:`27310` is fixed::
-
-            sage: fricas.set("F", "operator 'f")
-            sage: fricas("eval(D(F(x,y), [x, y], [2, 1]), x=x+y)").sage()
-            D[0, 0, 1](f)(x + y, y)
-
-        Conversion of hypergeometric functions (:issue:`31298`)::
-
-            sage: a,b,c = var("a b c")
-            sage: A = hypergeometric([a, b], [c], x)
-            sage: fricas(A).sage() - A
-            0
-            sage: fricas(A).D(x).sage() - diff(A, x)
-            0
-
-        Check that :issue:`31858` is fixed::
-
-            sage: fricas.Gamma(3/2).sage()
-            1/2*sqrt(pi)
-            sage: fricas.Gamma(3/4).sage()
-            gamma(3/4)
-            sage: fricas.Gamma(3, 2).sage()
-            gamma(3, 2)
-
-
-        Check that :issue:`32133` is fixed::
-
-            sage: var("y")
-            y
-            sage: f = fricas.zerosOf(y^4 + y + 1, y); f
-                        +-----------------------------+
-                        |       2                    2
-                       \|- 3 %y1  - 2 %y0 %y1 - 3 %y0   - %y1 - %y0
-            [%y0, %y1, --------------------------------------------,
-                                             2
-                +-----------------------------+
-                |       2                    2
-             - \|- 3 %y1  - 2 %y0 %y1 - 3 %y0   - %y1 - %y0
-             ----------------------------------------------]
-                                    2
-
-            sage: f[1].sage()
-            -1/2*sqrt(1/3)*sqrt((3*(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(2/3) + 4)/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3)) + 1/2*sqrt(-(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3) + 6*sqrt(1/3)/sqrt((3*(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(2/3) + 4)/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3)) - 4/3/(1/18*I*sqrt(229)*sqrt(3) + 1/2)^(1/3))
         """
         # a FriCAS expressions may contain implicit references to a
         # rootOf expression within itself, as for example in the
@@ -601,15 +382,12 @@ class SEXParser:
     _STRINGMARKER = '"'
     _ESCAPEMARKER = '_'  # STRINGMARKER must be escaped in strings
 
-    def __init__(self, s, raw=False):
+    def __init__(self, s):
         """
         INPUT:
 
         - ``s`` -- string
-        - ``raw`` -- boolean; whether the first element of a list
-          should never be interpreted as a function call
         """
-        self._raw = raw
         self._s = s
         self._start = 0  # specifies where to start parsing
 
@@ -624,14 +402,14 @@ class SEXParser:
             'abc'
 
             sage: SEXParser("(asin c)").parse()
-            ('asin', ('c'))
+            ('asin', 'c')
 
             sage: SEXParser("(pi)").parse()
-            ('pi', ())
+            ('pi',)
 
             sage: f = fricas('(x + y/2)::DMP(["x", "y", "z"], FRAC INT)')
             sage: i = fricas.get_InputForm(f"dom({f._name})::Any")
-            sage: SEXParser(i, raw=True).parse()
+            sage: SEXParser(i).parse()
             ('DistributedMultivariatePolynomial',
              ('x', 'y', 'z'),
              ('Fraction', ('Integer',)))
@@ -656,23 +434,17 @@ class SEXParser:
 
             sage: from sage.interfaces.fricas_translator import SEXParser
             sage: SEXParser("()").parse()
-            ('', ())
+            ()
 
             sage: SEXParser("(a b c)").parse()
-            ('a', ('b', 'c'))
+            ('a', 'b', 'c')
 
             sage: SEXParser('(bcd)').parse()
-            ('bcd', ())
+            ('bcd',)
         """
         # self._start specifies the position of the left bracket
         assert self._s[self._start] == self._LEFTBRACKET
         self._start += 1
-
-        if not self._raw:
-            self._raw = True
-            head = self._parse_atom()
-            self._raw = False
-            self._start += 1
 
         args = []
         while self._s[self._start] != self._RIGHTBRACKET:
@@ -680,10 +452,7 @@ class SEXParser:
             args.append(e)
             self._start += 1
 
-        args = tuple(args)
-        if not self._raw:
-            return (head, args)
-        return args
+        return tuple(args)
 
     def _parse_atom(self):
         """
@@ -710,11 +479,7 @@ class SEXParser:
             a += 1
 
         token = self._s[self._start:a]
-
         self._start = a - 1
-        if self._raw:
-            return token
-
         try:
             return Integer(token)
         except TypeError:
@@ -750,13 +515,13 @@ class SEXParser:
             '(b c)'
         """
         a = self._start  # the position of the left quote
-        assert self._s[a] == _STRINGMARKER
+        assert self._s[a] == self._STRINGMARKER
         b = a + 1
         a = b
         S = []
 
-        while self._s[b] != _STRINGMARKER:
-            if self._s[b] == _ESCAPEMARKER:
+        while self._s[b] != self._STRINGMARKER:
+            if self._s[b] == self._ESCAPEMARKER:
                 S.append(self._s[a:b])
                 b += 1
                 a = b
