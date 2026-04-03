@@ -542,7 +542,7 @@ cdef class SymbolicRing(Parent):
 
     def fraction_field(self):
         """
-        Return ``True``, since the symbolic expression ring is (for the most
+        Return ``self``, since the symbolic expression ring is (for the most
         part) a field.
 
         EXAMPLES::

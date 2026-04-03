@@ -130,8 +130,7 @@ from sage.rings.abc import RealDoubleField, ComplexDoubleField
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
 
-from sage.symbolic.callable import (CallableSymbolicExpressionRing_class,
-                                    CallableSymbolicExpressionRing)
+from sage.symbolic.callable import CallableSymbolicExpressionRing_class
 
 # For the norm function, we cache Sage integers 1 and 2
 __one__ = smallInteger(1)

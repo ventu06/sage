@@ -407,8 +407,7 @@ include "pynac_impl.pxi"
 
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
-from sage.symbolic.callable import (CallableSymbolicExpressionRing_class,
-                                    CallableSymbolicExpressionRing)
+from sage.symbolic.callable import CallableSymbolicExpressionRing_class
 
 
 def _dict_update_check_duplicate(dict d1, dict d2):
@@ -6738,6 +6737,7 @@ cdef class Expression(Expression_abc):
             if not (isinstance(i, Expression) and i.is_symbol()):
                 break
         else:
+            from sage.symbolic.callable import CallableSymbolicExpressionRing
             R = CallableSymbolicExpressionRing(args, check=False)
             return R(self)
         raise TypeError(f"must construct a function with symbolic variables as arguments, got {args}.")
