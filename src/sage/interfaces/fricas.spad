@@ -20,6 +20,7 @@ FiniteExport(R: Finite) : with
 ++ For domain constructors depending only on a single type
 SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with
         sexport: List T -> SExpression
+        sexport: Vector T -> SExpression
         sexport: Fraction T -> SExpression
         sexport: Factored T -> SExpression
         sexport: Matrix T -> SExpression
@@ -27,6 +28,8 @@ SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with
     == add
         sexport(obj: List T): SExpression ==
             convert([sexport(e)$ET for e in obj])@SExpression
+
+        sexport(obj: Vector T): SExpression == sexport(entries(obj))
 
         if T has IntegralDomain then
             sexport(obj: Fraction T): SExpression ==

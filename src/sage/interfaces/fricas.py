@@ -1211,11 +1211,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: x = polygen(QQ, 'x')
             sage: fricas(x+3).sage()
             x + 3
-            sage: fricas(x+3).domainOf()
-            Polynomial(Integer...)
-
-            sage: fricas(matrix([[2,3],[4,x+5]])).diagonal().sage()
-            (2, x + 5)
 
             sage: f = fricas("(y^2+3)::UP(y, INT)").sage(); f
             y^2 + 3
@@ -1229,6 +1224,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: fricas("x^2 + 1/z").sage()
             (x^2*z + 1)/z
+
+            sage: fricas("(1/(1-x))::FRAC MPOLY([x,y], INT)").sage()
+            (-1)/(x - 1)
 
         Expressions::
 
@@ -1261,6 +1259,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             [    1/2   1/2*x 1/2*x^2 1/2*x^3 1/2*x^4 1/2*x^5]
             [    1/4   1/4*x 1/4*x^2 1/4*x^3 1/4*x^4 1/4*x^5]
             [    1/8   1/8*x 1/8*x^2 1/8*x^3 1/8*x^4 1/8*x^5]
+
+            sage: fricas("matrix([[2,3],[4,x+5]])").diagonal().sage()
+            (2, x + 5)
 
         Lists::
 
@@ -1518,7 +1519,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
         P = self._check_valid()
         # the coercion to Any gets rid of the Union domain
-        dom_str = P.get_string(f"sageprint(dom({self._name})::Any)")
+        dom_str = P.get_string(f"sageprint(dom({self._name}::Any))")
+        # the following alternative rewrites
+        # "Union(P, Q, ...)" to "Union", and seems unusable
+        # dom_str = P.get_string(f"sageprint(typeOf({self._name})::InputForm)")
+        if dom_str == '"failed"':
+            return "failed"
         dom = SEXParser(dom_str).parse()
         pkg = SEXPorter(dom).package_call()
         obj_str = P.get_string(f"sageprint(sexport({self._name})${pkg})")

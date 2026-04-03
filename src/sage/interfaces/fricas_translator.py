@@ -1,3 +1,4 @@
+# sage.doctest: optional - fricas
 r"""
 To add handling of a FriCAS type constructor, proceed as follows:
 
@@ -23,6 +24,8 @@ FRICAS_CONSTANTS = {'%i': I,
                     '%pi': pi}
 
 # the dispatch dictionary for SEXPorter and Evaluator
+# if the first element of the pair is a function, it is used by
+# SEXPorter to rewrite the domain
 _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "PositiveInteger": ("_inputform", "_eval_simple"),
              "NonNegativeInteger": ("_inputform", "_eval_simple"),
@@ -30,6 +33,7 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Boolean": ("_inputform", "_eval_bool"),
              "AlgebraicNumber": ("_inputform", "_eval_qqbar"),
              "Expression": ("_inputform", "_eval_sr"),
+             "OrderedCompletion": ("_inputform", "_eval_sr"),
              "PiDomain": ("_inputform", "_eval_sr"),
              "PrimeField": ("_finite", "_eval_gf"),
              "IntegerMod": ("_finite", "_eval_simple"),
@@ -39,12 +43,21 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Matrix": ("_simple", "_eval_matrix"),
              "Polynomial": ("_simple", "_eval_polynomialring"),
              "Factored": ("_simple", "_eval_factorization"),
-             "UnivariatePolynomial": ("_simple1", "_eval_polynomialring"),  # FriCAS coerces to Polynomial
-             "DistributedMultivariatePolynomial": ("_simple1", "_eval_polynomialring"),
-             "MultivariatePolynomial": ("_simple1", "_eval_polynomialring")}
+             "Vector": ("_simple", "_eval_list"),
+             "DirectProduct": (lambda x: ("Vector", x[2]), "_eval_list"),
+             "UnivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                                      "_eval_polynomialring"),  # coerce to Polynomial
+             "DistributedMultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                                                   "_eval_polynomialring"),
+             "MultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                                        "_eval_polynomialring")}
 
 
 class SEXPorter:
+    """
+    A class constructing the FriCAS package which exports
+    ``sexport`` for a given (parsed) domain.
+    """
     def __init__(self, domain):
         """
         INPUT:
@@ -52,7 +65,12 @@ class SEXPorter:
         - ``domain`` -- a nested list of strings and integers,
           describing a FriCAS domain.
         """
-        self._domain = domain
+        if (isinstance(domain, tuple)
+            and (head := domain[0]) in _DISPATCH
+            and callable(fun := _DISPATCH[head][0])):
+            self._domain = fun(domain)
+        else:
+            self._domain = domain
 
     def _unparse(self):
         """
@@ -90,16 +108,6 @@ class SEXPorter:
 
         return f"SimpleExport({base_str}, {export_str})"
 
-    def _simple1(self):
-        """
-        Return ``SimpleExport`` of ``self._domain[2]``.
-        """
-        inner = SEXPorter(self._domain[2])
-        base_str = inner._unparse()
-        export_str = inner.package_call()
-
-        return f"SimpleExport({base_str}, {export_str})"
-
     def package_call(self):
         """
         Return the package containing the ``sexport`` function.
@@ -109,6 +117,12 @@ class SEXPorter:
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("List", ("FiniteField", 2, 3))).package_call()
             'SimpleExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
+
+            sage: SEXPorter(("List", ("UnivariatePolynomial", "x", ("Integer",)))).package_call()
+            'SimpleExport(Polynomial(Integer), SimpleExport(Integer, InputFormExport(Integer)))'
+
+            sage: SEXPorter(('DirectProduct', 2, ('Integer',))).package_call()
+            'SimpleExport(Integer, InputFormExport(Integer))'
         """
         head = self._domain[0]
         if head not in _DISPATCH:
@@ -216,7 +230,8 @@ class SEXEvaluator:
             [1, 2, 3]
         """
         base = self._dom.base()
-        return [SEXEvaluator(a, base).eval() for a in self._ast]
+        P = self._dom.parent()
+        return P([SEXEvaluator(a, base).eval() for a in self._ast])
 
     def _eval_fraction(self):
         r"""
@@ -469,7 +484,8 @@ class LazyParent:
 
         if head in ["UnivariatePolynomial",
                     "MultivariatePolynomial",
-                    "DistributedMultivariatePolynomial"]:
+                    "DistributedMultivariatePolynomial",
+                    "DirectProduct"]:
             return LazyParent(args[1])
 
         raise NotImplementedError(f"Cannot build base for {head}")
@@ -478,6 +494,13 @@ class LazyParent:
     def parent(self, **kwargs):
         head = self.head()
         args = self.args()
+
+        if head == "List":
+            return list
+
+        if head in ["Vector", "DirectProduct"]:
+            from sage.modules.free_module_element import vector
+            return vector
 
         if head == "FiniteField":
             from sage.rings.finite_rings.finite_field_constructor import GF
