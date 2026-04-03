@@ -334,6 +334,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
+import builtins
 import os
 import platform
 import re
@@ -626,7 +627,7 @@ class Singular(ExtraTabCompletion, Expect):
             sage: o = s.hilb()
             ...// dimension (affine) = 0
             // degree (affine)  = 8
-            // ** right side is not a datum, assignment ignored
+            // ** right side is not a datum, assignment...ignored
             ...
 
         rather than ignored
@@ -1045,7 +1046,7 @@ class Singular(ExtraTabCompletion, Expect):
             self.eval('matrix %s[%s][%s] = %s' % (name, nrows, ncols, entries))
         return SingularElement(self, None, name, True)
 
-    def ring(self, char=0, vars='(x)', order='lp', check=None):
+    def ring(self, char=0, vars='(x)', order='lp'):
         r"""
         Create a Singular ring and makes it the current ring.
 
@@ -1125,10 +1126,6 @@ class Singular(ExtraTabCompletion, Expect):
             s = '; '.join('if(defined(%s)>0){kill %s;};' % (x, x)
                           for x in vars[1:-1].split(','))
             self.eval(s)
-
-        if check is not None:
-            from sage.misc.superseded import deprecation
-            deprecation(33319, 'The check= keyword argument does nothing.' + f'({check})')
 
         R = self('%s,%s,%s' % (char, vars, order), 'ring')
         self.eval('short=0')  # make output include *'s for multiplication for *THIS* ring.
@@ -1225,7 +1222,7 @@ class Singular(ExtraTabCompletion, Expect):
         else:
             return None
 
-    def _tab_completion(self) -> list:
+    def _tab_completion(self) -> builtins.list[str]:
         """
         Return a list of all Singular commands.
 
@@ -1767,7 +1764,7 @@ class SingularElement(ExtraTabCompletion, ExpectElement, sage.interfaces.abc.Sin
             -4.00000000000000*z^3 - 27.0000000000000
             sage: Rx.<x> = RR[]
             sage: Rx("x + 7.5")._singular_().sage_poly()
-            x + 7.50000
+            x + 7.50000...
             sage: Rx("x + 7.5")._singular_().sage_poly(Rx)
             x + 7.50000000000000
 

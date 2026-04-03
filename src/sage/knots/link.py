@@ -1256,7 +1256,7 @@ class Link(SageObject):
             if not data:
                 return [(0, HomologyGroup(0, ring))]
 
-            torsion = set([k[1] for k in data])
+            torsion = {k[1] for k in data}
             invfac = {}
             for d in [k[0] for k in data]:
                 invfac[d] = []
@@ -1522,7 +1522,7 @@ class Link(SageObject):
             elif i[1] == -1:
                 cross_number[i[0]] = -i[2]
         edges_graph = DiGraph(edges)
-        d = edges_graph.all_simple_cycles()
+        d = edges_graph.all_simple_cycles(algorithm="A")
         code = []
         for i in d:
             l = [cross_number[j] for j in i]
@@ -2295,7 +2295,7 @@ class Link(SageObject):
                 gens = {g: g.order() for g in H.gens()}
                 if integral:
                     tor_count = {}
-                    for g, tor in gens.items():
+                    for tor in gens.values():
                         if tor in tor_count:
                             tor_count[tor] += 1
                         else:
@@ -3589,7 +3589,7 @@ class Link(SageObject):
 
         OUTPUT:
 
-        a list of group homomporhisms from the fundamental group of ``self``
+        a list of group homomorphisms from the fundamental group of ``self``
         to the `n`-th dihedral group (represented according to the key
         argument ``finitely_presented``).
 

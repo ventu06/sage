@@ -397,7 +397,6 @@ def lex_BFS(G, reverse=False, tree=False, initial_vertex=None, algorithm="fast")
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000', algorithm='fast')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -572,7 +571,6 @@ def lex_UP(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -645,7 +643,6 @@ def lex_DFS(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -718,7 +715,6 @@ def lex_DOWN(G, reverse=False, tree=False, initial_vertex=None):
 
     Different orderings for different traversals::
 
-        sage: # needs sage.combinat
         sage: G = digraphs.DeBruijn(2,3)
         sage: G.lex_BFS(initial_vertex='000')
         ['000', '001', '100', '010', '011', '110', '101', '111']
@@ -1424,7 +1420,10 @@ def maximum_cardinality_search(G, reverse=False, tree=False, initial_vertex=None
 
     Immutable graphs;:
 
-        sage: G = graphs.RandomGNP(10, .7)
+        sage: while True:
+        ....:     G = graphs.RandomGNP(10, .7)
+        ....:     if G.is_connected():  # algorithm only available for connected graphs
+        ....:         break
         sage: G._backend
         <sage.graphs.base.sparse_graph.SparseGraphBackend ...>
         sage: H = Graph(G, immutable=True)

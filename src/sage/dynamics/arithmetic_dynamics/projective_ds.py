@@ -4895,7 +4895,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
             if R in FiniteFields():
                 g = f.cyclegraph()
                 points = []
-                for cycle in g.all_simple_cycles():
+                for cycle in g.all_simple_cycles(algorithm="A"):
                     m = len(cycle)-1
                     if minimal:
                         if m == n:
@@ -5832,7 +5832,7 @@ class DynamicalSystem_projective(SchemeMorphism_polynomial_projective_space,
                     else:
                         im = list(R.gens())[:j] + (N-j)*[0] + [R.gen(i) for i in range(N, R.ngens())]
                     phi = Ra.hom(R.gens()[0:len(Ra.gens())])
-                    # create polymomial that evaluates to the characteristic polynomial
+                    # create polynomial that evaluates to the characteristic polynomial
                     M = t*matrix.identity(R, N)
                     g = (M-jacobian([phi(F.numerator())/phi(F.denominator()) for F in fa], var)).det()
                     # create the terms of the sigma invariants prod(w-lambda)
@@ -9483,7 +9483,7 @@ class DynamicalSystem_projective_finite_field(DynamicalSystem_projective_field,
 
             sage: R.<x,y,z> = ProjectiveSpace(GF(5), 2)
             sage: f = DynamicalSystem_projective([x^3 + x*z^2, y^3 + y*z^2, z^3])
-            sage: all([f.conjugate(m) == f for m in f.automorphism_group()])            # needs sage.rings.function_field
+            sage: all(f.conjugate(m) == f for m in f.automorphism_group())            # needs sage.rings.function_field
             True
         """
         absolute = kwds.get('absolute', False)

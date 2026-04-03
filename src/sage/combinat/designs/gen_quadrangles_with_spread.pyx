@@ -110,7 +110,7 @@ def generalised_quadrangle_with_spread(const int s, const int t,
     if is_prime_power(s) and t == s * s:
         if existence:
             return True
-        (GQ, S) = dual_GQ_ovoid(*generalised_quadrangle_hermitian_with_ovoid(s))
+        GQ, S = dual_GQ_ovoid(*generalised_quadrangle_hermitian_with_ovoid(s))
         if check:
             if not is_GQ_with_spread(GQ, S, s=s, t=t):
                 raise RuntimeError("Sage built a wrong GQ with spread")
@@ -199,9 +199,8 @@ def dual_GQ_ovoid(GQ, O):
         sage: t = dual_GQ_ovoid(*t)
         sage: t[0].is_generalized_quadrangle(parameters=True)
         (3, 9)
-        sage: all([x in t[0] for x in t[1]])
+        sage: all(x in t[0] for x in t[1])
         True
-
 
     TESTS::
 

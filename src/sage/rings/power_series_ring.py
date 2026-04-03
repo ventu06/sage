@@ -60,7 +60,6 @@ Sage can compute with power series over the symbolic ring.
 
 ::
 
-    sage: # needs sage.symbolic
     sage: K.<t> = PowerSeriesRing(SR, default_prec=5)
     sage: a, b, c = var('a,b,c')
     sage: f = a + b*t + c*t^2 + O(t^3)
@@ -496,7 +495,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
     """
 
     def __init__(self, base_ring, name=None, default_prec=None, sparse=False,
-                 implementation=None, category=None):
+                 implementation=None, category=None) -> None:
         """
         Initialize a power series ring.
 
@@ -807,7 +806,6 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
 
         Conversion from symbolic series::
 
-            sage: # needs sage.symbolic
             sage: x,y = var('x,y')
             sage: s = (1/(1-x)).series(x,3); s
             1 + 1*x + 1*x^2 + Order(x^3)
@@ -1239,7 +1237,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
             prec = self.default_prec()
         return self(self.__poly_ring.random_element(prec-1, *args, **kwds), prec)
 
-    def __contains__(self, x):
+    def __contains__(self, x) -> bool:
         """
         Return ``True`` if x is an element of this power series ring or
         canonically coerces to this ring.
@@ -1261,7 +1259,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return self.has_coerce_map_from(parent(x))
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         a field.
@@ -1274,7 +1272,7 @@ class PowerSeriesRing_generic(UniqueRepresentation, Parent, Nonexact):
         """
         return False
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         """
         Return ``False`` since the ring of power series over any ring is never
         finite.

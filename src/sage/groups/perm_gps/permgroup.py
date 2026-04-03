@@ -148,7 +148,7 @@ from sage.groups.perm_gps.permgroup_element import PermutationGroupElement
 from sage.groups.perm_gps.constructor import PermutationGroupElement as PermutationConstructor, standardize_generator
 from sage.groups.abelian_gps.abelian_group import AbelianGroup
 from sage.misc.cachefunc import cached_method
-from sage.groups.class_function import ClassFunction_libgap
+from sage.groups.class_function import ClassFunction
 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
 from sage.categories.finite_enumerated_sets import FiniteEnumeratedSets
 from sage.groups.conjugacy_classes import ConjugacyClassGAP
@@ -641,12 +641,11 @@ class PermutationGroup_generic(FiniteGroup):
         """
         return 'Group([%s])' % (', '.join(g._gap_init_() for g in self.gens()))
 
-    @cached_method
     def gap(self):
         r"""
         This method from :class:`sage.groups.libgap_wrapper.ParentLibGAP` is added in order to achieve
         compatibility and have :class:`sage.groups.libgap_morphism.GroupHomset_libgap` work for permutation
-        groups, as well
+        groups, as well.
 
         OUTPUT: an instance of :class:`sage.libs.gap.element.GapElement`
         representing this group
@@ -695,9 +694,10 @@ class PermutationGroup_generic(FiniteGroup):
             sage: g1.IsIdenticalObj(S._libgap_())
             true
         """
-        if self._libgap is not None:
-            return self._libgap
-        self._libgap = super()._libgap_()
+        if self._libgap is None:
+            # why is self._libgap = libgap.Group(self._gens) and
+            # adding methods to permgroup_named slower?
+            self._libgap = super()._libgap_()
         return self._libgap
 
     # Override the default _libgap_ to use the caching as self._libgap
@@ -1626,11 +1626,10 @@ class PermutationGroup_generic(FiniteGroup):
                 else:
                     libgap.Add(Xp, x)
             X = Xp
-        return SetPartition([
-            [self._domain_from_gap[Integer(x)]
-             for i in part
-             for x in O[i]] for part in P] +
-             [[x] for x in self.fixed_points()])
+        return SetPartition([[self._domain_from_gap[Integer(x)]
+                              for i in part
+                              for x in O[i]] for part in P] +
+                            [[x] for x in self.fixed_points()])
 
     def representative_action(self, x, y):
         r"""
@@ -3496,11 +3495,16 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: G.order()
             12
-            sage: G.character_table()                                                   # needs sage.rings.number_field
+            sage: Gct = G.character_table(); Gct                                        # random, needs sage.rings.number_field
             [         1          1          1          1]
             [         1 -zeta3 - 1      zeta3          1]
             [         1      zeta3 -zeta3 - 1          1]
             [         3          0          0         -1]
+            sage: sorted(Gct)                                                           # needs sage.rings.number_field
+            [(1, -zeta3 - 1, zeta3, 1),
+             (1, zeta3, -zeta3 - 1, 1),
+             (1, 1, 1, 1),
+             (3, 0, 0, -1)]
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3)]])
             sage: CT = gap(G).CharacterTable()
 
@@ -3511,12 +3515,14 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G = PermutationGroup([[(1,2),(3,4)], [(1,2,3,4)]])
             sage: G.order()
             8
-            sage: G.character_table()                                                   # needs sage.rings.number_field
+            sage: Gct = G.character_table(); Gct                                        # random, needs sage.rings.number_field
             [ 1  1  1  1  1]
             [ 1 -1 -1  1  1]
             [ 1 -1  1 -1  1]
             [ 1  1 -1 -1  1]
             [ 2  0  0  0 -2]
+            sage: sorted(Gct, key=str)                                                           # needs sage.rings.number_field
+            [(1, -1, -1, 1, 1), (1, -1, 1, -1, 1), (1, 1, -1, -1, 1), (1, 1, 1, 1, 1), (2, 0, 0, 0, -2)]
             sage: CT = gap(G).CharacterTable()
 
         Again, type ``CT.Display()`` to display this nicely.
@@ -3539,11 +3545,12 @@ class PermutationGroup_generic(FiniteGroup):
             [ 5  1  1 -1  1 -1  0]
             [ 4  2  0  1 -1  0 -1]
             [ 1  1  1  1  1  1  1]
-            sage: list(AlternatingGroup(6).character_table())
-            [(1, 1, 1, 1, 1, 1, 1), (5, 1, 2, -1, -1, 0, 0), (5, 1, -1, 2, -1, 0, 0),
-             (8, 0, -1, -1, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2),
+            sage: sorted(AlternatingGroup(6).character_table(), key=str)
+            [(1, 1, 1, 1, 1, 1, 1), (10, -2, 1, 1, 0, 0, 0),
+             (5, 1, -1, 2, -1, 0, 0), (5, 1, 2, -1, -1, 0, 0),
              (8, 0, -1, -1, 0, -zeta5^3 - zeta5^2, zeta5^3 + zeta5^2 + 1),
-             (9, 1, 0, 0, 1, -1, -1), (10, -2, 1, 1, 0, 0, 0)]
+             (8, 0, -1, -1, 0, zeta5^3 + zeta5^2 + 1, -zeta5^3 - zeta5^2),
+             (9, 1, 0, 0, 1, -1, -1)]
 
         Suppose that you have a class function `f(g)` on
         `G` and you know the values `v_1, \ldots, v_n` on
@@ -3589,7 +3596,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: [x.values() for x in irr]                                             # needs sage.rings.number_field
             [[1, -1, 1], [2, 0, -1], [1, 1, 1]]
         """
-        return [ClassFunction_libgap(self, irr) for irr in self._libgap_().Irr()]
+        return [ClassFunction(self, irr) for irr in self._libgap_().Irr()]
 
     def trivial_character(self):
         r"""
@@ -3616,7 +3623,7 @@ class PermutationGroup_generic(FiniteGroup):
             sage: G.character([1]*n)                                                    # needs sage.rings.number_field
             Character of Alternating group of order 4!/2 as a permutation group
         """
-        return ClassFunction_libgap(self, values)
+        return ClassFunction(self, values)
 
     def conjugacy_classes_representatives(self):
         """
@@ -4944,9 +4951,11 @@ class PermutationGroup_generic(FiniteGroup):
 
             sage: G = SymmetricGroup(5)
             sage: G.poincare_series(2, 10)                             # optional - gap_package_hap
+            The series is guaranteed correct for group cohomology in degrees < 11
             (x^2 + 1)/(x^4 - x^3 - x + 1)
             sage: G = SymmetricGroup(3)
             sage: G.poincare_series(2, 10)                             # optional - gap_package_hap
+            The series is guaranteed correct for group cohomology in degrees < 11
             -1/(x - 1)
 
         AUTHORS:

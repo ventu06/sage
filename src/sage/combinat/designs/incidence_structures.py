@@ -43,12 +43,13 @@ from __future__ import annotations
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
+from sage.structure.sage_object import SageObject
 from sage.sets.set import Set
 
 lazy_import('sage.libs.gap.libgap', 'libgap')
 
 
-class IncidenceStructure:
+class IncidenceStructure(SageObject):
     r"""
     A base class for incidence structures (i.e. hypergraphs, i.e. set systems)
 
@@ -142,7 +143,7 @@ class IncidenceStructure:
         True
     """
     def __init__(self, points=None, blocks=None, incidence_matrix=None,
-                 name=None, check=True, copy=True):
+                 name=None, check=True, copy=True) -> None:
         r"""
         TESTS::
 
@@ -260,7 +261,7 @@ class IncidenceStructure:
             for b in self._blocks:
                 yield [self._points[i] for i in b]
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         """
         A print method.
 
@@ -275,7 +276,7 @@ class IncidenceStructure:
 
     __str__ = __repr__
 
-    def __eq__(self, other):
+    def __eq__(self, other) -> bool:
         """
         Test whether the two incidence structures are equal.
 
@@ -320,7 +321,7 @@ class IncidenceStructure:
         other_blocks = sorted(sorted(p_to_i[p] for p in b) for b in other.blocks())
         return self._blocks == other_blocks
 
-    def __ne__(self, other):
+    def __ne__(self, other) -> bool:
         r"""
         Difference test.
 
@@ -334,7 +335,7 @@ class IncidenceStructure:
         """
         return not self == other
 
-    def __contains__(self, block):
+    def __contains__(self, block) -> bool:
         r"""
         Test if a block belongs to the incidence structure.
 
@@ -1067,14 +1068,25 @@ class IncidenceStructure:
         B = self._blocks
         return all(B[i] != B[i + 1] for i in range(len(B) - 1))
 
-    def _gap_(self):
+    def _gap_init_(self) -> str:
         """
         Return the GAP string describing the design.
 
         EXAMPLES::
 
+            sage: # optional - gap_package_design
             sage: BD = IncidenceStructure(7,[[0,1,2],[0,3,4],[0,5,6],[1,3,5],[1,4,6],[2,3,6],[2,4,5]])
-            sage: BD._gap_()
+            sage: gap.load_package("design")
+            sage: gap(BD)
+            rec(
+              blocks := [ [ 1, 2, 3 ], [ 1, 4, 5 ], [ 1, 6, 7 ], [ 2, 4, 6 ],
+                  [ 2, 5, 7 ], [ 3, 4, 7 ], [ 3, 5, 6 ] ],
+              isBlockDesign := true,
+              v := 7 )
+
+        TESTS::
+
+            sage: BD._gap_init_()  # optional - gap_package_design
             'BlockDesign(7,[[1, 2, 3], [1, 4, 5], [1, 6, 7], [2, 4, 6], [2, 5, 7], [3, 4, 7], [3, 5, 6]])'
         """
         v = self.n_points()
@@ -1097,7 +1109,7 @@ class IncidenceStructure:
         gB = [[x + 1 for x in b] for b in self._blocks]
         return libgap.BlockDesign(v, gB)
 
-    def intersection_graph(self, sizes=None):
+    def intersection_graph(self, sizes=None, immutable=False):
         r"""
         Return the intersection graph of the incidence structure.
 
@@ -1110,6 +1122,9 @@ class IncidenceStructure:
         - ``sizes`` -- list/set of integers; for convenience, setting
           ``sizes`` to ``5`` has the same effect as ``sizes=[5]``. When set to
           ``None`` (default), behaves as ``sizes=PositiveIntegers()``.
+
+        - ``immutable`` -- boolean (default: ``False``); whether to return an
+          immutable or a mutable graph
 
         EXAMPLES:
 
@@ -1131,7 +1146,8 @@ class IncidenceStructure:
         elif sizes in PositiveIntegers():
             sizes = (sizes,)
         V = [Set(v) for v in self]
-        return Graph([V, lambda x, y: len(x & y) in sizes], loops=False)
+        return Graph([V, lambda x, y: len(x & y) in sizes], format="rule",
+                     loops=False, immutable=immutable)
 
     def incidence_matrix(self):
         r"""

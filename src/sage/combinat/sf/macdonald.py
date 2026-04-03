@@ -12,28 +12,9 @@ where `K_{\mu\nu}(q,t)` are the Macdonald `q,t`-Koskta coefficients.
 
 The `Ht` in this case is short for `{\tilde H}` and is the basis which is
 the graded Frobenius image of the Garsia-Haiman modules [GH1993]_.
-
-REFERENCES:
-
-- [Mac1995]_
-
-.. [GH1993] \A. Garsia, M. Haiman, A graded representation module for Macdonald's
-   polynomials, Proc. Nat. Acad. U.S.A. no. 90, 3607--3610.
-
-.. [BGHT1999] \F. Bergeron, A. M. Garsia, M. Haiman, and G. Tesler, Identities and
-   positivity conjectures for some remarkable operators in the theory of symmetric
-   functions, Methods Appl. Anal. 6 (1999), no. 3, 363--420.
-
-.. [LLM1998] \L. Lapointe, A. Lascoux, J. Morse, Determinantal Expressions for
-   Macdonald Polynomials, IRMN no. 18 (1998).
-   :arxiv:`math/9808050`.
-
-.. [BH2013] \F. Bergeron, M. Haiman, Tableaux Formulas for Macdonald Polynomials,
-   Special edition in honor of Christophe Reutenauer 60 birthday, International
-   Journal of Algebra and Computation, Volume 23, Issue 4, (2013), pp. 833-852.
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2007 Mike Hansen <mhansen@gmail.com>,
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -45,8 +26,8 @@ REFERENCES:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
-#*****************************************************************************
+#                  https://www.gnu.org/licenses/
+# ***************************************************************************
 
 import functools
 
@@ -272,7 +253,7 @@ class Macdonald(UniqueRepresentation):
         ::
 
             sage: Sym = SymmetricFunctions(QQ['x','y','z'].fraction_field())
-            sage: (x,y,z) = Sym.base_ring().gens()
+            sage: x, y, z = Sym.base_ring().gens()
             sage: Macxy = Sym.macdonald(q=x,t=y)
             sage: Macyz = Sym.macdonald(q=y,t=z)
             sage: Maczx = Sym.macdonald(q=z,t=x)
@@ -1769,14 +1750,13 @@ class MacdonaldPolynomials_s(MacdonaldPolynomials_generic):
             (q*t - t^2 - q + t)/(-q^3 + q^2 + q - 1)
         """
         # Convert to the power sum
-        (q, t) = QQqt.gens()
+        q, t = QQqt.gens()
         p = self._sym.p()
         s = self._s
         p_x = p(s(part))
         f = lambda m, c: (m, c * prod([(1 - t**k) / (1 - q**k) for k in m]))
         res = s(p_x.map_item(f))
-        f = res.coefficient
-        return f
+        return res.coefficient
 
     def _s_cache(self, n):
         r"""

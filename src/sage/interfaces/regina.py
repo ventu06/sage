@@ -259,7 +259,7 @@ class Regina(ExtraTabCompletion, Interface):
             for e in AlgorithmExt:
                 d[e.name] = e
             # set up the globals
-            D = {k: v for k, v in d.items()}
+            D = dict(d)
             D[self._namespace.__name__] = self._namespace
             D[self.name()] = regina
             self._regina_globals = D
@@ -920,6 +920,7 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
             if locals:
                 lc.update(locals)
             from sage.misc.sage_eval import sage_eval
+            from sage.repl.preparse import implicit_mul
             s = self.detail().split('\n')[0]
             s = s.replace(' ', '')
             v = list(lc)
@@ -955,7 +956,6 @@ class ReginaElement(ExtraTabCompletion, InterfaceElement):
                 lc = R.gens_dict()
             return from_detail_str(lc)
         elif isinstance(inst, nspc.GroupExpression):
-            from sage.repl.preparse import implicit_mul
             num_gens = max(t.generator for t in inst.terms()) + 1
             if self._sage_parent:
                 F = self._sage_parent

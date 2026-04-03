@@ -56,35 +56,6 @@ from .base7 import Polyhedron_base7
 #########################################################################
 
 
-#########################################################################
-def is_Polyhedron(X):
-    """
-    Test whether ``X`` is a Polyhedron.
-
-    INPUT:
-
-    - ``X`` -- anything
-
-    OUTPUT: boolean
-
-    EXAMPLES::
-
-        sage: p = polytopes.hypercube(2)
-        sage: from sage.geometry.polyhedron.base import is_Polyhedron
-        sage: is_Polyhedron(p)
-        doctest:warning...
-        DeprecationWarning: is_Polyhedron is deprecated, use isinstance instead
-        See https://github.com/sagemath/sage/issues/34307 for details.
-        True
-        sage: is_Polyhedron(123456)
-        False
-    """
-    from sage.misc.superseded import deprecation
-    deprecation(34307, "is_Polyhedron is deprecated, use isinstance instead")
-    return isinstance(X, Polyhedron_base)
-
-
-#########################################################################
 class Polyhedron_base(Polyhedron_base7):
     """
     Base class for Polyhedron objects.
@@ -237,7 +208,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over an embedded number field::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron()
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -246,7 +216,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with floating point::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, base_ring=RDF)
             sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-5
@@ -254,7 +223,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Same example with a specific floating point solver::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: lp, x = p.to_linear_program(return_variable=True, solver='GLPK')
             sage: lp.set_objective(x[0] + x[1] + x[2])
             sage: lp.solve()                                               # tol 1e-8
@@ -262,7 +230,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Irrational algebraic linear program over `AA`::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: p = polytopes.icosahedron(base_ring=AA)
             sage: lp, x = p.to_linear_program(return_variable=True)
             sage: lp.set_objective(x[0] + x[1] + x[2])
@@ -324,7 +291,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         The boundary complex of the octahedron::
 
-            sage: # needs sage.graphs
             sage: oc = polytopes.octahedron()
             sage: sc_oc = oc.boundary_complex()
             sage: fl_oc = oc.face_lattice()                                             # needs sage.combinat
@@ -993,7 +959,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         This example tests the functionality for additional elements::
 
-            sage: # needs sage.groups sage.rings.real_mpfr
             sage: C = polytopes.cross_polytope(2)
             sage: G = C.restricted_automorphism_group(output='permutation')
             sage: conj_reps = G.conjugacy_classes_representatives()
@@ -1161,7 +1126,6 @@ class Polyhedron_base(Polyhedron_base7):
 
         Algebraic polyhedron::
 
-            sage: # needs sage.groups sage.rings.number_field
             sage: P = polytopes.dodecahedron(); P
             A 3-dimensional polyhedron
              in (Number Field in sqrt5 with defining polynomial x^2 - 5

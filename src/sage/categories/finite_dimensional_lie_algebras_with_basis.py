@@ -1,4 +1,3 @@
-# sage_setup: distribution = sagemath-categories
 r"""
 Finite Dimensional Lie Algebras With Basis
 
@@ -1146,8 +1145,7 @@ class FiniteDimensionalLieAlgebrasWithBasis(CategoryWithAxiom_over_base_ring):
                 sage: L.<X,Y,Z,W,U> = LieAlgebra(QQ, 2, step=3)
                 sage: E = L.quotient(U); E
                 Lie algebra quotient L/I of dimension 4 over Rational Field where
-                 L: Free Nilpotent Lie algebra on 5 generators (X, Y, Z, W, U)
-                    over Rational Field
+                 L: Free Nilpotent Lie algebra of rank 2 and step 3 over Rational Field
                  I: Ideal (U)
                 sage: E.basis().list()
                 [X, Y, Z, W]

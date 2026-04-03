@@ -752,7 +752,6 @@ def color_list(color, n):
 
     EXAMPLES::
 
-        sage: # needs sage.plot
         sage: from sage.geometry.toric_plotter import color_list
         sage: color_list("grey", 1)
         [RGB color (0.5019607843137255, 0.5019607843137255, 0.5019607843137255)]
@@ -833,9 +832,9 @@ def label_list(label, n, math_mode, index_set=None):
         index_set = range(n)
     if math_mode:
         label = label.strip("$")
-        return list("$%s_{%d}$" % (label, i) for i in index_set)
+        return ["$%s_{%d}$" % (label, i) for i in index_set]
     else:
-        return list("%s_%d" % (label, i) for i in index_set)
+        return ["%s_%d" % (label, i) for i in index_set]
 
 
 def options(option=None, **kwds):
