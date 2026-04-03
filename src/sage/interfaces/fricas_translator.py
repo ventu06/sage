@@ -44,7 +44,7 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Polynomial": ("_simple", "_eval_polynomialring"),
              "Factored": ("_simple", "_eval_factorization"),
              "Vector": ("_simple", "_eval_list"),
-             "DirectProduct": (lambda x: ("Vector", x[2]), "_eval_list"),
+             "DirectProduct": ("_aggregate", "_eval_list"),
              "UnivariatePolynomial": (lambda x: ("Polynomial", x[2]),
                                       "_eval_polynomialring"),  # coerce to Polynomial
              "DistributedMultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
@@ -98,6 +98,12 @@ class SEXPorter:
     def _finite(self):
         return f"FiniteExport({self._unparse()})"
 
+    def _aggregate(self):
+        inner = SEXPorter(self._domain[2])
+        base_str = inner._unparse()
+        export_str = inner.package_call()
+        return f"AggregateExport({base_str}, {self._unparse()}, {export_str})"
+
     def _simple(self):
         """
         Return ``SimpleExport`` of ``self._domain[1]``.
@@ -122,7 +128,7 @@ class SEXPorter:
             'SimpleExport(Polynomial(Integer), SimpleExport(Integer, InputFormExport(Integer)))'
 
             sage: SEXPorter(('DirectProduct', 2, ('Integer',))).package_call()
-            'SimpleExport(Integer, InputFormExport(Integer))'
+            'AggregateExport(Integer, DirectProduct(2,Integer), InputFormExport(Integer))'
         """
         head = self._domain[0]
         if head not in _DISPATCH:
@@ -294,6 +300,17 @@ class SEXEvaluator:
         base = self._dom.base()
         names = tuple(sorted(set(v for mon, _ in self._ast for v, _ in mon)))
         P = self._dom.parent(names=names)
+
+        from sage.rings.polynomial.polynomial_ring import PolynomialRing_generic
+        if isinstance(P, PolynomialRing_generic):
+
+            def to_exponent(mon):
+                if len(mon):
+                    return mon[0][1]
+                return 0
+
+            return P._from_dict({to_exponent(mon): SEXEvaluator(c, base).eval()
+                                 for mon, c in self._ast})
 
         def to_tuple(mon):
             t = [0]*len(P._names)
@@ -479,7 +496,8 @@ class LazyParent:
                     "Fraction",
                     "Matrix",
                     "Polynomial",
-                    "Factored"]:
+                    "Factored",
+                    "Vector"]:
             return LazyParent(args[0])
 
         if head in ["UnivariatePolynomial",
@@ -542,7 +560,7 @@ class LazyParent:
                 self._polynomial_symbols = []
             self._polynomial_symbols = sorted(set(list(kwargs.get("names", []))
                                                   + self._polynomial_symbols))
-
+            # we always want a multivariate polynomial ring here
             return PolynomialRing(base,
                                   len(self._polynomial_symbols),
                                   names=self._polynomial_symbols)

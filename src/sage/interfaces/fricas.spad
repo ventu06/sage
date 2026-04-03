@@ -16,6 +16,13 @@ FiniteExport(R: Finite) : with
         sexport(obj: R): SExpression ==
             convert(lookup(obj))@SExpression
 
+)abb package EXPORTA AggregateExport
+AggregateExport(T: Type, S: Join(HomogeneousAggregate(T), finiteAggregate), ET: with (sexport : T -> SExpression)) : with
+        sexport: S -> SExpression
+    == add
+        sexport(obj: S): SExpression ==
+            convert([sexport(e)$ET for e in parts(obj)])@SExpression
+
 )abb package EXPORT1 SimpleExport
 ++ For domain constructors depending only on a single type
 SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with

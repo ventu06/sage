@@ -1258,6 +1258,9 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: fricas("matrix([[2,3],[4,x+5]])").diagonal().sage()
             (2, x + 5)
 
+            sage: fricas("[1,1/x]::DirectProduct(2, Fraction UnivariatePolynomial(x, Integer))").sage()
+            (1, 1/x)
+
         Lists::
 
             sage: fricas("[2^n/x^n for n in 0..5]").sage()
