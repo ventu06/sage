@@ -300,8 +300,8 @@ class HasseDiagram(DiGraph):
 
         .. NOTE::
 
-            If the :meth:`lequal_matrix` has been computed, then this method is
-            redefined to use the cached data.
+            If the :meth:`lequal_matrix` has been computed, then this
+            method uses the cached data.
 
         EXAMPLES::
 
@@ -319,7 +319,7 @@ class HasseDiagram(DiGraph):
             sage: H.is_lequal(z,z)
             True
         """
-        if "_leq_storage" in self.__dict__:
+        if "_leq_storage" in self.__dict__:  # hopefully very fast
             return j in self._leq_storage[i]
         return i == j or (i < j and j in self.breadth_first_search(i))
 
@@ -344,9 +344,7 @@ class HasseDiagram(DiGraph):
             sage: H.is_less_than(z,z)
             False
         """
-        if x == y:
-            return False
-        return self.is_lequal(x, y)
+        return x != y and self.is_lequal(x, y)
 
     def is_gequal(self, x, y) -> bool:
         r"""
@@ -396,9 +394,7 @@ class HasseDiagram(DiGraph):
             sage: Q.is_greater_than(z,z)
             False
         """
-        if x == y:
-            return False
-        return self.is_lequal(y, x)
+        return x != y and self.is_lequal(y, x)
 
     def minimal_elements(self) -> list[int]:
         """
