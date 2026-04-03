@@ -192,7 +192,7 @@ from sage.categories.integral_domains import IntegralDomains
 from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.misc.cachefunc import cached_method
 from sage.misc.lazy_attribute import lazy_attribute
-from sage.misc.lazy_import import LazyImport
+from sage.misc.lazy_import import LazyImport, lazy_import
 from sage.misc.randstate import current_randstate
 from sage.modules.free_module_element import (
     FreeModuleElement,
@@ -217,8 +217,8 @@ from sage.structure.richcmp import (
 )
 from sage.structure.sequence import Sequence
 
-LazyImport('sage.symbolic.ring', 'SymbolicRing')
-LazyImport('sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+lazy_import('sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 ###############################################################################
 #
