@@ -1418,40 +1418,6 @@ class HasseDiagram(DiGraph):
             return self._leq_matrix_boolean
         return self._leq_matrix
 
-    def _alternate_is_lequal(self, i, j) -> bool:
-        r"""
-        Return ``True`` if ``i`` is less than or equal to ``j`` in
-        ``self``, and ``False`` otherwise.
-
-        .. NOTE::
-
-            If the dictionary :meth:`_leq_storage` has been computed, then
-            :meth:`is_lequal` is redefined to use the cached data.
-
-        EXAMPLES::
-
-            sage: from sage.combinat.posets.hasse_diagram import HasseDiagram
-            sage: H = HasseDiagram({0:[2], 1:[2], 2:[3], 3:[4], 4:[]})
-            sage: H.lequal_matrix()                                                     # needs sage.modules
-            [1 0 1 1 1]
-            [0 1 1 1 1]
-            [0 0 1 1 1]
-            [0 0 0 1 1]
-            [0 0 0 0 1]
-            sage: x,y,z = 0, 1, 4
-            sage: H._alternate_is_lequal(x,y)
-            False
-            sage: H._alternate_is_lequal(y,x)
-            False
-            sage: H._alternate_is_lequal(x,z)
-            True
-            sage: H._alternate_is_lequal(y,z)
-            True
-            sage: H._alternate_is_lequal(z,z)
-            True
-        """
-        return j in self._leq_storage[i]
-
     def prime_elements(self) -> tuple[list[int], list[int]]:
         r"""
         Return the join-prime and meet-prime elements of the bounded poset.
