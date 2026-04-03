@@ -136,6 +136,8 @@ from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunctio
 
 from sage.rings.polynomial.polydict cimport ETuple
 
+from sage.symbolic.ring import SymbolicRing
+
 
 cdef class Polynomial(CommutativePolynomial):
     """
@@ -8871,7 +8873,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 return [rt for (rt, mult) in rts_mult]
 
-        if isinstance(L, sage.rings.abc.SymbolicRing):
+        if isinstance(L, SymbolicRing):
             if self.degree() == 2:
                 from sage.misc.functional import sqrt
                 from sage.symbolic.constants import I

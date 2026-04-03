@@ -49,7 +49,6 @@ from sage.structure.parent cimport Parent
 from sage.categories.morphism cimport Morphism
 from sage.structure.coerce cimport is_numpy_type
 
-import sage.rings.abc
 from sage.rings.integer_ring import ZZ
 
 import keyword
@@ -60,7 +59,7 @@ KEYWORDS = set(keyword.kwlist).union(['exec', 'print', 'None', 'True',
                                       'False', 'nonlocal'])
 
 
-cdef class SymbolicRing(sage.rings.abc.SymbolicRing):
+cdef class SymbolicRing(Parent):
     """
     Symbolic Ring, parent object for all symbolic expressions.
     """

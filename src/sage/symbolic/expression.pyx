@@ -407,6 +407,9 @@ include "pynac_impl.pxi"
 
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
+from sage.symbolic.callable import (CallableSymbolicExpressionRing_class,
+                                    CallableSymbolicExpressionRing)
+
 
 def _dict_update_check_duplicate(dict d1, dict d2):
     r"""
@@ -3074,7 +3077,7 @@ cdef class Expression(Expression_abc):
             sage: (a+2*x).is_callable()
             False
         """
-        return isinstance(self.parent(), sage.rings.abc.CallableSymbolicExpressionRing)
+        return isinstance(self.parent(), CallableSymbolicExpressionRing_class)
 
     def left_hand_side(self):
         """
@@ -6735,7 +6738,6 @@ cdef class Expression(Expression_abc):
             if not (isinstance(i, Expression) and i.is_symbol()):
                 break
         else:
-            from sage.symbolic.callable import CallableSymbolicExpressionRing
             R = CallableSymbolicExpressionRing(args, check=False)
             return R(self)
         raise TypeError(f"must construct a function with symbolic variables as arguments, got {args}.")
@@ -13167,7 +13169,7 @@ cdef class Expression(Expression_abc):
         from sage.symbolic.integration.integral import \
             integral, _normalize_integral_input
         R = self._parent
-        if isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing):
+        if isinstance(R, CallableSymbolicExpressionRing_class):
             from sage.symbolic.ring import SR
             f = SR(self)
             f, v, a, b = _normalize_integral_input(f, *args)

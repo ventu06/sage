@@ -215,7 +215,7 @@ lazy_import('sage.combinat.words.abstract_word', 'Word_class')
 lazy_import('sage.combinat.words.finite_word', 'FiniteWord_class')
 lazy_import('sage.combinat.words.infinite_word', 'InfiniteWord_class')
 lazy_import('sage.combinat.words.word', 'Word')
-
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 ZZ_0 = Integer(0)
 ZZ_1 = Integer(1)
@@ -2701,14 +2701,14 @@ def continued_fraction(x, value=None):
             pass
 
     if is_real is False:
-        raise ValueError("the number %s does not seem to be a real number" % x)
+        raise ValueError(f"the number {x} does not seem to be a real number")
 
     if x.parent().is_exact():
         return ContinuedFraction_real(x)
 
     # We treat the Symbolic Ring and its subrings separately.  They hold all constants and
     # are not exact.
-    if isinstance(x.parent(), sage.rings.abc.SymbolicRing):
+    if isinstance(x.parent(), SymbolicRing):
         return ContinuedFraction_real(x)
 
     return continued_fraction(continued_fraction_list(x))

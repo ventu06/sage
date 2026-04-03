@@ -8,7 +8,7 @@ AUTHORS:
 - John Cremona (2008-01): EllipticCurve(j) fixed for all cases
 """
 
-#*****************************************************************************
+# ***************************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
 #  Distributed under the terms of the GNU General Public License (GPL)
@@ -21,7 +21,9 @@ AUTHORS:
 #  The full text of the GPL is available at:
 #
 #                  http://www.gnu.org/licenses/
-#*****************************************************************************
+# ***************************************************************************
+
+from sage.misc.lazy_import import lazy_import
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
@@ -35,11 +37,14 @@ from sage.rings.polynomial.multi_polynomial import MPolynomial
 
 from sage.categories.rings import Rings
 from sage.categories.fields import Fields
-_Fields = Fields()
 
 from sage.structure.sequence import Sequence
 from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
+_Fields = Fields()
 
 
 class EllipticCurveFactory(UniqueFactory):
@@ -424,7 +429,7 @@ class EllipticCurveFactory(UniqueFactory):
                 raise ValueError("no symbolic relations other than equalities are allowed")
             x = x.lhs() - x.rhs()
 
-        if isinstance(parent(x), sage.rings.abc.SymbolicRing):
+        if isinstance(parent(x), SymbolicRing):
             x = x._polynomial_(QQ['x', 'y'])
 
         if isinstance(x, MPolynomial):
@@ -724,9 +729,9 @@ def coefficients_from_j(j, minimal_twist=True):
         # we construct the minimal twist, i.e. the curve with minimal
         # conductor with this j_invariant:
         if j == 0:
-            return Sequence([0, 0, 1, 0, 0], universe=K) # 27a3
+            return Sequence([0, 0, 1, 0, 0], universe=K)  # 27a3
         if j == 1728:
-            return Sequence([0, 0, 0, -1, 0], universe=K) # 32a2
+            return Sequence([0, 0, 0, -1, 0], universe=K)  # 32a2
 
         if not minimal_twist:
             k = j-1728

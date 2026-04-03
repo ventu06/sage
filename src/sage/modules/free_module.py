@@ -217,6 +217,9 @@ from sage.structure.richcmp import (
 )
 from sage.structure.sequence import Sequence
 
+LazyImport('sage.symbolic.ring', 'SymbolicRing')
+LazyImport('sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
+
 ###############################################################################
 #
 # Constructor functions
@@ -8486,10 +8489,10 @@ def element_class(R, is_sparse):
             pass
         else:
             return Vector_complex_double_dense
-    elif isinstance(R, sage.rings.abc.CallableSymbolicExpressionRing) and not is_sparse:
+    elif isinstance(R, CallableSymbolicExpressionRing_class) and not is_sparse:
         import sage.modules.vector_callable_symbolic_dense
         return sage.modules.vector_callable_symbolic_dense.Vector_callable_symbolic_dense
-    elif isinstance(R, sage.rings.abc.SymbolicRing):
+    elif isinstance(R, SymbolicRing):
         if not is_sparse:
             import sage.modules.vector_symbolic_dense
             return sage.modules.vector_symbolic_dense.Vector_symbolic_dense
