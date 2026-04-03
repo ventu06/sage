@@ -39,7 +39,9 @@ _DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
              "Matrix": ("_simple", "_eval_matrix"),
              "Polynomial": ("_simple", "_eval_polynomialring"),
              "Factored": ("_simple", "_eval_factorization"),
-             "DistributedMultivariatePolynomial": ("_list_symbol", "_eval_polynomialring")}
+             "UnivariatePolynomial": ("_simple1", "_eval_polynomialring"),  # FriCAS coerces to Polynomial
+             "DistributedMultivariatePolynomial": ("_simple1", "_eval_polynomialring"),
+             "MultivariatePolynomial": ("_simple1", "_eval_polynomialring")}
 
 
 class SEXPorter:
@@ -79,19 +81,24 @@ class SEXPorter:
         return f"FiniteExport({self._unparse()})"
 
     def _simple(self):
+        """
+        Return ``SimpleExport`` of ``self._domain[1]``.
+        """
         inner = SEXPorter(self._domain[1])
         base_str = inner._unparse()
         export_str = inner.package_call()
 
         return f"SimpleExport({base_str}, {export_str})"
 
-    def _list_symbol(self):
-        args_str = "[" + ",".join(f'"{s}"' for s in self._domain[1]) + "]"
+    def _simple1(self):
+        """
+        Return ``SimpleExport`` of ``self._domain[2]``.
+        """
         inner = SEXPorter(self._domain[2])
         base_str = inner._unparse()
         export_str = inner.package_call()
 
-        return f"ListSymbolExport({args_str}, {base_str}, {export_str})"
+        return f"SimpleExport({base_str}, {export_str})"
 
     def package_call(self):
         """
@@ -103,9 +110,10 @@ class SEXPorter:
             sage: SEXPorter(("List", ("FiniteField", 2, 3))).package_call()
             'SimpleExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
         """
-        if not isinstance(self._domain, tuple):
-            return f"InputFormExport({self._domain})"
         head = self._domain[0]
+        if head not in _DISPATCH:
+            raise NotImplementedError(f"{head} cannot be translated from FriCAS to SageMath yet")
+
         return getattr(self, _DISPATCH[head][0])()
 
 
@@ -268,17 +276,14 @@ class SEXEvaluator:
             sage: SEXEvaluator(obj, LazyParent(dom)).eval()
             x^2*y - 3*z + 1
         """
-        from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-
         base = self._dom.base()
-        names = sorted(set(v for mon, _ in self._ast for v, _ in mon))
-        # we force the polynomial ring to be multivariate
-        P = PolynomialRing(base.parent(), len(names), names=names)
+        names = tuple(sorted(set(v for mon, _ in self._ast for v, _ in mon)))
+        P = self._dom.parent(names=names)
 
         def to_tuple(mon):
-            t = [0]*len(names)
+            t = [0]*len(P._names)
             for v, e in mon:
-                t[names.index(v)] = e
+                t[P._names.index(v)] = e
             return tuple(t)
 
         return P._from_dict({to_tuple(mon): SEXEvaluator(c, base).eval()
@@ -455,10 +460,16 @@ class LazyParent:
     def base(self):
         head = self.head()
         args = self.args()
-        if head in ["List", "Matrix", "Polynomial", "Fraction", "Factored"]:
+        if head in ["List",
+                    "Fraction",
+                    "Matrix",
+                    "Polynomial",
+                    "Factored"]:
             return LazyParent(args[0])
 
-        if head in ["DistributedMultivariatePolynomial"]:
+        if head in ["UnivariatePolynomial",
+                    "MultivariatePolynomial",
+                    "DistributedMultivariatePolynomial"]:
             return LazyParent(args[1])
 
         raise NotImplementedError(f"Cannot build base for {head}")
@@ -491,15 +502,31 @@ class LazyParent:
 
         if head == "Fraction":
             from sage.rings.fraction_field import FractionField
-            return FractionField(self.base().parent())
+            base = self.base().parent(**kwargs)
+            return FractionField(base)
 
-        if head in ["DistributedMultivariatePolynomial"]:
+        if head in ["UnivariatePolynomial",
+                    "MultivariatePolynomial",
+                    "DistributedMultivariatePolynomial"]:
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
-            return PolynomialRing(self.base().parent(), args[0])
+            base = self.base().parent(**kwargs)
+            return PolynomialRing(base, args[0])
+
+        if head == "Polynomial":
+            from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
+            base = self.base().parent(**kwargs)
+            if not hasattr(self, "_polynomial_symbols"):
+                self._polynomial_symbols = []
+            self._polynomial_symbols = sorted(set(list(kwargs.get("names", []))
+                                                  + self._polynomial_symbols))
+
+            return PolynomialRing(base,
+                                  len(self._polynomial_symbols),
+                                  names=self._polynomial_symbols)
 
         if head == "Matrix":
             from sage.matrix.matrix_space import MatrixSpace
-            base = self.base().parent()
+            base = self.base().parent(**kwargs)
             nrows = kwargs["nrows"]
             ncols = kwargs["ncols"]
             return MatrixSpace(base, nrows, ncols)

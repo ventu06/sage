@@ -57,12 +57,3 @@ SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with
                 l := listOfTerms obj
                 convert([convert([monomial(mon.k), sexport(mon.c)$ET])@SExpression
 		         for mon in l])@SExpression
-
-)abb package EXPORT2 ListSymbolExport
-ListSymbolExport(args : List Symbol, T : Type, ET : with (sexport : T -> SExpression)) : with
-        sexport: DistributedMultivariatePolynomial(args,  T) -> SExpression
-    == add
-        if T has Ring then
-            sexport(obj: DistributedMultivariatePolynomial(args,  T)): SExpression ==
-                p: Polynomial T := dmpToP(obj)$PolToPol(args, T)
-                sexport(p)$SimpleExport(T, ET)

@@ -1196,7 +1196,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: a.sage()
             x^2 + 1
             sage: _.parent()
-            Univariate Polynomial Ring in x over Integer Ring
+            Multivariate Polynomial Ring in x over Integer Ring
             sage: fricas('x^2 + y^2 + 1/2').sage()
             x^2 + y^2 + 1/2
             sage: _.parent()
@@ -1256,7 +1256,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         Matrices::
 
-            sage: fricas("matrix [[x^n/2^m for n in 0..5] for m in 0..3]").sage()   # long time
+            sage: fricas("matrix [[x^n/2^m for n in 0..5] for m in 0..3]").sage()
             [      1       x     x^2     x^3     x^4     x^5]
             [    1/2   1/2*x 1/2*x^2 1/2*x^3 1/2*x^4 1/2*x^5]
             [    1/4   1/4*x 1/4*x^2 1/4*x^3 1/4*x^4 1/4*x^5]
@@ -1264,10 +1264,10 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         Lists::
 
-            sage: fricas("[2^n/x^n for n in 0..5]").sage()                      # long time
+            sage: fricas("[2^n/x^n for n in 0..5]").sage()
             [1, 2/x, 4/x^2, 8/x^3, 16/x^4, 32/x^5]
 
-            sage: fricas("[matrix [[i for i in 1..n]] for n in 0..5]").sage()   # long time
+            sage: fricas("[matrix [[i for i in 1..n]] for n in 0..5]").sage()
             [[], [1], [1 2], [1 2 3], [1 2 3 4], [1 2 3 4 5]]
 
         Error handling::
@@ -1294,20 +1294,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: s.sage()
             Traceback (most recent call last):
             ...
-            NotImplementedError: the translation of the FriCAS object
-            <BLANKLINE>
-                  1     1  2    1  3    5   4    7   5    21   6    33   7    429   8
-              1 + - x - - x  + -- x  - --- x  + --- x  - ---- x  + ---- x  - ----- x
-                  2     8      16      128      256      1024      2048      32768
-            +
-               715   9    2431   10      11
-              ----- x  - ------ x   + O(x  )
-              65536      262144
-            <BLANKLINE>
-            to sage is not yet implemented:
-            An error occurred when FriCAS evaluated 'unparse(...::InputForm)':
-            <BLANKLINE>
-               Cannot convert the value from type Any to InputForm .
+            NotImplementedError: UnivariatePuiseuxSeries cannot be translated from FriCAS to SageMath yet
 
         TESTS::
 
