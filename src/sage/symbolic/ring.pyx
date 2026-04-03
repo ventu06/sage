@@ -540,6 +540,18 @@ cdef class SymbolicRing(Parent):
         """
         return True
 
+    def fraction_field(self):
+        """
+        Return ``True``, since the symbolic expression ring is (for the most
+        part) a field.
+
+        EXAMPLES::
+
+            sage: SR.fraction_field() is SR
+            True
+        """
+        return self
+
     def is_finite(self):
         """
         Return ``False``, since the Symbolic Ring is infinite.
