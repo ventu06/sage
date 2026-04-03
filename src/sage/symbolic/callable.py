@@ -243,6 +243,7 @@ class CallableSymbolicExpressionRing_class(SymbolicRing):
             sage: TestSuite(f.parent()).run(skip=['_test_divides'])
         """
         self._arguments = arguments
+        from sage.symbolic.ring import SR
         SymbolicRing.__init__(self, SR)
         self._populate_coercion_lists_(coerce_list=[SR])
         self.symbols = SR.symbols  # Use the same list of symbols as SR
