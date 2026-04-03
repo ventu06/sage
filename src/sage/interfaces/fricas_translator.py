@@ -272,16 +272,8 @@ class SEXEvaluator:
 
         base = self._dom.base()
         names = sorted(set(v for mon, _ in self._ast for v, _ in mon))
-        P = PolynomialRing(base.parent(), names=names)
-        if len(names) == 1:
-
-            def to_exponent(mon):
-                if len(mon):
-                    return mon[0][1]
-                return 0
-
-            return P._from_dict({to_exponent(mon): SEXEvaluator(c, base).eval()
-                                 for mon, c in self._ast})
+        # we force the polynomial ring to be multivariate
+        P = PolynomialRing(base.parent(), len(names), names=names)
 
         def to_tuple(mon):
             t = [0]*len(names)
