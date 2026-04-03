@@ -200,18 +200,13 @@ import os
 
 import sage.interfaces.abc
 
-from sage.misc.cachefunc import cached_method
-from sage.misc.misc_c import prod
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
 from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.misc.instancedoc import instancedoc
-from sage.rings.integer import Integer
-from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.lazy_import import lazy_import
-lazy_import('sage.symbolic.expression', ['symbol_table', 'register_symbol'])
-lazy_import('sage.calculus.var', ['var', 'function'])
+lazy_import('sage.symbolic.expression', ['register_symbol'])
 lazy_import('sage.symbolic.constants', ['I', 'e', 'pi'])
 
 FRICAS_SINGLE_LINE_START = 3  # where output starts when it fits next to the line number
@@ -1105,7 +1100,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             sage: ZZ(fricas('1'))
             1
         """
-        return ZZ(self.sage())
+        return self.sage()
 
     def _rational_(self):
         """
