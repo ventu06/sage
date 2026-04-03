@@ -1855,7 +1855,7 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: L.Chains().generating_series().truncate(7)
-            1 + X + 1/2*X^2 + 1/2*X^3 + 1/2*X^4 + 1/2*X^5 + 1/2*X^6 
+            1 + X + 1/2*X^2 + 1/2*X^3 + 1/2*X^4 + 1/2*X^5 + 1/2*X^6
         """
         P = self.parent()
         L = LazyPowerSeriesRing(P.base_ring().fraction_field(),
