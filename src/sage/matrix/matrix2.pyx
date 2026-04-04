@@ -87,6 +87,7 @@ from sage.categories.fields import Fields
 from sage.categories.integral_domains import IntegralDomains
 from sage.categories.rings import Rings
 from sage.misc.lazy_string import lazy_string
+from sage.misc.lazy_import import LazyImport
 from sage.misc.randstate cimport current_randstate
 from sage.structure.coerce cimport py_scalar_parent
 from sage.structure.sequence import Sequence
@@ -107,7 +108,8 @@ from sage.matrix.matrix_misc import permanental_minor_polynomial
 
 from sage.misc.misc_c import prod
 
-from sage.symbolic.ring import SymbolicRing
+
+SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
 
 # temporary hack to silence the warnings from #34806

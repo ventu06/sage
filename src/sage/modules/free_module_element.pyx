@@ -116,6 +116,7 @@ cimport cython
 from cpython.slice cimport PySlice_GetIndicesEx
 
 from sage.categories.rings import Rings
+from sage.misc.lazy_import import LazyImport
 from sage.misc.superseded import deprecated_function_alias
 from sage.structure.sequence import Sequence
 from sage.structure.element cimport Element, Vector
@@ -130,7 +131,9 @@ from sage.rings.abc import RealDoubleField, ComplexDoubleField
 from sage.rings.integer cimport Integer, smallInteger
 from sage.arith.numerical_approx cimport digits_to_bits
 
-from sage.symbolic.callable import CallableSymbolicExpressionRing_class
+
+CallableSymbolicExpressionRing_class = LazyImport(
+    'sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 # For the norm function, we cache Sage integers 1 and 2
 __one__ = smallInteger(1)

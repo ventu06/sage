@@ -407,7 +407,9 @@ include "pynac_impl.pxi"
 
 from sage.symbolic.symbols import symbol_table, register_symbol  # used to be defined in pynac_impl
 
-from sage.symbolic.callable import CallableSymbolicExpressionRing_class
+from sage.misc.lazy_import import LazyImport
+CallableSymbolicExpressionRing_class = LazyImport(
+    'sage.symbolic.callable', 'CallableSymbolicExpressionRing_class')
 
 
 def _dict_update_check_duplicate(dict d1, dict d2):
