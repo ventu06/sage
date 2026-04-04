@@ -2,11 +2,6 @@
 r"""
 Interface to FriCAS
 
-.. TODO::
-
-    - some conversions in ``sage.functions`` are still missing and
-      all should be checked and tested
-
 FriCAS is a free GPL-compatible (modified BSD license) general
 purpose computer algebra system based on Axiom.  The FriCAS
 website can be found at http://fricas.sourceforge.net/.
@@ -18,6 +13,9 @@ AUTHORS:
 
 - Martin Rubey, Bill Page (2016-08): Completely separate from Axiom,
   implement more complete translation from FriCAS to SageMath types.
+
+- Martin Rubey (2026-04): implement proper translation from FriCAS
+  to SageMath types.
 
 EXAMPLES::
 
@@ -716,8 +714,7 @@ http://fricas.sourceforge.net.
             lines = m.groups()[0].split("\n")
             if max(len(line) for line in lines) < FRICAS_LINE_LENGTH:
                 return "\n".join(line[FRICAS_SINGLE_LINE_START:] for line in lines)
-            else:
-                return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
+            return "\n".join(line[FRICAS_MULTI_LINE_START:] for line in lines)
 
         self._check_errors(var, output)
 
@@ -1252,10 +1249,6 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: fricas("integrate(sin((x^2+1)/x),x)").sage()
             integral(sin((x^2 + 1)/x), x)
-
-        .. TODO::
-
-            - Converting matrices and lists takes much too long.
 
         Matrices::
 
