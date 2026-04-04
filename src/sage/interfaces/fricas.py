@@ -200,10 +200,12 @@ import os
 
 import sage.interfaces.abc
 
+from importlib.resources import files
+from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.interfaces.tab_completion import ExtraTabCompletion
 from sage.interfaces.expect import Expect, ExpectElement, FunctionElement, ExpectFunction
-from sage.env import DOT_SAGE, LOCAL_IDENTIFIER
 from sage.misc.instancedoc import instancedoc
+from sage.rings.integer_ring import ZZ
 from sage.rings.rational_field import QQ
 from sage.misc.lazy_import import lazy_import
 lazy_import('sage.symbolic.expression', ['register_symbol'])
@@ -248,9 +250,8 @@ FRICAS_INIT_CODE = (
     "                                |startKeyedMsg|      |endOfKeyedMsg|))"
     "               (prin1 x)"
     "               (princ #\\Newline))))")
-# code (one-liners!) executed after having set up the prompt
+# code (one-line!) executed after having set up the prompt
 FRICAS_HELPER_CODE = (
-    ')co fricas.spad',
     'sageprint(x:SExpression):String == ' +
     '(atom? x => (' +
     'float? x => return float(x)::String;' +
@@ -347,8 +348,17 @@ class FriCAS(ExtraTabCompletion, Expect):
         # switching off the line numbers also modified the prompt
         self._prompt = FRICAS_LINENUMBER_OFF_PROMPT
         self.eval(FRICAS_LINENUMBER_OFF_CODE, reformat=False)
-        for line in FRICAS_HELPER_CODE:
-            self.eval(line, reformat=False)
+        self.eval(FRICAS_HELPER_CODE, reformat=False)
+        # compile fricas.spad
+        in_path = files('sage.interfaces').joinpath("fricas.spad")
+        out_path = os.path.join(DOT_SAGE, 'fricas')
+        try:
+            os.makedirs(out_path)
+        except OSError:
+            if not os.path.isdir(out_path):
+                raise
+        self.eval(f")cd {out_path}")
+        self.eval(f")compile {in_path}")
         # register translations between SymbolicRing and FriCAS Expression
         self._register_symbols()
 
@@ -1093,14 +1103,14 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         return float(self.sage())
 
-    def _integer_(self, ZZ=None):
+    def _integer_(self):
         """
         EXAMPLES::
 
             sage: ZZ(fricas('1'))
             1
         """
-        return self.sage()
+        return ZZ(self.sage())
 
     def _rational_(self):
         """

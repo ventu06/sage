@@ -7,6 +7,7 @@ py.install_sources(
   'expect.py',
   'four_ti_2.py',
   'fricas.py',
+  'fricas.spad',
   'fricas_translator.py',
   'frobby.py',
   'gap.py',
