@@ -215,6 +215,7 @@ FRICAS_LINE_LENGTH = 80       # length of a line, should match the line length i
 # the following messages have, unfortunately, no markup.
 FRICAS_WHAT_OPERATIONS_STRING = r"Operations whose names satisfy the above pattern\(s\):"
 FRICAS_ERROR_IN_LIBRARY_CODE = ">> Error detected within library code:"
+FRICAS_SYSTEM_ERROR = ">> System error:"
 
 # only the last command should be necessary to make the interface
 # work, the other are optimizations.  Beware that lisp distinguishes
@@ -579,7 +580,7 @@ http://fricas.sourceforge.net.
             raise RuntimeError("An error occurred when FriCAS evaluated '%s':\n%s" % (line, output))
 
         # or even an error
-        if FRICAS_ERROR_IN_LIBRARY_CODE in output:
+        if FRICAS_ERROR_IN_LIBRARY_CODE in output or FRICAS_SYSTEM_ERROR in output:
             raise RuntimeError("An error occurred when FriCAS evaluated '%s':\n%s" % (line, output))
 
     @staticmethod
