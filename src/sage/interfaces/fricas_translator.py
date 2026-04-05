@@ -26,31 +26,32 @@ FRICAS_CONSTANTS = {'%i': I,
 # the dispatch dictionary for SEXPorter and Evaluator
 # if the first element of the pair is a function, it is used by
 # SEXPorter to rewrite the domain
-_DISPATCH = {"Integer": ("_inputform", "_eval_simple"),
-             "PositiveInteger": ("_inputform", "_eval_simple"),
-             "NonNegativeInteger": ("_inputform", "_eval_simple"),
-             "Float": ("_inputform", "_eval_float"),
-             "Boolean": ("_inputform", "_eval_bool"),
-             "AlgebraicNumber": ("_inputform", "_eval_qqbar"),
-             "Expression": ("_inputform", "_eval_sr"),
-             "OrderedCompletion": ("_inputform", "_eval_sr"),
-             "PiDomain": ("_inputform", "_eval_sr"),
-             "PrimeField": ("_finite", "_eval_gf"),
-             "IntegerMod": ("_finite", "_eval_simple"),
-             "FiniteField": ("_finite", "_eval_gf"),
-             "Fraction": ("_simple", "_eval_fraction"),
-             "List": ("_simple", "_eval_list"),
-             "Matrix": ("_simple", "_eval_matrix"),
-             "Polynomial": ("_simple", "_eval_polynomialring"),
-             "Factored": ("_simple", "_eval_factorization"),
-             "Vector": ("_simple", "_eval_list"),
-             "DirectProduct": ("_aggregate", "_eval_list"),
-             "UnivariatePolynomial": (lambda x: ("Polynomial", x[2]),
-                                      "_eval_polynomialring"),  # coerce to Polynomial
-             "DistributedMultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
-                                                   "_eval_polynomialring"),
-             "MultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
-                                        "_eval_polynomialring")}
+FRICAS_DOMAIN_DISPATCH = {
+    "Integer": ("_inputform", "_eval_call"),
+    "PositiveInteger": ("_inputform", "_eval_call"),
+    "NonNegativeInteger": ("_inputform", "_eval_call"),
+    "Float": ("_inputform", "_eval_float"),
+    "Boolean": ("_inputform", "_eval_bool"),
+    "AlgebraicNumber": ("_inputform", "_eval_qqbar"),
+    "Expression": ("_inputform", "_eval_sr"),
+    "OrderedCompletion": ("_inputform", "_eval_sr"),
+    "PiDomain": ("_inputform", "_eval_sr"),
+    "PrimeField": ("_finite", "_eval_gf"),
+    "IntegerMod": ("_finite", "_eval_call"),
+    "FiniteField": ("_finite", "_eval_gf"),
+    "Fraction": ("_unary", "_eval_fraction"),
+    "List": ("_unary", "_eval_list"),
+    "Matrix": ("_unary", "_eval_matrix"),
+    "Polynomial": ("_unary", "_eval_polynomialring"),
+    "Factored": ("_unary", "_eval_factorization"),
+    "Vector": ("_unary", "_eval_list"),
+    "DirectProduct": ("_aggregate", "_eval_list"),
+    "UnivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                             "_eval_polynomialring"),  # coerce to Polynomial
+    "DistributedMultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                                          "_eval_polynomialring"),
+    "MultivariatePolynomial": (lambda x: ("Polynomial", x[2]),
+                               "_eval_polynomialring")}
 
 
 class SEXPorter:
@@ -66,8 +67,8 @@ class SEXPorter:
           describing a FriCAS domain.
         """
         if (isinstance(domain, tuple)
-            and (head := domain[0]) in _DISPATCH
-            and callable(fun := _DISPATCH[head][0])):
+            and (head := domain[0]) in FRICAS_DOMAIN_DISPATCH
+            and callable(fun := FRICAS_DOMAIN_DISPATCH[head][0])):
             self._domain = fun(domain)
         else:
             self._domain = domain
@@ -76,11 +77,17 @@ class SEXPorter:
         """
         Return the FriCAS domain as a string.
 
+        .. WARNING::
+
+            This method does not work with arguments that are lists,
+            such as `MultivariatePolynomial([x,y], Integer)`.
+
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("Fraction", ("FiniteField", 2, 3)))._unparse()
             'Fraction(FiniteField(2,3))'
+
         """
         if not isinstance(self._domain, tuple):
             return str(self._domain)
@@ -104,15 +111,15 @@ class SEXPorter:
         export_str = inner.package_call()
         return f"AggregateExport({base_str}, {self._unparse()}, {export_str})"
 
-    def _simple(self):
+    def _unary(self):
         """
-        Return ``SimpleExport`` of ``self._domain[1]``.
+        Return ``UnaryExport`` of ``self._domain[1]``.
         """
         inner = SEXPorter(self._domain[1])
         base_str = inner._unparse()
         export_str = inner.package_call()
 
-        return f"SimpleExport({base_str}, {export_str})"
+        return f"UnaryExport({base_str}, {export_str})"
 
     def package_call(self):
         """
@@ -122,19 +129,19 @@ class SEXPorter:
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("List", ("FiniteField", 2, 3))).package_call()
-            'SimpleExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
+            'UnaryExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
 
             sage: SEXPorter(("List", ("UnivariatePolynomial", "x", ("Integer",)))).package_call()
-            'SimpleExport(Polynomial(Integer), SimpleExport(Integer, InputFormExport(Integer)))'
+            'UnaryExport(Polynomial(Integer), UnaryExport(Integer, InputFormExport(Integer)))'
 
             sage: SEXPorter(('DirectProduct', 2, ('Integer',))).package_call()
             'AggregateExport(Integer, DirectProduct(2,Integer), InputFormExport(Integer))'
         """
         head = self._domain[0]
-        if head not in _DISPATCH:
+        if head not in FRICAS_DOMAIN_DISPATCH:
             raise NotImplementedError(f"{head} cannot be translated from FriCAS to SageMath yet")
 
-        return getattr(self, _DISPATCH[head][0])()
+        return getattr(self, FRICAS_DOMAIN_DISPATCH[head][0])()
 
 
 class SEXEvaluator:
@@ -153,19 +160,19 @@ class SEXEvaluator:
         Return the evaluation of ``self`` in the given parent.
         """
         head = self._dom.head()
-        return getattr(self, _DISPATCH[head][1])()
+        return getattr(self, FRICAS_DOMAIN_DISPATCH[head][1])()
 
     # specific evaluators
     # the naming convention is the parent in sage, in lower case
 
-    def _eval_simple(self):
+    def _eval_call(self):
         r"""
         Return the evaluation by passing it to the parent.
 
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
-            sage: SEXEvaluator("-5", LazyParent(['Integer']))._eval_simple()
+            sage: SEXEvaluator("-5", LazyParent(['Integer']))._eval_call()
             -5
         """
         return self._dom.parent()(self._ast)

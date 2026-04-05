@@ -23,9 +23,9 @@ AggregateExport(T: Type, S: Join(HomogeneousAggregate(T), finiteAggregate), ET: 
         sexport(obj: S): SExpression ==
             convert([sexport(e)$ET for e in parts(obj)])@SExpression
 
-)abb package EXPORT1 SimpleExport
+)abb package EXPORT1 UnaryExport
 ++ For domain constructors depending only on a single type
-SimpleExport(T : Type, ET : with (sexport : T -> SExpression)) : with
+UnaryExport(T : Type, ET : with (sexport : T -> SExpression)) : with
         sexport: List T -> SExpression
         sexport: Vector T -> SExpression
         sexport: Fraction T -> SExpression
