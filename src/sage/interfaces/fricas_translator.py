@@ -7,7 +7,7 @@ To add handling of a FriCAS type constructor, proceed as follows:
 
 * in ``fricas.spad``, add an appropriate package, if necessary.
 
-* in ``dispatch_table``, map the type constructor to a function that
+* in ``FRICAS_DOMAIN_DISPATCH``, map the type constructor to a function that
   constructs the package containing ``sexport`` and a function that
   constructs the element given the parsed string produced by
   ``sexport``.
@@ -65,6 +65,12 @@ class SEXPorter:
 
         - ``domain`` -- a nested list of strings and integers,
           describing a FriCAS domain.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("Integer",))._domain
+            ('Integer',)
         """
         if (isinstance(domain, tuple)
             and (head := domain[0]) in FRICAS_DOMAIN_DISPATCH
@@ -100,12 +106,39 @@ class SEXPorter:
                 + ")")
 
     def _inputform(self):
+        """
+        Return an ``InputFormExport`` package call for this domain.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("Integer",))._inputform()
+            'InputFormExport(Integer)'
+        """
         return f"InputFormExport({self._unparse()})"
 
     def _finite(self):
+        """
+        Return a ``FiniteExport`` package call for this domain.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("FiniteField", 2, 3))._finite()
+            'FiniteExport(FiniteField(2,3))'
+        """
         return f"FiniteExport({self._unparse()})"
 
     def _aggregate(self):
+        """
+        Return an ``AggregateExport`` package call for this domain.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(('DirectProduct', 2, ('Integer',)))._aggregate()
+            'AggregateExport(Integer, DirectProduct(2,Integer), InputFormExport(Integer))'
+        """
         inner = SEXPorter(self._domain[2])
         base_str = inner._unparse()
         export_str = inner.package_call()
@@ -113,7 +146,13 @@ class SEXPorter:
 
     def _unary(self):
         """
-        Return ``UnaryExport`` of ``self._domain[1]``.
+        Return a ``UnaryExport`` package call for this domain.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: SEXPorter(("List", ("Integer",)))._unary()
+            'UnaryExport(Integer, InputFormExport(Integer))'
         """
         inner = SEXPorter(self._domain[1])
         base_str = inner._unparse()
@@ -151,6 +190,12 @@ class SEXEvaluator:
 
         - ``ast`` -- a nested list of strings and integers describing a FriCAS object
         - ``dom`` -- a :class:`LazyParent` describing the domain of ``ast``
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXEvaluator, LazyParent
+            sage: SEXEvaluator(1, LazyParent(['Integer']))._ast
+            1
         """
         self._ast = ast
         self._dom = dom
@@ -158,6 +203,12 @@ class SEXEvaluator:
     def eval(self):
         r"""
         Return the evaluation of ``self`` in the given parent.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXEvaluator, LazyParent
+            sage: SEXEvaluator("5", LazyParent(['Integer'])).eval()
+            5
         """
         head = self._dom.head()
         return getattr(self, FRICAS_DOMAIN_DISPATCH[head][1])()
@@ -204,7 +255,7 @@ class SEXEvaluator:
             sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
             sage: obj = SEXParser(obj_str).parse(); obj
             ('float', 231801786030234225607, -66, 2)
-            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: SEXEvaluator(obj, LazyParent(dom))._eval_float()
             3.1415000000000000000
         """
         from sage.rings.real_mpfr import RealField
@@ -301,7 +352,7 @@ class SEXEvaluator:
             sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
             sage: obj = SEXParser(obj_str).parse(); obj
             (((('z', 1),), -3), ((('y', 1), ('x', 2)), 1), ((), 1))
-            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: SEXEvaluator(obj, LazyParent(dom))._eval_polynomialring()
             x^2*y - 3*z + 1
         """
         base = self._dom.base()
@@ -343,7 +394,7 @@ class SEXEvaluator:
             sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
             sage: obj = SEXParser(obj_str).parse(); obj
             (-1, ((2, 4), (3, 1)))
-            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: SEXEvaluator(obj, LazyParent(dom))._eval_factorization()
             -1 * 2^4 * 3
         """
         from sage.structure.factorization import Factorization
@@ -421,7 +472,7 @@ class SEXEvaluator:
             ('::',
              ('rootOf', ('+', ('+', ('^', 'x', 5), ('*', -1, 'x')), -1), 'x'),
              ('AlgebraicNumber',))
-            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: SEXEvaluator(obj, LazyParent(dom))._eval_qqbar()
             1.167303978261419?
         """
         ex = SEXEvaluator(self._ast[1], None)._eval_sr()
@@ -429,8 +480,14 @@ class SEXEvaluator:
 
     def _eval_sr(self):
         r"""
-        Evaluate as element of the symbolic ring.
+        Evaluate as an element of the symbolic ring.
 
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXEvaluator
+            sage: SEXEvaluator("x", None)._eval_sr()
+            x
         """
         # a FriCAS expressions may contain implicit references to a
         # rootOf expression within itself, as for example in the
@@ -487,16 +544,52 @@ class SEXEvaluator:
 
 class LazyParent:
     def __init__(self, domain):
+        """
+        Initialize this lazy parent from a FriCAS domain description.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent
+            sage: LazyParent(['Integer']).head()
+            'Integer'
+        """
         self._domain = domain
 
     def head(self):
+        """
+        Return the constructor.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent
+            sage: LazyParent(('List', ('Integer',))).head()
+            'List'
+        """
         return self._domain[0]
 
     def args(self):
+        """
+        Return the arguments of the constructor.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent
+            sage: LazyParent(('List', ('Integer',))).args()
+            (('Integer',),)
+        """
         return self._domain[1:]
 
     @cached_method
     def base(self):
+        """
+        Return the base domain as a :class:`LazyParent`.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent
+            sage: LazyParent(('List', ('Integer',))).base().head()
+            'Integer'
+        """
         head = self.head()
         args = self.args()
         if head in ["List",
@@ -517,6 +610,15 @@ class LazyParent:
 
     @cached_method
     def parent(self, **kwargs):
+        """
+        Return the corresponding SageMath parent.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent
+            sage: LazyParent(['Integer']).parent()
+            Integer Ring
+        """
         head = self.head()
         args = self.args()
 
@@ -594,6 +696,12 @@ class SEXParser:
         INPUT:
 
         - ``s`` -- string
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXParser
+            sage: SEXParser("abc")._s
+            'abc'
         """
         self._s = s
         self._start = 0  # specifies where to start parsing
@@ -641,7 +749,7 @@ class SEXParser:
         TESTS::
 
             sage: from sage.interfaces.fricas_translator import SEXParser
-            sage: SEXParser("()").parse()
+            sage: SEXParser("()").parse()  # indirect doctest
             ()
 
             sage: SEXParser("(a b c)").parse()
@@ -673,7 +781,7 @@ class SEXParser:
         TESTS::
 
             sage: from sage.interfaces.fricas_translator import SEXParser
-            sage: SEXParser("abc").parse()
+            sage: SEXParser("abc").parse()  # indirect doctest
             'abc'
             sage: SEXParser("123 xyz").parse()
             123
@@ -704,7 +812,7 @@ class SEXParser:
         TESTS::
 
             sage: from sage.interfaces.fricas_translator import SEXParser
-            sage: SEXParser('"abc" 123').parse()
+            sage: SEXParser('"abc" 123').parse()  # indirect doctest
             'abc'
 
             sage: SEXParser('"" 123').parse()
