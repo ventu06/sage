@@ -14,8 +14,8 @@ AUTHORS:
 - Martin Rubey, Bill Page (2016-08): Completely separate from Axiom,
   implement more complete translation from FriCAS to SageMath types.
 
-- Martin Rubey (2026-04): implement proper translation from FriCAS
-  to SageMath types.
+- Martin Rubey, Chenxin Zhong (2026-04): implement proper translation from
+  FriCAS to SageMath types.
 
 EXAMPLES::
 
@@ -547,9 +547,9 @@ http://fricas.sourceforge.net.
             RuntimeError: An error occurred when FriCAS evaluated '[i fo83r i in 0..17]':
               Line   1: x:=[i fo83r i in 0..17];
                        ...A..........B
-            * Error  A: Missing mate.
-            * Error  B: syntax error at top level
-            * Error  B: Possibly missing a ]
+            ... Error  A: Missing mate.
+            ... Error  B: syntax error at top level
+            ... Error  B: Possibly missing a ]
                3 error(s) parsing
 
             sage: fricas.set("x", "something stupid")       # indirect doctest
@@ -1101,7 +1101,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         return float(self.sage())
 
-    def _integer_(self):
+    def _integer_(self, ZZ=None):
         """
         EXAMPLES::
 
