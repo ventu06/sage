@@ -1679,8 +1679,7 @@ class CycleSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             [(1, 2, 3), (1, 3, 2)]
         """
         labels = _label_sets(self.parent()._arity, [labels])
-        # TODO: CyclicPermutations should yield hashable objects, not lists
-        yield from map(tuple, CyclicPermutations(labels[0]))
+        yield from CyclicPermutations(labels[0])
 
     def generating_series(self):
         r"""

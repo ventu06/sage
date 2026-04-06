@@ -9337,14 +9337,14 @@ class CyclicPermutations(Permutations_mset):
     EXAMPLES::
 
         sage: CyclicPermutations(range(4)).list()                                       # needs sage.combinat
-        [[0, 1, 2, 3],
-         [0, 1, 3, 2],
-         [0, 2, 1, 3],
-         [0, 2, 3, 1],
-         [0, 3, 1, 2],
-         [0, 3, 2, 1]]
+        [(0, 1, 2, 3),
+         (0, 1, 3, 2),
+         (0, 2, 1, 3),
+         (0, 2, 3, 1),
+         (0, 3, 1, 2),
+         (0, 3, 2, 1)]
         sage: CyclicPermutations([1,1,1]).list()                                        # needs sage.combinat
-        [[1, 1, 1]]
+        [(1, 1, 1)]
     """
     @staticmethod
     def __classcall_private__(cls, mset):
@@ -9379,16 +9379,16 @@ class CyclicPermutations(Permutations_mset):
         EXAMPLES::
 
             sage: CyclicPermutations(range(4)).list()  # indirect doctest               # needs sage.combinat
-            [[0, 1, 2, 3],
-             [0, 1, 3, 2],
-             [0, 2, 1, 3],
-             [0, 2, 3, 1],
-             [0, 3, 1, 2],
-             [0, 3, 2, 1]]
+            [(0, 1, 2, 3),
+             (0, 1, 3, 2),
+             (0, 2, 1, 3),
+             (0, 2, 3, 1),
+             (0, 3, 1, 2),
+             (0, 3, 2, 1)]
              sage: CyclicPermutations([1,1,1]).list()                                   # needs sage.combinat
-             [[1, 1, 1]]
+             [(1, 1, 1)]
              sage: CyclicPermutations([1,1,1]).list(distinct=True)                      # needs sage.combinat
-             [[1, 1, 1], [1, 1, 1]]
+             [(1, 1, 1), (1, 1, 1)]
         """
         if distinct:
             content = [1] * len(self.mset)
@@ -9400,7 +9400,7 @@ class CyclicPermutations(Permutations_mset):
 
         from .necklace import Necklaces
         for necklace in Necklaces(content):
-            yield [self.mset[x-1] for x in necklace]
+            yield tuple(self.mset[x-1] for x in necklace)
 
     iterator = __iter__
 
@@ -9409,12 +9409,12 @@ class CyclicPermutations(Permutations_mset):
         EXAMPLES::
 
             sage: CyclicPermutations(range(4)).list()                                   # needs sage.combinat
-            [[0, 1, 2, 3],
-             [0, 1, 3, 2],
-             [0, 2, 1, 3],
-             [0, 2, 3, 1],
-             [0, 3, 1, 2],
-             [0, 3, 2, 1]]
+            [(0, 1, 2, 3),
+             (0, 1, 3, 2),
+             (0, 2, 1, 3),
+             (0, 2, 3, 1),
+             (0, 3, 1, 2),
+             (0, 3, 2, 1)]
         """
         return list(self.__iter__(distinct=distinct))
 
@@ -9430,41 +9430,41 @@ class CyclicPermutationsOfPartition(Permutations):
     EXAMPLES::
 
         sage: CyclicPermutationsOfPartition([[1,2,3,4],[5,6,7]]).list()                 # needs sage.combinat
-        [[[1, 2, 3, 4], [5, 6, 7]],
-         [[1, 2, 4, 3], [5, 6, 7]],
-         [[1, 3, 2, 4], [5, 6, 7]],
-         [[1, 3, 4, 2], [5, 6, 7]],
-         [[1, 4, 2, 3], [5, 6, 7]],
-         [[1, 4, 3, 2], [5, 6, 7]],
-         [[1, 2, 3, 4], [5, 7, 6]],
-         [[1, 2, 4, 3], [5, 7, 6]],
-         [[1, 3, 2, 4], [5, 7, 6]],
-         [[1, 3, 4, 2], [5, 7, 6]],
-         [[1, 4, 2, 3], [5, 7, 6]],
-         [[1, 4, 3, 2], [5, 7, 6]]]
+        [[(1, 2, 3, 4), (5, 6, 7)],
+         [(1, 2, 4, 3), (5, 6, 7)],
+         [(1, 3, 2, 4), (5, 6, 7)],
+         [(1, 3, 4, 2), (5, 6, 7)],
+         [(1, 4, 2, 3), (5, 6, 7)],
+         [(1, 4, 3, 2), (5, 6, 7)],
+         [(1, 2, 3, 4), (5, 7, 6)],
+         [(1, 2, 4, 3), (5, 7, 6)],
+         [(1, 3, 2, 4), (5, 7, 6)],
+         [(1, 3, 4, 2), (5, 7, 6)],
+         [(1, 4, 2, 3), (5, 7, 6)],
+         [(1, 4, 3, 2), (5, 7, 6)]]
 
     ::
 
         sage: CyclicPermutationsOfPartition([[1,2,3,4],[4,4,4]]).list()                 # needs sage.combinat
-        [[[1, 2, 3, 4], [4, 4, 4]],
-         [[1, 2, 4, 3], [4, 4, 4]],
-         [[1, 3, 2, 4], [4, 4, 4]],
-         [[1, 3, 4, 2], [4, 4, 4]],
-         [[1, 4, 2, 3], [4, 4, 4]],
-         [[1, 4, 3, 2], [4, 4, 4]]]
+        [[(1, 2, 3, 4), (4, 4, 4)],
+         [(1, 2, 4, 3), (4, 4, 4)],
+         [(1, 3, 2, 4), (4, 4, 4)],
+         [(1, 3, 4, 2), (4, 4, 4)],
+         [(1, 4, 2, 3), (4, 4, 4)],
+         [(1, 4, 3, 2), (4, 4, 4)]]
 
     ::
 
         sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list()                   # needs sage.combinat
-        [[[1, 2, 3], [4, 4, 4]], [[1, 3, 2], [4, 4, 4]]]
+        [[(1, 2, 3), (4, 4, 4)], [(1, 3, 2), (4, 4, 4)]]
 
     ::
 
         sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list(distinct=True)      # needs sage.combinat
-        [[[1, 2, 3], [4, 4, 4]],
-         [[1, 3, 2], [4, 4, 4]],
-         [[1, 2, 3], [4, 4, 4]],
-         [[1, 3, 2], [4, 4, 4]]]
+        [[(1, 2, 3), (4, 4, 4)],
+         [(1, 3, 2), (4, 4, 4)],
+         [(1, 2, 3), (4, 4, 4)],
+         [(1, 3, 2), (4, 4, 4)]]
     """
     @staticmethod
     def __classcall_private__(cls, partition):
@@ -9530,41 +9530,41 @@ class CyclicPermutationsOfPartition(Permutations):
 
             sage: CyclicPermutationsOfPartition([[1,2,3,4],        # indirect doctest   # needs sage.combinat
             ....:                                [5,6,7]]).list()
-            [[[1, 2, 3, 4], [5, 6, 7]],
-             [[1, 2, 4, 3], [5, 6, 7]],
-             [[1, 3, 2, 4], [5, 6, 7]],
-             [[1, 3, 4, 2], [5, 6, 7]],
-             [[1, 4, 2, 3], [5, 6, 7]],
-             [[1, 4, 3, 2], [5, 6, 7]],
-             [[1, 2, 3, 4], [5, 7, 6]],
-             [[1, 2, 4, 3], [5, 7, 6]],
-             [[1, 3, 2, 4], [5, 7, 6]],
-             [[1, 3, 4, 2], [5, 7, 6]],
-             [[1, 4, 2, 3], [5, 7, 6]],
-             [[1, 4, 3, 2], [5, 7, 6]]]
+            [[(1, 2, 3, 4), (5, 6, 7)],
+             [(1, 2, 4, 3), (5, 6, 7)],
+             [(1, 3, 2, 4), (5, 6, 7)],
+             [(1, 3, 4, 2), (5, 6, 7)],
+             [(1, 4, 2, 3), (5, 6, 7)],
+             [(1, 4, 3, 2), (5, 6, 7)],
+             [(1, 2, 3, 4), (5, 7, 6)],
+             [(1, 2, 4, 3), (5, 7, 6)],
+             [(1, 3, 2, 4), (5, 7, 6)],
+             [(1, 3, 4, 2), (5, 7, 6)],
+             [(1, 4, 2, 3), (5, 7, 6)],
+             [(1, 4, 3, 2), (5, 7, 6)]]
 
         ::
 
             sage: CyclicPermutationsOfPartition([[1,2,3,4],[4,4,4]]).list()             # needs sage.combinat
-            [[[1, 2, 3, 4], [4, 4, 4]],
-             [[1, 2, 4, 3], [4, 4, 4]],
-             [[1, 3, 2, 4], [4, 4, 4]],
-             [[1, 3, 4, 2], [4, 4, 4]],
-             [[1, 4, 2, 3], [4, 4, 4]],
-             [[1, 4, 3, 2], [4, 4, 4]]]
+            [[(1, 2, 3, 4), (4, 4, 4)],
+             [(1, 2, 4, 3), (4, 4, 4)],
+             [(1, 3, 2, 4), (4, 4, 4)],
+             [(1, 3, 4, 2), (4, 4, 4)],
+             [(1, 4, 2, 3), (4, 4, 4)],
+             [(1, 4, 3, 2), (4, 4, 4)]]
 
         ::
 
             sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list()               # needs sage.combinat
-            [[[1, 2, 3], [4, 4, 4]], [[1, 3, 2], [4, 4, 4]]]
+            [[(1, 2, 3), (4, 4, 4)], [(1, 3, 2), (4, 4, 4)]]
 
         ::
 
             sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list(distinct=True)  # needs sage.combinat
-            [[[1, 2, 3], [4, 4, 4]],
-             [[1, 3, 2], [4, 4, 4]],
-             [[1, 2, 3], [4, 4, 4]],
-             [[1, 3, 2], [4, 4, 4]]]
+            [[(1, 2, 3), (4, 4, 4)],
+             [(1, 3, 2), (4, 4, 4)],
+             [(1, 2, 3), (4, 4, 4)],
+             [(1, 3, 2), (4, 4, 4)]]
         """
         if len(self.partition) == 1:
             for i in CyclicPermutations(self.partition[0]).iterator(distinct=distinct):
@@ -9581,12 +9581,12 @@ class CyclicPermutationsOfPartition(Permutations):
         EXAMPLES::
 
             sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list()               # needs sage.combinat
-            [[[1, 2, 3], [4, 4, 4]], [[1, 3, 2], [4, 4, 4]]]
+            [[(1, 2, 3), (4, 4, 4)], [(1, 3, 2), (4, 4, 4)]]
             sage: CyclicPermutationsOfPartition([[1,2,3],[4,4,4]]).list(distinct=True)  # needs sage.combinat
-            [[[1, 2, 3], [4, 4, 4]],
-             [[1, 3, 2], [4, 4, 4]],
-             [[1, 2, 3], [4, 4, 4]],
-             [[1, 3, 2], [4, 4, 4]]]
+            [[(1, 2, 3), (4, 4, 4)],
+             [(1, 3, 2), (4, 4, 4)],
+             [(1, 2, 3), (4, 4, 4)],
+             [(1, 3, 2), (4, 4, 4)]]
         """
         return list(self.iterator(distinct=distinct))
 
