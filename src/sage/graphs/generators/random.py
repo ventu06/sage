@@ -1920,8 +1920,8 @@ def _auxiliary_random_forest_word(n, k):
         sage: with(seed(94364165)):
         ....:     _auxiliary_random_forest_word(4, 3)
         ....:     _auxiliary_random_forest_word(3, 5)
-        [1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0]
-        [1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+        [1, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0]
+        [1, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 0]
 
     TESTS::
 
