@@ -123,14 +123,13 @@ def default_viewer(viewer=None):
 
     if viewer is None or viewer.startswith('browse'):
         return BROWSER
-    elif viewer.startswith('dvi'):
+    if viewer.startswith('dvi'):
         return DVI_VIEWER
-    elif viewer.startswith('png'):
+    if viewer.startswith('png'):
         return PNG_VIEWER
-    elif viewer.startswith('pdf'):
+    if viewer.startswith('pdf'):
         return PDF_VIEWER
-    else:
-        raise ValueError('Unknown type of viewer: {}.'.format(viewer))
+    raise ValueError('Unknown type of viewer: {}.'.format(viewer))
 
 
 # _viewer_prefs: a dictionary holding global preferences for viewers.
@@ -293,11 +292,11 @@ class Viewer(SageObject):
 
         if x is None or x.startswith('browse'):
             return self.browser()
-        elif x.startswith('dvi'):
+        if x.startswith('dvi'):
             return self.dvi_viewer()
-        elif x.startswith('png'):
+        if x.startswith('png'):
             return self.png_viewer()
-        elif x.startswith('pdf'):
+        if x.startswith('pdf'):
             return self.pdf_viewer()
 
 
