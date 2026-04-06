@@ -286,8 +286,7 @@ class FinitelyPresentedGroupElement(FreeGroupElement):
         # computing that an element is actually one can be very expensive
         if self.Tietze() == ():
             return '1'
-        else:
-            return self.gap()._repr_()
+        return self.gap()._repr_()
 
     @cached_method
     def Tietze(self):

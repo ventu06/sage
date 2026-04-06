@@ -224,11 +224,10 @@ def direct_product_permgroups(P):
     if n == 0:
         from sage.groups.perm_gps.permgroup_named import SymmetricGroup
         return SymmetricGroup(0)
-    elif n == 1:
+    if n == 1:
         return P[0]
-    else:
-        G = libgap.DirectProduct(*P)
-        return PermutationGroup(gap_group=G)
+    G = libgap.DirectProduct(*P)
+    return PermutationGroup(gap_group=G)
 
 
 def from_gap_list(G, src):
@@ -597,10 +596,9 @@ class PermutationGroup_generic(FiniteGroup):
         gens = self.gens()
         if len(gens) == 1 and gens[0].is_one():
             return None
-        else:
-            from sage.categories.pushout import PermutationGroupFunctor
-            return (PermutationGroupFunctor(gens, self.domain()),
-                    PermutationGroup([]))
+        from sage.categories.pushout import PermutationGroupFunctor
+        return (PermutationGroupFunctor(gens, self.domain()),
+                PermutationGroup([]))
 
     @cached_method
     def _has_natural_domain(self):
@@ -1243,7 +1241,7 @@ class PermutationGroup_generic(FiniteGroup):
 
             SGS = self.strong_generating_system(implementation='gap')
             return elements(SGS)
-        elif algorithm in ["BFS", "DFS"]:
+        if algorithm in ["BFS", "DFS"]:
             from sage.sets.recursively_enumerated_set import RecursivelyEnumeratedSet
             seeds = [self.one()]
             gens = self.gens()
@@ -1256,8 +1254,7 @@ class PermutationGroup_generic(FiniteGroup):
                 seeds=seeds,
                 successors=successors,
                 enumeration=enumeration))
-        else:
-            raise ValueError("the input algorithm (='%s') must be 'SGS', 'BFS' or 'DFS'" % algorithm)
+        raise ValueError("the input algorithm (='%s') must be 'SGS', 'BFS' or 'DFS'" % algorithm)
 
     def gens(self) -> tuple:
         """
@@ -1363,8 +1360,7 @@ class PermutationGroup_generic(FiniteGroup):
         if i is None:
             if len(gens) == 1:
                 return gens[0]
-            else:
-                raise ValueError("you must specify which generator you want")
+            raise ValueError("you must specify which generator you want")
         return gens[i]
 
     def ngens(self) -> int:
@@ -1848,9 +1844,8 @@ class PermutationGroup_generic(FiniteGroup):
         def gap_to_output(x, depth, container):
             if depth == len(container):
                 return self._domain_from_gap[x]
-            else:
-                x = [gap_to_output(xx, depth+1, container) for xx in x]
-                return container[depth](x)
+            x = [gap_to_output(xx, depth+1, container) for xx in x]
+            return container[depth](x)
         try:
             container = actions[action]
         except KeyError:
@@ -2189,9 +2184,8 @@ class PermutationGroup_generic(FiniteGroup):
                 stab = stab.stabilizer(j)
             return sgs
 
-        else:
-            raise ValueError("the optional argument 'implementation'"
-                             " (='%s') must be 'sage' or 'gap'" % implementation)
+        raise ValueError("the optional argument 'implementation'"
+                         " (='%s') must be 'sage' or 'gap'" % implementation)
 
     def _repr_(self):
         r"""
@@ -2356,7 +2350,7 @@ class PermutationGroup_generic(FiniteGroup):
 
         if not gens:
             return Integer(1)
-        elif len(gens) == 1:
+        if len(gens) == 1:
             return gens[0].order()
 
         subgroup_order = self._order()
@@ -3341,12 +3335,11 @@ class PermutationGroup_generic(FiniteGroup):
         """
         if other is None:
             return PermutationGroup(gap_group=libgap.DerivedSubgroup(self), domain=self.domain())
-        else:
-            from sage.categories.finite_permutation_groups import FinitePermutationGroups
-            if other not in FinitePermutationGroups():
-                raise TypeError("{0} is not a permutation group".format(other))
-            gap_group = libgap.CommutatorSubgroup(self, other)
-            return PermutationGroup(gap_group=gap_group)
+        from sage.categories.finite_permutation_groups import FinitePermutationGroups
+        if other not in FinitePermutationGroups():
+            raise TypeError("{0} is not a permutation group".format(other))
+        gap_group = libgap.CommutatorSubgroup(self, other)
+        return PermutationGroup(gap_group=gap_group)
 
     @hap_decorator
     def cohomology(self, n, p=0):
@@ -3425,13 +3418,12 @@ class PermutationGroup_generic(FiniteGroup):
         """
         if p == 0:
             return AbelianGroup(1, [1])
-        else:
-            G = self._libgap_()
-            S = G.SylowSubgroup(p)
-            R = S.ResolutionFiniteGroup(n+1)
-            HR = R.HomToIntegers()
-            L = HR.Cohomology(n).sage()
-            return AbelianGroup(len(L), L)
+        G = self._libgap_()
+        S = G.SylowSubgroup(p)
+        R = S.ResolutionFiniteGroup(n+1)
+        HR = R.HomToIntegers()
+        L = HR.Cohomology(n).sage()
+        return AbelianGroup(len(L), L)
 
     @hap_decorator
     def homology(self, n, p=0):
@@ -3503,12 +3495,11 @@ class PermutationGroup_generic(FiniteGroup):
         """
         if p == 0:
             return AbelianGroup(1, [1])
-        else:
-            S = self._libgap_().SylowSubgroup(p)
-            R = S.ResolutionFiniteGroup(n+1)
-            TR = R.TensorWithIntegers()
-            L = TR.Homology(n).sage()
-            return AbelianGroup(len(L), L)
+        S = self._libgap_().SylowSubgroup(p)
+        R = S.ResolutionFiniteGroup(n+1)
+        TR = R.TensorWithIntegers()
+        L = TR.Homology(n).sage()
+        return AbelianGroup(len(L), L)
 
     def character_table(self):
         r"""
@@ -3948,10 +3939,9 @@ class PermutationGroup_generic(FiniteGroup):
         if representatives:
             return [[self._domain_from_gap[x] for x in rep]
                     for rep in ag.AllBlocks().sage()]
-        else:
-            return [[[self._domain_from_gap[x] for x in cl]
-                      for cl in ag.Orbit(rep, libgap.OnSets).sage()]
-                    for rep in ag.AllBlocks()]
+        return [[[self._domain_from_gap[x] for x in cl]
+                  for cl in ag.Orbit(rep, libgap.OnSets).sage()]
+                for rep in ag.AllBlocks()]
 
     def cosets(self, S, side='right'):
         r"""
@@ -4217,8 +4207,7 @@ class PermutationGroup_generic(FiniteGroup):
         if self.is_simple():
             info = self._libgap_().IsomorphismTypeInfoFiniteSimpleGroup()
             return info
-        else:
-            raise TypeError("group must be simple")
+        raise TypeError("group must be simple")
 
     def minimal_normal_subgroups(self):
         """

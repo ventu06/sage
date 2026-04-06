@@ -2226,14 +2226,13 @@ class TransitiveGroupsOfDegree(CachedRepresentation, Parent):
         # transitive group of degree 1, we may as well handle 1
         if self._degree <= 1:
             return Integer(1)
-        else:
-            try:
-                return Integer(libgap.NrTransitiveGroups(libgap(self._degree)))
-            except RuntimeError:
-                from sage.misc.verbose import verbose
-                verbose("Error: TransitiveGroups should come with GAP.", level=0)
-            except TypeError:
-                raise NotImplementedError("only the transitive groups of degree at most 31 are available in GAP's database")
+        try:
+            return Integer(libgap.NrTransitiveGroups(libgap(self._degree)))
+        except RuntimeError:
+            from sage.misc.verbose import verbose
+            verbose("Error: TransitiveGroups should come with GAP.", level=0)
+        except TypeError:
+            raise NotImplementedError("only the transitive groups of degree at most 31 are available in GAP's database")
 
 
 class PrimitiveGroup(PermutationGroup_unique):
@@ -2382,11 +2381,10 @@ def PrimitiveGroups(d=None):
     """
     if d is None:
         return PrimitiveGroupsAll()
-    else:
-        d = Integer(d)
-        if d < 0:
-            raise ValueError("a primitive group acts on a nonnegative integer number of positions")
-        return PrimitiveGroupsOfDegree(d)
+    d = Integer(d)
+    if d < 0:
+        raise ValueError("a primitive group acts on a nonnegative integer number of positions")
+    return PrimitiveGroupsOfDegree(d)
 
 
 class PrimitiveGroupsAll(DisjointUnionEnumeratedSets):
@@ -2609,8 +2607,7 @@ class PrimitiveGroupsOfDegree(CachedRepresentation, Parent):
             # While we are at it, and since Sage also handles the
             # primitive group of degree 1, we may as well handle 1
             return Integer(1)
-        else:
-            return Integer(libgap.NrPrimitiveGroups(self._degree))
+        return Integer(libgap.NrPrimitiveGroups(self._degree))
 
 
 class PermutationGroup_plg(PermutationGroup_unique):

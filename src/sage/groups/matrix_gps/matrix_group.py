@@ -236,8 +236,7 @@ class MatrixGroup_base(Group):
         """
         if self._ambient is None:
             return self
-        else:
-            return self._ambient
+        return self._ambient
 
     def _repr_(self):
         """
@@ -273,18 +272,15 @@ class MatrixGroup_base(Group):
             if self.ngens() > 5:
                 return 'Matrix group over {0} with {1} generators'.format(
                     self.base_ring(), self.ngens())
-            else:
-                from sage.repl.display.util import format_list
-                return 'Matrix group over {0} with {1} generators {2}'.format(
-                    self.base_ring(), self.ngens(), format_list(self.gens()))
-        else:
-            if self.ngens() > 5:
-                return 'Subgroup with {0} generators of {1}'.format(
-                    self.ngens(), ambient_group)
-            else:
-                from sage.repl.display.util import format_list
-                return 'Subgroup with {0} generators {1} of {2}'.format(
-                    self.ngens(), format_list(self.gens()), ambient_group)
+            from sage.repl.display.util import format_list
+            return 'Matrix group over {0} with {1} generators {2}'.format(
+                self.base_ring(), self.ngens(), format_list(self.gens()))
+        if self.ngens() > 5:
+            return 'Subgroup with {0} generators of {1}'.format(
+                self.ngens(), ambient_group)
+        from sage.repl.display.util import format_list
+        return 'Subgroup with {0} generators {1} of {2}'.format(
+            self.ngens(), format_list(self.gens()), ambient_group)
 
     def _repr_option(self, key):
         """
