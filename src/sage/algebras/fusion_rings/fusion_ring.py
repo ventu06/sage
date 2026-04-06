@@ -1172,9 +1172,8 @@ class FusionRing(WeylCharacterRing):
             if len(top_row) == 2:
                 m1, m2 = top_row
                 return [[]] if fr.Nk_ij(m1, m2, root) else []
-            else:
-                m1, m2 = top_row[:2]
-                return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
+            m1, m2 = top_row[:2]
+            return [(l, *b) for l in fr.basis() for b in _get_trees(fr, [l]+top_row[2:], root) if fr.Nk_ij(m1, m2, l)]
 
         comp_basis = []
         for top in product((a*a).monomials(), repeat=n_strands//2):

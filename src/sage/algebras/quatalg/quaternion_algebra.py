@@ -1761,8 +1761,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         gens = [self(g) for g in gens]  # coerce integers etc. into quaternions
         if self.base_ring() == QQ:
             return QuaternionFractionalIdeal_rational(self, gens, left_order=left_order, right_order=right_order, check=check)
-        else:
-            raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
+        raise NotImplementedError("ideal only implemented for quaternion algebras over QQ")
 
     ideal = fractional_ideal  # legacy alias
 
@@ -2715,8 +2714,7 @@ class QuaternionOrder(Parent):
         Q = QuadraticForm(m)
         if include_basis:
             return Q, B
-        else:
-            return Q
+        return Q
 
     def isomorphism_to(self, other, *, conjugator=False, B=10):
         r"""
@@ -2931,9 +2929,8 @@ class QuaternionOrder(Parent):
                 gamma = gamma * alpha
                 if conjugator:
                     return gamma
-                else:
-                    ims = [~gamma * gen * gamma for gen in Q.gens()]
-                    return self.hom(ims, other, check=False)
+                ims = [~gamma * gen * gamma for gen in Q.gens()]
+                return self.hom(ims, other, check=False)
 
         # We can tell if 1, i, j, k cover all the alpha we need to test,
         # by checking if we have additional ramified primes which are not the square-free parts of nrd(i), nrd(j) or nrd(k)
@@ -3519,9 +3516,8 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
             if self.__theta_series.prec() >= B:
                 if var == self.__theta_series.variable():
                     return self.__theta_series.add_bigoh(B)
-                else:
-                    p_ring = self._theta_series.parent().change_var(var)
-                    p_ring(self.__theta_series.list()[:B+1])
+                p_ring = self._theta_series.parent().change_var(var)
+                p_ring(self.__theta_series.list()[:B+1])
         except AttributeError:
             pass
         v = self.theta_series_vector(B)
@@ -4308,11 +4304,10 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         """
         if self.__left_order is not None:
             return self.free_module() <= self.left_order().free_module()
-        elif self.__right_order is not None:
+        if self.__right_order is not None:
             return self.free_module() <= self.right_order().free_module()
-        else:
-            self_square = self**2
-            return self_square.free_module() <= self.free_module()
+        self_square = self**2
+        return self_square.free_module() <= self.free_module()
 
     def primitive_decomposition(self):
         r"""
@@ -4459,7 +4454,7 @@ def intersection_of_row_modules_over_ZZ(v):
         raise ValueError("v must have positive length")
     if len(v) == 1:
         return v[0]
-    elif len(v) == 2:
+    if len(v) == 2:
         # real work - the base case
         a, b = v
         s, _ = a.stack(b)._clear_denom()
@@ -4467,10 +4462,9 @@ def intersection_of_row_modules_over_ZZ(v):
         K = s.right_kernel_matrix(algorithm='pari', basis='computed')
         n = a.nrows()
         return K.matrix_from_columns(range(n)) * a
-    else:
-        # induct
-        w = intersection_of_row_modules_over_ZZ(v[:2])
-        return intersection_of_row_modules_over_ZZ([w] + v[2:])
+    # induct
+    w = intersection_of_row_modules_over_ZZ(v[:2])
+    return intersection_of_row_modules_over_ZZ([w] + v[2:])
 
 
 def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
@@ -4546,68 +4540,67 @@ def normalize_basis_at_p(e, p, B=QuaternionAlgebraElement_abstract.pair):
     N = len(e)
     if N == 0:
         return []
-    else:
-        min_m, min_n, min_v = 0, 0, infinity
+    min_m, min_n, min_v = 0, 0, infinity
 
-        # Find two basis vector on which the bilinear form has minimal
-        # p-valuation. If there is more than one such pair, always
-        # prefer diagonal entries over any other and (secondary) take
-        # min_m and then min_n as small as possible
-        for m in range(N):
-            for n in range(m, N):
-                v = B(e[m], e[n]).valuation(p)
-                if v < min_v or (v == min_v and (min_m != min_n) and (m == n)):
-                    min_m, min_n, min_v = m, n, v
+    # Find two basis vector on which the bilinear form has minimal
+    # p-valuation. If there is more than one such pair, always
+    # prefer diagonal entries over any other and (secondary) take
+    # min_m and then min_n as small as possible
+    for m in range(N):
+        for n in range(m, N):
+            v = B(e[m], e[n]).valuation(p)
+            if v < min_v or (v == min_v and (min_m != min_n) and (m == n)):
+                min_m, min_n, min_v = m, n, v
 
-        if (min_m == min_n) or p != 2:      # In this case we can diagonalize
-            if min_m == min_n:              # Diagonal entry has minimal valuation
-                f0 = e[min_m]
-            else:
-                f0 = e[min_m] + e[min_n]    # Only off-diagonal entries have min. val., but p!=2
+    if (min_m == min_n) or p != 2:      # In this case we can diagonalize
+        if min_m == min_n:              # Diagonal entry has minimal valuation
+            f0 = e[min_m]
+        else:
+            f0 = e[min_m] + e[min_n]    # Only off-diagonal entries have min. val., but p!=2
 
-            # Swap with first vector
-            e[0], e[min_m] = e[min_m], e[0]
+        # Swap with first vector
+        e[0], e[min_m] = e[min_m], e[0]
 
-            # Orthogonalize remaining vectors with respect to f
-            c = B(f0, f0)
-            for l in range(1, N):
-                e[l] = e[l] - B(e[l], f0) / c * f0
+        # Orthogonalize remaining vectors with respect to f
+        c = B(f0, f0)
+        for l in range(1, N):
+            e[l] = e[l] - B(e[l], f0) / c * f0
 
-            # Recursively normalize remaining vectors
-            f = normalize_basis_at_p(e[1:], p)
-            f.insert(0, (f0, min_v - valuation(p, 2)))
-            return f
+        # Recursively normalize remaining vectors
+        f = normalize_basis_at_p(e[1:], p)
+        f.insert(0, (f0, min_v - valuation(p, 2)))
+        return f
 
-        else:   # p = 2 and only off-diagonal entries have min. val., gives 2-dim. block
-            # first diagonal entry should have smaller valuation
-            if B(e[min_m], e[min_m]).valuation(p) > B(e[min_n], e[min_n]).valuation(p):
-                e[min_m], e[min_n] = e[min_n], e[min_m]
+    # p = 2 and only off-diagonal entries have min. val., gives 2-dim. block
+    # first diagonal entry should have smaller valuation
+    if B(e[min_m], e[min_m]).valuation(p) > B(e[min_n], e[min_n]).valuation(p):
+        e[min_m], e[min_n] = e[min_n], e[min_m]
 
-            f0 = p**min_v / B(e[min_m], e[min_n]) * e[min_m]
-            f1 = e[min_n]
+    f0 = p**min_v / B(e[min_m], e[min_n]) * e[min_m]
+    f1 = e[min_n]
 
-            # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
-            if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
-                g = f0
-                f0 += f1
-                f1 = g
+    # Ensures that (B(f0,f0)/2).valuation(p) <= B(f0,f1).valuation(p)
+    if B(f0, f1).valuation(p) + 1 < B(f0, f0).valuation(p):
+        g = f0
+        f0 += f1
+        f1 = g
 
-            # Make remaining vectors orthogonal to span of f0, f1
-            e[min_m] = e[0]
-            e[min_n] = e[1]
+    # Make remaining vectors orthogonal to span of f0, f1
+    e[min_m] = e[0]
+    e[min_n] = e[1]
 
-            B00 = B(f0, f0)
-            B11 = B(f1, f1)
-            B01 = B(f0, f1)
-            d = B00 * B11 - B01**2
-            tu = [(B01 * B(f1, e[l]) - B11 * B(f0, e[l]),
-                   B01 * B(f0, e[l]) - B00 * B(f1, e[l])) for l in range(2, N)]
+    B00 = B(f0, f0)
+    B11 = B(f1, f1)
+    B01 = B(f0, f1)
+    d = B00 * B11 - B01**2
+    tu = [(B01 * B(f1, e[l]) - B11 * B(f0, e[l]),
+           B01 * B(f0, e[l]) - B00 * B(f1, e[l])) for l in range(2, N)]
 
-            e[2:N] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
+    e[2:N] = [e[l] + tu[l-2][0]/d * f0 + tu[l-2][1]/d * f1 for l in range(2, N)]
 
-            # Recursively normalize remaining vectors
-            f = normalize_basis_at_p(e[2:N], p)
-            return [(f0, min_v), (f1, min_v)] + f
+    # Recursively normalize remaining vectors
+    f = normalize_basis_at_p(e[2:N], p)
+    return [(f0, min_v), (f1, min_v)] + f
 
 
 def maxord_solve_aux_eq(a, b, p):

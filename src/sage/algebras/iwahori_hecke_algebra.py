@@ -1506,8 +1506,7 @@ class IwahoriHeckeAlgebra(Parent, UniqueRepresentation):
                 # 10% faster than a plain addition on the example of #12528
                 return self.sum_of_terms(((w, A._q_sum), (wi, A._q_prod)),
                                          distinct=True)
-            else:
-                return self.monomial(wi)
+            return self.monomial(wi)
 
         def product_by_generator(self, x, i, side='right'):
             r"""

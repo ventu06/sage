@@ -2870,8 +2870,7 @@ class DifferentialGCAlgebra(GCAlgebra):
             if isinstance(phiext, tuple):
                 if partial_result:
                     return phiext[0]
-                else:
-                    raise ValueError("could not cover all relations in max iterations in degree {}".format(degree + 1))
+                raise ValueError("could not cover all relations in max iterations in degree {}".format(degree + 1))
             phi = phiext
             self._minimalmodels[degree] = phi
         return phi
