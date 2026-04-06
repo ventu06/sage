@@ -575,13 +575,12 @@ class RegularCrystals(Category_singleton):
                     element = element.f(i)
                     l.append(element)
                 return C.sum_of_monomials(l)
-            else:
-                l = []
-                element = self
-                for k in range(-r-1):
-                    element = element.e(i)
-                    l.append(element)
-                return - C.sum_of_monomials(l)
+            l = []
+            element = self
+            for k in range(-r-1):
+                element = element.e(i)
+                l.append(element)
+            return - C.sum_of_monomials(l)
 
         def stembridgeDelta_depth(self, i, j):
             r"""
