@@ -1299,7 +1299,21 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
             ...
             NotImplementedError: UnivariatePuiseuxSeries cannot be translated from FriCAS to SageMath yet
 
-        TESTS::
+        TESTS:
+
+        Records from the differential equation solver::
+
+            sage: x = var('x')
+            sage: y = function('y')(x)
+            sage: f = fricas(diff(y,x) + y - 1).solve(y.operator(), x)
+            sage: f
+                                        - x
+            [particular = 1, basis = [%e   ]]
+
+            sage: f.sage()
+            {'particular': 1, 'basis': [e^(-x)]}
+
+        Expressions::
 
             sage: f = fricas('integrate(sin(x^2), x)'); f
                        +---+

@@ -32,6 +32,7 @@ UnaryExport(T : Type, ET : with (sexport : T -> SExpression)) : with
         sexport: Factored T -> SExpression
         sexport: Matrix T -> SExpression
         sexport: Polynomial T -> SExpression
+        sexport: Record(particular : T, basis : List T) -> SExpression
     == add
         sexport(obj: List T): SExpression ==
             convert([sexport(e)$ET for e in obj])@SExpression
@@ -67,3 +68,12 @@ UnaryExport(T : Type, ET : with (sexport : T -> SExpression)) : with
                 l := listOfTerms obj
                 convert([convert([monomial(mon.k), sexport(mon.c)$ET])@SExpression
 		         for mon in l])@SExpression
+
+)abb package EXPORT2 BinaryExport
+++ For domain constructors depending on two types
+BinaryExport(S: Type, T : Type, ES : with (sexport : S -> SExpression), ET : with (sexport : T -> SExpression)) : with
+        sexport: Record(particular : S, basis : T) -> SExpression
+    == add
+        sexport(obj: Record(particular : S, basis : T)): SExpression ==
+                convert([sexport(obj.particular)$ES,
+                         sexport(obj.basis)$ET])@SExpression

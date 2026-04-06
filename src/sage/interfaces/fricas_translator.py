@@ -27,6 +27,7 @@ FRICAS_CONSTANTS = {'%i': I,
 # if the first element of the pair is a function, it is used by
 # SEXPorter to rewrite the domain
 FRICAS_DOMAIN_DISPATCH = {
+    "Record": ("_record", "_eval_record"),
     "Integer": ("_inputform", "_eval_call"),
     "PositiveInteger": ("_inputform", "_eval_call"),
     "NonNegativeInteger": ("_inputform", "_eval_call"),
@@ -160,6 +161,30 @@ class SEXPorter:
 
         return f"UnaryExport({base_str}, {export_str})"
 
+    def _record(self):
+        """
+        Return a ``UnaryExport`` package call for a record.
+
+        .. WARNING::
+
+            Currently, only ``Record(particular : T, basis : List
+            T)`` is supported.  Generic support seems to be
+            difficult.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: dom = ('Record', (':', 'particular', ('Expression', ('Integer',))), (':', 'basis', ('List', ('Expression', ('Integer',)))))
+            sage: SEXPorter(dom)._record()
+            'BinaryExport(Expression(Integer), List(Expression(Integer)), InputFormExport(Expression(Integer)), UnaryExport(Expression(Integer), InputFormExport(Expression(Integer))))'
+        """
+        fields = [f[1] for f in self._domain[1:]]
+        if fields != ['particular', 'basis']:
+            raise NotImplementedError(f"cannot translate a record with fields {fields}, only ['particular', 'basis'] is currently supported")
+        f1 = SEXPorter(self._domain[1][2])
+        f2 = SEXPorter(self._domain[2][2])
+        return f"BinaryExport({f1._unparse()}, {f2._unparse()}, {f1.package_call()}, {f2.package_call()})"
+
     def package_call(self):
         """
         Return the package containing the ``sexport`` function.
@@ -227,6 +252,28 @@ class SEXEvaluator:
             -5
         """
         return self._dom.parent()(self._ast)
+
+    def _eval_record(self):
+        r"""
+        Return the evaluation as a record.
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
+            sage: obj = (1, (('exp', ('*', -1, 'x')),))
+            sage: EXPR = ('Expression', ('Integer',))
+            sage: dom = ('Record', (':', 'particular', EXPR), (':', 'basis', ('List', EXPR)))
+            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
+            {'particular': 1, 'basis': [e^(-x)]}
+        """
+        assert len(self._dom._domain) == len(self._ast) + 1
+        result = dict()
+        for field, value in zip(self._dom._domain[1:], self._ast):
+            key = field[1]
+            parent = LazyParent(field[2])
+            val = SEXEvaluator(value, parent).eval()
+            result[key] = val
+        return result
 
     def _eval_bool(self):
         r"""
