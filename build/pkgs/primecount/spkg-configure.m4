@@ -26,7 +26,16 @@ SAGE_SPKG_CONFIGURE([primecount], [
                            PRIMECOUNT_VERSION_MINOR >= ]] SAGE_PRIMECOUNT_MINOR [[ ) return 0;
                        else return 1;
                       ]])],
-                     [AC_MSG_RESULT([Good.])],
+                     [AC_MSG_RESULT([Good.])
+                      dnl Reject broken .pc files with empty version
+                      AC_MSG_CHECKING([whether primecount .pc file reports a non-empty version])
+                      primecount_pc_version=`$PKG_CONFIG --modversion primecount 2>/dev/null`
+                      AS_IF([test -z "$primecount_pc_version"], [
+                          AC_MSG_RESULT([no, broken .pc file])
+                          sage_spkg_install_primecount=yes
+                      ], [
+                          AC_MSG_RESULT([yes ($primecount_pc_version)])
+                      ])],
                      [AC_MSG_RESULT([Too old.])
                       sage_spkg_install_primecount=yes],
                      []) dnl cross-compilation - noop
@@ -39,3 +48,4 @@ SAGE_SPKG_CONFIGURE([primecount], [
     m4_popdef([SAGE_PRIMECOUNT_MAJOR])
     m4_popdef([SAGE_PRIMECOUNT_MINOR])
 ])
+
