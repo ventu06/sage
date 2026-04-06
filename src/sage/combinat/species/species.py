@@ -680,8 +680,7 @@ class GenericCombinatorialSpecies(SageObject):
         """
         if self.is_weighted():
             return self._weight.parent()
-        else:
-            return QQ
+        return QQ
 
     def _common_parent(self, parents):
         """

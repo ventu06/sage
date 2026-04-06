@@ -2065,13 +2065,12 @@ class SetPartitions(UniqueRepresentation, Parent):
 
         if part is None:
             return SetPartitions_set(s)
-        elif isinstance(part, (int, Integer)):
+        if isinstance(part, (int, Integer)):
             return SetPartitions_setn(s, part)
-        else:
-            part = sorted(part, reverse=True)
-            if part not in Partitions(len(s)):
-                raise ValueError("part must be an integer partition of %s" % len(s))
-            return SetPartitions_setparts(s, Partition(part))
+        part = sorted(part, reverse=True)
+        if part not in Partitions(len(s)):
+            raise ValueError("part must be an integer partition of %s" % len(s))
+        return SetPartitions_setparts(s, Partition(part))
 
     def __contains__(self, x):
         """

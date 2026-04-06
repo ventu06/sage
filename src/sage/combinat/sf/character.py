@@ -68,8 +68,7 @@ class Character_generic(SFA_generic):
         """
         if la:
             return la.size()**2 + la[0]
-        else:
-            return 0
+        return 0
 
     def _other_to_self(self, sexpr):
         r"""

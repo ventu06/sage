@@ -2430,8 +2430,7 @@ class SymmetricGroupAlgebra_n(GroupAlgebra_class):
 
         if mult == 'l2r':
             return z
-        else:
-            return z.map_support(lambda x: x.inverse())
+        return z.map_support(lambda x: x.inverse())
 
     def murphy_basis(self):
         r"""
@@ -3617,11 +3616,10 @@ class HeckeAlgebraSymmetricGroup_t(HeckeAlgebraSymmetricGroup_generic):
 
         if perm[i - 1] < perm[i]:
             return self.monomial(self._indices(perm_i))
-        else:
-            # Ti^2 = (q - q^(-1))*Ti - q1*q2
-            q = self.q()
-            z_elt = {perm_i: q, perm: q - 1}
-            return self._from_dict(z_elt)
+        # Ti^2 = (q - q^(-1))*Ti - q1*q2
+        q = self.q()
+        z_elt = {perm_i: q, perm: q - 1}
+        return self._from_dict(z_elt)
 
     def t_action(self, a, i):
         r"""
