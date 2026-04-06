@@ -1296,7 +1296,7 @@ def pruned_tree(T, f, s):
     if not ke:
         # No removed edge. Only one possible subtree
         return [tuple(T)] * n
-    elif ke == n - 1:
+    if ke == n - 1:
         # All edges are removed. Only n possible subtrees
         return [(u,) for u in T]
 

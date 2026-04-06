@@ -1583,7 +1583,7 @@ class BipartiteGraph(Graph):
         """
         if algorithm == "Godsil":
             return Graph.matching_polynomial(self, complement=False, name=name)
-        elif algorithm == "rook":
+        if algorithm == "rook":
             from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
             A = self.reduced_adjacency_matrix()
             a = A.rook_vector()
@@ -2272,7 +2272,7 @@ class BipartiteGraph(Graph):
                 return Integer(len(d))
             return d
 
-        elif algorithm == "Edmonds" or algorithm == "LP":
+        if algorithm == "Edmonds" or algorithm == "LP":
             return Graph.matching(self, value_only=value_only,
                                   algorithm=algorithm,
                                   use_edge_labels=use_edge_labels,
