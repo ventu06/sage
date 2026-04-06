@@ -938,10 +938,8 @@ class GiacElement(ExpectElement):
             if 'is not valid' in msg and 'to < or <=' in msg:
                 if (hash(str(self)) < hash(str(other))):
                     return rich_to_bool(op, -1)
-                else:
-                    return rich_to_bool(op, 1)
-            else:
-                raise RuntimeError(e)
+                return rich_to_bool(op, 1)
+            raise RuntimeError(e)
         if P.eval("evalb(%s %s %s)" % (self.name(), P._greaterthan_symbol(), other.name())) == P._true_symbol():
             return rich_to_bool(op, 1)
 
