@@ -505,8 +505,7 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
         """
         if self.rank() == self.degree():
             return abs(self.reduced_basis.determinant())
-        else:
-            return self.gram_matrix().determinant().sqrt()
+        return self.gram_matrix().determinant().sqrt()
 
     @cached_method
     def discriminant(self):
@@ -993,5 +992,4 @@ class FreeModule_submodule_with_basis_integer(FreeModule_submodule_with_basis_pi
 
         if exact_form:
             return (D * gamma(1 + (r/2)))**(1/r) / pi.sqrt()
-        else:
-            return D**(1/r) * (r/(2*pi*e)).sqrt()
+        return D**(1/r) * (r/(2*pi*e)).sqrt()
