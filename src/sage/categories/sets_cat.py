@@ -2980,6 +2980,8 @@ Please use, e.g., S.algebra(QQ, category=Semigroups())""".format(self))
                       irreducible symmetric group character basis
                     Defining w as shorthand for
                      Symmetric Functions over Integer Ring in the Witt basis
+                    Defining xt as shorthand for
+                     Symmetric Functions over Integer Ring in the irreducible rook monoid character basis
 
                 The messages can be silenced by setting ``verbose=False``::
 
