@@ -847,9 +847,9 @@ cdef class Integer(sage.structure.element.EuclideanDomainElement):
             return (<Integer>x)._xor(y)
         return coercion_model.bin_op(x, y, operator.xor)
 
-    def __richcmp__(left, right, int op):
+    def __richcmp__(left, right, int op) -> bool:
         """
-        ``cmp`` for integers.
+        ``richcmp`` for integers.
 
         EXAMPLES::
 

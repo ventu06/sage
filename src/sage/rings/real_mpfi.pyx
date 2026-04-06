@@ -173,11 +173,6 @@ The bad:
 
     Intervals ``a`` and ``b`` overlap iff ``not(a != b)``.
 
-.. WARNING::
-
-    The ``cmp(a, b)`` function should not be used to compare real
-    intervals. Note that ``cmp`` will disappear in Python3.
-
 EXAMPLES::
 
     sage: 0 < RIF(1, 2)
@@ -849,7 +844,7 @@ cdef class RealIntervalField_class(sage.rings.abc.RealIntervalField):
             return self._convert_method_map(S, "_real_mpfi_")
         return None
 
-    def __richcmp__(self, other, int op):
+    def __richcmp__(self, other, int op) -> bool:
         """
         Compare ``self`` to ``other``.
 
