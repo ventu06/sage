@@ -1313,7 +1313,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         """
         return f"Quaternion Algebra ({self._a!r}, {self._b!r}) with base ring {self.base_ring()}"
 
-    def is_definite(self):
+    def is_definite(self) -> bool:
         r"""
         Check whether this quaternion algebra is definite.
 
@@ -1340,7 +1340,7 @@ class QuaternionAlgebra_ab(QuaternionAlgebra_abstract):
         a, b = self.invariants()
         return a < 0 and b < 0
 
-    def is_totally_definite(self):
+    def is_totally_definite(self) -> bool:
         r"""
         Check whether this quaternion algebra is totally definite.
 
@@ -4074,7 +4074,7 @@ class QuaternionFractionalIdeal_rational(QuaternionFractionalIdeal):
         # the correct alpha if a certificate is requested
         return (~J.norm() * IJbar).is_principal(certificate)
 
-    def is_principal(self, certificate=False):
+    def is_principal(self, certificate=False) -> bool | tuple:
         r"""
         Check whether this quaternion fractional ideal is principal.
 

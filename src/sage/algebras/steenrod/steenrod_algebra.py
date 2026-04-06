@@ -2907,7 +2907,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         return (all(self.profile(i, 0) == 0 for i in range(1, n))
                 and all(self.profile(i, 1) == 1 for i in range(n)))
 
-    def is_finite(self):
+    def is_finite(self) -> bool:
         r"""
         Return ``True`` if this algebra is finite-dimensional.
 
@@ -3037,7 +3037,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             return Infinity
         return self.prime() ** self.dimension()
 
-    def is_division_algebra(self):
+    def is_division_algebra(self) -> bool:
         r"""
         The only way this algebra can be a division algebra is if it
         is the ground field `\GF{p}`.
@@ -3051,7 +3051,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.is_field()
 
-    def is_field(self, proof=True):
+    def is_field(self, proof=True) -> bool:
         r"""
         The only way this algebra can be a field is if it is the
         ground field `\GF{p}`.
@@ -3065,7 +3065,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.dimension() == 1
 
-    def is_integral_domain(self, proof=True):
+    def is_integral_domain(self, proof=True) -> bool:
         r"""
         The only way this algebra can be an integral domain is if it
         is the ground field `\GF{p}`.
@@ -3094,7 +3094,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
         """
         return self.is_finite()
 
-    def is_generic(self):
+    def is_generic(self) -> bool:
         r"""
         The algebra is generic if it is based on the odd-primary relations,
         i.e. if its dual is a quotient of
@@ -3196,7 +3196,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             return self.parent().prefix()
 
-        def is_homogeneous(self):
+        def is_homogeneous(self) -> bool:
             """
             Return ``True`` iff this element is homogeneous.
 
@@ -3543,7 +3543,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                 excesses = [excess_odd(mono) for mono in a.support()]
             return min(excesses)
 
-        def is_unit(self):
+        def is_unit(self) -> bool:
             r"""
             Return ``True`` if element has a nonzero scalar multiple of
             `P(0)` as a summand, ``False`` otherwise.
@@ -3565,7 +3565,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
             """
             return self.parent().one() in self.monomials()
 
-        def is_nilpotent(self):
+        def is_nilpotent(self) -> bool:
             """
             Return ``True`` if element is not a unit, ``False`` otherwise.
 
@@ -3660,7 +3660,7 @@ class SteenrodAlgebra_generic(CombinatorialFreeModule):
                     wt = min(wt, sum(mono1) + len(mono1) + P_wt)
                 return wt
 
-        def is_decomposable(self):
+        def is_decomposable(self) -> bool:
             r"""
             Return ``True`` if element is decomposable, ``False`` otherwise.
 

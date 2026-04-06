@@ -2757,9 +2757,10 @@ class CubicHeckeAlgebra(CombinatorialFreeModule):
         """
         return self._filecache.section
 
-    def is_filecache_empty(self, section=None):
+    def is_filecache_empty(self, section=None) -> bool:
         r"""
         Return ``True`` if the file cache of the given ``section`` is empty.
+
         If no ``section`` is given the answer is given for the complete
         file cache.
 
