@@ -612,6 +612,16 @@ class DiGraph(GenericGraph):
             sage: copy(g) is g    # copy is mutable again
             False
 
+        When the input provides an explicit vertex list, creating an immutable
+        digraph preserves this order::
+
+            sage: D = DiGraph([['b', 'a'], []])
+            sage: list(D)
+            ['b', 'a']
+            sage: Dim = DiGraph([['b', 'a'], []], immutable=True)
+            sage: list(Dim)
+            ['b', 'a']
+
         Unknown input format::
 
             sage: DiGraph(4, format='HeyHeyHey')
@@ -864,7 +874,8 @@ class DiGraph(GenericGraph):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             ib = StaticSparseBackend(self,
                                      loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges())
+                                     multiedges=self.allows_multiple_edges(),
+                                     sort=(format != "vertices_and_edges"))
             self._backend = ib
             self._immutable = True
 

@@ -1006,6 +1006,16 @@ class Graph(GenericGraph):
             sage: Graph(g, immutable=True)
             Petersen graph: Graph on 10 vertices
 
+        When the input provides an explicit vertex list, creating an immutable
+        graph preserves this order::
+
+            sage: G = Graph([['b', 'a'], []])
+            sage: list(G)
+            ['b', 'a']
+            sage: Gim = Graph([['b', 'a'], []], immutable=True)
+            sage: list(Gim)
+            ['b', 'a']
+
         Check error messages for graphs built from incidence matrices (see
         :issue:`18440`)::
 
@@ -1281,7 +1291,8 @@ class Graph(GenericGraph):
             from sage.graphs.base.static_sparse_backend import StaticSparseBackend
             ib = StaticSparseBackend(self,
                                      loops=self.allows_loops(),
-                                     multiedges=self.allows_multiple_edges())
+                                     multiedges=self.allows_multiple_edges(),
+                                     sort=(format != "vertices_and_edges"))
             self._backend = ib
             self._immutable = True
 
