@@ -233,8 +233,7 @@ class Channel(SageObject):
         """
         if message in self.input_space():
             return self.transmit_unsafe(message)
-        else:
-            raise TypeError("Message must be an element of the input space for the given channel")
+        raise TypeError("Message must be an element of the input space for the given channel")
 
     #Alias for transmit method
     __call__ = transmit
