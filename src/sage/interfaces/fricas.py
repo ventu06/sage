@@ -1310,8 +1310,10 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
                                         - x
             [particular = 1, basis = [%e   ]]
 
-            sage: f.sage()
-            {'particular': 1, 'basis': [e^(-x)]}
+            sage: f.sage()["particular"]
+            1
+            sage: f.sage()["basis"]
+            [e^(-x)]
 
         Expressions::
 

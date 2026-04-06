@@ -260,11 +260,15 @@ class SEXEvaluator:
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
+            sage: fricas._start()  # to fill the symbol table
             sage: obj = (1, (('exp', ('*', -1, 'x')),))
             sage: EXPR = ('Expression', ('Integer',))
             sage: dom = ('Record', (':', 'particular', EXPR), (':', 'basis', ('List', EXPR)))
-            sage: SEXEvaluator(obj, LazyParent(dom)).eval()
-            {'particular': 1, 'basis': [e^(-x)]}
+            sage: result = SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: result["particular"]
+            1
+            sage: result["basis"]
+            [e^(-x)]
         """
         assert len(self._dom._domain) == len(self._ast) + 1
         result = dict()
