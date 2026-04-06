@@ -130,7 +130,7 @@ cdef object _md_tree_node_to_md_tree_inner_rec(const md_tree_node *n,
     else:  # is_prime
         node = Node(NodeType.PRIME)
     node.children.extend(_md_tree_node_to_md_tree_inner_rec(c, Gb)
-                                                    for c in deref(n).children)
+                         for c in deref(n).children)
     return node
 
 
@@ -731,7 +731,7 @@ def check_modular_decomposition(tree_root, graph):
                 # characteristics of modules
                 return False
             if not check_modular_decomposition(module,
-                                              graph.subgraph(get_vertices(module))):
+                                               graph.subgraph(get_vertices(module))):
                 # recursively test the modular decomposition subtrees
                 return False
 
