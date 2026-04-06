@@ -1101,7 +1101,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         return float(self.sage())
 
-    def _integer_(self, ZZ=None):
+    def _integer_(self, Z=None):
         """
         EXAMPLES::
 
