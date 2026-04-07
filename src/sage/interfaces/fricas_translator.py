@@ -721,6 +721,10 @@ class LazyParent:
                                   len(self._polynomial_symbols),
                                   names=self._polynomial_symbols)
 
+        if head == "Expression":
+            from sage.symbolic.ring import SR
+            return SR
+
         if head == "Matrix":
             from sage.matrix.matrix_space import MatrixSpace
             base = self.base().parent(**kwargs)
