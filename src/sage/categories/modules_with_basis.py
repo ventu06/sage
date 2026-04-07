@@ -1430,12 +1430,15 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
-            a = self.zero()
-            if not indices.is_empty():
-                for i in range(n):
-                    a += self.term(indices.random_element(),
-                                   self.base_ring().random_element())
-            return a
+            if indices.is_empty():
+                return self.zero()
+
+            return self.sum(
+                self.term(indices.random_element(),
+                          self.base_ring().random_element())
+                for _ in range(n)
+            )
+
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
