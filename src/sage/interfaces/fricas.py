@@ -547,8 +547,6 @@ http://fricas.sourceforge.net.
             RuntimeError: An error occurred when FriCAS evaluated '[i fo83r i in 0..17]':
               Line   1: x:=[i fo83r i in 0..17];
                        ...A..........B
-            ... Error  A: Missing mate.
-            ... Error  B: syntax error at top level
             ...Error  A: Missing mate.
             ...Error  B: syntax error at top level
             ...Error  B: Possibly missing a ]
