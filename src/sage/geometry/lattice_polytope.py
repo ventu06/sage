@@ -641,7 +641,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
     def __reduce__(self):
         r"""
-        Reduction function. Does not store data that can be relatively fast
+        Reduction function.
+
+        This does not store data that can be relatively fast
         recomputed.
 
         TESTS::
@@ -727,7 +729,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         Check that :issue:`28741` is fixed::
 
-            sage: # needs sage.graphs
             sage: p = LatticePolytope([], lattice=ToricLattice(3).dual()); p
             -1-d lattice polytope in 3-d lattice M
             sage: a = p.faces()[0][0]
@@ -1042,7 +1043,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             return PointCollection(r, self._sublattice)
         if isinstance(data, Matrix):
             r = matrix([self._pullback(col)
-                    for col in data.columns(copy=False)]).transpose()
+                        for col in data.columns(copy=False)]).transpose()
             return r
         data = vector(QQ, data)
         return self._sublattice.coordinates(data - self._shift_vector)
@@ -1309,7 +1310,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return faces
 
     @cached_method
-    def adjacent(self):
+    def adjacent(self) -> tuple:
         r"""
         Return faces adjacent to ``self`` in the ambient face lattice.
 
@@ -1323,7 +1324,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         * `F_1` and `F_2` are facets of some face of dimension `d+1`, unless
           `d` is the dimension of the ambient structure.
 
-        OUTPUT: :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
+        OUTPUT:
+
+        :class:`tuple` of :class:`lattice polytopes <LatticePolytopeClass>`
 
         EXAMPLES::
 
@@ -1441,6 +1444,26 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
     linear_transformation = affine_transform
 
+    def translation(self, v):
+        """
+        Return the translated polytope ``P+v``, where ``P`` is this lattice polytope.
+
+        INPUT:
+
+        - ``v`` -- integer or vector of integers
+
+        Integers are interpreted as vectors with the same components.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(2)
+            sage: o.translation((-1,-1))
+            2-d lattice polytope in 2-d lattice M
+            sage: o.translation(-1)
+            2-d lattice polytope in 2-d lattice M
+        """
+        return self.affine_transform(1, v)
+
     def ambient(self):
         r"""
         Return the ambient structure of ``self``.
@@ -1455,7 +1478,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: o.ambient() is o
             True
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face
             1-d face of 3-d reflexive polytope in 3-d lattice M
@@ -1482,7 +1504,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         But each of its other faces is contained in one or more facets::
 
-            sage: # needs sage.graphs
             sage: face = o.faces(1)[0]
             sage: face.ambient_facet_indices()
             (4, 5)
@@ -1785,7 +1806,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: o = lattice_polytope.cross_polytope(4)
             sage: e = o.edges()[0]; e
             1-d face of 4-d reflexive polytope in 4-d lattice M
@@ -1914,7 +1934,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         However, you can achieve some of this functionality using
         :meth:`facets`, :meth:`facet_of`, and :meth:`adjacent` methods::
 
-            sage: # needs sage.graphs
             sage: face = square.faces(0)[0]
             sage: face
             0-d face of 2-d lattice polytope in 2-d lattice M
@@ -1936,7 +1955,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         Note that if ``p`` is a face of ``superp``, then the face
         lattice of ``p`` consists of (appropriate) faces of ``superp``::
 
-            sage: # needs sage.graphs
             sage: superp = LatticePolytope([(1,2,3,4), (5,6,7,8),
             ....:                           (1,2,4,8), (1,3,9,7)])
             sage: superp.face_lattice()
@@ -2302,7 +2320,6 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
 
         EXAMPLES::
 
-            sage: # needs sage.graphs
             sage: square = LatticePolytope([(0,0), (1,0), (1,1), (0,1)])
             sage: square.facet_of()
             ()
@@ -2456,7 +2473,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return LatticePolytopeClass._rp_dict[dim][self.normal_form().matrix()]
 
     @cached_method
-    def interior_point_indices(self):
+    def interior_point_indices(self) -> tuple[int, ...]:
         r"""
         Return indices of (relative) interior lattice points of this polytope.
 
@@ -2496,9 +2513,9 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
                      for i, c in enumerate(self.distances().columns(copy=False))
                      if len(c.nonzero_positions()) == self.n_facets())
 
-    def interior_points(self):
+    def interior_points(self) -> PointCollection:
         r"""
-        Return (relative) boundary lattice points of this polytope.
+        Return (relative) interior lattice points of this polytope.
 
         OUTPUT: a :class:`point collection <PointCollection>`
 
@@ -2521,7 +2538,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         return self.points(self.interior_point_indices())
 
     @cached_method
-    def is_reflexive(self):
+    def is_reflexive(self) -> bool:
         r"""
         Return ``True`` if this polytope is reflexive.
 
@@ -2767,12 +2784,12 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
             sage: p.nef_partitions()                                                    # needs palp
             Traceback (most recent call last):
             ...
-            ValueError: The given polytope is not reflexive!
+            ValueError: the given polytope is not reflexive:
             Polytope: 3-d lattice polytope in 3-d lattice M
         """
         if not self.is_reflexive():
-            raise ValueError(("The given polytope is not reflexive!\n"
-                              + "Polytope: %s") % self)
+            raise ValueError("the given polytope is not reflexive:\n"
+                             f"Polytope: {self}")
         keys = "-N -V"
         if keep_symmetric:
             keys += " -s"
@@ -2830,7 +2847,7 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
         """
         return self._palp("nef.x -f " + keys)
 
-    def n_facets(self):
+    def n_facets(self) -> int:
         r"""
         Return the number of facets of this polytope.
 
@@ -3372,11 +3389,29 @@ class LatticePolytopeClass(Element, ConvexSet_compact,
     nvertices = n_vertices
 
     @cached_method
+    def ehrhart_polynomial(self, *args, **kwds):
+        """
+        Return the Ehrhart polynomial of ``self``.
+
+        See :meth:`~sage.geometry.base_ZZ.polyhedron_ZZ.ehrhart_polynomial`
+        for the possible arguments.
+
+        EXAMPLES::
+
+            sage: o = lattice_polytope.cross_polytope(3)
+            sage: o.ehrhart_polynomial()    # optional - latte_int
+            4/3*t^3 + 2*t^2 + 8/3*t + 1
+        """
+        return self.polyhedron().ehrhart_polynomial(*args, **kwds)
+
+    @cached_method
     def origin(self):
         r"""
         Return the index of the origin in the list of points of ``self``.
 
-        OUTPUT: integer if the origin belongs to this polytope, ``None`` otherwise
+        OUTPUT:
+
+        integer if the origin belongs to this polytope, ``None`` otherwise
 
         EXAMPLES::
 
@@ -5328,7 +5363,7 @@ def all_nef_partitions(polytopes, keep_symmetric=False):
     r"""
     Compute nef-partitions for all given ``polytopes``.
 
-    This functions does it MUCH faster than member functions of
+    This function does it MUCH faster than member functions of
     ``LatticePolytope`` during the first run. So it is recommended to
     use this functions if you work with big sets of data.
 
@@ -5383,7 +5418,7 @@ def all_points(polytopes):
 
     This functions does it MUCH faster than member functions of
     ``LatticePolytope`` during the first run. So it is recommended to
-    use this functions if you work with big sets of data.
+    use this function if you work with big sets of data.
 
     INPUT:
 
