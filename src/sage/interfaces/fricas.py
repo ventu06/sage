@@ -1544,8 +1544,8 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         if dom_str == '"failed"':
             return "failed"
         dom = SEXParser(dom_str).parse()
-        pkg = SEXPorter(dom).package_call()
-        obj_str = P.get_string(f"sageprint(sexport({self._name})${pkg})")
+        fun = SEXPorter(dom).export_call()
+        obj_str = P.get_string(f"sageprint({fun}({self._name}))")
         obj = SEXParser(obj_str).parse()
         return SEXEvaluator(obj, LazyParent(dom)).eval()
 

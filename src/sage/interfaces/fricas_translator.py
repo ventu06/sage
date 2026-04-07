@@ -57,8 +57,8 @@ FRICAS_DOMAIN_DISPATCH = {
 
 class SEXPorter:
     """
-    A class constructing the FriCAS package which exports
-    ``sexport`` for a given (parsed) domain.
+    A class constructing the FriCAS package call to export
+    objects in the given (parsed) domain.
     """
     def __init__(self, domain):
         """
@@ -114,9 +114,9 @@ class SEXPorter:
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("Integer",))._inputform()
-            'InputFormExport(Integer)'
+            '(sexport$InputFormExport(Integer))'
         """
-        return f"InputFormExport({self._unparse()})"
+        return f"(sexport$InputFormExport({self._unparse()}))"
 
     def _finite(self):
         """
@@ -126,9 +126,9 @@ class SEXPorter:
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("FiniteField", 2, 3))._finite()
-            'FiniteExport(FiniteField(2,3))'
+            '(sexport$FiniteExport(FiniteField(2,3)))'
         """
-        return f"FiniteExport({self._unparse()})"
+        return f"(sexport$FiniteExport({self._unparse()}))"
 
     def _aggregate(self):
         """
@@ -138,12 +138,12 @@ class SEXPorter:
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(('DirectProduct', 2, ('Integer',)))._aggregate()
-            'AggregateExport(Integer, DirectProduct(2,Integer), InputFormExport(Integer))'
+            '(sexport$AggregateExport(Integer, DirectProduct(2,Integer), (sexport$InputFormExport(Integer))))'
         """
         inner = SEXPorter(self._domain[2])
         base_str = inner._unparse()
-        export_str = inner.package_call()
-        return f"AggregateExport({base_str}, {self._unparse()}, {export_str})"
+        export_str = inner.export_call()
+        return f"(sexport$AggregateExport({base_str}, {self._unparse()}, {export_str}))"
 
     def _unary(self):
         """
@@ -153,53 +153,49 @@ class SEXPorter:
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: SEXPorter(("List", ("Integer",)))._unary()
-            'UnaryExport(Integer, InputFormExport(Integer))'
+            '(sexport$UnaryExport(Integer, (sexport$InputFormExport(Integer))))'
         """
         inner = SEXPorter(self._domain[1])
         base_str = inner._unparse()
-        export_str = inner.package_call()
-
-        return f"UnaryExport({base_str}, {export_str})"
+        export_str = inner.export_call()
+        return f"(sexport$UnaryExport({base_str}, {export_str}))"
 
     def _record(self):
         """
         Return a ``UnaryExport`` package call for a record.
 
-        .. WARNING::
-
-            Currently, only ``Record(particular : T, basis : List
-            T)`` is supported.  Generic support seems to be
-            difficult.
-
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
-            sage: dom = ('Record', (':', 'particular', ('Expression', ('Integer',))), (':', 'basis', ('List', ('Expression', ('Integer',)))))
+            sage: dom = ('Record', (':', 'particular', ('Integer',)), (':', 'basis', ('List', ('Integer',))))
             sage: SEXPorter(dom)._record()
-            'BinaryExport(Expression(Integer), List(Expression(Integer)), InputFormExport(Expression(Integer)), UnaryExport(Expression(Integer), InputFormExport(Expression(Integer))))'
+            'sexportparticularbasis'
         """
-        fields = [f[1] for f in self._domain[1:]]
-        if fields != ['particular', 'basis']:
-            raise NotImplementedError(f"cannot translate a record with fields {fields}, only ['particular', 'basis'] is currently supported")
-        f1 = SEXPorter(self._domain[1][2])
-        f2 = SEXPorter(self._domain[2][2])
-        return f"BinaryExport({f1._unparse()}, {f2._unparse()}, {f1.package_call()}, {f2.package_call()})"
+        from sage.interfaces.fricas import fricas
 
-    def package_call(self):
+        def make_call(field_name, field_domain):
+            return SEXPorter(field_domain).export_call() + f"(obj.{field_name})"
+
+        items = ",".join(make_call(field[1], field[2]) for field in self._domain[1:])
+        name = "sexport" + "".join(field[1] for field in self._domain[1:])
+        fricas.eval(f"{name}(obj) == convert([{items}])@SExpression")
+        return name
+
+    def export_call(self):
         """
-        Return the package containing the ``sexport`` function.
+        Return the function call doing the export.
 
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
-            sage: SEXPorter(("List", ("FiniteField", 2, 3))).package_call()
-            'UnaryExport(FiniteField(2,3), FiniteExport(FiniteField(2,3)))'
+            sage: SEXPorter(("List", ("FiniteField", 2, 3))).export_call()
+            '(sexport$UnaryExport(FiniteField(2,3), (sexport$FiniteExport(FiniteField(2,3)))))'
 
-            sage: SEXPorter(("List", ("UnivariatePolynomial", "x", ("Integer",)))).package_call()
-            'UnaryExport(Polynomial(Integer), UnaryExport(Integer, InputFormExport(Integer)))'
+            sage: SEXPorter(("List", ("UnivariatePolynomial", "x", ("Integer",)))).export_call()
+            '(sexport$UnaryExport(Polynomial(Integer), (sexport$UnaryExport(Integer, (sexport$InputFormExport(Integer))))))'
 
-            sage: SEXPorter(('DirectProduct', 2, ('Integer',))).package_call()
-            'AggregateExport(Integer, DirectProduct(2,Integer), InputFormExport(Integer))'
+            sage: SEXPorter(('DirectProduct', 2, ('Integer',))).export_call()
+            '(sexport$AggregateExport(Integer, DirectProduct(2,Integer), (sexport$InputFormExport(Integer))))'
         """
         head = self._domain[0]
         if head not in FRICAS_DOMAIN_DISPATCH:
@@ -302,8 +298,8 @@ class SEXEvaluator:
             sage: P = f._check_valid()
             sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
             sage: dom = SEXParser(dom_str).parse()
-            sage: pkg = SEXPorter(dom).package_call()
-            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: fun = SEXPorter(dom).export_call()
+            sage: obj_str = P.get_string(f"sageprint({fun}({f._name}))")
             sage: obj = SEXParser(obj_str).parse(); obj
             ('float', 231801786030234225607, -66, 2)
             sage: SEXEvaluator(obj, LazyParent(dom))._eval_float()
@@ -399,8 +395,8 @@ class SEXEvaluator:
             sage: P = f._check_valid()
             sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
             sage: dom = SEXParser(dom_str).parse()
-            sage: pkg = SEXPorter(dom).package_call()
-            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: fun = SEXPorter(dom).export_call()
+            sage: obj_str = P.get_string(f"sageprint({fun}({f._name}))")
             sage: obj = SEXParser(obj_str).parse(); obj
             (((('z', 1),), -3), ((('y', 1), ('x', 2)), 1), ((), 1))
             sage: SEXEvaluator(obj, LazyParent(dom))._eval_polynomialring()
@@ -441,8 +437,8 @@ class SEXEvaluator:
             sage: P = f._check_valid()
             sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
             sage: dom = SEXParser(dom_str).parse()
-            sage: pkg = SEXPorter(dom).package_call()
-            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: fun = SEXPorter(dom).export_call()
+            sage: obj_str = P.get_string(f"sageprint({fun}({f._name}))")
             sage: obj = SEXParser(obj_str).parse(); obj
             (-1, ((2, 4), (3, 1)))
             sage: SEXEvaluator(obj, LazyParent(dom))._eval_factorization()
@@ -517,8 +513,8 @@ class SEXEvaluator:
             sage: P = f._check_valid()
             sage: dom_str = P.get_string(f"sageprint(dom({f._name})::Any)")
             sage: dom = SEXParser(dom_str).parse()
-            sage: pkg = SEXPorter(dom).package_call()
-            sage: obj_str = P.get_string(f"sageprint(sexport({f._name})${pkg})")
+            sage: fun = SEXPorter(dom).export_call()
+            sage: obj_str = P.get_string(f"sageprint({fun}({f._name}))")
             sage: obj = SEXParser(obj_str).parse(); obj
             ('::',
              ('rootOf', ('+', ('+', ('^', 'x', 5), ('*', -1, 'x')), -1), 'x'),
