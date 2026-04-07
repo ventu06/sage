@@ -699,6 +699,14 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         sage: (1 + l) * (1 + l).conjugate()
         0
 
+    TESTS:
+
+    Random elements work::
+
+        sage: O = OctonionAlgebra(QQ)
+        sage: O.random_element() in O
+        True
+
     REFERENCES:
 
     - [Scha1996]_

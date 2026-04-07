@@ -146,6 +146,15 @@ class JordanAlgebra(UniqueRepresentation, Parent):
         [-2  3]
         [ 3  4]
 
+    TESTS:
+
+    Random elements work::
+
+        sage: m = matrix([[-2,3],[3,4]])
+        sage: J.<a,b,c> = JordanAlgebra(m, QQ)
+        sage: J.random_element() in J
+        True
+
     REFERENCES:
 
     - :wikipedia:`Jordan_algebra`
