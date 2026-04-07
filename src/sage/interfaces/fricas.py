@@ -549,7 +549,9 @@ http://fricas.sourceforge.net.
                        ...A..........B
             ... Error  A: Missing mate.
             ... Error  B: syntax error at top level
-            ... Error  B: Possibly missing a ]
+            ...Error  A: Missing mate.
+            ...Error  B: syntax error at top level
+            ...Error  B: Possibly missing a ]
                3 error(s) parsing
 
             sage: fricas.set("x", "something stupid")       # indirect doctest
