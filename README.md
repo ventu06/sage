@@ -485,17 +485,6 @@ SAGE_ROOT                 Root directory (create by git clone)
 │       └── zipp/
 ├── configure             Top-level configure script
 ├── COPYING.txt           Copyright information
-├── pkgs                  Source trees of Python distribution packages
-│   ├── sage-docbuild
-│   │   ├── sage_docbuild/
-│   │   └── setup.py
-│   ├── sage-setup
-│   │   ├── sage_setup/
-│   │   └── setup.py
-│   └── sagemath-standard
-│       ├── bin/
-│       ├── sage -> ../../src/sage
-│       └── setup.py
 ├── local  (SAGE_LOCAL)   Installation hierarchy for non-Python packages
 │   ├── bin               Executables
 │   ├── include           C/C++ headers
@@ -635,7 +624,7 @@ information, patches, and build scripts are in the accompanying
 part of the Sage git repository.
 
 <p align="center">
-   Copyright (C) 2005-2025 The Sage Development Team
+   Copyright (C) 2005-2026 The Sage Development Team
 </p>
 <p align="center">
    https://www.sagemath.org
