@@ -1430,13 +1430,13 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
+            if not indices:
+                return self.zero()
+
             if isinstance(indices, list):
                 # If keys() is a list, it won't have random_element().
                 from sage.sets.finite_enumerated_set import FiniteEnumeratedSet
                 indices = FiniteEnumeratedSet(indices)
-
-            if indices.is_empty():
-                return self.zero()
 
             return self.sum(
                 self.term(indices.random_element(),
