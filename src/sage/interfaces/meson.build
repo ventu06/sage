@@ -17,7 +17,6 @@ py.install_sources(
   'gnuplot.py',
   'gp.py',
   'interface.py',
-  'interfaces_test.py',
   'jmoldata.py',
   'kash.py',
   'kenzo.py',
