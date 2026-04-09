@@ -233,8 +233,7 @@ class sage_interactive(interactive):
         def n(x):
             if isinstance(parent(x), SymbolicRing):
                 return x.numerical_approx()
-            else:
-                return x
+            return x
         abbrev = tuple(n(x) for x in abbrev)
         return super().widget_from_tuple(abbrev, *args, **kwds)
 
