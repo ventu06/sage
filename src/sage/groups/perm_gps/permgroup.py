@@ -1591,12 +1591,12 @@ class PermutationGroup_generic(FiniteGroup):
             Group([ (7,8,9)(10,11,12), (5,6)(8,9)(11,12), (4,5,6)(7,8,9)(10,11,12) ])
             sage: B = libgap.Stabilizer(H, list(S[1]), libgap.OnTuples); B
             Group([ (1,2,3) ])
-            sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A, B))
+            sage: T = PermutationGroup(gap_group=libgap.DirectProduct(A,B))
             sage: T.is_isomorphic(H)
             True
-            sage: PermutationGroup(PermutationGroup(gap_group=A).gens(), domain=S[1]).disjoint_direct_product_decomposition()
+            sage: PermutationGroup(PermutationGroup(gap_group=A).gens(),domain=list(S[1])).disjoint_direct_product_decomposition()
             {{4, 5, 6, 7, 8, 9, 10, 11, 12}}
-            sage: PermutationGroup(PermutationGroup(gap_group=B).gens(), domain=S[0]).disjoint_direct_product_decomposition()
+            sage: PermutationGroup(PermutationGroup(gap_group=B).gens(),domain=list(S[0])).disjoint_direct_product_decomposition()
             {{1, 2, 3}}
 
         An example with a different domain::
