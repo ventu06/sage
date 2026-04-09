@@ -1565,7 +1565,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: one = L.one()
-            sage: one.functorial_composition(one, algorithm="subgroups")
+            sage: one.functorial_composition(one, algorithm="subgroups")  # indirect doctest
             X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
             sage: one.functorial_composition(X, algorithm="subgroups")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
@@ -1618,7 +1618,7 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
 
             sage: L.<X> = LazyCombinatorialSpecies(QQ)
             sage: one = L.one()
-            sage: one.functorial_composition(one, algorithm="orbits")
+            sage: one.functorial_composition(one, algorithm="orbits")  # indirect doctest
             X + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
             sage: one.functorial_composition(X, algorithm="orbits")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
@@ -2393,6 +2393,7 @@ class ChainSpecies(LazyCombinatorialSpeciesElement, UniqueRepresentation,
             return (identity + reversal) / 2
 
         return L(coefficient)
+
 
 class GraphSpecies(LazyCombinatorialSpeciesElementGeneratingSeriesMixin,
                    LazyCombinatorialSpeciesElement, UniqueRepresentation,
