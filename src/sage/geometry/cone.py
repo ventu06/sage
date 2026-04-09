@@ -3408,8 +3408,7 @@ class ConvexRationalPolyhedralCone(IntegralRayCollection, Container, ConvexSet_c
 
         - :class:`tuple` of primitive vectors in the lattice of ``self``
           giving directions of lines that span the linear subspace of
-          ``self``. These lines are arbitrary, but fixed. If you do not care
-          about the order, see also :meth:`line_set`.
+          ``self``. These lines are arbitrary, but fixed.
 
         EXAMPLES::
 
