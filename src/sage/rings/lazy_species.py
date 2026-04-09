@@ -1623,18 +1623,21 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             sage: one.functorial_composition(X, algorithm="orbits")
             1 + E_2 + E_3 + E_4 + E_5 + E_6 + O^7
         """
-        left = self._left
+        N = factorial(n) * self._right_gf[n]
         G = self._right
         R = G.parent()._laurent_poly_ring
+        left = self._left
+        if not left[N]:
+            return R.zero()
 
         S_n = _SymmetricGroup(n)
-        g_count = factorial(n) * G.generating_series()[n]
         G_n = G[n].monomial_coefficients(copy=False)
 
-        if len(G_n) == 1 and next(iter(G_n)).permutation_group()[0] == S_n:
+        if not G_n or (len(G_n) == 1
+                       and next(iter(G_n)).permutation_group()[0] == S_n):
             # we act trivially on G[n]
-            f_g_count = left.generating_series()[g_count] * factorial(g_count)
-            return f_g_count * R(S_n)
+            f_N = left.generating_series()[N] * factorial(N)
+            return f_N * R(S_n)
 
         # lazily create the action corresponding to G
         G_action = None
@@ -1644,24 +1647,24 @@ class FunctorialCompositionSpeciesElement(LazyCombinatorialSpeciesElement):
             l_G = [H
                    for g, c in G_n.items() if (H := g.permutation_group()[0]) != S_n
                    for _ in range(c)]
-            g_act = libgap.FactorCosetAction(S_n, l_G)
-            return libgap.MappingGeneratorsImages(g_act)
+            act = libgap.FactorCosetAction(S_n, l_G)
+            return libgap.MappingGeneratorsImages(act)
 
         result = R.zero()
-        for f, c in left[g_count]:
+        for f, c in left[N]:
             F = f.permutation_group()[0]
-            f_g_count = factorial(g_count) / F.cardinality()
-            if f_g_count == 1:
+            f_N = factorial(N) / F.cardinality()
+            if f_N == 1:
                 result += c * R(S_n)
                 continue
 
             if G_action is None:
                 G_action = get_G_action()
 
-            f_act = libgap.FactorCosetAction(SymmetricGroup(g_count), F)
+            f_act = libgap.FactorCosetAction(SymmetricGroup(N), F)
             f_images = [libgap.Image(f_act, image) for image in G_action[1]]
             summands = []
-            U = set(range(1, f_g_count + 1))
+            U = set(range(1, f_N + 1))
             while U:
                 u = U.pop()
                 OS = libgap.OrbitStabilizer(S_n, u, G_action[0], f_images)
