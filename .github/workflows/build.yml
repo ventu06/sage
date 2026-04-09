@@ -15,7 +15,7 @@ on:
       platform:
         description: 'Platform'
         required: true
-        default: 'ubuntu-noble-standard'
+        default: 'ubuntu-resolute-standard'
       docker_tag:
         description: 'Docker tag'
         required: true
