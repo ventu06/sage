@@ -20,7 +20,7 @@ AUTHORS:
 #
 #  The full text of the GPL is available at:
 #
-#                  http://www.gnu.org/licenses/
+#                  https://www.gnu.org/licenses/
 # *****************************************************************************
 
 from sage.rings.integer_ring import ZZ
@@ -39,6 +39,7 @@ from sage.categories.fields import Fields
 from sage.structure.sequence import Sequence
 from sage.structure.element import parent, Expression
 from sage.structure.factory import UniqueFactory
+from sage.misc.lazy_import import lazy_import
 
 lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
