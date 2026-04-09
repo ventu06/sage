@@ -305,15 +305,14 @@ class SEXEvaluator:
             sage: SEXEvaluator(obj, LazyParent(dom))._eval_float()
             3.1415000000000000000
         """
-        from sage.rings.real_mpfr import RealField
         _, x, e, b = self._ast
         # Warning: precision$Float gives the current precision,
         # whereas the bitlength of two's complement gives the
         # precision of self.
         x = int(x)
         prec = max(x.bit_length() if x >= 0 else (~x).bit_length(), 53)
-        R = RealField(prec)
-        return R(Integer(x) * Integer(b) ** Integer(e))
+        P = self._dom.parent(prec=prec)
+        return P(Integer(x) * Integer(b) ** Integer(e))
 
     def _eval_gf(self):
         r"""
@@ -330,7 +329,7 @@ class SEXEvaluator:
 
     def _eval_list(self):
         r"""
-        Return the evaluation as a list.
+        Return the evaluation by coercing a list to the parent.
 
         EXAMPLES::
 
@@ -376,13 +375,25 @@ class SEXEvaluator:
             sage: SEXEvaluator(ast, LazyParent(('Matrix', ('Integer',))))._eval_matrix()
             [1 2]
             [3 4]
+
+            sage: SEXEvaluator(ast, LazyParent(('Matrix', ('PrimeField', 3))))._eval_matrix()
+            [1 2]
+            [0 1]
+
+            sage: ast = SEXParser("((1 2) (3 (sin x)))").parse()
+            sage: SEXEvaluator(ast, LazyParent(('Matrix', ('Expression', ('Integer',)))))._eval_matrix()
+            [     1      2]
+            [     3 sin(x)]
+
+            sage: ast = SEXParser("(((float 191846138366579336806 -67 2)))").parse()
+            sage: SEXEvaluator(ast, LazyParent(('Matrix', ('Float',))))._eval_matrix()
+            [1.3000000000000000000]
         """
         base = self._dom.base()
         m = [[SEXEvaluator(e, base).eval() for e in row]
              for row in self._ast]
-        if not m:
-            return self._dom.parent(nrows=0, ncols=0)(m)
-        return self._dom.parent(nrows=len(m), ncols=len(m[0]))(m)
+        P = self._dom.parent()
+        return P(m)
 
     def _eval_polynomialring(self):
         r"""
@@ -676,18 +687,17 @@ class LazyParent:
             from sage.modules.free_module_element import vector
             return vector
 
-        if head == "FiniteField":
-            from sage.rings.finite_rings.finite_field_constructor import GF
-            p, e = args
-            return GF(p, e)
+        if head in ["Matrix", "RectangularMatrix", "SquareMatrix"]:
+            from sage.matrix.constructor import matrix
+            return matrix
 
-        if head == "PrimeField":
+        if head in ["FiniteField", "PrimeField"]:
             from sage.rings.finite_rings.finite_field_constructor import GF
-            return GF(args[0])
+            return GF(*args)
 
         if head == "IntegerMod":
             from sage.rings.finite_rings.integer_mod_ring import IntegerModRing
-            return IntegerModRing(args[0])
+            return IntegerModRing(*args)
 
         if head in ["Integer", "PositiveInteger", "NonNegativeInteger"]:
             from sage.rings.integer_ring import ZZ
@@ -696,6 +706,14 @@ class LazyParent:
         if head == "AlgebraicNumber":
             from sage.rings.qqbar import QQbar
             return QQbar
+
+        if head == "Expression":
+            from sage.symbolic.ring import SR
+            return SR
+
+        if head == "Float":
+            from sage.rings.real_mpfr import RealField
+            return RealField(kwargs["prec"])
 
         if head == "Fraction":
             from sage.rings.fraction_field import FractionField
@@ -720,17 +738,6 @@ class LazyParent:
             return PolynomialRing(base,
                                   len(self._polynomial_symbols),
                                   names=self._polynomial_symbols)
-
-        if head == "Expression":
-            from sage.symbolic.ring import SR
-            return SR
-
-        if head == "Matrix":
-            from sage.matrix.matrix_space import MatrixSpace
-            base = self.base().parent(**kwargs)
-            nrows = kwargs["nrows"]
-            ncols = kwargs["ncols"]
-            return MatrixSpace(base, nrows, ncols)
 
         raise NotImplementedError(f"Cannot build parent for {head}")
 
