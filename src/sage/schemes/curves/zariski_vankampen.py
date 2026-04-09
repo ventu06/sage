@@ -353,7 +353,7 @@ def orient_circuit(circuit, convex=False, precision=53, verbose=False) -> tuple:
         if pr > 0:
             # return circuit
             return circuit_vertex
-        elif pr < 0:
+        if pr < 0:
             return tuple(reversed(circuit_vertex))
     prec = precision
     while True:

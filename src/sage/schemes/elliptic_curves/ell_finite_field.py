@@ -468,8 +468,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             R = self.frobenius_order()
             if R.degree() == 1:
                 return frob * frob
-            else:
-                return frob.norm()
+            return frob.norm()
 
         # We need manual caching (not @cached_method) since various
         # other methods refer to this _order attribute, in particular
@@ -778,8 +777,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         R = self.frobenius_order()
         if R.degree() == 1:
             return self.frobenius_polynomial().roots(multiplicities=False)[0]
-        else:
-            return R.gen(1)
+        return R.gen(1)
 
     def frobenius_endomorphism(self):
         r"""
@@ -1380,11 +1378,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             gens = list(filter(bool, [P, Q]))
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt._order for pt in gens])
 
-        elif algorithm == 'divpoly':
+        if algorithm == 'divpoly':
             # NB: we already handled extend= above
             return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
 
-        elif algorithm == 'structure':
+        if algorithm == 'structure':
             return E.abelian_group().torsion_subgroup(n)
 
         raise ValueError(f'unknown algorithm {algorithm!r}')
@@ -1490,16 +1488,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             if self.base_field().degree() == other.base_field().degree():
                 return self.cardinality() == other.cardinality()
 
-            elif self.base_field().degree() == gcd(self.base_field().degree(),
+            if self.base_field().degree() == gcd(self.base_field().degree(),
                                                    other.base_field().degree()):
                 return self.cardinality(extension_degree=other.base_field().degree()//self.base_field().degree()) == other.cardinality()
 
-            elif other.base_field().degree() == gcd(self.base_field().degree(),
+            if other.base_field().degree() == gcd(self.base_field().degree(),
                                                     other.base_field().degree()):
                 return other.cardinality(extension_degree=self.base_field().degree()//other.base_field().degree()) == self.cardinality()
 
-            else:
-                raise ValueError("Curves have different base fields: use the field parameter.")
+            raise ValueError("Curves have different base fields: use the field parameter.")
         else:
             f_deg = field.degree()
             s_deg = self.base_field().degree()

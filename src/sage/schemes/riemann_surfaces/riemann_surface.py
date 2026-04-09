@@ -239,7 +239,7 @@ def bisect(L, t):
         if t == L[mid][0]:
             return mid
         # If it's smaller, then we're on the left side.
-        elif t < L[mid][0]:
+        if t < L[mid][0]:
             max = mid
         # Otherwise we're on the right side.
         else:
@@ -997,10 +997,9 @@ class RiemannSurface:
                 )
                 / (2 * M - 2 * rho * Y)
             )
-        else:
-            # Instead, we just compute the minimum distance between branch
-            # points and the point in question.
-            return min(abs(b - z1) for b in self._f_branch_locus) / 2
+        # Instead, we just compute the minimum distance between branch
+        # points and the point in question.
+        return min(abs(b - z1) for b in self._f_branch_locus) / 2
 
     def homotopy_continuation(self, edge):
         r"""
@@ -1577,8 +1576,7 @@ class RiemannSurface:
                 theta = (self._vertices[neighbour] - self._vertices[center]).argument()
                 direction_cache[k] = theta
                 return theta
-            else:
-                return direction_cache[k]
+            return direction_cache[k]
 
         # This loop will start at the entry (0,1), and proceed along the row up
         # til (0,cn-1).
@@ -1743,7 +1741,7 @@ class RiemannSurface:
                 raise ValueError("t outside path range")
             if t == 0:
                 return z_start, currL[0][1][windex]
-            elif t == 1:
+            if t == 1:
                 return z_end, currL[-1][1][windex]
             while True:
                 i = bisect(currL, t)
@@ -2089,8 +2087,7 @@ class RiemannSurface:
         ]
         if exact:
             return RBzg, list(zip(integrand_list, dgdz_list, minpoly_list, a0_info))
-        else:
-            return CCzg, list(zip(integrand_list, dgdz_list, CCminpoly_list, a0_info))
+        return CCzg, list(zip(integrand_list, dgdz_list, CCminpoly_list, a0_info))
 
     def rigorous_line_integral(self, upstairs_edge, differentials, bounding_data):
         r"""

@@ -739,8 +739,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         x,y,z = self._coords
         if z:
             return pari([x/z, y/z])
-        else:
-            return pari([0])
+        return pari([0])
 
     def order(self, algorithm=None):
         r"""
@@ -812,7 +811,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if algorithm == 'generic_small':
             return generic.order_from_bounds(self, None)
-        elif algorithm == 'hybrid':
+        if algorithm == 'hybrid':
             lb = 1
             sqrt_ub = 32
             N = None
@@ -1031,8 +1030,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
 
         if self.is_zero():
             return text("$\\infty$", (-3, 3), **args)
-        else:
-            return point((self[0], self[1]), **args)
+        return point((self[0], self[1]), **args)
 
     def _add_(self, other):
         r"""
@@ -1175,8 +1173,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[0], self[1]
-        else:
-            return self[0]/self[2], self[1]/self[2]
+        return self[0]/self[2], self[1]/self[2]
 
     def x(self):
         """
@@ -1198,8 +1195,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[0]
-        else:
-            return self[0]/self[2]
+        return self[0]/self[2]
 
     def y(self):
         """
@@ -1221,8 +1217,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         """
         if self[2].is_one():
             return self[1]
-        else:
-            return self[1]/self[2]
+        return self[1]/self[2]
 
     def is_divisible_by(self, m):
         """
@@ -1507,8 +1502,7 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         if m == 0:
             if self == 0:  # then every point Q is a solution, but...
                 return [self]
-            else:
-                return []
+            return []
 
         # ans will contain the list of division points.
         ans = []
@@ -1888,18 +1882,16 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         elif self != R:
             if self[0] == R[0]:
                 return Q[0] - self[0]
-            else:
-                l = (R[1] - self[1])/(R[0] - self[0])
-                return Q[1] - self[1] - l * (Q[0] - self[0])
+            l = (R[1] - self[1])/(R[0] - self[0])
+            return Q[1] - self[1] - l * (Q[0] - self[0])
         else:
             a1, a2, a3, a4, a6 = self.curve().a_invariants()
             numerator = (3*self[0]**2 + 2*a2*self[0] + a4 - a1*self[1])
             denominator = (2*self[1] + a1*self[0] + a3)
             if denominator == 0:
                 return Q[0] - self[0]
-            else:
-                l = numerator/denominator
-                return Q[1] - self[1] - l * (Q[0] - self[0])
+            l = numerator/denominator
+            return Q[1] - self[1] - l * (Q[0] - self[0])
 
     def _miller_(self, Q, n):
         r"""
@@ -2885,8 +2877,7 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
             n = E.pari_curve().ellorder(self)
             if n:
                 return Integer(n)
-            else:
-                return oo
+            return oo
 
         if algorithm == 'generic':
             # Get the torsion order if known, else a bound on (multiple
@@ -4017,14 +4008,13 @@ class EllipticCurvePoint_number_field(EllipticCurvePoint_field):
         r -= offset/6
         if not r:
             return QQ.zero()
+        if E.base_ring() is QQ:
+            Nv = Integer(v)
         else:
-            if E.base_ring() is QQ:
-                Nv = Integer(v)
-            else:
-                Nv = v.norm()
-                if not weighted:
-                    r = r / (v.ramification_index() * v.residue_class_degree())
-            return r * log(Nv)
+            Nv = v.norm()
+            if not weighted:
+                r = r / (v.ramification_index() * v.residue_class_degree())
+        return r * log(Nv)
 
     def elliptic_logarithm(self, embedding=None, precision=100,
                            algorithm='pari'):
@@ -4577,9 +4567,9 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if isinstance(base, (list, tuple)):
             if not base:
                 return self.log(self.curve().zero())
-            elif len(base) == 1:
+            if len(base) == 1:
                 return self.log(base[0])
-            elif len(base) > 2:
+            if len(base) > 2:
                 raise ValueError('sequence must have length <= 2')
 
             P1, P2 = base
@@ -4640,7 +4630,7 @@ class EllipticCurvePoint_finite_field(EllipticCurvePoint_field):
         if F.is_prime_field() and n == p:
             # Anomalous case
             return base.padic_elliptic_logarithm(self, p)
-        elif hasattr(E, '_order') and E._order.gcd(n**2) == n:
+        if hasattr(E, '_order') and E._order.gcd(n**2) == n:
             pass    # cyclic rational n-torsion -> okay
         elif base.weil_pairing(self, n) != 1:
             raise ValueError('ECDLog problem has no solution (non-trivial Weil pairing)')

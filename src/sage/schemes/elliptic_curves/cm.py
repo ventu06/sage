@@ -1006,8 +1006,7 @@ def is_cm_j_invariant(j, algorithm='CremonaSutherland', method=None):
                 D0 *= 4
             f = ZZ(D // D0).isqrt()
             return (True, (D0, f))
-        else:
-            return (False, None)
+        return (False, None)
 
     h = jpol.degree()
     if algorithm in ['exhaustive', 'old']:
