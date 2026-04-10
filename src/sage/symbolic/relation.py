@@ -1581,10 +1581,7 @@ def _solve_expression(f, x, explicit_solutions, multiplicities,
                 m = eq._maxima_()
                 s = m.to_poly_solve(x, options='algexact:true')
                 T = string_to_list_of_solutions(repr(s))
-                for t in T:
-                    u = _to_poly_solve_unwrap_solution(t)
-                    if u is not None:
-                        X.append(u)
+                X.extend(u for t in T if (u :=_to_poly_solve_unwrap_solution(t)) is not None)
             except TypeError as mess:
                 if ignore_exceptions:
                     continue
