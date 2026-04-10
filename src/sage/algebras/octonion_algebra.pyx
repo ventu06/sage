@@ -89,7 +89,7 @@ cdef class Octonion_generic(AlgebraElement):
 
     def __getitem__(self, m):
         r"""
-        Return the ``m``th coordinate of ``self``.
+        Return the ``m``-th coordinate of ``self``.
 
         EXAMPLES::
 
@@ -107,7 +107,6 @@ cdef class Octonion_generic(AlgebraElement):
             7
             sage: elt.dense_coefficient_list()
             [0, 1, 2, 3, 4, 5, 6, 7]
-
         """
         return self.vec[m]
 
