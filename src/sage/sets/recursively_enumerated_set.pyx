@@ -1132,7 +1132,7 @@ cdef class RecursivelyEnumeratedSet_symmetric(RecursivelyEnumeratedSet_generic):
             sage: next(it)
             Traceback (most recent call last):
             ...
-            KeyboardInterrupt:
+            KeyboardInterrupt
             sage: next(it)
             Traceback (most recent call last):
             ...
