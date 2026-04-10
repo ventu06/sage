@@ -1039,7 +1039,7 @@ def solve(f, *args, explicit_solutions=None, multiplicities=None, to_poly_solve=
         sage: solve(cos(x) * sin(x) == 1/2, x, to_poly_solve='force')
         [x == 1/4*pi + pi*z...]
 
-    Regression test: Maxima ``to_poly_solve`` may return bare equations or
+    Maxima's ``to_poly_solve`` may return bare equations or
     tuples; both must be accepted without ``TypeError``::
 
         sage: x = var('x')
