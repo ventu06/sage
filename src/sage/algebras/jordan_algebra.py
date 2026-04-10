@@ -432,6 +432,17 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 self._x = x
             AlgebraElement.__init__(self, parent)
 
+        def __hash__(self) -> int:
+            r"""
+            EXAMPLES::
+
+                sage: A = MatrixSpace(QQ,2)
+                sage: J = JordanAlgebra(A)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._x) )
+
         def _repr_(self) -> str:
             """
             Return a string representation of ``self``.
@@ -853,6 +864,17 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._s = s
             self._v = v
             AlgebraElement.__init__(self, parent)
+
+        def __hash__(self):
+            r"""
+            EXAMPLES::
+
+                sage: m = matrix([[0,1],[1,1]])
+                sage: J = JordanAlgebra(m)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._s, self._v) )
 
         def _repr_(self) -> str:
             """
@@ -1503,6 +1525,17 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             """
             self._data = tuple(data)
             AlgebraElement.__init__(self, parent)
+
+        def __hash__(self):
+            r"""
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._data) )
 
         def _to_print_matrix(self):
             r"""
