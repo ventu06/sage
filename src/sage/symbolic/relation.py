@@ -649,7 +649,7 @@ def _to_poly_solve_unwrap_solution(t):
         True
     """
     if isinstance(t, (list, tuple)):
-        if not len(t):
+        if not t:
             return None
         return t[0]
     if t is None:
