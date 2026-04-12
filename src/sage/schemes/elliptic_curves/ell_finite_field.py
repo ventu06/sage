@@ -2904,7 +2904,7 @@ def is_j_supersingular(j, proof=True):
 def special_supersingular_curve(F, q=None, *, endomorphism=False):
     r"""
     Given a finite field ``F`` of characteristic `p`, and optionally
-    a positive integer `q` such that the Hilbert conductor of `-q`
+    a positive integer `q < p/4` such that the Hilbert conductor of `-q`
     and `-p` equals `p`, construct a "special" supersingular elliptic
     curve `E` defined over ``F``.
 
@@ -3040,28 +3040,28 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         sage: p = random_prime(300, lbound=10)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
-        ....:     q = randrange(1, p)
+        ....:     q = randrange(1, p//4)
         ....:     if QuaternionAlgebra(-q, -p).discriminant() == p:
         ....:         break
         sage: E = special_supersingular_curve(GF((p, k)), q)
         sage: E.is_supersingular()
         True
         sage: F.<t> = GF((p, 2*k))
-        sage: E, endo = special_supersingular_curve(F, q, endomorphism=True)  # long time
-        sage: E.is_supersingular()                                            # long time (depends on something slow)
+        sage: E, endo = special_supersingular_curve(F, q, endomorphism=True)
+        sage: E.is_supersingular()
         True
-        sage: E.j_invariant() in GF(p)                                        # long time (depends on something slow)
+        sage: E.j_invariant() in GF(p)
         True
-        sage: endo.domain() is endo.codomain() is E                           # long time (depends on something slow)
+        sage: endo.domain() is endo.codomain() is E
         True
-        sage: endo.degree() == q                                              # long time (depends on something slow)
+        sage: endo.degree() == q
         True
-        sage: endo.trace()                                                    # long time (depends on something slow)
+        sage: endo.trace()
         0
-        sage: pi = E.frobenius_isogeny()                                      # long time (depends on something slow)
-        sage: pi.codomain() is pi.domain() is E                               # long time (depends on something slow)
+        sage: pi = E.frobenius_isogeny()
+        sage: pi.codomain() is pi.domain() is E
         True
-        sage: pi * endo == -endo * pi                                         # long time (depends on something slow)
+        sage: pi * endo == -endo * pi
         True
 
     .. NOTE::
