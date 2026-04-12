@@ -75,7 +75,7 @@ ARG MAKE_BUILD=make-build
 ################################################################################
 # Image containing the run-time dependencies for Sage                          #
 ################################################################################
-FROM ubuntu:jammy AS run-time-dependencies
+FROM ubuntu:noble AS run-time-dependencies
 LABEL maintainer="Erik M. Bray <erik.bray@lri.fr>, Julian Rüth <julian.rueth@fsfe.org>, Sebastian Oehms <seb.oehms@gmail.com>"
 # Set sane defaults for common environment variables.
 ENV LC_ALL=C.UTF-8
@@ -87,10 +87,10 @@ RUN ln -s "$SAGE_ROOT/sage" /usr/bin/sage
 RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # Sage needs the fortran libraries at run-time because we do not build gfortran
 # with Sage but use the system's.
-# We need gcc/g++ and libstdc++-10-dev to allow compilation of cython at run-time from the notebook.
+# We need gcc/g++ and libstdc++-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-10-dev sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl libboost-dev \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 python3-dev libpython3-dev python3-setuptools python3-venv libssl-dev git rdfind autoconf automake libtool bc binutils xz-utils liblzma-dev \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -111,7 +111,7 @@ WORKDIR $HOME
 FROM run-time-dependencies AS build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 python3-dev libpython3-dev python3-setuptools python3-venv libssl-dev git rdfind autoconf automake libtool bc binutils xz-utils liblzma-dev \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind autoconf automake libtool bc binutils \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 
