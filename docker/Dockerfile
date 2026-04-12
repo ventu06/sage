@@ -96,7 +96,7 @@ RUN apt-get -qq update \
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
 # We also want this user at runtime as some commands in sage know about the user that was used during build.
 ARG HOME=/home/sage
-RUN adduser --quiet --shell /bin/bash --gecos "Sage user,101,," --disabled-password --home "$HOME" sage \
+RUN useradd --create-home --home-dir "$HOME" --shell /bin/bash --comment "Sage user,101,," sage \
     && echo "sage ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers.d/01-sage \
     && chmod 0440 /etc/sudoers.d/01-sage
 # Run everything from now on as the sage user in sage's home
