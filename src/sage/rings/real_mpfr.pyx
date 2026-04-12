@@ -3089,7 +3089,7 @@ cdef class RealNumber(sage.structure.element.RingElement):
          """
         cdef RealNumber x = self._new()
         # Use mpfr_rint with MPFR_RNDN (round to nearest, ties to even)
-        mpfr_rint(x.value, self.value, MPFR_RNDN)
+        mpfr_roundeven(x.value, self.value)
         return x.integer_part()
 
     def floor(self):
