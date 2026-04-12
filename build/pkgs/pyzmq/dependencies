@@ -1,4 +1,4 @@
-zeromq cffi | $(PYTHON_TOOLCHAIN) $(PYTHON) cython scikit_build_core
+numpy zeromq cffi | $(PYTHON_TOOLCHAIN) $(PYTHON) cython scikit_build_core
 
 ----------
 All lines of this file are ignored except the first.
