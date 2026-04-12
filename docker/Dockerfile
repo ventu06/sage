@@ -90,7 +90,7 @@ RUN ln -s /usr/bin/sage /usr/bin/sagemath
 # We need gcc/g++ and libstdc++-dev to allow compilation of cython at run-time from the notebook.
 # We also install sudo for the sage user, see below.
 RUN apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 python3-dev libpython3-dev python3-setuptools python3-venv libssl-dev git rdfind autoconf automake libtool bc binutils xz-utils liblzma-dev \
+    && apt-get -qq install -y --no-install-recommends gfortran gcc g++ libstdc++-dev sudo openssl pkg-config patch libz-dev libbz2-dev bzip2 ca-certificates perl libboost-dev \
     && apt-get -qq clean \
     && rm -r /var/lib/apt/lists/*
 # Sage refuses to build as root, so we add a "sage" user that can sudo without a password.
@@ -111,7 +111,7 @@ WORKDIR $HOME
 FROM run-time-dependencies AS build-time-dependencies
 # Install the build time dependencies & git & rdfind
 RUN sudo apt-get -qq update \
-    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 libssl-dev git rdfind autoconf automake libtool bc binutils \
+    && sudo apt-get -qq install -y wget build-essential automake m4 dpkg-dev python3 python3-dev python3-setuptools python3-venv libssl-dev git rdfind autoconf automake libtool bc binutils flex xz-utils liblzma-dev \
     && sudo apt-get -qq clean \
     && sudo rm -r /var/lib/apt/lists/*
 
