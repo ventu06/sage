@@ -199,7 +199,7 @@ ENV SAGE_NUM_THREADS=$SAGE_NUM_THREADS
 RUN make configure
 # Old default before https://github.com/sagemath/sage/issues/32406
 RUN ./configure --disable-editable
-RUN make build V=0
+RUN make build
 
 ################################################################################
 # Image with a full build of sage and its documentation.                       #
@@ -213,13 +213,13 @@ ARG MAKEFLAGS_DOCBUILD=$MAKEFLAGS
 ENV MAKEFLAGS_DOCBUILD=$MAKEFLAGS_DOCBUILD
 ARG SAGE_NUM_THREADS_DOCBUILD=$SAGE_NUM_THREADS
 ENV SAGE_NUM_THREADS=$SAGE_NUM_THREADS_DOCBUILD
-RUN make V=0
+RUN make
 
 ################################################################################
 # Image with a full build of sage, ready to release.                           #
 ################################################################################
 FROM make-all AS make-release
-RUN make micro_release V=0
+RUN make micro_release
 
 ################################################################################
 # A releasable (relatively small) image which contains a copy of sage without  #
