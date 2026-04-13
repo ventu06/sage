@@ -171,9 +171,27 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
 @richcmp_method
 class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
-    """
+    r"""
     This class is used to wrap a subgroup of an existing
     additive abelian group as a new additive abelian group.
+
+    INPUTS:
+
+    - ``universe`` -- common parent of all the group elements
+      encapsulated by this wrapper; must be an abelian group
+
+    - ``gens`` -- sequence of *independent* group elements
+
+    - ``invariants`` -- sequence of integers `\geq0`, parallel
+      to ``gens``, which specifies the order of each given
+      generator. The value `0` represents infinite order.
+
+    .. NOTE:
+
+        A set of group elements `\{g_1, \ldots, g_n\}` is called
+        *independent* if the sum of all the subgroups `\langle g_i\rangle`
+        is direct. That is, the only relations between these generators
+        are the trivial ones coming from the order of each `g_i`.
 
     EXAMPLES::
 
@@ -448,9 +466,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             NotImplementedError: No black-box discrete log for infinite abelian groups
         """
         from sage.arith.misc import CRT_list
-        from sage.rings.infinity import Infinity
 
-        if self.order() == Infinity:
+        if not self.is_finite():
             raise NotImplementedError("No black-box discrete log for infinite abelian groups")
 
         if gens is None:
@@ -820,10 +837,11 @@ def basis_from_generators(gens, ords=None):
 
     .. NOTE::
 
-        A *basis* of a finite abelian group is a generating
-        set `\{g_1, \ldots, g_n\}` such that each element of the
-        group can be written as a unique linear combination
-        `\alpha_1 g_1 + \cdots + \alpha_n g_n` with each
+        A *basis* of an abelian group is an *independent* generating
+        set `\{g_1, \ldots, g_n\}`. This means the sum of all the
+        subgroups `\langle g_i\rangle` is direct; in other words,
+        every element of the group can be written as a unique linear
+        combination `\alpha_1 g_1 + \cdots + \alpha_n g_n` with each
         `\alpha_i \in \{0, \ldots, \mathrm{ord}(g_i)-1\}`.
 
     ALGORITHM: [Suth2007]_, Algorithm 9.1 & Remark 9.1
@@ -848,11 +866,23 @@ def basis_from_generators(gens, ords=None):
         True
         sage: E.abelian_group().invariants()
         (3024, 313157428926517503432720)
+
+    TESTS::
+
+        sage: from sage.groups.additive_abelian.additive_abelian_wrapper import basis_from_generators
+        sage: basis_from_generators([1])
+        Traceback (most recent call last):
+        ...
+        ValueError: all provided generators must have finite order
     """
     if not gens:
         return [], []
     if ords is None:
         ords = [g.order() for g in gens]
+
+    from sage.rings.infinity import Infinity
+    if not all(o < Infinity for o in ords):
+        raise ValueError('all provided generators must have finite order')
 
     from sage.arith.functions import lcm
     lam = lcm(ords)
