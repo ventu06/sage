@@ -192,13 +192,14 @@ class SEXPorter:
 
     def _union(self):
         """
-        Return a function call for a record.
+        Return a function call for a union.
 
         This constructs a function of the form::
 
             sexportunionname1name2(obj) == (
                 obj case Domain1 => (Domain1 sexport(obj)$Domain1Export(...));
-                obj case Domain2 => (Domain2 sexport(obj)$Domain2Export(...)))
+                obj case Domain2 => (Domain2 sexport(obj)$Domain2Export(...));
+                (Domain3 sexport(obj)$Domain3Export(...)))
 
         EXAMPLES::
 
