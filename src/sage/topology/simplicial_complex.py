@@ -4197,7 +4197,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
             return self.connected_component(Simplex([base_point])).fundamental_group(simplify=simplify)
 
         from sage.groups.free_group import FreeGroup
-        from sage.libs.gap.libgap import libgap as gap
+        from sage.libs.gap.libgap import libgap
         G = self.graph()
         # Edges in the graph may be sorted differently than in the
         # simplicial complex, so convert the edges to frozensets so we
@@ -4207,7 +4207,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         gens = [e for e in G.edge_iterator(labels=False)
                 if frozenset(e) not in spanning_tree]
         if not gens:
-            return gap.TrivialGroup()
+            return libgap.TrivialGroup()
 
         gens_dict = {frozenset(g): i for i, g in enumerate(gens)}
         FG = FreeGroup(len(gens), 'e')
