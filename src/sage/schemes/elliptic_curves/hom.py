@@ -578,6 +578,30 @@ class EllipticCurveHom(Morphism):
             Trivial group
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 5*x + 5
                 over Finite Field in z7 of size 101^7
+
+        We can check that the (now proven insecure) key exchange "SIDH" works::
+
+            sage: a, b = 91, 57
+            sage: p = 2^a * 3^b - 1
+            sage: F.<i> = GF((p,2), modulus=[1,0,1])
+            sage: E = EllipticCurve(F, [1,0])
+            sage: E.set_order((p + 1)^2)
+            sage: P2, Q2 = E.torsion_basis(2^a)
+            sage: P3, Q3 = E.torsion_basis(3^b)
+            sage: K2 = P2 + randrange(2^a) * Q2; K2.set_order(2^a)
+            sage: K3 = P3 + randrange(3^b) * Q3; K3.set_order(3^b)
+            sage: phi2 = E.isogeny(K2); E2 = phi2.codomain()
+            sage: phi3 = E.isogeny(K3); E3 = phi3.codomain()
+            sage: psi2 = E3.isogeny(phi3(K2))
+            sage: psi3 = E2.isogeny(phi2(K3))
+            sage: ker23 = (psi3 * phi2).kernel_subgroup()
+            sage: [d.factor() for d in ker23.invariants()]
+            [2^91 * 3^57]
+            sage: ker32 = (psi2 * phi3).kernel_subgroup()
+            sage: [d.factor() for d in ker32.invariants()]
+            [2^91 * 3^57]
+            sage: ker23 == ker32
+            True
         """
         if algorithm is None:
             if self.domain().base_ring().is_finite():
