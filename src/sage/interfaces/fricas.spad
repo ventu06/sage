@@ -67,12 +67,3 @@ UnaryExport(T : Type, sexportT : T -> SExpression) : with
                 l := listOfTerms obj
                 convert([convert([monomial(mon.k), sexportT(mon.c)])@SExpression
 		         for mon in l])@SExpression
-
-)abb package EXPORT2 BinaryExport
-++ For domain constructors depending on two types
-BinaryExport(S: Type, T : Type, sexportS : S -> SExpression, sexportT : T -> SExpression) : with
-        sexport: Record(particular : S, basis : T) -> SExpression
-    == add
-        sexport(obj: Record(particular : S, basis : T)): SExpression ==
-                convert([sexportS(obj.particular),
-                         sexportT(obj.basis)])@SExpression

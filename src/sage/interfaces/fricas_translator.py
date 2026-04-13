@@ -28,6 +28,7 @@ FRICAS_CONSTANTS = {'%i': I,
 # SEXPorter to rewrite the domain
 FRICAS_DOMAIN_DISPATCH = {
     "Record": ("_record", "_eval_record"),
+    "Union": ("_union", "_eval_union"),
     "Integer": ("_inputform", "_eval_call"),
     "PositiveInteger": ("_inputform", "_eval_call"),
     "NonNegativeInteger": ("_inputform", "_eval_call"),
@@ -95,6 +96,8 @@ class SEXPorter:
             sage: SEXPorter(("Fraction", ("FiniteField", 2, 3)))._unparse()
             'Fraction(FiniteField(2,3))'
 
+            sage: SEXPorter(('Union', ('Fraction', ('Integer',)), '"failed"'))._unparse()
+            'Union(Fraction(Integer),"failed")'
         """
         if not isinstance(self._domain, tuple):
             return str(self._domain)
@@ -162,14 +165,20 @@ class SEXPorter:
 
     def _record(self):
         """
-        Return a ``UnaryExport`` package call for a record.
+        Return a function call for a record.
+
+        This constructs a function of the form::
+
+            sexportrecordname1name2(obj) ==
+                convert([sexport(obj.name1)$Domain1Export(...),
+                         sexport(obj.name2)$Domain1Export(...)])@SExpression
 
         EXAMPLES::
 
             sage: from sage.interfaces.fricas_translator import SEXPorter
             sage: dom = ('Record', (':', 'particular', ('Integer',)), (':', 'basis', ('List', ('Integer',))))
             sage: SEXPorter(dom)._record()
-            'sexportparticularbasis'
+            'sexportRecordparticularbasis'
         """
         from sage.interfaces.fricas import fricas
 
@@ -177,8 +186,61 @@ class SEXPorter:
             return SEXPorter(field_domain).export_call() + f"(obj.{field_name})"
 
         items = ",".join(make_call(field[1], field[2]) for field in self._domain[1:])
-        name = "sexport" + "".join(field[1] for field in self._domain[1:])
+        name = "sexportRecord" + "".join(field[1] for field in self._domain[1:])
         fricas.eval(f"{name}(obj) == convert([{items}])@SExpression")
+        return name
+
+    def _union(self):
+        """
+        Return a function call for a record.
+
+        This constructs a function of the form::
+
+            sexportunionname1name2(obj) == (
+                obj case Domain1 => (Domain1 sexport(obj)$Domain1Export(...));
+                obj case Domain2 => (Domain2 sexport(obj)$Domain2Export(...)))
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import SEXPorter
+            sage: dom = ('Union', ('Expression', ('Integer',)), ('PrimeField', 3))
+            sage: SEXPorter(dom)._union()
+            'sexportUnionExpressionIntegerPrimeField3'
+
+            sage: dom = ('Union', ('Integer',), "failed")
+            sage: SEXPorter(dom)._union()
+            'sexportUnionIntegerfailed'
+        """
+        from sage.interfaces.fricas import fricas
+        from sage.misc.flatten import flatten
+        from re import compile
+
+        def make_call(field_domain, field_tag):
+            if isinstance(field_domain, str):  # e.g., '"failed"'
+                s = f'convert({field_domain})@SExpression'
+            else:
+                domain = SEXPorter(field_domain)
+                s = f'{domain.export_call()}(obj)'
+
+            return f'convert([convert({field_tag})@SExpression, {s}])@SExpression'
+
+
+        def make_case(field_domain, field_tag):
+            if field_tag == len(self._domain) - 2:
+                return make_call(field_domain, field_tag)
+
+            domain = SEXPorter(field_domain)
+            return f'obj case {domain._unparse()} => {make_call(field_domain, field_tag)}'
+
+        items = "; ".join(make_case(dom, tag) for tag, dom in enumerate(self._domain[1:]))
+        name = "sexport" + "".join(map(str, flatten(self._domain)))
+        # the idea for this name is to enable caching later
+        # we have to strip quotes from the name
+        # alternatively, maybe just use sexport or sexportUnion as name
+        pattern = compile(r'[\W_]+')
+        name = pattern.sub('', name)
+
+        fricas.eval(f"{name}(obj:{self._unparse()}): SExpression == ({items});")
         return name
 
     def export_call(self):
@@ -274,6 +336,29 @@ class SEXEvaluator:
             val = SEXEvaluator(value, parent).eval()
             result[key] = val
         return result
+
+    def _eval_union(self):
+        r"""
+        Return the evaluation of a union.
+
+        This has to dispatch to the correct type
+
+        EXAMPLES::
+
+            sage: from sage.interfaces.fricas_translator import LazyParent, SEXEvaluator
+            sage: obj = (1, (('exp', ('*', -1, 'x')),))
+            sage: EXPR = ('Expression', ('Integer',))
+            sage: dom = ('Record', (':', 'particular', EXPR), (':', 'basis', ('List', EXPR)))
+            sage: result = SEXEvaluator(obj, LazyParent(dom)).eval()
+            sage: result["particular"]
+            1
+            sage: result["basis"]
+            [e^(-x)]
+        """
+        tag, val = self._ast
+        dom = self._dom._domain[1 + tag]
+        parent = LazyParent(dom)
+        return SEXEvaluator(val, parent).eval()
 
     def _eval_bool(self):
         r"""
@@ -903,4 +988,4 @@ class SEXParser:
 
         self._start = b
         S.append(self._s[a:b])
-        return "".join(S)
+        return '"' + "".join(S) + '"'

@@ -1301,6 +1301,12 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         TESTS:
 
+        Unions::
+
+            sage: f = fricas('[5::Union(INT, "failed")]')
+            sage: f.sage()
+            [5]
+
         Records from the differential equation solver::
 
             sage: x = var('x')
@@ -1540,7 +1546,11 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         dom_str = P.get_string(f"sageprint(dom({self._name}::Any))")
         # the following alternative rewrites
         # "Union(P, Q, ...)" to "Union", and seems unusable
+        #
         # dom_str = P.get_string(f"sageprint(typeOf({self._name})::InputForm)")
+
+        # it seems safer to require that SEXPorter only works on types,
+        # although this only catches "failed"
         if dom_str == '"failed"':
             return "failed"
         dom = SEXParser(dom_str).parse()
