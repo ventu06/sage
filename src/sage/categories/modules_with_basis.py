@@ -1811,7 +1811,7 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
             zero = self.parent().base_ring().zero()
             mc = self.monomial_coefficients(copy=False)
             if not sort:
-                return [value for key, value in mc.items() if value != zero]
+                return [value for value in mc.values() if value != zero]
 
             v = sorted([(key, value) for key, value in mc.items()
                         if value != zero])
