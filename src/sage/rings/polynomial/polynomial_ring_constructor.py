@@ -1033,7 +1033,7 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
 
     EXAMPLES::
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: R.<x, y, z> = BooleanPolynomialRing(); R  # indirect doctest
         Boolean PolynomialRing in x, y, z
         sage: p = x*y + x*z + y*z
@@ -1042,29 +1042,29 @@ def BooleanPolynomialRing_constructor(n=None, names=None, order='lex'):
         sage: R.term_order()
         Lexicographic term order
 
-        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # needs sage.rings.polynomial.pbori
-        sage: R.term_order()                                                            # needs sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(5, 'x', order='deglex(3),deglex(2)')            # needs brial
+        sage: R.term_order()                                                            # needs brial
         Block term order with blocks:
         (Degree lexicographic term order of length 3,
          Degree lexicographic term order of length 2)
 
-        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                      # needs sage.rings.polynomial.pbori
-        sage: R.term_order()                                                            # needs sage.rings.polynomial.pbori
+        sage: R = BooleanPolynomialRing(3, 'x', order='degneglex')                      # needs brial
+        sage: R.term_order()                                                            # needs brial
         Degree negative lexicographic term order
 
-        sage: BooleanPolynomialRing(names=('x','y'))                                    # needs sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names=('x','y'))                                    # needs brial
         Boolean PolynomialRing in x, y
 
-        sage: BooleanPolynomialRing(names='x,y')                                        # needs sage.rings.polynomial.pbori
+        sage: BooleanPolynomialRing(names='x,y')                                        # needs brial
         Boolean PolynomialRing in x, y
 
     TESTS::
 
-        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # needs sage.rings.polynomial.pbori
-        sage: x > y                                                                     # needs sage.rings.polynomial.pbori
+        sage: P.<x,y> = BooleanPolynomialRing(2, order='deglex')                        # needs brial
+        sage: x > y                                                                     # needs brial
         True
 
-        sage: # needs sage.rings.polynomial.pbori
+        sage: # needs brial
         sage: P.<x0, x1, x2, x3> = BooleanPolynomialRing(4, order='deglex(2),deglex(2)')
         sage: x0 > x1
         True
