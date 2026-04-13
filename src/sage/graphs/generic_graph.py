@@ -12224,13 +12224,20 @@ class GenericGraph(GenericGraph_pyx):
 
         ::
 
+            sage: C = graphs.ClawGraph().complement()
+            sage: for v in C.vertex_iterator(degree=0):
+            ....:     print(v)
+            0
+
+        ::
+
             sage: H = graphs.PathGraph(5)
             sage: prop = lambda l: l % 3 == 1
             sage: for v in H.vertex_iterator(degree=1, vertex_property=prop):
             ....:     print(v)
             4
         """
-        if degree:
+        if degree is not None:
             if vertex_property is not None:
                 for v, d in self.degree_iterator(labels=True):
                     if d == degree and vertex_property(v):
