@@ -707,14 +707,19 @@ class LFunction(SageObject):
         """
         return self._conductor
 
-    def eps(self):
+    def sign(self):
         """
-        Return the epsilon factor.
+        Return the sign.
+
+        This complex number is the sign of the functional equation,
+        sometimes also called the root number.
+
+        See https://www.lmfdb.org/knowledge/show/lfunction.sign
 
         EXAMPLES::
 
             sage: from sage.lfunctions.pari import *
-            sage: L = LFunction(lfun_number_field(QQ)); L.eps()
+            sage: L = LFunction(lfun_number_field(QQ)); L.sign()
             1
         """
         return self._eps
