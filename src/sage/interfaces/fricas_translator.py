@@ -393,7 +393,7 @@ class SEXEvaluator:
             dom = dom[2]
         if not isinstance(dom, tuple):
             assert dom == val
-            return val
+            return val[1:-1]
         parent = LazyParent(dom)
         return SEXEvaluator(val, parent).eval()
 

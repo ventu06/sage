@@ -1314,11 +1314,11 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
             sage: f = fricas('["failed"::Union(INT, "failed")]')
             sage: f.sage()
-            ['"failed"']
+            ['failed']
 
             sage: f = fricas('"bbb"::Union(a: INT, b: "bbb")')
             sage: f.sage()
-            '"bbb"'
+            'bbb'
 
         Records from the differential equation solver::
 
