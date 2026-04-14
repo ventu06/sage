@@ -20,6 +20,8 @@ class Brial(JoinFeature):
         sage: from sage.features.brial import Brial
         sage: Brial().is_present()  # needs brial
         FeatureTestResult('brial', True)
+        sage: Brial().is_present()  # needs !brial
+        FeatureTestResult('brial', False)
 
     """
     def __init__(self):
@@ -33,3 +35,7 @@ class Brial(JoinFeature):
         JoinFeature.__init__(self, 'brial',
                              [PythonModule('sage.rings.polynomial.pbori.pbori')],
                              spkg='sagemath_brial', type='standard')
+
+
+def all_features():
+    return [Brial()]
