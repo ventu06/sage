@@ -923,3 +923,25 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
         return ss
 
     rational_points = points
+
+    def abelian_group(self):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        EXAMPLES::
+
+            sage: TODO
+        """
+        n = self.order()
+        from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
+        A = AdditiveAbelianGroupWrapper(self, [], [])
+        for fast in (True, False):
+            for _ in range(99 * self.curve().genus()):
+                assert A.order().divides(n)
+                if A.order() == n:
+                    return A
+                D = self.random_element(fast=fast)
+                A = AdditiveAbelianGroupWrapper.from_generators(A._gen_elements + (D,))
+        raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')

@@ -225,6 +225,18 @@ class HyperellipticJacobian_generic(Jacobian_generic):
 
     rational_points = points
 
+    def abelian_group(self, *args, **kwds):
+        r"""
+        Return the group of rational points on this Jacobian as an
+        :class:`~sage.groups.additive_abelian.additive_abelian_wrapper.AdditiveAbelianGroupWrapper`
+        object.
+
+        .. SEEALSO::
+
+            :meth:`sage.schemes.hyperelliptic_curves.jacobian_homset_generic.abelian_group`.
+        """
+        return self.point_homset().abelian_group(*args, **kwds)
+
     ####################################################################
     # Some properties of geometric Endomorphism ring and algebra
     ####################################################################
