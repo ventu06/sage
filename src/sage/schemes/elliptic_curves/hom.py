@@ -1379,6 +1379,9 @@ class EllipticCurveHom(Morphism):
             sage: chain.divide_left(psi) == phi
             True
         """
+        if self.degree() == psi.degree():
+            return find_post_isomorphism(psi, self)
+
         from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
         numer = self * psi.dual()
         denom = psi.degree()
