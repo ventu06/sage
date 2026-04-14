@@ -1301,11 +1301,24 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
 
         TESTS:
 
+        Strings::
+
+            sage: fricas('["abc", "xyz"]').sage()
+            ['abc', 'xyz']
+
         Unions::
 
             sage: f = fricas('[5::Union(INT, "failed")]')
             sage: f.sage()
             [5]
+
+            sage: f = fricas('["failed"::Union(INT, "failed")]')
+            sage: f.sage()
+            ['"failed"']
+
+            sage: f = fricas('"bbb"::Union(a: INT, b: "bbb")')
+            sage: f.sage()
+            '"bbb"'
 
         Records from the differential equation solver::
 
@@ -1542,17 +1555,7 @@ class FriCASElement(ExpectElement, sage.interfaces.abc.FriCASElement):
         """
         from sage.interfaces.fricas_translator import SEXParser, SEXPorter, SEXEvaluator, LazyParent
         P = self._check_valid()
-        # the coercion to Any gets rid of the Union domain
-        dom_str = P.get_string(f"sageprint(dom({self._name}::Any))")
-        # the following alternative rewrites
-        # "Union(P, Q, ...)" to "Union", and seems unusable
-        #
-        # dom_str = P.get_string(f"sageprint(typeOf({self._name})::InputForm)")
-
-        # it seems safer to require that SEXPorter only works on types,
-        # although this only catches "failed"
-        if dom_str == '"failed"':
-            return "failed"
+        dom_str = P.get_string(f"sageprint(dom({self._name}))")
         dom = SEXParser(dom_str).parse()
         fun = SEXPorter(dom).export_call()
         obj_str = P.get_string(f"sageprint({fun}({self._name}))")

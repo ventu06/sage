@@ -29,6 +29,7 @@ FRICAS_CONSTANTS = {'%i': I,
 FRICAS_DOMAIN_DISPATCH = {
     "Record": ("_record", "_eval_record"),
     "Union": ("_union", "_eval_union"),
+    "String": ("_inputform", "_eval_call"),
     "Integer": ("_inputform", "_eval_call"),
     "PositiveInteger": ("_inputform", "_eval_call"),
     "NonNegativeInteger": ("_inputform", "_eval_call"),
@@ -98,12 +99,21 @@ class SEXPorter:
 
             sage: SEXPorter(('Union', ('Fraction', ('Integer',)), '"failed"'))._unparse()
             'Union(Fraction(Integer),"failed")'
+
+            sage: dom = ('Union', (':', 'f1', ('Expression', ('Integer',))), (':', 'f2', ('List', ('Expression', ('Integer',)))), (':', 'fail', '"failed"'), (':', 'pole', '"potentialPole"'))
+            sage: SEXPorter(dom)._unparse()
+            'Union(f1: Expression(Integer),f2: List(Expression(Integer)),fail: "failed",pole: "potentialPole")'
         """
         if not isinstance(self._domain, tuple):
             return str(self._domain)
 
         if len(self._domain) == 1:
             return str(self._domain[0])
+
+        if self._domain[0] == ':' and len(self._domain) == 3:
+            tag = self._domain[1]
+            dom = SEXPorter(self._domain[2])._unparse()
+            return f"{tag}: {dom}"
 
         return (self._domain[0] + "("
                 + ",".join(SEXPorter(e)._unparse() for e in self._domain[1:])
@@ -216,37 +226,54 @@ class SEXPorter:
         from sage.misc.flatten import flatten
         from re import compile
 
-        def make_call(field_domain, field_tag):
+        def is_tagged(dom):
+            return isinstance(dom, tuple) and len(dom) == 3 and dom[0] == ':'
+
+        # detect if this is a tagged union (all fields tagged)
+        tagged = all(is_tagged(dom) for dom in self._domain[1:])
+
+        def make_call(field_domain, tag_index):
             if isinstance(field_domain, str):  # e.g., '"failed"'
                 s = f'convert({field_domain})@SExpression'
             else:
                 domain = SEXPorter(field_domain)
                 s = f'{domain.export_call()}(obj)'
 
-            return f'convert([convert({field_tag})@SExpression, {s}])@SExpression'
+            return f'convert([convert({tag_index})@SExpression, {s}])@SExpression'
 
+        def make_case(field, tag_index):
+            if tagged:
+                # field = (':', tag_name, domain)
+                tag_name = field[1]
+                field_domain = field[2]
+            else:
+                tag_name = None
+                field_domain = field
 
-        def make_case(field_domain, field_tag):
-            if field_tag == len(self._domain) - 2:
-                return make_call(field_domain, field_tag)
+            # for the last case we want no "case" prefix
+            if tag_index == len(self._domain) - 2:
+                return make_call(field_domain, tag_index)
+
+            if tagged:
+                return f'obj case {tag_name} => {make_call(field_domain, tag_index)}'
 
             domain = SEXPorter(field_domain)
-            return f'obj case {domain._unparse()} => {make_call(field_domain, field_tag)}'
+            return f'obj case {domain._unparse()} => {make_call(field_domain, tag_index)}'
 
-        items = "; ".join(make_case(dom, tag) for tag, dom in enumerate(self._domain[1:]))
+        items = "; ".join(make_case(dom, tag)
+                          for tag, dom in enumerate(self._domain[1:]))
+
         name = "sexport" + "".join(map(str, flatten(self._domain)))
-        # the idea for this name is to enable caching later
-        # we have to strip quotes from the name
-        # alternatively, maybe just use sexport or sexportUnion as name
         pattern = compile(r'[\W_]+')
         name = pattern.sub('', name)
 
         fricas.eval(f"{name}(obj:{self._unparse()}): SExpression == ({items});")
         return name
 
+
     def export_call(self):
         """
-        Return the function call doing the export.
+        Return the function call doing the export, as a string.
 
         EXAMPLES::
 
@@ -260,6 +287,10 @@ class SEXPorter:
             sage: SEXPorter(('DirectProduct', 2, ('Integer',))).export_call()
             '(sexport$AggregateExport(Integer, DirectProduct(2,Integer), (sexport$InputFormExport(Integer))))'
         """
+        if not isinstance(self._domain, tuple):
+            # it should be a FriCAS string
+            return self._domain
+
         head = self._domain[0]
         if head not in FRICAS_DOMAIN_DISPATCH:
             raise NotImplementedError(f"{head} cannot be translated from FriCAS to SageMath yet")
@@ -358,6 +389,11 @@ class SEXEvaluator:
         """
         tag, val = self._ast
         dom = self._dom._domain[1 + tag]
+        if isinstance(dom, tuple) and dom[0] == ':':
+            dom = dom[2]
+        if not isinstance(dom, tuple):
+            assert dom == val
+            return val
         parent = LazyParent(dom)
         return SEXEvaluator(val, parent).eval()
 
@@ -766,6 +802,9 @@ class LazyParent:
         head = self.head()
         args = self.args()
 
+        if head == "String":
+            return lambda x: x[1:-1]
+
         if head == "List":
             return list
 
@@ -956,23 +995,23 @@ class SEXParser:
         TESTS::
 
             sage: from sage.interfaces.fricas_translator import SEXParser
-            sage: SEXParser('"abc" 123').parse()  # indirect doctest
-            'abc'
+            sage: SEXParser('"abc" 123')._parse_string()
+            '"abc"'
 
-            sage: SEXParser('"" 123').parse()
-            ''
+            sage: SEXParser('"" 123')._parse_string()
+            '""'
 
-            sage: SEXParser('"____" 123').parse()
-            '__'
+            sage: SEXParser('"____" 123')._parse_string()
+            '"__"'
 
-            sage: SEXParser('"_a" 123').parse()
-            'a'
+            sage: SEXParser('"_a" 123')._parse_string()
+            '"a"'
 
-            sage: SEXParser('"_" _"" 123').parse()
-            '" "'
+            sage: SEXParser('"_" _"" 123')._parse_string()
+            '"" ""'
 
-            sage: SEXParser('"(b c)"').parse()
-            '(b c)'
+            sage: SEXParser('"(b c)"')._parse_string()
+            '"(b c)"'
         """
         a = self._start  # the position of the left quote
         assert self._s[a] == self._STRINGMARKER
