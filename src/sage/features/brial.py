@@ -21,7 +21,7 @@ class Brial(JoinFeature):
         sage: Brial().is_present()  # needs brial
         FeatureTestResult('brial', True)
         sage: Brial().is_present()  # needs !brial
-        FeatureTestResult('brial', False)
+        FeatureTestResult('sage.rings.polynomial.pbori.pbori', False)
 
     """
     def __init__(self):
