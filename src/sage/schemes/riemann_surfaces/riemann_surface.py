@@ -3662,10 +3662,7 @@ class RiemannSurface:
             PM = AInv * PM
 
         if method == "svp":
-            H = max(
-                max(z.real_part().abs() for z in vector),
-                max(z.imag_part().abs() for z in vector),
-            )
+            H = max(max(z.real_part().abs(), z.imag_part().abs()) for z in vector)
             if b is None:
                 b = self._prec - 5 - H.log2().floor()
             if r is None:
@@ -4005,10 +4002,8 @@ def integer_matrix_relations(M1, M2, b=None, r=None):
     if not (M1.is_square() and M2.is_square()):
         raise ValueError("matrices need to be square")
     prec = min(M1.base_ring().precision(), M2.base_ring().precision())
-    H = max(
-        max(abs(m.real_part()) for m in M1.list() + M2.list()),
-        max(abs(m.imag_part()) for m in M1.list() + M2.list()),
-    )
+    H = max(max(abs(m.real_part()), abs(m.imag_part()))
+            for m in M1.list() + M2.list())
     if b is None:
         b = prec - 5 - H.log2().floor()
     if r is None:
