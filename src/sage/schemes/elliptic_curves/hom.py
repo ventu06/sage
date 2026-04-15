@@ -1380,6 +1380,10 @@ class EllipticCurveHom(Morphism):
             True
         """
         if self.degree() == psi.degree():
+            # quotient is an isomorphism; use specialized implementation
+            # TODO brute-forcing the quotient isogeny could also be done
+            #          (1) for .divide_left() if we had find_pre_isomorphism()
+            #          (2) for other quotient isogenies of "small" degree > 1
             return find_post_isomorphism(psi, self)
 
         from sage.schemes.elliptic_curves.hom_fractional import EllipticCurveHom_fractional
