@@ -1378,6 +1378,20 @@ class EllipticCurveHom(Morphism):
               Denominator: 3
             sage: chain.divide_left(psi) == phi
             True
+
+        If the quotient is an isomorphism, it is found much more quickly::
+
+            sage: E = EllipticCurve(GF(419^2), [1,0])
+            sage: K = E.lift_x(28)
+            sage: phi = E.isogeny(K)
+            sage: psi = E.isogeny(K, model='montgomery')
+            sage: iso = psi.divide_right(phi); iso
+            Elliptic-curve morphism:
+              From: Elliptic Curve defined by y^2 = x^3 + 333*x + 200 over Finite Field in z2 of size 419^2
+              To:   Elliptic Curve defined by y^2 = x^3 + (156*z2+341)*x^2 + x over Finite Field in z2 of size 419^2
+              Via:  (u,r,s,t) = (225*z2 + 261, 351, 0, 0)
+            sage: psi == iso * phi
+            True
         """
         if self.degree() == psi.degree():
             # quotient is an isomorphism; use specialized implementation
