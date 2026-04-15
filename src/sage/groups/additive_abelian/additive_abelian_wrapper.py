@@ -622,7 +622,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
         basis, ords = basis_from_generators(gens)
         return AdditiveAbelianGroupWrapper(universe, basis, ords)
 
-    def canonical_form(self, factors=None):
+    def canonical_form(self, factors):
         r"""
         Return another :class:`AdditiveAbelianGroupWrapper` encapsulating
         the same group, whose cyclic factors are chosen according to one
