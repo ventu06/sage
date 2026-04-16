@@ -924,6 +924,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
 
     rational_points = points
 
+    @cached_method
     def abelian_group(self):
         r"""
         Return the group of rational points on this Jacobian as an
