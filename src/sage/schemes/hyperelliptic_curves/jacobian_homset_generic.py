@@ -998,10 +998,12 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 on Jacobian of Hyperelliptic Curve over Finite Field of size 419 defined by y^2 = x^8 + x
         """
         n = self.order()
+        g = self.curve().genus()
         from sage.groups.additive_abelian.additive_abelian_wrapper import AdditiveAbelianGroupWrapper
         A = AdditiveAbelianGroupWrapper(self, [], [])
         for fast in (True, False):
-            for _ in range(99 * self.curve().genus()):
+            for _ in range(99 * g):
+                assert len(A.invariants()) <= 2 * g
                 assert A.order().divides(n)
                 if A.order() == n:
                     return A
