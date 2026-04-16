@@ -73,7 +73,7 @@ from sage.categories.principal_ideal_domains import PrincipalIdealDomains
 from sage.categories.integral_domains import IntegralDomains
 from sage.modules import free_module
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 
 # #############################################################################
 #

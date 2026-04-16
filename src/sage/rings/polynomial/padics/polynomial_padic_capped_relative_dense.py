@@ -16,8 +16,8 @@ from sage.rings.polynomial.padics.polynomial_padic import Polynomial_padic
 import sage.rings.polynomial.polynomial_integer_dense_ntl
 import sage.rings.integer
 import sage.rings.integer_ring
-import sage.rings.padics.misc as misc
-import sage.rings.padics.precision_error as precision_error
+from sage.rings.padics import misc
+from sage.rings.padics import precision_error
 from sage.rings.fraction_field_element import FractionFieldElement
 import copy
 

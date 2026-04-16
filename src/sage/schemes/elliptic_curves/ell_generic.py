@@ -61,7 +61,7 @@ from sage.rings.polynomial.polynomial_element import polynomial_is_variable
 from sage.rings.polynomial.polynomial_quotient_ring_element import PolynomialQuotientRingElement
 from sage.rings.finite_rings.finite_field_base import FiniteField
 import sage.groups.additive_abelian.additive_abelian_group as groups
-import sage.groups.generic as generic
+from sage.groups import generic
 
 from sage.arith.functions import lcm
 from sage.rings.integer import Integer
@@ -74,7 +74,7 @@ from sage.misc.fast_methods import WithEqualityById
 from sage.structure.coerce import py_scalar_to_element
 
 # Schemes
-import sage.schemes.projective.projective_space as projective_space
+from sage.schemes.projective import projective_space
 from sage.schemes.projective.projective_homset import SchemeHomset_points_abelian_variety_field
 import sage.schemes.curves.projective_curve as plane_curve
 

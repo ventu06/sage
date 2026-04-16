@@ -179,7 +179,7 @@ import itertools
 from warnings import warn
 
 import sage.matrix.matrix_space
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.rings.abc
 import sage.rings.infinity
 import sage.rings.integer

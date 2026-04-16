@@ -114,7 +114,7 @@ from sage.matrix.constructor import matrix
 from sage.structure.sage_object import SageObject
 from sage.structure.richcmp import richcmp_method, richcmp
 from sage.misc.cachefunc import cached_method
-import sage.rings.invariants.reconstruction as reconstruction
+from sage.rings.invariants import reconstruction
 
 
 ######################################################################
