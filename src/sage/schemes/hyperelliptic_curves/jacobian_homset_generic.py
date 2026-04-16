@@ -1008,5 +1008,7 @@ class HyperellipticJacobianHomset(SchemeHomset_points):
                 if A.order() == n:
                     return A
                 D = self.random_element(fast=fast)
+                if D in A:
+                    continue
                 A = AdditiveAbelianGroupWrapper.from_generators(A._gen_elements + (D,))
         raise RuntimeError('very unlikely event, or (more likely) bug in HyperellipticJacobianHomset.abelian_group()')
