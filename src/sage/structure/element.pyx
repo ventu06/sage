@@ -309,7 +309,7 @@ from sage.misc.lazy_format import LazyFormat
 from sage.arith.long cimport integer_check_long_py
 from sage.arith.power cimport generic_power as arith_generic_power
 from sage.arith.numerical_approx cimport digits_to_bits
-from sage.misc.decorators import sage_wraps
+from sage.misc.decorators import rename_keyword, sage_wraps
 from sage.misc.superseded import deprecation
 
 
@@ -2455,7 +2455,7 @@ cdef class ModuleElementWithMutability(ModuleElement):
     """
     Generic element of a module with mutability.
     """
-
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self, parent, immutable=False):
         """
         EXAMPLES::

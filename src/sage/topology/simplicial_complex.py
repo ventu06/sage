@@ -165,6 +165,7 @@ from functools import total_ordering
 from .cell_complex import GenericCellComplex
 from sage.categories.fields import Fields
 from sage.misc.cachefunc import cached_method
+from sage.misc.decorators import rename_keyword
 from sage.misc.latex import latex
 from sage.misc.lazy_import import lazy_import
 from sage.rings.integer import Integer
@@ -944,7 +945,7 @@ class SimplicialComplex(Parent, GenericCellComplex):
         However this is close enough to being a parent with elements
         being the faces of ``self`` that we currently allow this abuse.
     """
-
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self,
                  maximal_faces=None,
                  from_characteristic_function=None,

@@ -12,7 +12,7 @@ Mutability Cython Implementation
 ##########################################################################
 
 cimport cython
-from sage.misc.decorators import sage_wraps
+from sage.misc.decorators import rename_keyword, sage_wraps
 
 cdef class Mutability:
     r"""
@@ -46,7 +46,7 @@ cdef class Mutability:
         sage: hash(a)
         6
     """
-
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self, immutable=False):
         r"""
         TESTS::

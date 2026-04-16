@@ -120,6 +120,7 @@ from sage.rings.integer_ring import ZZ
 from sage.graphs.graph import Graph
 from sage.combinat.posets.posets import Poset
 from sage.combinat.subset import powerset
+from sage.misc.decorators import rename_keyword
 
 
 class PolyhedralComplex(GenericCellComplex):
@@ -266,6 +267,7 @@ class PolyhedralComplex(GenericCellComplex):
         sage: Q.backend()
         'cdd'
     """
+    @rename_keyword(deprecation=41756, is_immutable='immutable')
     def __init__(self, maximal_cells=None, backend=None, maximality_check=True,
                  face_to_face_check=False, immutable=False,
                  ambient_dim=None) -> None:
