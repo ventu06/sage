@@ -1642,7 +1642,7 @@ def sr_to_max(expr):
             return EclObject(l)
         if (op in special_sage_to_max):
             return EclObject(special_sage_to_max[op](*[sr_to_max(o) for o in expr.operands()]))
-        if op == tuple:
+        if op is tuple:
             return EclObject(([mlist],
                               [sr_to_max(op) for op in expr.operands()]))
         if op not in sage_op_dict:
