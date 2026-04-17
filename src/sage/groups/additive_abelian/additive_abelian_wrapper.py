@@ -186,7 +186,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
       to ``gens``, which specifies the order of each given
       generator. The value `0` represents infinite order.
 
-    .. NOTE:
+    .. NOTE::
 
         A set of group elements `\{g_1, \ldots, g_n\}` is called
         *independent* if the sum of all the subgroups `\langle g_i\rangle`
