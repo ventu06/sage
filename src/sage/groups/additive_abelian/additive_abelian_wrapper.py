@@ -184,7 +184,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
     - ``invariants`` -- sequence of integers `\geq0`, parallel
       to ``gens``, which specifies the order of each given
-      generator. The value `0` represents infinite order.
+      generator; the value `0` represents infinite order
 
     .. NOTE::
 
