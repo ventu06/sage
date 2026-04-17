@@ -175,7 +175,7 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
     This class is used to wrap a subgroup of an existing
     additive abelian group as a new additive abelian group.
 
-    INPUTS:
+    INPUT:
 
     - ``universe`` -- common parent of all the group elements
       encapsulated by this wrapper; must be an abelian group
