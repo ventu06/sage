@@ -536,6 +536,9 @@ class EllipticCurveHom(Morphism):
         the kernel using :meth:`matrix_on_subgroup` combined
         with linear algebra.
 
+        If no algorithm is specified, then this selects the most
+        suitable algorithm automatically.
+
         EXAMPLES::
 
             sage: E0 = EllipticCurve(GF(419^2), [1,0])
@@ -614,8 +617,10 @@ class EllipticCurveHom(Morphism):
         #TODO: a specialized implementation for EllipticCurveHom_composite might be beneficial
         #TODO: a specialized implementation for EllipticCurveHom_fractional might be beneficial
 
-        if (pts := getattr(self, '__EllipticCurveIsogeny_kernel_list', None)):
-            return AdditiveAbelianGroupWrapper.from_generators(pts)
+        try:
+            return AdditiveAbelianGroupWrapper.from_generators(self.__EllipticCurveIsogeny_kernel_list)
+        except AttributeError:
+            pass
 
         if self.separable_degree().is_one():
             # purely inseparable
@@ -665,7 +670,8 @@ class EllipticCurveHom(Morphism):
                 raise ValueError('kernel subgroup has no generating points over the base field')
             return A
 
-        assert algorithm == 'kerpoly'
+        if algorithm != 'kerpoly':
+            raise ValueError(f"invalid algorithm {algorithm}")
 
         f = self.kernel_polynomial()
 
