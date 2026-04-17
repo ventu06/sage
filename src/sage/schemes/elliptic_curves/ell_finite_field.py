@@ -2621,7 +2621,6 @@ def fill_ss_j_dict():
     values for `p<300`.  Setting the values this way avoids start-up
     costs.
     """
-    global supersingular_j_polynomials
     if not supersingular_j_polynomials:
         supersingular_j_polynomials[13] = [8, 1]
         supersingular_j_polynomials[17] = [9, 1]

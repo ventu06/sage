@@ -134,7 +134,6 @@ def FreeQuadraticModule(base_ring, rank, inner_product_matrix,
         [1 0]
         [0 1]
     """
-    global _cache
     rank = int(rank)
 
     # In order to use coercion into the inner_product_ring we need to pass

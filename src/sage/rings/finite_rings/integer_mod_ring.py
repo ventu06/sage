@@ -457,7 +457,6 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
             raise ZeroDivisionError("order must be positive")
         self.__order = order
         self._pyx_order = integer_mod.NativeIntStruct(order)
-        global default_category
         if category is None:
             category = default_category
         else:
