@@ -459,6 +459,10 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
         Since this morphism is a scalar multiplication `[m]`,
         the kernel is simply the `m`-torsion subgroup.
 
+        ALGORITHM:
+
+        This method defers to ``self.domain().torsion_subgroup()``.
+
         EXAMPLES::
 
             sage: E = EllipticCurve(GF(101), [5,5])
@@ -471,10 +475,6 @@ class EllipticCurveHom_scalar(EllipticCurveHom):
             Additive abelian group isomorphic to Z/7 + Z/7
               embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 5*x + 5
                 over Finite Field in t of size 101^6
-
-        ALGORITHM:
-
-        This method defers to ``self.domain().torsion_subgroup()``.
         """
         ker = self.domain().torsion_subgroup(self._m, extend=extend, algorithm=algorithm)
         if ker.order() != self.separable_degree():

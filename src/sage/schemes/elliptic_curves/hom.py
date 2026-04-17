@@ -512,15 +512,15 @@ class EllipticCurveHom(Morphism):
 
         INPUT:
 
-        - ``extend`` -- boolean (default: ``False``):
-          Whether or not to extend the base field as necessary
+        - ``extend`` -- boolean (default: ``False``);
+          whether or not to extend the base field as necessary
           to find all kernel points.
 
-        - ``algorithm`` -- string (default: ``None``).
-          Over general fields, only ``"kerpoly"`` is available;
-          over finite fields, there is additionally ``"structure"''.
-          If ``algorithm`` is ``None``, the method attempts to
-          select the most suitable algorithm automatically.
+        - ``algorithm`` -- string (optional); must be
+          one of the following:
+
+          * ``"kerpoly"`` -- works in general
+          * ``"structure"`` -- works for finite base fields
 
         ALGORITHM:
 
@@ -536,8 +536,8 @@ class EllipticCurveHom(Morphism):
         the kernel using :meth:`matrix_on_subgroup` combined
         with linear algebra.
 
-        If no algorithm is specified, then this selects the most
-        suitable algorithm automatically.
+        If no algorithm is specified, this method selects
+        the most suitable algorithm automatically.
 
         EXAMPLES::
 
