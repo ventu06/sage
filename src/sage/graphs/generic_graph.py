@@ -12229,15 +12229,6 @@ class GenericGraph(GenericGraph_pyx):
             sage: for v in H.vertex_iterator(degree=1, vertex_property=prop):
             ....:     print(v)
             4
-
-        Note that since the intersection option is available, the
-        vertex_iterator() function is sub-optimal, speed-wise, but note the
-        following optimization::
-
-            sage: timeit V = P.vertices(sort=False)         # not tested
-            100000 loops, best of 3: 8.85 [micro]s per loop
-            sage: timeit V = list(P.vertex_iterator())      # not tested
-            100000 loops, best of 3: 5.74 [micro]s per loop
         """
         if degree:
             if vertex_property is not None:
