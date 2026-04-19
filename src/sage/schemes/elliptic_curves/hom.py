@@ -670,8 +670,7 @@ class EllipticCurveHom(Morphism):
         if Q.is_zero():
             if all:
                 return self.kernel_points()
-            else:
-                return self.domain().zero()
+            return self.domain().zero()
         if all:
             try:
                 P = self.inverse_image(Q)
@@ -1580,7 +1579,7 @@ def compare_via_evaluation(left, right):
         Ps = EE.gens()
         return all(left._eval(P) == right._eval(P) for P in Ps)
 
-    elif isinstance(F, number_field_base.NumberField):
+    if isinstance(F, number_field_base.NumberField):
         for _ in range(100):
             P = E.lift_x(F.random_element(), extend=True)
             if P._has_order_at_least(4*d + 1, attempts=50):

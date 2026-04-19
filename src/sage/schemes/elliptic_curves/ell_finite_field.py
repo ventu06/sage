@@ -468,8 +468,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             R = self.frobenius_order()
             if R.degree() == 1:
                 return frob * frob
-            else:
-                return frob.norm()
+            return frob.norm()
 
         # We need manual caching (not @cached_method) since various
         # other methods refer to this _order attribute, in particular
@@ -778,8 +777,7 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
         R = self.frobenius_order()
         if R.degree() == 1:
             return self.frobenius_polynomial().roots(multiplicities=False)[0]
-        else:
-            return R.gen(1)
+        return R.gen(1)
 
     def frobenius_endomorphism(self):
         r"""
@@ -1380,11 +1378,11 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             gens = list(filter(bool, [P, Q]))
             return AdditiveAbelianGroupWrapper(E.point_homset(), gens, [pt._order for pt in gens])
 
-        elif algorithm == 'divpoly':
+        if algorithm == 'divpoly':
             # NB: we already handled extend= above
             return super().torsion_subgroup(n, extend=False, algorithm='divpoly')
 
-        elif algorithm == 'structure':
+        if algorithm == 'structure':
             return E.abelian_group().torsion_subgroup(n)
 
         raise ValueError(f'unknown algorithm {algorithm!r}')
@@ -1490,16 +1488,15 @@ class EllipticCurve_finite_field(EllipticCurve_field, ProjectivePlaneCurve_finit
             if self.base_field().degree() == other.base_field().degree():
                 return self.cardinality() == other.cardinality()
 
-            elif self.base_field().degree() == gcd(self.base_field().degree(),
+            if self.base_field().degree() == gcd(self.base_field().degree(),
                                                    other.base_field().degree()):
                 return self.cardinality(extension_degree=other.base_field().degree()//self.base_field().degree()) == other.cardinality()
 
-            elif other.base_field().degree() == gcd(self.base_field().degree(),
+            if other.base_field().degree() == gcd(self.base_field().degree(),
                                                     other.base_field().degree()):
                 return other.cardinality(extension_degree=self.base_field().degree()//other.base_field().degree()) == self.cardinality()
 
-            else:
-                raise ValueError("Curves have different base fields: use the field parameter.")
+            raise ValueError("Curves have different base fields: use the field parameter.")
         else:
             f_deg = field.degree()
             s_deg = self.base_field().degree()
@@ -3414,34 +3411,34 @@ def EllipticCurve_with_prime_order(N):
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
-        verbose 2 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        verbose 2 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
         Elliptic Curve defined by y^2 = x^3 + 671938635*x + 843230411 over Finite Field of size 999969307
         Elliptic Curve defined by y^2 = x^3 + 835778425*x + 33546204 over Finite Field of size 999969307
         sage: set_verbose(4)
         sage: set_random_seed(1337)
         sage: for _, E in zip(range(3), EllipticCurve_with_prime_order(10^9 + 7)):
         ....:     print(E)
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-67
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-107
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-139
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
-        verbose 2 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-19
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-67
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-107
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-139
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-163
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-163
         Elliptic Curve defined by y^2 = x^3 + 265977778*x + 120868502 over Finite Field of size 1000041437
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-227
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-251
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-283
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-307
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-331
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-379
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-419
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-491
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-523
-        verbose 4 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
-        verbose 2 (3272: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-179
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-227
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-251
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-283
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-307
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-331
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-379
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-419
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-491
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-523
+        verbose 4 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Testing D=-667
+        verbose 2 (...: ell_finite_field.py, EllipticCurve_with_prime_order) Computing the Hilbert class polynomial H_-667
         Elliptic Curve defined by y^2 = x^3 + 671938635*x + 843230411 over Finite Field of size 999969307
         Elliptic Curve defined by y^2 = x^3 + 835778425*x + 33546204 over Finite Field of size 999969307
 

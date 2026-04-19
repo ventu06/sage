@@ -531,7 +531,7 @@ class EllipticCurveFormalGroup(SageObject):
 
         if prec == 1:
             return R(0)
-        elif prec == 2:
+        if prec == 2:
             return t1 + t2 - self.curve().a1()*t1*t2
 
         try:
