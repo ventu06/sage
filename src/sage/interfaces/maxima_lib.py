@@ -387,7 +387,6 @@ class MaximaLib(MaximaAbstract):
             raise RuntimeError("Maxima interface in library mode can only be instantiated once")
         maxima_lib_instances += 1
 
-        global init_code
         self.__init_code = init_code
 
         MaximaAbstract.__init__(self, "maxima")
@@ -1602,8 +1601,6 @@ def sr_to_max(expr):
         sage: max_to_sr(sr_to_max(f_prime(x = 1)))
         D[0](f)(1)
     """
-    global sage_op_dict, max_op_dict
-    global sage_sym_dict, max_sym_dict
     if isinstance(expr, (list, tuple)):
         return EclObject(([mlist], [sr_to_max(e) for e in expr]))
     op = expr.operator()
