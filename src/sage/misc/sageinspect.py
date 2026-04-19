@@ -2507,7 +2507,7 @@ def sage_getsourcelines(obj):
                             B = None
                         if B is not None and B is not obj:
                             return sage_getsourcelines(B)
-                    if obj.__class__ != type:
+                    if obj.__class__ is not type:
                         return sage_getsourcelines(obj.__class__)
                     raise err
 
