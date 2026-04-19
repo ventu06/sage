@@ -58,7 +58,6 @@ py.install_sources(
   'sympy_wrapper.py',
   'tab_completion.py',
   'tachyon.py',
-  'tests.py',
   'tides.py',
   subdir: 'sage/interfaces',
 )
