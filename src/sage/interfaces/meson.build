@@ -7,6 +7,8 @@ py.install_sources(
   'expect.py',
   'four_ti_2.py',
   'fricas.py',
+  'fricas.spad',
+  'fricas_translator.py',
   'frobby.py',
   'gap.py',
   'gap3.py',
@@ -82,4 +84,3 @@ foreach name, pyx : extension_data
     dependencies: [py_dep, gmp],
   )
 endforeach
-
