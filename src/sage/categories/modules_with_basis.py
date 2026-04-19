@@ -1427,12 +1427,23 @@ class ModulesWithBasis(CategoryWithAxiom_over_base_ring):
                 True
             """
             indices = self.basis().keys()
-            a = self.zero()
-            if not indices.is_empty():
-                for i in range(n):
-                    a += self.term(indices.random_element(),
-                                   self.base_ring().random_element())
-            return a
+            if not indices:
+                return self.zero()
+
+            # Some container types (list, tuple, etc.) won't have
+            # a random_element() method.
+            if hasattr(indices, "random_element"):
+                random_element = lambda c: c.random_element()
+            else:
+                from random import choice
+                random_element = choice
+
+            return self.sum(
+                self.term(random_element(indices),
+                          self.base_ring().random_element())
+                for _ in range(n)
+            )
+
 
     class ElementMethods:
         # TODO: Define the appropriate element methods here (instead of in
