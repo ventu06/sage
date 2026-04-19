@@ -1597,6 +1597,118 @@ class EllipticCurvePoint_field(EllipticCurvePoint,
         ans.sort()
         return ans
 
+    def divide(self, d, *, extend=True):
+        r"""
+        Return a point `P'` such that `[d]P'` equals this point.
+
+        If ``extend`` is set to ``True`` (the default), the base
+        field is extended as needed to find `P'`.
+
+        EXAMPLES::
+
+            sage: E = EllipticCurve(GF(101), [1,1])
+            sage: P = E.lift_x(3); P
+            (3 : 43 : 1)
+            sage: P.order()
+            7
+            sage: P.divide(15)
+            (3 : 43 : 1)
+            sage: P.divide(7)  # random
+            (27*W^6 + 57*W^5 + 100*W^4 + 88*W^3 + 75*W^2 + 95*W + 40 : 88*W^6 + 60*W^5 + 77*W^4 + 90*W^3 + 29*W^2 + 30*W + 69 : 1)
+            sage: P.divide(7, extend=False)
+            Traceback (most recent call last):
+            ...
+            ValueError: division point not defined over this field and "extend" is not set
+
+        ::
+
+            sage: E = EllipticCurve('11a1')
+            sage: P = E(5, 5); P.order()
+            5
+            sage: P.divide(7)
+            (16 : 60 : 1)
+            sage: P.divide(5)
+            (w25 : ... : 1)
+
+        ::
+
+            sage: E = EllipticCurve('574i1')
+            sage: P = E(103, -276); P.order()
+            7
+            sage: P.divide(7)  # long time -- 10s
+            (w49 : ... : 1)
+            sage: Q = E(61, 18); Q.order()
+            +Infinity
+            sage: Q.divide(2)
+            (w4 : 1/98*w4^3 - 183/98*w4^2 + 19395/98*w4 - 736973/98 : 1)
+            sage: Q.divide(3)
+            (w9 : -729/6939467105435648*w9^8 + 80657/1734866776358912*w9^7 - 2397859/123919055454208*w9^6 + 1500694639/495676221816832*w9^5 - 5685415021/15489881931776*w9^4 - 3292127267237/123919055454208*w9^3 + 1295248228392915/247838110908416*w9^2 + 166211134033305409/3469733552717824*w9 - 90243166176496845075/6939467105435648 : 1)
+            sage: Q.divide(4)
+            (w16 : (-124965/70810888830976*w4^3 + 11887009/70810888830976*w4^2 - 1135583489/70810888830976*w4 - 35734554871/70810888830976)*w16^3 + (55813353/70810888830976*w4^3 - 11172166293/70810888830976*w4^2 + 1212280156533/70810888830976*w4 - 53785946841885/70810888830976)*w16^2 + (-2446291839/70810888830976*w4^3 + 235629424819/70810888830976*w4^2 - 22582519549139/70810888830976*w4 - 700065444135573/70810888830976)*w16 - 120431435405/70810888830976*w4^3 + 49277316666089/70810888830976*w4^2 - 5642819368330569/70810888830976*w4 + 415447155783470481/70810888830976 : 1)
+        """
+        P = self
+        E = P.curve()
+        F = E.base_field()
+        n = P.order()
+
+        if n < oo:
+            m = d.prime_to_m_part(n)
+            P *= m.inverse_mod(n)
+            d //= m
+
+        def ffext(poly):
+            F = poly.parent().base_ring()
+            name = f'w{F.absolute_degree() * poly.degree()}'
+            if isinstance(self, EllipticCurvePoint_finite_field):
+                F, emb = F.extension(poly.degree(), name, map=True)
+                root = poly.change_ring(emb).any_root()
+                return F, emb, root
+            Fext = F.extension(poly, name)
+            return Fext, F.hom(Fext), Fext.gen()
+
+        coercion = F.hom(F)
+        for q, e in d.factor():
+            for _ in range(e):
+
+                f = P.division_points(q, poly_only=True)
+                try:
+                    x = f.any_root(assume_squarefree=True)
+                except ValueError:
+                    if not extend:
+                        raise ValueError('division point not defined over this field and "extend" is not set')
+                    # need to extend the field to get the x-coordinate
+                    g = f.factor()[0][0]
+                    F, emb, x = ffext(g)
+                    E = E.change_ring(emb)
+                    P = P.change_ring(emb)
+                    coercion = emb * coercion
+
+                h = E.defining_polynomial()(x=x, z=1).univariate_polynomial()
+                try:
+                    y = h.any_root()
+                except ValueError:
+                    # need to extend the field further to get the y-coordinate
+                    if not extend:
+                        raise ValueError('division point not defined over this field and "extend" is not set')
+                    F, emb, y = ffext(h)
+                    E = E.change_ring(emb)
+                    P = P.change_ring(emb)
+                    coercion = emb * coercion
+                    x = emb(x)
+
+                pt = E(x, y)
+                if q * pt != P:
+                    pt = -pt
+                assert q * pt == P
+                P = pt
+
+        try:
+            F.register_coercion(coercion)
+        except AssertionError:  # coercion already exists
+            pass
+
+        return P
+
     def _divide_out(self, p):
         r"""
         Return `(Q,k)` where `p^kQ` == ``self`` and `Q` cannot be divided by `p`.
