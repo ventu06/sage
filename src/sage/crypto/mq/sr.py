@@ -104,8 +104,8 @@ instances to recover all solutions to the system.::
     sage: a = K.gen()
     sage: K = [a]
     sage: P = [1]
-    sage: F,s = sr.polynomial_system(P=P, K=K)                                          # needs sage.rings.polynomial.pbori
-    sage: F.groebner_basis()                                                            # needs sage.rings.polynomial.pbori
+    sage: F,s = sr.polynomial_system(P=P, K=K)                                          # needs brial
+    sage: F.groebner_basis()                                                            # needs brial
     [k100, k101 + 1, k102, k103 + k003,
      x100 + 1, x101 + k003 + 1, x102 + k003 + 1,
      x103 + k003, w100, w101, w102 + 1, w103 + k003 + 1,
@@ -124,8 +124,8 @@ to the same ciphertext::
 
 All solutions can easily be recovered using the variety function for ideals.::
 
-   sage: I = F.ideal()                                                                  # needs sage.rings.polynomial.pbori
-   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
+   sage: I = F.ideal()                                                                  # needs brial
+   sage: for V in I.variety():                                                          # needs brial sage.symbolic
    ....:    for k,v in sorted(V.items()):
    ....:       print("{} {}".format(k, v))
    ....:    print("\n")
@@ -174,7 +174,7 @@ All solutions can easily be recovered using the variety function for ideals.::
 We can also verify the correctness of the variety by evaluating all
 ideal generators on all points.::
 
-   sage: for V in I.variety():                                                          # needs sage.rings.polynomial.pbori sage.symbolic
+   sage: for V in I.variety():                                                          # needs brial sage.symbolic
    ....:     for f in I.gens():
    ....:         if f.subs(V) != 0:
    ....:            print("epic fail")
@@ -1618,7 +1618,7 @@ class SR_generic(MPolynomialSystemGenerator):
              'x103': x103}
 
             sage: sr = mq.SR(1,1,1,4,gf2=True)
-            sage: sr.variable_dict()                                                    # needs sage.rings.polynomial.pbori
+            sage: sr.variable_dict()                                                    # needs brial
             {'k000': k000,
              'k001': k001,
              'k002': k002,
@@ -1962,16 +1962,16 @@ class SR_generic(MPolynomialSystemGenerator):
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: P = sr.vector([0, 0, 1, 0])
             sage: K = sr.vector([1, 0, 0, 1])
-            sage: F, s = sr.polynomial_system(P, K)                                     # needs sage.rings.polynomial.pbori
+            sage: F, s = sr.polynomial_system(P, K)                                     # needs brial
 
         This returns a polynomial system::
 
-            sage: F                                                                     # needs sage.rings.polynomial.pbori
+            sage: F                                                                     # needs brial
             Polynomial Sequence with 36 Polynomials in 20 Variables
 
         and a solution::
 
-            sage: s  # random -- maybe we need a better doctest here?                   # needs sage.rings.polynomial.pbori
+            sage: s  # random -- maybe we need a better doctest here?                   # needs brial
             {k000: 1, k001: 0, k003: 1, k002: 0}
 
         This solution is not the only solution that we can learn from the
@@ -1979,25 +1979,25 @@ class SR_generic(MPolynomialSystemGenerator):
 
         ::
 
-            sage: F.groebner_basis()[-3:]                                               # needs sage.rings.polynomial.pbori
+            sage: F.groebner_basis()[-3:]                                               # needs brial
             [k000 + 1, k001, k003 + 1]
 
         In particular we have two solutions::
 
-            sage: len(F.ideal().variety())                                              # needs sage.rings.polynomial.pbori
+            sage: len(F.ideal().variety())                                              # needs brial
             2
 
         In the following example we provide ``C`` explicitly::
 
            sage: C = sr(P,K)
-           sage: F,s = sr.polynomial_system(P=P, C=C)                                   # needs sage.rings.polynomial.pbori
-           sage: F                                                                      # needs sage.rings.polynomial.pbori
+           sage: F,s = sr.polynomial_system(P=P, C=C)                                   # needs brial
+           sage: F                                                                      # needs brial
            Polynomial Sequence with 36 Polynomials in 20 Variables
 
         Alternatively, we can use symbols for the ``P`` and
         ``C``. First, we have to create a polynomial ring::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: sr = mq.SR(1, 1, 1, 4, gf2=True, polybori=True)
             sage: R = sr.R
             sage: vn = sr.varstrs("P",0,1,4) + R.variable_names() + sr.varstrs("C",0,1,4)
@@ -2007,7 +2007,7 @@ class SR_generic(MPolynomialSystemGenerator):
 
         Now, we can construct the purely symbolic equation system::
 
-            sage: # needs sage.rings.polynomial.pbori
+            sage: # needs brial
             sage: C = sr.vars("C",0); C
             (C000, C001, C002, C003)
             sage: P = sr.vars("P",0)
@@ -2022,13 +2022,13 @@ class SR_generic(MPolynomialSystemGenerator):
         We show that the (returned) key is a solution to the returned system::
 
             sage: sr = mq.SR(3,4,4,8, star=True, gf2=True, polybori=True)
-            sage: while True:  # workaround (see :issue:`31891`)                         # needs sage.rings.polynomial.pbori
+            sage: while True:  # workaround (see :issue:`31891`)                         # needs brial
             ....:     try:
             ....:         F, s = sr.polynomial_system()
             ....:         break
             ....:     except ZeroDivisionError:
             ....:         pass
-            sage: F.subs(s).groebner_basis()    # long time                             # needs sage.rings.polynomial.pbori
+            sage: F.subs(s).groebner_basis()    # long time                             # needs brial
             Polynomial Sequence with 1248 Polynomials in 1248 Variables
         """
         plaintext = P
@@ -3091,9 +3091,9 @@ class SR_gf2(SR_generic):
         EXAMPLES::
 
             sage: sr = mq.SR(1, 1, 1, 8, gf2=True)
-            sage: xi = sr.vars('x', 1)                                                  # needs sage.rings.polynomial.pbori
-            sage: wi = sr.vars('w', 1)                                                  # needs sage.rings.polynomial.pbori
-            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]                         # needs sage.rings.polynomial.pbori
+            sage: xi = sr.vars('x', 1)                                                  # needs brial
+            sage: wi = sr.vars('w', 1)                                                  # needs brial
+            sage: sr.inversion_polynomials(xi, wi, len(xi))[:3]                         # needs brial
             [x100*w100 + x100*w102 + x100*w103 + x100*w107 + x101*w101 + x101*w102 + x101*w106 + x102*w100 + x102*w101 + x102*w105 + x103*w100 + x103*w104 + x104*w103 + x105*w102 + x106*w101 + x107*w100,
              x100*w101 + x100*w103 + x100*w104 + x101*w100 + x101*w102 + x101*w103 + x101*w107 + x102*w101 + x102*w102 + x102*w106 + x103*w100 + x103*w101 + x103*w105 + x104*w100 + x104*w104 + x105*w103 + x106*w102 + x107*w101,
              x100*w102 + x100*w104 + x100*w105 + x101*w101 + x101*w103 + x101*w104 + x102*w100 + x102*w102 + x102*w103 + x102*w107 + x103*w101 + x103*w102 + x103*w106 + x104*w100 + x104*w101 + x104*w105 + x105*w100 + x105*w104 + x106*w103 + x107*w102]
