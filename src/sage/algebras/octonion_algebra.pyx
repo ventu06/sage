@@ -1,4 +1,3 @@
-# sage.doctest: needs sage.modules
 """
 Octonion Algebras
 
@@ -439,7 +438,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.norm()
@@ -462,7 +461,7 @@ cdef class Octonion_generic(AlgebraElement):
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.abs()                                                             # needs sage.symbolic
+            sage: elt.abs()
             2*sqrt(-61)
             sage: elt = sum(O.basis())
             sage: elt.abs()
@@ -596,10 +595,10 @@ cdef class Octonion(Octonion_generic):
 
             sage: O = OctonionAlgebra(QQ)
             sage: elt = sum(i * b for i, b in enumerate(O.basis(), start=2))
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(71)
             sage: elt = sum(O.basis())
-            sage: elt.norm()                                                            # needs sage.symbolic
+            sage: elt.norm()
             2*sqrt(2)
         """
         return self.vec.norm()
@@ -778,7 +777,7 @@ class OctonionAlgebra(UniqueRepresentation, Parent):
         EXAMPLES::
 
             sage: O = OctonionAlgebra(QQ)
-            sage: TestSuite(O).run()                                                    # needs sage.symbolic
+            sage: TestSuite(O).run()
 
             sage: O = OctonionAlgebra(QQ, 1, 3, 7)
             sage: TestSuite(O).run()
