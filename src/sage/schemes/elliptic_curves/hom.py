@@ -892,7 +892,8 @@ class EllipticCurveHom(Morphism):
             True
             sage: E.scalar_multiplication(-1).inverse_image(P) == -P
             True
-            sage: f.inverse_image(f.codomain().0)
+            sage: Ts = [pt for pt in f.codomain() if pt.weil_pairing(f(Q), f(Q).order())**3 != 1]
+            sage: f.inverse_image(choice(Ts))
             Traceback (most recent call last):
             ...
             ValueError: ...
