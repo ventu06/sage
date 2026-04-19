@@ -1033,7 +1033,9 @@ cdef class MPolynomial(CommutativePolynomial):
 
         INPUT:
 
-        - ``gap`` -- a GAP or libgap instance
+        - ``gap`` -- a GAP instance
+
+        Note that ``libgap`` should rather be used.
 
         TESTS:
 
@@ -1044,16 +1046,9 @@ cdef class MPolynomial(CommutativePolynomial):
             -x*y+3*z
             sage: gap(R.zero())     # indirect doctest
             0
-            sage: (x+y+z)._gap_(libgap)
-            x+y+z
-
-            sage: g = gap(x - y + 3*x*y*z)                                              # needs sage.libs.gap
-            sage: R(g)                                                                  # needs sage.libs.gap
+            sage: g = gap(x - y + 3*x*y*z)
+            sage: R(g)
             3*x*y*z + x - y
-
-            sage: g = libgap(5*x - y*z)                                                 # needs sage.libs.gap
-            sage: R(g)                                                                  # needs sage.libs.gap
-            -y*z + 5*x
 
         Multivariate polynomial over a cyclotomic field::
 
@@ -1061,8 +1056,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: P.<x,y> = F[]
             sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
             sage: gap(p)     # indirect doctest
-            (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
-            sage: libgap(p)  # indirect doctest
             (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
 
         Multivariate polynomial over a polynomial ring over a cyclotomic field::
@@ -1072,8 +1065,6 @@ cdef class MPolynomial(CommutativePolynomial):
             sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
             sage: gap(p)     # indirect doctest
             ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
-            sage: libgap(p)  # indirect doctest
-            ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         R = gap(self.parent())
         variables = R.IndeterminatesOfPolynomialRing()
@@ -1081,18 +1072,44 @@ cdef class MPolynomial(CommutativePolynomial):
 
     def _libgap_(self):
         r"""
-        TESTS::
+
+        Return a representation of ``self`` in libgap.
+
+        EXAMPLES:
+
+        Multivariate polynomial over integers::
 
             sage: R.<x,y,z> = ZZ[]
-            sage: libgap(-x*y + 3*z)   # indirect doctest                               # needs sage.libs.gap
+            sage: libgap(-x*y + 3*z)   # indirect doctest
             -x*y+3*z
-            sage: libgap(R.zero())     # indirect doctest                               # needs sage.libs.gap
+            sage: libgap(R.zero())     # indirect doctest
             0
+            sage: g = libgap(5*x - y*z)
+            sage: R(g)
+            -y*z + 5*x
+
+        Multivariate polynomial over a cyclotomic field::
+
+            sage: F.<zeta> = CyclotomicField(8)
+            sage: P.<x,y> = F[]
+            sage: p = zeta + zeta^2*x + zeta^3*y + (1+zeta)*x*y
+            sage: libgap(p)  # indirect doctest
+            (1+E(8))*x*y+E(4)*x+E(8)^3*y+E(8)
+
+        Multivariate polynomial over a polynomial ring over a cyclotomic field::
+
+            sage: S.<z> = F[]
+            sage: P.<x,y> = S[]
+            sage: p = zeta + zeta^2*x*z + zeta^3*y*z^2 + (1+zeta)*x*y*z
+            sage: libgap(p)  # indirect doctest
+            ((1+E(8))*z)*x*y+E(4)*z*x+E(8)^3*z^2*y+E(8)
         """
         from sage.libs.gap.libgap import libgap
-        return self._gap_(libgap)
+        R = libgap(self.parent())
+        variables = R.IndeterminatesOfPolynomialRing()
+        return self(*variables)
 
-    def _magma_init_(self, magma):
+    def _magma_init_(self, magma) -> str:
         r"""
         Return a Magma string representation of ``self`` valid in the
         given magma session.
@@ -1130,7 +1147,7 @@ cdef class MPolynomial(CommutativePolynomial):
 
         return '%s!(%s)' % (R.name(), s)
 
-    def _giac_init_(self):
+    def _giac_init_(self) -> str:
         r"""
         Return a Giac string representation of this polynomial.
 
