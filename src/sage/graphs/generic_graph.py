@@ -23706,7 +23706,7 @@ class GenericGraph(GenericGraph_pyx):
             ....:            2: {0: None, 1: None, 3: 'foo'}, 3: {2: 'foo'}},
             ....:           sparse=True)
             sage: import tempfile
-            sage: with tempfile.NamedTemporaryFile(mode='a+t') as f:
+            sage: with tempfile.NamedTemporaryFile(mode='a+t', delete_on_close=False) as f:
             ....:     G.graphviz_to_file_named(f.name, edge_labels=True)
             ....:     print(f.read())
             graph {
