@@ -1,7 +1,6 @@
 r"""
 Base class for elements of multivariate polynomial rings
 """
-
 # ********************************************************************
 #       Copyright (C) 2005 William Stein <wstein@gmail.com>
 #
@@ -18,8 +17,6 @@ from sage.rings.integer_ring import ZZ
 from sage.structure.coerce cimport coercion_model
 from sage.misc.derivative import multi_derivative
 from sage.misc.misc_c import prod
-from sage.misc.superseded import deprecated_function_alias
-
 
 from sage.rings.polynomial.polynomial_ring_constructor import PolynomialRing
 from sage.categories.map cimport Map
@@ -1307,7 +1304,7 @@ cdef class MPolynomial(CommutativePolynomial):
         """
         return self.base_ring().ideal(self.coefficients())
 
-    def is_gen(self):
+    def is_gen(self) -> bool:
         r"""
         Return ``True`` if this polynomial is a generator of its parent.
 
@@ -1327,19 +1324,8 @@ cdef class MPolynomial(CommutativePolynomial):
             True
             sage: (x*y).is_gen()
             False
-
-        TESTS::
-
-            sage: R.<x,y> = ZZ[]
-            sage: x.is_generator()
-            doctest:warning...:
-            DeprecationWarning: is_generator is deprecated. Please use is_gen instead.
-            See https://github.com/sagemath/sage/issues/38942 for details.
-            True
         """
         return self in self.parent().gens()
-
-    is_generator = deprecated_function_alias(38942, is_gen)
 
     def map_coefficients(self, f, new_base_ring=None):
         r"""
