@@ -87,6 +87,29 @@ cdef class Octonion_generic(AlgebraElement):
         data = [p for p in enumerate(self.vec) if p[1]]
         return repr_from_monomials(data, self._parent._repr_term, True)
 
+    def __getitem__(self, m):
+        r"""
+        Return the ``m``-th coordinate of ``self``.
+
+        EXAMPLES::
+
+            sage: O = OctonionAlgebra(QQ)
+            sage: elt = sum(i * b for i, b in enumerate(O.basis()))
+            sage: elt
+            i + 2*j + 3*k + 4*l + 5*li + 6*lj + 7*lk
+            sage: elt[2]
+            2
+            sage: elt.coefficient(4)
+            4
+            sage: elt[6]
+            6
+            sage: elt.leading_coefficient()
+            7
+            sage: elt.dense_coefficient_list()
+            [0, 1, 2, 3, 4, 5, 6, 7]
+        """
+        return self.vec[m]
+
     def __bool__(self):
         r"""
         Return if ``self`` is nonzero or not.
