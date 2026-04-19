@@ -2901,7 +2901,7 @@ def is_j_supersingular(j, proof=True):
 def special_supersingular_curve(F, q=None, *, endomorphism=False):
     r"""
     Given a finite field ``F`` of characteristic `p`, and optionally
-    a positive integer `q` such that the Hilbert conductor of `-q`
+    a positive integer `q < p/4` such that the Hilbert conductor of `-q`
     and `-p` equals `p`, construct a "special" supersingular elliptic
     curve `E` defined over ``F``.
 
@@ -2931,12 +2931,6 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
     - ``endomorphism`` -- boolean (default: ``False``); when set to ``True``,
       it is required that `2 \mid r`, and the function then additionally
       returns `\vartheta`
-
-    .. WARNING::
-
-        Due to :issue:`38481`, calling this function with a value of `q`
-        larger than approximately `p/4` may currently fail. This failure
-        will not occur for automatically chosen values of `q`.
 
     EXAMPLES::
 
@@ -3043,7 +3037,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         sage: p = random_prime(300, lbound=10)
         sage: k = ZZ(randrange(1, 5))
         sage: while True:
-        ....:     q = randrange(1, p//4)  # upper bound p//4 is a workaround for #38481
+        ....:     q = randrange(1, p//4)
         ....:     if QuaternionAlgebra(-q, -p).discriminant() == p:
         ....:         break
         sage: E = special_supersingular_curve(GF((p, k)), q)
@@ -3142,7 +3136,7 @@ def special_supersingular_curve(F, q=None, *, endomorphism=False):
         iso = E.isomorphism(F(-q).sqrt(), is_codomain=True)
         try:
             endo = iso * E.isogeny(None, iso.domain(), degree=q)
-        except (NotImplementedError, ValueError):  #FIXME catching ValueError here is a workaround for #38481
+        except NotImplementedError:
             endos = (iso*phi for phi in E.isogenies_degree(q)
                              for iso in phi.codomain().isomorphisms(E))
             endo = next(endo for endo in endos if endo.trace().is_zero())
