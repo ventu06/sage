@@ -109,7 +109,7 @@ easily::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 import sage.interfaces.abc
-import sage.misc.latex as latex
+from sage.misc import latex
 import sage.structure.parent_gens
 
 from sage.structure.parent import Parent

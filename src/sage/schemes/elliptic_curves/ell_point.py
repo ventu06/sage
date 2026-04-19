@@ -130,7 +130,7 @@ AUTHORS:
 
 import math
 
-import sage.groups.generic as generic
+from sage.groups import generic
 import sage.rings.abc
 
 from sage.misc.lazy_import import lazy_import

@@ -133,8 +133,8 @@ TESTS::
     sage: TestSuite(M).run()
 """
 
-import sage.categories.commutative_rings as commutative_rings
-import sage.misc.latex as latex
+from sage.categories import commutative_rings
+from sage.misc import latex
 from sage.interfaces.abc import MagmaElement
 from sage.misc.lazy_import import lazy_import
 from sage.rings import (
@@ -155,10 +155,10 @@ from sage.structure.nonexact import Nonexact
 from sage.structure.unique_representation import UniqueRepresentation
 
 _CommutativeRings = commutative_rings.CommutativeRings()
-import sage.categories.integral_domains as integral_domains
+from sage.categories import integral_domains
 
 _IntegralDomains = integral_domains.IntegralDomains()
-import sage.categories.fields as fields
+from sage.categories import fields
 
 _Fields = fields.Fields()
 

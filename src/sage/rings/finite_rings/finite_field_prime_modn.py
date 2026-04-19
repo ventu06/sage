@@ -28,9 +28,9 @@ from sage.rings.finite_rings.finite_field_base import FiniteField as FiniteField
 from sage.categories.finite_fields import FiniteFields
 _FiniteFields = FiniteFields()
 
-import sage.rings.finite_rings.integer_mod_ring as integer_mod_ring
+from sage.rings.finite_rings import integer_mod_ring
 from sage.rings.integer import Integer
-import sage.rings.finite_rings.integer_mod as integer_mod
+from sage.rings.finite_rings import integer_mod
 
 from sage.rings.integer_ring import ZZ
 from sage.rings.finite_rings.integer_mod_ring import IntegerModRing_generic

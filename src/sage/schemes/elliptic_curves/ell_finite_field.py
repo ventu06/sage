@@ -31,7 +31,7 @@ AUTHORS:
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.groups.generic as generic
+from sage.groups import generic
 
 from sage.arith.functions import lcm
 from sage.arith.misc import binomial, GCD as gcd

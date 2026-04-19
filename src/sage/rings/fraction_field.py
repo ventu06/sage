@@ -81,7 +81,7 @@ Test that :issue:`15971` is fixed::
 #                  https://www.gnu.org/licenses/
 # ****************************************************************************
 
-import sage.misc.latex as latex
+from sage.misc import latex
 from sage.categories.basic import QuotientFields, Rings
 from sage.categories.map import Section
 from sage.misc.cachefunc import cached_method

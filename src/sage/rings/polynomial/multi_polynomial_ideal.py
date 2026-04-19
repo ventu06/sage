@@ -236,9 +236,9 @@ AUTHORS:
 from warnings import warn
 
 import sage.rings.abc
-import sage.rings.polynomial.toy_buchberger as toy_buchberger
-import sage.rings.polynomial.toy_d_basis as toy_d_basis
-import sage.rings.polynomial.toy_variety as toy_variety
+from sage.rings.polynomial import toy_buchberger
+from sage.rings.polynomial import toy_d_basis
+from sage.rings.polynomial import toy_variety
 from sage.misc.cachefunc import cached_method
 from sage.misc.method_decorator import MethodDecorator
 from sage.misc.misc_c import prod
@@ -4150,7 +4150,7 @@ class MPolynomialIdeal(MPolynomialIdeal_singular_repr,
         - ``verbose`` -- (default: ``False``) if ``True``, printout
           useful info during computations
         """
-        import sage.rings.polynomial.groebner_fan as groebner_fan
+        from sage.rings.polynomial import groebner_fan
         return groebner_fan.GroebnerFan(self, is_groebner_basis=is_groebner_basis,
                                         symmetry=symmetry, verbose=verbose)
 

@@ -538,7 +538,7 @@ class Ideal_generic(MonoidElement):
             sage: latex(3*ZZ) # indirect doctest
             \left(3\right)\Bold{Z}
         """
-        import sage.misc.latex as latex
+        from sage.misc import latex
         return '\\left(%s\\right)%s' % (", ".join(latex.latex(g)
                                                   for g in self.gens()),
                                         latex.latex(self.ring()))

@@ -29,13 +29,13 @@ AUTHORS:
 
 SMALL_DISC = 1000000
 
-import sage.misc.latex as latex
+from sage.misc import latex
 
-import sage.rings.rational_field as rational_field
-import sage.rings.integer_ring as integer_ring
+from sage.rings import rational_field
+from sage.rings import integer_ring
 from sage.arith.misc import kronecker as kronecker_symbol
 from sage.arith.misc import GCD as gcd
-import sage.misc.misc as misc
+from sage.misc import misc
 from sage.rings.finite_rings.finite_field_constructor import FiniteField
 
 from sage.rings.ideal import Ideal_generic, Ideal_fractional
