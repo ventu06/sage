@@ -585,6 +585,7 @@ from sage.arith.misc import factor
 from sage.categories.action import Action
 from sage.misc.cachefunc import cached_method
 from sage.misc.fast_methods import Singleton
+from sage.misc.lazy_import import lazy_import
 from sage.misc.lazy_string import lazy_string
 from sage.misc.misc import increase_recursion_limit
 from sage.rings import infinity
@@ -624,6 +625,8 @@ from sage.structure.richcmp import (
     richcmp_not_equal,
 )
 from sage.structure.sage_object import SageObject
+
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
 
 
 class AlgebraicField_common(sage.rings.abc.AlgebraicField_common):
@@ -4881,7 +4884,7 @@ class AlgebraicNumber_base(sage.structure.element.FieldElement):
         except ValueError:
             pass
         rad = self.radical_expression()
-        if isinstance(rad.parent(), sage.rings.abc.SymbolicRing):
+        if isinstance(rad.parent(), SymbolicRing):
             return rad._maxima_init_()
         raise NotImplementedError('cannot find radical expression')
 

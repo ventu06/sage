@@ -243,6 +243,8 @@ from sage.structure.richcmp import richcmp_by_eq_and_lt
 import sage.rings.abc
 from .misc import WithLocals
 
+lazy_import('sage.symbolic.ring', 'SymbolicRing')
+
 
 class Variable(CachedRepresentation, SageObject):
     r"""
@@ -3463,7 +3465,7 @@ class MonomialGrowthGroup(GenericGrowthGroup):
             MPolynomialRing_base
         from sage.rings.power_series_ring import PowerSeriesRing_generic
         import operator
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             if data.operator() == operator.pow:
                 base, exponent = data.operands()
                 if str(base) == var:
@@ -4213,7 +4215,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from warnings import warn
 
         super().__init__(base, *args, **kwds)
-        if isinstance(base, sage.rings.abc.SymbolicRing) and not self._an_element_base_() > 0:
+        if isinstance(base, SymbolicRing) and not self._an_element_base_() > 0:
             warn("When using the Exponential {}, make "
                  "assumptions on the used symbolic elements.\n"
                  "In particular, use something like "
@@ -4337,7 +4339,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.functions.log import Function_exp
         from sage.symbolic.operators import mul_vararg
 
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             op = data.operator()
             if op == operator.pow:
                 base, exponent = data.operands()
@@ -4441,7 +4443,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
         from sage.structure.element import parent
 
         P = base.parent()
-        if isinstance(P, sage.rings.abc.SymbolicRing):
+        if isinstance(P, SymbolicRing):
             try:
                 base = base.pyobject()
             except TypeError:
@@ -4449,7 +4451,7 @@ class ExponentialGrowthGroup(GenericGrowthGroup):
             else:
                 P = base.parent()
 
-        if P in (ZZ, QQ, AA) or isinstance(P, (sage.rings.abc.SymbolicRing,
+        if P in (ZZ, QQ, AA) or isinstance(P, (SymbolicRing,
                                                sage.rings.abc.RealField,
                                                sage.rings.abc.RealIntervalField,
                                                sage.rings.abc.RealBallField)):

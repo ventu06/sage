@@ -112,7 +112,7 @@ from sage.rings.padics.padic_generic import pAdicGeneric
 from sage.structure.category_object cimport normalize_names
 
 from sage.misc.derivative import multi_derivative
-
+from sage.misc.lazy_import import LazyImport
 from sage.arith.misc import sort_complex_numbers_for_display, power_mod, is_prime
 from sage.arith.functions import lcm
 
@@ -135,6 +135,8 @@ from sage.misc.cachefunc import cached_method
 from sage.rings.polynomial.polynomial_compiled cimport CompiledPolynomialFunction
 
 from sage.rings.polynomial.polydict cimport ETuple
+
+SymbolicRing = LazyImport('sage.symbolic.ring', 'SymbolicRing')
 
 
 cdef class Polynomial(CommutativePolynomial):
@@ -8871,7 +8873,7 @@ cdef class Polynomial(CommutativePolynomial):
             else:
                 return [rt for (rt, mult) in rts_mult]
 
-        if isinstance(L, sage.rings.abc.SymbolicRing):
+        if isinstance(L, SymbolicRing):
             if self.degree() == 2:
                 from sage.misc.functional import sqrt
                 from sage.symbolic.constants import I
