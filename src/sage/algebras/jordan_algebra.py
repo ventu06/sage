@@ -414,9 +414,43 @@ class SpecialJordanAlgebra(JordanAlgebra):
                 sage: J = JordanAlgebra(F)
                 sage: a,b,c = map(J, F.gens())
                 sage: TestSuite(a + 2*b - c).run()
+
+            TESTS:
+
+            We make an immutable copy of matrix elements::
+
+                sage: A = MatrixSpace(QQ, 2)
+                sage: J = JordanAlgebra(A)
+                sage: xmat = A([[-2,3],[3,4]])
+                sage: x = J(xmat)
+                sage: xmat[0,0] = 0
+                sage: xmat
+                [0 3]
+                [3 4]
+                sage: x
+                [-2  3]
+                [ 3  4]
+
             """
-            self._x = x
+            if hasattr(x, "set_immutable"):
+                # Mutable matrices aren't hashable, so we make a copy
+                # and mark the copy immutable.
+                self._x = x.change_ring(x.base_ring())
+                self._x.set_immutable()
+            else:
+                self._x = x
             AlgebraElement.__init__(self, parent)
+
+        def __hash__(self) -> int:
+            r"""
+            EXAMPLES::
+
+                sage: A = MatrixSpace(QQ,2)
+                sage: J = JordanAlgebra(A)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._x) )
 
         def _repr_(self) -> str:
             """
@@ -839,6 +873,17 @@ class JordanAlgebraSymmetricBilinear(JordanAlgebra):
             self._s = s
             self._v = v
             AlgebraElement.__init__(self, parent)
+
+        def __hash__(self):
+            r"""
+            EXAMPLES::
+
+                sage: m = matrix([[0,1],[1,1]])
+                sage: J = JordanAlgebra(m)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._s, self._v) )
 
         def _repr_(self) -> str:
             """
@@ -1489,6 +1534,17 @@ class ExceptionalJordanAlgebra(JordanAlgebra):
             """
             self._data = tuple(data)
             AlgebraElement.__init__(self, parent)
+
+        def __hash__(self):
+            r"""
+            EXAMPLES::
+
+                sage: O = OctonionAlgebra(QQ)
+                sage: J = JordanAlgebra(O)
+                sage: hash(J.one()) in ZZ
+                True
+            """
+            return hash( (self.parent(), self._data) )
 
         def _to_print_matrix(self):
             r"""
