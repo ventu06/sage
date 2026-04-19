@@ -511,9 +511,8 @@ class QuotientRing_nc(Parent):
             return QuotientFunctor(self.__I, names=names, domain=_CommRings,
                                    codomain=_CommRings,
                                    as_field=isinstance(self, Field)), self.__R
-        else:
-            return QuotientFunctor(self.__I, names=names,
-                                   as_field=isinstance(self, Field)), self.__R
+        return QuotientFunctor(self.__I, names=names,
+                               as_field=isinstance(self, Field)), self.__R
 
     def _repr_(self):
         """

@@ -242,8 +242,7 @@ class IntegerModFactory(UniqueFactory):
             order = -order
         if order == 0:
             return integer_ring.IntegerRing(**kwds)
-        else:
-            return IntegerModRing_generic(order, **kwds)
+        return IntegerModRing_generic(order, **kwds)
 
 
 Zmod = Integers = IntegerModRing = IntegerModFactory("IntegerModRing")
@@ -1226,9 +1225,9 @@ class IntegerModRing_generic(quotient_ring.QuotientRing_generic, sage.rings.abc.
         """
         if S is int:
             return integer_mod.Int_to_IntegerMod(self)
-        elif S is integer_ring.ZZ:
+        if S is integer_ring.ZZ:
             return integer_mod.Integer_to_IntegerMod(self)
-        elif isinstance(S, IntegerModRing_generic):
+        if isinstance(S, IntegerModRing_generic):
             if isinstance(S, Field):
                 return None
             try:

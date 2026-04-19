@@ -1245,19 +1245,18 @@ class ContinuedFraction_base(SageObject):
             preperiod = l[:preperiod_length]
             period = l[preperiod_length:]
             return continued_fraction((preperiod, period), value)
-        else:
-            if forward_value:
-                if isinstance(self, ContinuedFraction_real):
-                    # self._x0 is an exact number, ie with infinite precision
-                    x = self._x0
-                    value = (a * x + b) / (c * x + d)
-                elif isinstance(self, ContinuedFraction_infinite) and self._value is not None:
-                    # if present, self._value is an exact number, ie with infinite precision
-                    x = self._value
-                    value = (a * x + b) / (c * x + d)
+        if forward_value:
+            if isinstance(self, ContinuedFraction_real):
+                # self._x0 is an exact number, ie with infinite precision
+                x = self._x0
+                value = (a * x + b) / (c * x + d)
+            elif isinstance(self, ContinuedFraction_infinite) and self._value is not None:
+                # if present, self._value is an exact number, ie with infinite precision
+                x = self._value
+                value = (a * x + b) / (c * x + d)
 
-            from sage.misc.lazy_list import lazy_list
-            return continued_fraction(lazy_list(_i), value)
+        from sage.misc.lazy_list import lazy_list
+        return continued_fraction(lazy_list(_i), value)
 
     def __neg__(self):
         """
@@ -2215,11 +2214,10 @@ class ContinuedFraction_infinite(ContinuedFraction_base):
         """
         if self._value is not None:
             return self._value
-        else:
-            from sage.rings.real_lazy import RLF
-            if self._w[0] < 0:
-                return -RLF(-self)
-            return RLF(self)
+        from sage.rings.real_lazy import RLF
+        if self._w[0] < 0:
+            return -RLF(-self)
+        return RLF(self)
 
     def __neg__(self):
         """

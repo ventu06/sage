@@ -763,8 +763,7 @@ def PolynomialRing(base_ring, *args, **kwds):
 
     if multivariate or len(names) != 1:
         return _multi_variate(base_ring, names, **kwds)
-    else:
-        return _single_variate(base_ring, names, **kwds)
+    return _single_variate(base_ring, names, **kwds)
 
 
 def unpickle_PolynomialRing(base_ring, arg1=None, arg2=None, sparse=False):
@@ -1011,11 +1010,11 @@ def polynomial_default_category(base_ring_category, n_variables):
 
     if base_ring_category.is_subcategory(_Fields) and n_variables == 1:
         return category & _EuclideanDomains
-    elif base_ring_category.is_subcategory(_UniqueFactorizationDomains):
+    if base_ring_category.is_subcategory(_UniqueFactorizationDomains):
         return category & _UniqueFactorizationDomains
-    elif base_ring_category.is_subcategory(_IntegralDomains):
+    if base_ring_category.is_subcategory(_IntegralDomains):
         return category & _IntegralDomains
-    elif base_ring_category.is_subcategory(_CommutativeRings):
+    if base_ring_category.is_subcategory(_CommutativeRings):
         return category & _CommutativeRings
     return category
 

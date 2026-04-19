@@ -538,8 +538,7 @@ class NumberFieldIdeal(Ideal_generic):
         two_gens = self.gens_two()
         if two_gens[1]:
             return two_gens
-        else:
-            return (two_gens[0],)
+        return (two_gens[0],)
 
     def __pari__(self):
         """
@@ -2490,8 +2489,7 @@ class NumberFieldFractionalIdeal(MultiplicativeGroupElement, NumberFieldIdeal,
         if self.is_integral() and other.is_integral():
             if gcd(ZZ(self.absolute_norm()), ZZ(other.absolute_norm())) == 1:
                 return True
-            else:
-                return self+other == one
+            return self+other == one
         # This special case is necessary since the zero ideal is not a
         # fractional ideal!
         if other.absolute_norm() == 0:

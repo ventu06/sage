@@ -366,9 +366,9 @@ def PolynomialSequence(arg1, arg2=None, immutable=False, cr=False, cr_str=None):
 
     if not isinstance(K, FiniteField) or K.characteristic() != 2:
         return PolynomialSequence_generic(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
-    elif K.degree() == 1:
+    if K.degree() == 1:
         return PolynomialSequence_gf2(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
-    elif K.degree() > 1:
+    if K.degree() > 1:
         return PolynomialSequence_gf2e(parts, ring, immutable=immutable, cr=cr, cr_str=cr_str)
 
 
@@ -1056,8 +1056,7 @@ class PolynomialSequence_generic(Sequence_generic):
 
         if not return_indices:
             return macaulay_mat
-        else:
-            return macaulay_mat, row_indices, column_indices
+        return macaulay_mat, row_indices, column_indices
 
     def subs(self, *args, **kwargs):
         """
@@ -1155,8 +1154,7 @@ class PolynomialSequence_generic(Sequence_generic):
         """
         if self._is_short_for_repr():
             return super()._repr_()
-        else:
-            return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self), self.nvariables())
+        return "Polynomial Sequence with %d Polynomials in %d Variables" % (len(self), self.nvariables())
 
     def _repr_pretty_(self, p, cycle):
         """
@@ -1216,14 +1214,13 @@ class PolynomialSequence_generic(Sequence_generic):
         if isinstance(right, PolynomialSequence_generic) and right.ring() == self.ring():
             return PolynomialSequence(self.ring(), self.parts() + right.parts())
 
-        elif isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
+        if isinstance(right, (tuple, list)) and all(x.parent() == self.ring() for x in right):
             return PolynomialSequence(self.ring(), self.parts() + (right,))
 
-        elif isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
+        if isinstance(right, MPolynomialIdeal) and (right.ring() is self.ring() or right.ring() == self.ring()):
             return PolynomialSequence(self.ring(), self.parts() + (right.gens(),))
 
-        else:
-            raise TypeError("right must be a system over same ring as self.")
+        raise TypeError("right must be a system over same ring as self.")
 
     def connection_graph(self):
         """
@@ -1483,20 +1480,19 @@ class PolynomialSequence_generic(Sequence_generic):
 
         if isinstance(R, MPolynomialRing_libsingular):
             return PolynomialSequence(R, interred_libsingular(self), immutable=True)
-        else:
-            try:
-                s = self._singular_().parent()
-                o = s.option("get")
-                s.option("redTail")
-                ret = []
-                for f in self._singular_().interred():
-                    f = R(f)
-                    ret.append(f.lc()**(-1) * f)  # lead coeffs are not reduced by interred
-                s.option("set", o)
-            except TypeError:
-                from sage.rings.polynomial.toy_buchberger import \
-                    inter_reduction
-                ret = inter_reduction(self)
+        try:
+            s = self._singular_().parent()
+            o = s.option("get")
+            s.option("redTail")
+            ret = []
+            for f in self._singular_().interred():
+                f = R(f)
+                ret.append(f.lc()**(-1) * f)  # lead coeffs are not reduced by interred
+            s.option("set", o)
+        except TypeError:
+            from sage.rings.polynomial.toy_buchberger import \
+                inter_reduction
+            ret = inter_reduction(self)
 
         ret = sorted(ret, reverse=True)
         ret = PolynomialSequence(R, ret, immutable=True)
@@ -1705,8 +1701,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
                 if 1 in linear:
                     if return_reductors:
                         return PolynomialSequence(R, [R(1)]), PolynomialSequence(R, [])
-                    else:
-                        return PolynomialSequence(R, [R(1)])
+                    return PolynomialSequence(R, [R(1)])
                 rb = ll_encode(linear)
                 reductors.extend(linear)
 
@@ -1720,8 +1715,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if return_reductors:
             reduced_reductors = gauss_on_polys(reductors)
             return ret, PolynomialSequence(R, reduced_reductors)
-        else:
-            return ret
+        return ret
 
     def _groebner_strategy(self):
         """
@@ -1752,13 +1746,12 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
         if not isinstance(R, BooleanPolynomialRing_base):
             from sage.libs.singular.groebner_strategy import GroebnerStrategy
             return GroebnerStrategy(self.ideal())
-        else:
-            from sage.rings.polynomial.pbori.pbori import GroebnerStrategy
-            g = GroebnerStrategy(R)
-            for p in self:
-                g.add_as_you_wish(p)
-            g.reduction_strategy.opt_red_tail = True
-            return g
+        from sage.rings.polynomial.pbori.pbori import GroebnerStrategy
+        g = GroebnerStrategy(R)
+        for p in self:
+            g.add_as_you_wish(p)
+        g.reduction_strategy.opt_red_tail = True
+        return g
 
     def solve(self, algorithm='polybori', n=1,
               eliminate_linear_variables=True, verbose=False, **kwds):
@@ -1966,8 +1959,7 @@ class PolynomialSequence_gf2(PolynomialSequence_generic):
             l = [p for p in self if not p == 0]
             l = sorted(inter_red(l, completely=True), reverse=True)
             return PolynomialSequence(l, R, immutable=True)
-        else:
-            return PolynomialSequence_generic.reduced(self)
+        return PolynomialSequence_generic.reduced(self)
 
     def coefficients_monomials(self, order=None, sparse=True):
         """

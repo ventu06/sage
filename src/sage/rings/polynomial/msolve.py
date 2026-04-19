@@ -253,7 +253,7 @@ def variety(ideal, ring, *, proof=True):
     dim = data[0]
     if dim == -1:
         return []
-    elif dim > 0:
+    if dim > 0:
         raise ValueError("positive-dimensional ideal")
     else:
         assert dim.is_zero()
