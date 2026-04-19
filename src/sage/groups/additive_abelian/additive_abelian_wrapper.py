@@ -171,9 +171,27 @@ class AdditiveAbelianGroupWrapperElement(addgp.AdditiveAbelianGroupElement):
 
 @richcmp_method
 class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
-    """
+    r"""
     This class is used to wrap a subgroup of an existing
     additive abelian group as a new additive abelian group.
+
+    INPUT:
+
+    - ``universe`` -- common parent of all the group elements
+      encapsulated by this wrapper; must be an abelian group
+
+    - ``gens`` -- sequence of *independent* group elements
+
+    - ``invariants`` -- sequence of integers `\geq0`, parallel
+      to ``gens``, which specifies the order of each given
+      generator; the value `0` represents infinite order
+
+    .. NOTE::
+
+        A set of group elements `\{g_1, \ldots, g_n\}` is called
+        *independent* if the sum of all the subgroups `\langle g_i\rangle`
+        is direct. That is, the only relations between these generators
+        are the trivial ones coming from the order of each `g_i`.
 
     EXAMPLES::
 
@@ -448,9 +466,8 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
             NotImplementedError: No black-box discrete log for infinite abelian groups
         """
         from sage.arith.misc import CRT_list
-        from sage.rings.infinity import Infinity
 
-        if self.order() == Infinity:
+        if not self.is_finite():
             raise NotImplementedError("No black-box discrete log for infinite abelian groups")
 
         if gens is None:
@@ -604,6 +621,97 @@ class AdditiveAbelianGroupWrapper(addgp.AdditiveAbelianGroup_fixed_gens):
 
         basis, ords = basis_from_generators(gens)
         return AdditiveAbelianGroupWrapper(universe, basis, ords)
+
+    def canonical_form(self, factors):
+        r"""
+        Return another :class:`AdditiveAbelianGroupWrapper` encapsulating
+        the same group, whose cyclic factors are chosen according to one
+        of the standard canonical forms for abelian groups.
+
+        The choices for ``factors`` are:
+
+        - ``"invariant"`` (default): The cyclic factors correspond to the
+          invariant factors of the group, in descending order by size. In
+          this representation, the number of cyclic factors equals the
+          (free) rank of the group.
+
+        - ``"primary"``: All (finite) cyclic factors are taken to be of
+          prime-power order, sorted primarily by the prime and secondarily
+          by the exponent, in descending order. (Any non-torsion factors,
+          i.e., generators of infinite order, come first.)
+
+        EXAMPLES::
+
+            sage: F = GF((31337, 6)); F.inject_variables()
+            Defining z6
+            sage: E = EllipticCurve(F, j=37)
+            sage: P = E.lift_x(30466*z6^5 + 21642*z6^4 + 28691*z6^3 + 8814*z6^2 + 11494*z6 + 20047)
+            sage: Q = E.lift_x(13388*z6^5 + 3743*z6^4 + 28597*z6^3 + 12076*z6^2 + 8009*z6 + 30993)
+            sage: R = E.lift_x(9590*z6^5 + 22933*z6^4 + 30844*z6^3 + 9942*z6^2 + 27949*z6 + 22000)
+            sage: A = AdditiveAbelianGroupWrapper(E.point_homset(), [P, Q, R], [P.order(), Q.order(), R.order()]); A
+            Additive abelian group isomorphic to Z/3024 + Z/67444704069074640 + Z/4643173 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 31016*x + 17167 over Finite Field in z6 of size 31337^6
+            sage: A.generator_orders()
+            (3024, 67444704069074640, 4643173)
+            sage: A == E.abelian_group()
+            True
+            sage: A1 = A.canonical_form('invariant'); A1
+            Additive abelian group isomorphic to Z/313157428926517503432720 + Z/3024 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 31016*x + 17167 over Finite Field in z6 of size 31337^6
+            sage: A1.generator_orders()
+            (313157428926517503432720, 3024)
+            sage: A1 == A
+            True
+            sage: A2 = A.canonical_form('primary'); A2
+            Additive abelian group isomorphic to Z/3499 + Z/1999 + Z/1327 + Z/457 + Z/43 + Z/37 + Z/31 + Z/11 + Z/7 + Z/7 + Z/5 + Z/243 + Z/27 + Z/16 + Z/16 embedded in Abelian group of points on Elliptic Curve defined by y^2 = x^3 + 31016*x + 17167 over Finite Field in z6 of size 31337^6
+            sage: A2.generator_orders()
+            (3499, 1999, 1327, 457, 43, 37, 31, 11, 7, 7, 5, 243, 27, 16, 16)
+            sage: A2 == A
+            True
+
+        An example with an infinite group::
+
+            sage: x = polygen(QQ)
+            sage: K.<a> = NumberField(x^2 - x + 1)
+            sage: E = EllipticCurve([1, 0, 1, -2931-835*a, -101239-35790*a])
+            sage: P, Q = E.torsion_gens(6)
+            sage: R = E(-6190/169*a - 17711/169,  3128439/2197*a - 2552844/2197)
+            sage: A = AdditiveAbelianGroupWrapper(E.point_homset(), [Q, R, P], [Q.order(), 0, P.order()]); A
+            Additive abelian group isomorphic to Z/3 + Z + Z/6 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 + (-835*a-2931)*x + (-35790*a-101239) over Number Field in a with defining polynomial x^2 - x + 1
+            sage: A.generator_orders()
+            (3, 0, 6)
+            sage: A1 = A.canonical_form('invariant'); A1
+            Additive abelian group isomorphic to Z + Z/6 + Z/3 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 + (-835*a-2931)*x + (-35790*a-101239) over Number Field in a with defining polynomial x^2 - x + 1
+            sage: A1.generator_orders()
+            (0, 6, 3)
+            sage: A2 = A.canonical_form('primary'); A2
+            Additive abelian group isomorphic to Z + Z/3 + Z/3 + Z/2 embedded in Abelian group of points on Elliptic Curve defined by y^2 + x*y + y = x^3 + (-835*a-2931)*x + (-35790*a-101239) over Number Field in a with defining polynomial x^2 - x + 1
+            sage: A2.generator_orders()
+            (0, 3, 3, 2)
+        """
+        if factors == 'invariant':
+            from sage.matrix.special import diagonal_matrix
+            D = diagonal_matrix(ZZ, self._gen_orders)
+            S, U, V = D.smith_form()
+            newgens, newords = [], []
+            for row, d in zip(~V, S.diagonal()):
+                if d.is_one():
+                    continue
+                newgens.append(sum(ZZ(c) * g for c, g in zip(row, self._gen_elements)))
+                newords.append(d)
+            newgens, newords = newgens[::-1], newords[::-1]
+
+        elif factors == 'primary':
+            tors_ord = ZZ.prod(filter(bool, self._gen_orders))
+            newgens = [g for g, o in zip(self._gen_elements, self._gen_orders) if not o]
+            newords = [0] * len(newgens)
+            for q, e in reversed(tors_ord.factor()):
+                tors_grp = self.torsion_subgroup(q**e).canonical_form('invariant')
+                newgens.extend(tors_grp._gen_elements)
+                newords.extend(tors_grp._gen_orders)
+
+        else:
+            raise ValueError(f'unknown value {factors!r} for the "factors" argument')
+
+        return AdditiveAbelianGroupWrapper(self.universe(), newgens, newords)
 
 
 def _discrete_log_pgroup(p, vals, aa, b):
@@ -820,10 +928,11 @@ def basis_from_generators(gens, ords=None):
 
     .. NOTE::
 
-        A *basis* of a finite abelian group is a generating
-        set `\{g_1, \ldots, g_n\}` such that each element of the
-        group can be written as a unique linear combination
-        `\alpha_1 g_1 + \cdots + \alpha_n g_n` with each
+        A *basis* of an abelian group is an *independent* generating
+        set `\{g_1, \ldots, g_n\}`. This means the sum of all the
+        subgroups `\langle g_i\rangle` is direct; in other words,
+        every element of the group can be written as a unique linear
+        combination `\alpha_1 g_1 + \cdots + \alpha_n g_n` with each
         `\alpha_i \in \{0, \ldots, \mathrm{ord}(g_i)-1\}`.
 
     ALGORITHM: [Suth2007]_, Algorithm 9.1 & Remark 9.1
@@ -848,11 +957,23 @@ def basis_from_generators(gens, ords=None):
         True
         sage: E.abelian_group().invariants()
         (3024, 313157428926517503432720)
+
+    TESTS::
+
+        sage: from sage.groups.additive_abelian.additive_abelian_wrapper import basis_from_generators
+        sage: basis_from_generators([1])
+        Traceback (most recent call last):
+        ...
+        ValueError: all provided generators must have finite order
     """
     if not gens:
         return [], []
     if ords is None:
         ords = [g.order() for g in gens]
+
+    from sage.rings.infinity import Infinity
+    if not all(o < Infinity for o in ords):
+        raise ValueError('all provided generators must have finite order')
 
     from sage.arith.functions import lcm
     lam = lcm(ords)
